@@ -25,7 +25,6 @@
     <class name="bridleway" id="120" />
     <class name="byway" id="121" />
     <class name="steps" id="122" />
-
     <class name="unclassified" id="123" />
     <class name="road" id="100" />
   </type>

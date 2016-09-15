@@ -36,7 +36,7 @@ WHERE   highway = 'residential';
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 1,
         seg_stress_tf = 1
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT = 25
 AND     (bicycle='lane' OR cycleway='lane')
 AND     seg_stress_ft IS NULL;
@@ -50,7 +50,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 2,
         seg_stress_tf = 2
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT = 30
 AND     (bicycle='lane' OR cycleway='lane')
 AND     seg_stress_ft IS NULL;
@@ -78,7 +78,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 3,
         seg_stress_tf = 3
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT >= 35
 AND     (bicycle='lane' OR cycleway='lane')
 AND     seg_stress_ft IS NULL;
@@ -101,7 +101,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 1,
         seg_stress_tf = 1
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT = 25
 AND     cycleway='buffered_lane'
 AND     seg_stress_ft IS NULL;
@@ -115,7 +115,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 2,
         seg_stress_tf = 2
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT = 30
 AND     cycleway='buffered_lane'
 AND     seg_stress_ft IS NULL;
@@ -143,7 +143,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 3,
         seg_stress_tf = 3
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT >= 35
 AND     cycleway='buffered_lane'
 AND     seg_stress_ft IS NULL;
@@ -166,7 +166,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 1,
         seg_stress_tf = 1
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT = 25
 AND     cycleway='track'
 AND     seg_stress_ft IS NULL;
@@ -180,7 +180,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 1,
         seg_stress_tf = 1
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT = 30
 AND     cycleway='track'
 AND     seg_stress_ft IS NULL;
@@ -208,7 +208,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 2,
         seg_stress_tf = 2
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT >= 35
 AND     cycleway='track'
 AND     seg_stress_ft IS NULL;
@@ -231,7 +231,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 2,
         seg_stress_tf = 2
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT = 25
 AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
@@ -243,7 +243,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 3,
         seg_stress_tf = 3
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT = 30
 AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
@@ -267,7 +267,7 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 4,
         seg_stress_tf = 4
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     speed::INT >= 35
 AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
@@ -380,26 +380,26 @@ AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 1,
         seg_stress_tf = 1
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     highway IN ('tertiary','tertiary_link','secondary','secondary_link')
 AND     (bicycle='lane' OR cycleway IN ('lane','buffered_lane','track'))
 AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 2,
         seg_stress_tf = 2
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     highway IN ('tertiary','tertiary_link')
 AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 3,
         seg_stress_tf = 3
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     highway IN ('secondary','secondary_link')
 AND     seg_stress_ft IS NULL;
 UPDATE  boston_massachusetts_osm_line
 SET     seg_stress_ft = 3,
         seg_stress_tf = 3
-WHERE   lanes::INT IN (2,3)
+WHERE   lanes::INT IN (1,2,3)
 AND     highway IN ('primary','primary_link','trunk','trunk_link')
 AND     seg_stress_ft IS NULL;
 

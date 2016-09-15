@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <type name="highway" id="1">
+  </type>
+  <type name="cycleway" id="2">
+  </type>
+  <type name="tracktype" id="3">
+  </type>
+  <type name="junction" id="4">
+  </type>
+</configuration>
+
+
+import all and then import only highways and copy in anything that doesn't already
+exist
