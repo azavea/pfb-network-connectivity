@@ -2,6 +2,7 @@
 -- INPUTS
 -- location: cambridge
 ----------------------------------------
+UPDATE  cambridge_ways SET functional_class = NULL;
 
 UPDATE  cambridge_ways
 SET     functional_class = osm.highway
@@ -51,4 +52,11 @@ AND     osm.highway = 'pedestrian'
 AND     osm.bicycle IN ('yes','permissive')
 AND     (osm.access IS NULL OR osm.access NOT IN ('no','private'));
 
+DELETE FROM cambridge_ways WHERE functional_class IS NULL;
+DELETE FROM cambridge_ways_intersections
+WHERE NOT EXISTS (
+    SELECT  1
+    FROM    cambridge_ways
+    WHERE   cambridge_ways_intersections.int_id IN (intersection_from,intersection_to)
+);
 --elevators?

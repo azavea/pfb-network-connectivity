@@ -28,4 +28,10 @@
     <class name="unclassified" id="123" />
     <class name="road" id="100" />
   </type>
+  <type name="cycleway" id="2">
+    <class name="lane" id="201" />
+    <class name="track" id="202" />
+    <class name="opposite_lane" id="203" />
+    <class name="opposite" id="204" />
+  </type>
 </configuration>

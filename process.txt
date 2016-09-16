@@ -1,4 +1,7 @@
-1: Run "import osm.sh"
+1: Run import_osm.sh
 2: Run prepare_tables.sql
-3: Run functional_class.sql
-4: Run speed_limit.sql
+3: Run one_way.sql
+4: Run functional_class.sql
+5: Run speed_limit.sql
+6: Run width_ft.sql
+7: Run lanes.sql
