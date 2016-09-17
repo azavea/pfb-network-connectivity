@@ -5,6 +5,7 @@ OSMPREFIX='cambridge'
 OSMFILE='/home/spencer/Downloads/boston_massachusetts.osm'
 
 # drop old tables
+echo 'Dropping old tables'
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "DROP TABLE IF EXISTS received.${OSMPREFIX}_ways;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
@@ -61,6 +62,7 @@ osm2pgrouting \
   --clean
 
 # rename a few tables
+echo 'Renaming tables'
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.${OSMPREFIX}_ways_vertices_pgr RENAME TO ${OSMPREFIX}_ways_intersections;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
@@ -88,6 +90,7 @@ psql -h $DBHOST -U gis -d ${DBNAME} \
 # not met by osm2pgrouting
 
 # drop old tables
+echo 'Dropping old tables'
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "DROP TABLE IF EXISTS received.${OSMPREFIX}_osm_full_line;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
@@ -110,6 +113,7 @@ osm2pgsql \
   $OSMFILE
 
 # move the full osm tables to the received schema
+echo 'Moving tables to received schema'
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE generated.${OSMPREFIX}_osm_full_line SET SCHEMA received;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
@@ -118,3 +122,15 @@ psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE generated.${OSMPREFIX}_osm_full_polygon SET SCHEMA received;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE generated.${OSMPREFIX}_osm_full_roads SET SCHEMA received;"
+
+# process tables
+echo 'Updating field names'
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./prepare_tables.sql
+echo 'Setting values'
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./one_way.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./functional_class.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./speed_limit.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./width_ft.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./lanes.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./park.sql
+#psql -h $DBHOST -U gis -d ${DBNAME} -f ./bike_infra.sql
