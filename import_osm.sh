@@ -133,4 +133,12 @@ psql -h $DBHOST -U gis -d ${DBNAME} -f ./speed_limit.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./width_ft.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./lanes.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./park.sql
-#psql -h $DBHOST -U gis -d ${DBNAME} -f ./bike_infra.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./bike_infra.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_motorway-trunk.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_primary.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_secondary.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_tertiary.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_residential.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_living_street.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_track.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_path.sql
