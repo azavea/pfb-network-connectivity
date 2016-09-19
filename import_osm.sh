@@ -152,6 +152,7 @@ psql -h $DBHOST -U gis -d ${DBNAME} -f ./width_ft.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./lanes.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./park.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./bike_infra.sql
+echo 'Calculating stress'
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_motorway-trunk.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_primary.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_secondary.sql
