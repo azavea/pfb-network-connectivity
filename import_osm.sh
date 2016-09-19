@@ -66,25 +66,39 @@ echo 'Renaming tables'
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.${OSMPREFIX}_ways_vertices_pgr RENAME TO ${OSMPREFIX}_ways_intersections;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
+  -c "ALTER TABLE received.${OSMPREFIX}_ways_intersections RENAME CONSTRAINT node_id TO ${OSMPREFIX}_node_id;"
+psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.osm_nodes RENAME TO ${OSMPREFIX}_osm_nodes;"
+psql -h $DBHOST -U gis -d ${DBNAME} \
+  -c "ALTER TABLE received.${OSMPREFIX}_osm_nodes RENAME CONSTRAINT node_id TO ${OSMPREFIX}_node_id;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.osm_relations RENAME TO ${OSMPREFIX}_osm_relations;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.osm_way_classes RENAME TO ${OSMPREFIX}_osm_way_classes;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
+  -c "ALTER TABLE received.${OSMPREFIX}_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO ${OSMPREFIX}_osm_way_classes_pkey;"
+psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.osm_way_tags RENAME TO ${OSMPREFIX}_osm_way_tags;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.osm_way_types RENAME TO ${OSMPREFIX}_osm_way_types;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
+  -c "ALTER TABLE received.${OSMPREFIX}_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO ${OSMPREFIX}_osm_way_types_pkey;"
+psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE scratch.osm_nodes RENAME TO ${OSMPREFIX}_hwys_osm_nodes;"
+psql -h $DBHOST -U gis -d ${DBNAME} \
+  -c "ALTER TABLE scratch.${OSMPREFIX}_hwys_osm_nodes RENAME CONSTRAINT node_id TO ${OSMPREFIX}_node_id;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE scratch.osm_relations RENAME TO ${OSMPREFIX}_hwys_osm_relations;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE scratch.osm_way_classes RENAME TO ${OSMPREFIX}_hwys_osm_way_classes;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
+  -c "ALTER TABLE scratch.${OSMPREFIX}_hwys_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO ${OSMPREFIX}_osm_way_classes_pkey;"
+psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE scratch.osm_way_tags RENAME TO ${OSMPREFIX}_hwys_osm_way_tags;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE scratch.osm_way_types RENAME TO ${OSMPREFIX}_hwys_osm_way_types;"
+psql -h $DBHOST -U gis -d ${DBNAME} \
+  -c "ALTER TABLE scratch.${OSMPREFIX}_hwys_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO ${OSMPREFIX}_osm_way_types_pkey;"
 
 # import full osm to fill out additional data needs
 # not met by osm2pgrouting
