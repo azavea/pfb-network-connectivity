@@ -66,7 +66,7 @@ echo 'Renaming tables'
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.${OSMPREFIX}_ways_vertices_pgr RENAME TO ${OSMPREFIX}_ways_intersections;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE received.${OSMPREFIX}_ways_intersections RENAME CONSTRAINT node_id TO ${OSMPREFIX}_node_id;"
+  -c "ALTER TABLE received.${OSMPREFIX}_ways_intersections RENAME CONSTRAINT vertex_id TO ${OSMPREFIX}_vertex_id;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.osm_nodes RENAME TO ${OSMPREFIX}_osm_nodes;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
@@ -83,6 +83,8 @@ psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.osm_way_types RENAME TO ${OSMPREFIX}_osm_way_types;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.${OSMPREFIX}_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO ${OSMPREFIX}_osm_way_types_pkey;"
+psql -h $DBHOST -U gis -d ${DBNAME} \
+  -c "ALTER TABLE scratch.${OSMPREFIX}_hwys_ways_vertices_pgr RENAME CONSTRAINT vertex_id TO ${OSMPREFIX}_vertex_id;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE scratch.osm_nodes RENAME TO ${OSMPREFIX}_hwys_osm_nodes;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
