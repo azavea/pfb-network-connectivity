@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # vars
 DBHOST='192.168.1.144'
 DBNAME='people_for_bikes'
