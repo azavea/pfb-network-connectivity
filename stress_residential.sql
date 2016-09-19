@@ -16,10 +16,15 @@ UPDATE  cambridge_ways
 SET     ft_seg_stress = 3
 WHERE   functional_class = 'residential'
 AND     (ft_lanes > 1 OR speed_limit > 30);
+UPDATE  cambridge_ways
+SET     tf_seg_stress = 3
+WHERE   functional_class = 'residential'
+AND     (tf_lanes > 1 OR speed_limit > 30);
 
 -- stress increase for narrow one way and parking on both sides
 UPDATE  cambridge_ways
-SET     ft_seg_stress = 3
+SET     ft_seg_stress = 3,
+        tf_seg_stress = 3
 WHERE   functional_class = 'residential'
 AND     width_ft <= 28
 AND     ft_park = 1
