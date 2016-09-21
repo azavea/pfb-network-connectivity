@@ -72,7 +72,7 @@ ALTER TABLE cambridge_ways ADD COLUMN tf_int_stress INT;
 CREATE INDEX idx_cambridge_ways_osm ON cambridge_ways (osm_id);
 CREATE INDEX idx_cambridge_ways_ints_osm ON cambridge_ways_intersections (osm_id);
 CREATE INDEX idx_cambridge_fullways ON cambridge_osm_full_line (osm_id);
-CREATE INDEX idx_cambrdige_fullpoints ON cambridge_osm_full_point (osm_id);
+CREATE INDEX idx_cambridge_fullpoints ON cambridge_osm_full_point (osm_id);
 ANALYZE cambridge_ways (osm_id,geom);
 ANALYZE cambridge_hwys_ways (the_geom);
 ANALYZE cambridge_ways_intersections (osm_id);

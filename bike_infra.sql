@@ -61,6 +61,9 @@ AND (
         OR  (osm.cycleway = 'track' AND osm."oneway:bicycle" = 'no')
         OR  (COALESCE(one_way_car,'ft') = 'ft' AND osm."cycleway" = 'track')
         OR  (COALESCE(one_way_car,'ft') = 'ft' AND osm."cycleway:right" = 'track')
+        OR  (one_way_car = 'tf' AND osm."cycleway" = 'opposite_track')
+        OR  (one_way_car = 'tf' AND osm."cycleway:left" = 'opposite_track')
+        OR  (one_way_car = 'tf' AND osm."cycleway:right" = 'opposite_track')
 );
 
 
@@ -121,6 +124,9 @@ AND (
         OR  (osm.cycleway = 'track' AND osm."oneway:bicycle" = 'no')
         OR  (COALESCE(one_way_car,'tf') = 'tf' AND osm."cycleway" = 'track')
         OR  (COALESCE(one_way_car,'tf') = 'tf' AND osm."cycleway:left" = 'track')
+        OR  (one_way_car = 'ft' AND osm."cycleway" = 'opposite_track')
+        OR  (one_way_car = 'ft' AND osm."cycleway:left" = 'opposite_track')
+        OR  (one_way_car = 'ft' AND osm."cycleway:right" = 'opposite_track')
 );
 
 -- update one_way based on bike infra
