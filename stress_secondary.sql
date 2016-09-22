@@ -5,48 +5,92 @@
 UPDATE  cambridge_ways SET ft_seg_stress = NULL, tf_seg_stress = NULL
 WHERE   functional_class IN ('secondary','secondary_link');
 
--- no additional information
+-- ft direction
 UPDATE  cambridge_ways
-SET     ft_seg_stress = 4,
-        tf_seg_stress = 4
+SET     ft_seg_stress =
+            CASE
+            WHEN ft_bike_infra = 'track' THEN 1
+            WHEN ft_bike_infra = 'buffered_lane'
+                    THEN    CASE
+                            WHEN speed_limit = 35 THEN  CASE
+                                                        WHEN ft_lanes = 1 THEN 2
+                                                        ELSE 3
+                                                        END
+                            WHEN speed_limit <= 30 THEN CASE
+                                                        WHEN ft_lanes = 1 THEN 1
+                                                        ELSE 3
+                                                        END
+                            ELSE 3
+                            END
+            WHEN ft_bike_infra = 'lane'
+                    THEN    CASE
+                            WHEN speed_limit <= 25
+                                    THEN    CASE
+                                            WHEN ft_lanes = 1 THEN  CASE
+                                                                    WHEN ft_park = 0 THEN 1
+                                                                    ELSE 2
+                                                                    END
+                                            WHEN ft_lanes > 2 THEN  3
+                                            ELSE    CASE
+                                                    WHEN ft_park = 0 THEN 2
+                                                    ELSE 3
+                                                    END
+                                            END
+                            WHEN speed_limit = 30 THEN  CASE
+                                                        WHEN ft_lanes = 1 THEN
+                                                                CASE
+                                                                WHEN ft_park = 0 THEN 1
+                                                                ELSE 2
+                                                                END
+                                                        ELSE 3
+                                                        END
+                            ELSE 3
+                            END
+            ELSE 3
+            END
 WHERE   functional_class IN ('secondary','secondary_link');
 
--- stress reduction for cycle track
+-- tf direction
 UPDATE  cambridge_ways
-SET     ft_seg_stress = 2
-WHERE   functional_class IN ('secondary','secondary_link')
-AND     ft_bike_infra = 'track';
-UPDATE  cambridge_ways
-SET     tf_seg_stress = 2
-WHERE   functional_class IN ('secondary','secondary_link')
-AND     tf_bike_infra = 'track';
-
--- stress reduction for one vehicle lane and buffered lane
-UPDATE  cambridge_ways
-SET     ft_seg_stress = 2
-WHERE   functional_class IN ('secondary','secondary_link')
-AND     ft_bike_infra = 'buffered_lane'
-AND     ft_lanes = 1
-AND     speed_limit <= 30;
-UPDATE  cambridge_ways
-SET     tf_seg_stress = 2
-WHERE   functional_class IN ('secondary','secondary_link')
-AND     tf_bike_infra = 'buffered_lane'
-AND     tf_lanes = 1
-AND     speed_limit <= 30;
-
--- stress reduction for one vehicle lane, no parking, and bike lane
-UPDATE  cambridge_ways
-SET     ft_seg_stress = 2
-WHERE   functional_class IN ('secondary','secondary_link')
-AND     ft_bike_infra = 'lane'
-AND     ft_lanes = 1
-AND     ft_park = 0
-AND     speed_limit <= 30;
-UPDATE  cambridge_ways
-SET     tf_seg_stress = 2
-WHERE   functional_class IN ('secondary','secondary_link')
-AND     tf_bike_infra = 'lane'
-AND     tf_lanes = 1
-AND     ft_park = 0
-AND     speed_limit <= 30;
+SET     tf_seg_stress =
+            CASE
+            WHEN tf_bike_infra = 'track' THEN 1
+            WHEN tf_bike_infra = 'buffered_lane'
+                    THEN    CASE
+                            WHEN speed_limit = 35 THEN  CASE
+                                                        WHEN tf_lanes = 1 THEN 2
+                                                        ELSE 3
+                                                        END
+                            WHEN speed_limit <= 30 THEN CASE
+                                                        WHEN tf_lanes = 1 THEN 1
+                                                        ELSE 3
+                                                        END
+                            ELSE 3
+                            END
+            WHEN tf_bike_infra = 'lane'
+                    THEN    CASE
+                            WHEN speed_limit <= 25
+                                    THEN    CASE
+                                            WHEN tf_lanes = 1 THEN  CASE
+                                                                    WHEN tf_park = 0 THEN 1
+                                                                    ELSE 2
+                                                                    END
+                                            WHEN tf_lanes > 2 THEN  3
+                                            ELSE    CASE
+                                                    WHEN tf_park = 0 THEN 2
+                                                    ELSE 3
+                                                    END
+                                            END
+                            WHEN speed_limit = 30 THEN  CASE
+                                                        WHEN tf_lanes = 1 THEN
+                                                                CASE
+                                                                WHEN tf_park = 0 THEN 1
+                                                                ELSE 2
+                                                                END
+                                                        ELSE 3
+                                                        END
+                            ELSE 3
+                            END
+            ELSE 3
+            END
+WHERE   functional_class IN ('secondary','secondary_link');
