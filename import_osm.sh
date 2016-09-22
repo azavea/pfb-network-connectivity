@@ -144,7 +144,7 @@ psql -h $DBHOST -U gis -d ${DBNAME} \
 # process tables
 echo 'Updating field names'
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./prepare_tables.sql
-echo 'Setting values'
+echo 'Setting values on road segments'
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./one_way.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./functional_class.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./speed_limit.sql
@@ -152,6 +152,10 @@ psql -h $DBHOST -U gis -d ${DBNAME} -f ./width_ft.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./lanes.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./park.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./bike_infra.sql
+echo 'Setting values on intersections'
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./legs.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./signalized.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stops.sql
 echo 'Calculating stress'
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_motorway-trunk.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_primary.sql
@@ -162,3 +166,4 @@ psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_living_street.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_track.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_path.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_one_way_reset.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_intersections.sql

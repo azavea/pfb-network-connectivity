@@ -110,11 +110,12 @@ way        parking:lane:right  text  linear
 way        parking:lane:left   text  linear
 way        parking:lane:both   text  linear
 node,way   segregated   text         linear
-node,way   stop         TEXT         linear
+node,way   stop         text         linear
 node,way   surface      text         linear
 way        tracktype    text         linear
 node,way   traffic_sign text         linear
-node,way   traffic_signals   text    linear
+node       traffic_signals   text    linear
+way        traffic_signals:direction  text linear
 node,way   tunnel       text         linear
 node,way   width        text         linear
 

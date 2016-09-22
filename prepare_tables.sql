@@ -102,3 +102,9 @@ WHERE   NOT EXISTS (
             FROM    cambridge_ways w2
             WHERE   w2.osm_id = cambridge_hwys_ways.osm_id
 );
+
+-- setup intersection table
+ALTER TABLE cambridge_ways_intersections ADD COLUMN legs INT;
+ALTER TABLE cambridge_ways_intersections ADD COLUMN signalized BOOLEAN;
+ALTER TABLE cambridge_ways_intersections ADD COLUMN stops BOOLEAN;
+CREATE INDEX idx_cambridge_ints_stop ON cambridge_ways_intersections (signalized,stops);
