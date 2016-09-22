@@ -21,7 +21,13 @@ AND     osm.highway IN (
             'secondary',
             'primary',
             'living_street'
-);                          -- note that we're leaving out "road" and "unclassified"
+);                          -- note that we're leaving out "road"
+
+UPDATE  cambridge_ways
+SET     functional_class = 'tertiary'
+FROM    cambridge_osm_full_line osm
+WHERE   cambridge_ways.osm_id = osm.osm_id
+AND     osm.highway = 'unclassified';
 
 UPDATE  cambridge_ways
 SET     functional_class = 'track'

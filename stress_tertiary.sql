@@ -1,9 +1,13 @@
 ----------------------------------------
 -- INPUTS
 -- location: cambridge
+-- notes: this includes residential streets that have bike lanes
+--        of any type
 ----------------------------------------
 UPDATE  cambridge_ways SET ft_seg_stress = NULL, tf_seg_stress = NULL
-WHERE   functional_class IN ('tertiary','tertiary_link');
+WHERE   functional_class IN ('tertiary','tertiary_link')
+OR      (functional_class = 'residential' AND ft_bike_infra IN ('track','buffered_lane','lane'))
+OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'));
 
 -- scoring with additional info
 UPDATE  cambridge_ways
@@ -55,7 +59,10 @@ SET     ft_seg_stress =
                     ELSE 3
                     END
             END
-WHERE   functional_class IN ('tertiary','tertiary_link');
+WHERE   functional_class IN ('tertiary','tertiary_link')
+OR      (functional_class = 'residential' AND ft_bike_infra IN ('track','buffered_lane','lane'))
+OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'));
+
 UPDATE  cambridge_ways
 SET     tf_seg_stress =
             CASE
@@ -105,7 +112,9 @@ SET     tf_seg_stress =
                     ELSE 3
                     END
             END
-WHERE   functional_class IN ('tertiary','tertiary_link');
+WHERE   functional_class IN ('tertiary','tertiary_link')
+OR      (functional_class = 'residential' AND ft_bike_infra IN ('track','buffered_lane','lane'))
+OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'));
 
 
 --
