@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # vars
-DBHOST='192.168.40.225'
+DBHOST='192.168.1.144'
 DBNAME='people_for_bikes'
 OSMPREFIX='cambridge'
 OSMFILE='/home/spencer/gis/cambridge.osm'
@@ -166,4 +166,9 @@ psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_living_street.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_track.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_path.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_one_way_reset.sql
-psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_intersections.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_motorway-trunk_ints.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_primary_ints.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_secondary_ints.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_tertiary_ints.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_lesser_ints.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./stress_link_ints.sql
