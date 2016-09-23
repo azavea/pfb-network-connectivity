@@ -4,7 +4,7 @@
 DBHOST='192.168.1.144'
 DBNAME='people_for_bikes'
 OSMPREFIX='cambridge'
-OSMFILE='/home/spencer/gis/cambridge.osm'
+OSMFILE='/home/spencer/Downloads/cambridge.osm'
 
 # drop old tables
 echo 'Dropping old tables'
