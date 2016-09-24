@@ -58,11 +58,28 @@ AND     osm.highway = 'pedestrian'
 AND     osm.bicycle IN ('yes','permissive')
 AND     (osm.access IS NULL OR osm.access NOT IN ('no','private'));
 
+-- remove stuff that we don't want to route over
 DELETE FROM cambridge_ways WHERE functional_class IS NULL;
+
+-- remove orphans
+DELETE FROM cambridge_ways
+WHERE   NOT EXISTS (
+            SELECT  1
+            FROM    cambridge_ways w
+            WHERE   cambridge_ways.intersection_to IN (w.intersection_to,w.intersection_from)
+            AND     w.road_id != cambridge_ways.road_id
+)
+AND     NOT EXISTS (
+            SELECT  1
+            FROM    cambridge_ways w
+            WHERE   cambridge_ways.intersection_from IN (w.intersection_to,w.intersection_from)
+            AND     w.road_id != cambridge_ways.road_id
+);
+
+-- remove obsolete intersections
 DELETE FROM cambridge_ways_intersections
 WHERE NOT EXISTS (
     SELECT  1
-    FROM    cambridge_ways
-    WHERE   cambridge_ways_intersections.int_id IN (intersection_from,intersection_to)
+    FROM    cambridge_ways w
+    WHERE   int_id IN (w.intersection_to,w.intersection_from)
 );
---elevators?

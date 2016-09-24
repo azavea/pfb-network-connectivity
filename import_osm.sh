@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # vars
-DBHOST='192.168.40.225'
+DBHOST='192.168.1.144'
 DBNAME='people_for_bikes'
 OSMPREFIX='cambridge'
 OSMFILE='/home/spencer/gis/cambridge.osm'
@@ -25,32 +25,21 @@ psql -h $DBHOST -U gis -d ${DBNAME} \
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "DROP TABLE IF EXISTS received.${OSMPREFIX}_osm_way_types;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_hwys_ways;"
+  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_ways;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_hwys_ways_vertices_pgr;"
+  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_ways_vertices_pgr;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_hwys_relations_ways;"
+  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_relations_ways;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_hwys_osm_nodes;"
+  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_osm_nodes;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_hwys_osm_relations;"
+  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_osm_relations;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_hwys_osm_way_classes;"
+  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_osm_way_classes;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_hwys_osm_way_tags;"
+  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_osm_way_tags;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_hwys_osm_way_types;"
-
-# import the osm optimized for routing
-osm2pgrouting \
-  -f $OSMFILE \
-  -h $DBHOST \
-  --dbname ${DBNAME} \
-  --username gis \
-  --schema received \
-  --prefix ${OSMPREFIX}_ \
-  --conf ./mapconfig_all.xml
-  --clean
+  -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_osm_way_types;"
 
 # import the osm with highways that the above misses (bug in osm2pgrouting)
 osm2pgrouting \
@@ -58,9 +47,20 @@ osm2pgrouting \
   -h $DBHOST \
   --dbname ${DBNAME} \
   --username gis \
+  --schema received \
+  --prefix ${OSMPREFIX}_ \
+  --conf ./mapconfig_highway.xml \
+  --clean
+
+# import the osm optimized for routing
+osm2pgrouting \
+  -f $OSMFILE \
+  -h $DBHOST \
+  --dbname ${DBNAME} \
+  --username gis \
   --schema scratch \
-  --prefix ${OSMPREFIX}_hwys_ \
-  --conf ./mapconfig_highway.xml
+  --prefix ${OSMPREFIX}_cycwys_ \
+  --conf ./mapconfig_cycleway.xml \
   --clean
 
 # rename a few tables
@@ -86,23 +86,23 @@ psql -h $DBHOST -U gis -d ${DBNAME} \
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "ALTER TABLE received.${OSMPREFIX}_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO ${OSMPREFIX}_osm_way_types_pkey;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.${OSMPREFIX}_hwys_ways_vertices_pgr RENAME CONSTRAINT vertex_id TO ${OSMPREFIX}_vertex_id;"
+  -c "ALTER TABLE scratch.${OSMPREFIX}_cycwys_ways_vertices_pgr RENAME CONSTRAINT vertex_id TO ${OSMPREFIX}_vertex_id;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.osm_nodes RENAME TO ${OSMPREFIX}_hwys_osm_nodes;"
+  -c "ALTER TABLE scratch.osm_nodes RENAME TO ${OSMPREFIX}_cycwys_osm_nodes;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.${OSMPREFIX}_hwys_osm_nodes RENAME CONSTRAINT node_id TO ${OSMPREFIX}_node_id;"
+  -c "ALTER TABLE scratch.${OSMPREFIX}_cycwys_osm_nodes RENAME CONSTRAINT node_id TO ${OSMPREFIX}_node_id;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.osm_relations RENAME TO ${OSMPREFIX}_hwys_osm_relations;"
+  -c "ALTER TABLE scratch.osm_relations RENAME TO ${OSMPREFIX}_cycwys_osm_relations;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.osm_way_classes RENAME TO ${OSMPREFIX}_hwys_osm_way_classes;"
+  -c "ALTER TABLE scratch.osm_way_classes RENAME TO ${OSMPREFIX}_cycwys_osm_way_classes;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.${OSMPREFIX}_hwys_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO ${OSMPREFIX}_osm_way_classes_pkey;"
+  -c "ALTER TABLE scratch.${OSMPREFIX}_cycwys_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO ${OSMPREFIX}_osm_way_classes_pkey;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.osm_way_tags RENAME TO ${OSMPREFIX}_hwys_osm_way_tags;"
+  -c "ALTER TABLE scratch.osm_way_tags RENAME TO ${OSMPREFIX}_cycwys_osm_way_tags;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.osm_way_types RENAME TO ${OSMPREFIX}_hwys_osm_way_types;"
+  -c "ALTER TABLE scratch.osm_way_types RENAME TO ${OSMPREFIX}_cycwys_osm_way_types;"
 psql -h $DBHOST -U gis -d ${DBNAME} \
-  -c "ALTER TABLE scratch.${OSMPREFIX}_hwys_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO ${OSMPREFIX}_osm_way_types_pkey;"
+  -c "ALTER TABLE scratch.${OSMPREFIX}_cycwys_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO ${OSMPREFIX}_osm_way_types_pkey;"
 
 # import full osm to fill out additional data needs
 # not met by osm2pgrouting

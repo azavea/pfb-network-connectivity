@@ -46,7 +46,7 @@ ALTER TABLE cambridge_ways_intersections RENAME COLUMN the_geom TO geom;
 -- reproject
 ALTER TABLE cambridge_ways ALTER COLUMN geom TYPE geometry(linestring,2249)
 USING ST_Transform(geom,2249);
-ALTER TABLE cambridge_hwys_ways ALTER COLUMN the_geom TYPE geometry(linestring,2249)
+ALTER TABLE cambridge_cycwys_ways ALTER COLUMN the_geom TYPE geometry(linestring,2249)
 USING ST_Transform(the_geom,2249);
 ALTER TABLE cambridge_ways_intersections ALTER COLUMN geom TYPE geometry(point,2249)
 USING ST_Transform(geom,2249);
@@ -74,33 +74,33 @@ CREATE INDEX idx_cambridge_ways_ints_osm ON cambridge_ways_intersections (osm_id
 CREATE INDEX idx_cambridge_fullways ON cambridge_osm_full_line (osm_id);
 CREATE INDEX idx_cambridge_fullpoints ON cambridge_osm_full_point (osm_id);
 ANALYZE cambridge_ways (osm_id,geom);
-ANALYZE cambridge_hwys_ways (the_geom);
+ANALYZE cambridge_cycwys_ways (the_geom);
 ANALYZE cambridge_ways_intersections (osm_id);
 ANALYZE cambridge_osm_full_line (osm_id);
 ANALYZE cambridge_osm_full_point (osm_id);
 
--- add in highway data that is missing from first osm2pgrouting call
+-- add in cycleway data that is missing from first osm2pgrouting call
 INSERT INTO cambridge_ways (
     name, intersection_from, intersection_to, osm_id, geom
 )
 SELECT  name,
         (SELECT     i.int_id
         FROM        cambridge_ways_intersections i
-        WHERE       i.geom <#> cambridge_hwys_ways.the_geom < 20
-        ORDER BY    ST_Distance(ST_StartPoint(cambridge_hwys_ways.the_geom),i.geom) ASC
+        WHERE       i.geom <#> cambridge_cycwys_ways.the_geom < 20
+        ORDER BY    ST_Distance(ST_StartPoint(cambridge_cycwys_ways.the_geom),i.geom) ASC
         LIMIT       1),
         (SELECT     i.int_id
         FROM        cambridge_ways_intersections i
-        WHERE       i.geom <#> cambridge_hwys_ways.the_geom < 20
-        ORDER BY    ST_Distance(ST_EndPoint(cambridge_hwys_ways.the_geom),i.geom) ASC
+        WHERE       i.geom <#> cambridge_cycwys_ways.the_geom < 20
+        ORDER BY    ST_Distance(ST_EndPoint(cambridge_cycwys_ways.the_geom),i.geom) ASC
         LIMIT       1),
         osm_id,
         the_geom
-FROM    cambridge_hwys_ways
+FROM    cambridge_cycwys_ways
 WHERE   NOT EXISTS (
             SELECT  1
             FROM    cambridge_ways w2
-            WHERE   w2.osm_id = cambridge_hwys_ways.osm_id
+            WHERE   w2.osm_id = cambridge_cycwys_ways.osm_id
 );
 
 -- setup intersection table
