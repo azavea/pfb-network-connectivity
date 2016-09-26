@@ -1,12 +1,15 @@
 import nxutils
 import networkx as nx
 
-n = nxutils.NXUtils('cambridge')
+zipCode = '02138'
+prefix = 'cambridge'
+
+n = nxutils.NXUtils(prefix, zipCode)
 n.buildNetwork()
 DG = n.getNetwork()
-fullCycles = len(list(nx.simple_cycles(DG)))
+fullCycles = nx.simple_cycles(DG)
 print('Number of cycles for all stress')
-print(fullCycles)
+print(len(list(fullCycles)))
 
 MG = n.getStressNetwork(2)
 stressCycles = len(list(nx.simple_cycles(SG)))

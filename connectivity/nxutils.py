@@ -29,29 +29,37 @@ import psycopg2
 import networkx as nx
 
 class NXUtils:
-    def __init__(self, prefix):
+    def __init__(self, prefix, zipCode):
         # set up connection
         self.conn = psycopg2.connect("host=192.168.1.144 dbname=people_for_bikes user=gis password=gis")
 
         # layers
         self.vertsTable = prefix + '_ways_net_vert'
         self.linksTable = prefix + '_ways_net_link'
+        self.zipsTable = prefix + '_zip_codes'
 
         # other vars
+        self.zipCode = zipCode
         self.DG = nx.DiGraph()
 
     def buildNetwork(self):
         # edges
         edgeCur = self.conn.cursor()
         edgeCur.execute('\
-            SELECT  source_vert, \
-                    target_vert, \
-                    COALESCE(link_cost,0), \
-                    link_id, \
-                    COALESCE(link_stress,99), \
-                    int_id \
-            FROM    ' + self.linksTable
-        )
+            SELECT  links.source_vert, \
+                    links.target_vert, \
+                    COALESCE(links.link_cost,0), \
+                    links.link_id, \
+                    COALESCE(links.link_stress,99), \
+                    links.int_id \
+            FROM    ' + self.linksTable + ' links \
+            WHERE   EXISTS ( \
+                        SELECT  1 \
+                        FROM    ' + self.zipsTable + ' zips \
+                        WHERE   zips.zip_code = \'' + self.zipCode + '\' \
+                        AND     ST_Intersects(zips.geom,links.geom) \
+            ) \
+        ')
         for record in edgeCur:
             self.DG.add_edge(
                 int(record[0]),
@@ -65,11 +73,17 @@ class NXUtils:
         # vertices
         vertCur = self.conn.cursor()
         vertCur.execute('\
-            SELECT  vert_id, \
-                    COALESCE(vert_cost,0), \
-                    road_id \
-            FROM    ' + self.vertsTable
-        )
+            SELECT  verts.vert_id, \
+                    COALESCE(verts.vert_cost,0), \
+                    verts.road_id \
+            FROM    ' + self.vertsTable + ' verts \
+            WHERE   EXISTS ( \
+                        SELECT  1 \
+                        FROM    ' + self.zipsTable + ' zips \
+                        WHERE   zips.zip_code = \'' + self.zipCode + '\' \
+                        AND     ST_Intersects(zips.geom,verts.geom) \
+            ) \
+        ')
         for record in vertCur:
             vid = record[0]
             self.DG.node[vid]['weight'] = record[1]
