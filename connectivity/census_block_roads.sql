@@ -25,4 +25,8 @@ WHERE   EXISTS (
             AND     zips.zip_code = '02138'
 )
 AND     blocks.geom <-> ways.geom < 50
-        ST_Intersects(ST_Buffer(blocks.geom,50),ways.geom);
+AND     ST_Intersects(ST_Buffer(blocks.geom,50),ways.geom);
+
+CREATE INDEX idx_cambridge_censblkrds
+ON generated.cambridge_census_block_roads (blockid10,road_id);
+ANALYZE generated.cambridge_census_block_roads;

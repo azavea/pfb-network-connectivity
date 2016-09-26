@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # vars
-DBHOST='192.168.1.144'
+DBHOST='192.168.40.225'
 DBNAME='people_for_bikes'
 OSMPREFIX='cambridge'
 OSMFILE='/home/spencer/gis/cambridge.osm'
