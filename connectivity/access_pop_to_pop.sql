@@ -3,37 +3,41 @@
 -- location: cambridge
 ----------------------------------------
 
-SELECT  blocks.id,
-        blocks.blockid10,
-        (
-            SELECT  SUM(b.pop10)
-            FROM    cambridge_reachable_roads_low_stress ls,
-                    cambridge_census_block_roads br,
-                    cambridge_census_blocks b,
-            WHERE   blocks.blockid10 =
-        ) AS low_stress_pop,
-
-FROM    cambridge_census_blocks blocks
-
-
-
-
-SELECT DISTINCT
-        source_block.id,
-        source_block.blockid10,
-        target_block.id,
-        target_block.blockid10,
-        target_block.pop10
+SELECT  source_block.id AS source_id,
+        source_block.blockid10 AS source_blockid10,
+        target_block.id AS target_id,
+        target_block.blockid10 AS target_blockid10,
+        target_block.pop10 AS target_pop
 FROM    cambridge_census_blocks source_block,
-        cambridge_census_block_roads source_br,
-        cambridge_census_blocks target_block,
-        cambridge_census_block_roads target_br
-WHERE   source_block.blockid10 = source_br.blockid10
-AND     target_block.blockid10 = target_br.blockid10
-AND     EXISTS (
+        cambridge_census_blocks target_block
+WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_reachable_roads_low_stress ls
-            WHERE   ls.base_road = source_br.road_id
+            FROM    cambridge_census_block_roads source_br,
+                    cambridge_census_block_roads target_br,
+                    cambridge_reachable_roads_low_stress ls
+            WHERE   source_block.blockid10 = source_br.blockid10
+            AND     target_block.blockid10 = target_br.blockid10
+            AND     ls.base_road = source_br.road_id
             AND     ls.target_road = target_br.road_id
-)
--- and source_block.id = 88206
+        )
+AND     (
+            SELECT  MIN(total_cost)
+            FROM    cambridge_census_block_roads source_br,
+                    cambridge_census_block_roads target_br,
+                    cambridge_reachable_roads_low_stress ls
+            WHERE   source_block.blockid10 = source_br.blockid10
+            AND     target_block.blockid10 = target_br.blockid10
+            AND     ls.base_road = source_br.road_id
+            AND     ls.target_road = target_br.road_id
+        ) /
+        (
+            SELECT  MIN(total_cost) + 1
+            FROM    cambridge_census_block_roads source_br,
+                    cambridge_census_block_roads target_br,
+                    cambridge_reachable_roads_high_stress hs
+            WHERE   source_block.blockid10 = source_br.blockid10
+            AND     target_block.blockid10 = target_br.blockid10
+            AND     hs.base_road = source_br.road_id
+            AND     hs.target_road = target_br.road_id
+        ) <= 1.3                                                --30% max deviation
+-- and source_block.blockid10 = '250173540002000'

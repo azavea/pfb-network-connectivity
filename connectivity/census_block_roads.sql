@@ -2,6 +2,7 @@
 -- INPUTS
 -- location: cambridge
 ----------------------------------------
+DROP TABLE IF EXISTS generated.cambridge_census_block_roads;
 
 CREATE TABLE generated.cambridge_census_block_roads (
     id SERIAL PRIMARY KEY,
@@ -21,7 +22,7 @@ FROM    cambridge_census_blocks blocks,
 WHERE   EXISTS (
             SELECT  1
             FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(zips.geom,blocks.geom)
+            WHERE   zips.geom <-> blocks.geom < 11000
             AND     zips.zip_code = '02138'
 )
 AND     blocks.geom <-> ways.geom < 50
