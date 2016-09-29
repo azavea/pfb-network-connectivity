@@ -1,21 +1,46 @@
-1:  Run import_osm.sh
-2:  Run prepare_tables.sql
-3:  Run one_way.sql
-4:  Run functional_class.sql
-5:  Run speed_limit.sql
-6:  Run width_ft.sql
-7:  Run lanes.sql
-8:  Run park.sql
-9:  Run bike_infra.sql
-10: Run legs.sql
-11: Run signalized.sql
-12: Run stops.sql
-13: Run stress_motorway-trunk.sql
-14: Run stress_primary.sql
-15: Run stress_secondary.sql
-16: Run stress_tertiary.sql
-17: Run stress_residential.sql
-18: Run stress_living_street.sql
-19: Run stress_track.sql
-20: Run stress_path.sql
-21: Run stress_intersections.sql
+-------------------------------------------
+-scripts given in order they should be run-
+-------------------------------------------
+
+import_osm.sh (runs the following automatically)
+  - prepare_tables.sql
+  - one_way.sql
+  - functional_class.sql
+  - speed_limit.sql
+  - width_ft.sql
+  - lanes.sql
+  - park.sql
+  - bike_infra.sql
+  - legs.sql
+  - signalized.sql
+  - stops.sql
+  - stress_motorway-trunk.sql
+  - stress_primary.sql
+  - stress_secondary.sql
+  - stress_tertiary.sql
+  - stress_residential.sql
+  - stress_living_street.sql
+  - stress_track.sql
+  - stress_path.sql
+  - stress_one_way_reset.sql
+  - stress_motorway-trunk_ints.sql
+  - stress_primary_ints.sql
+  - stress_secondary_ints.sql
+  - stress_tertiary_ints.sql
+  - stress_lesser_ints.sql
+  - stress_link_ints.sql
+
+SELECT tdgBuildNetwork('cambridge_ways')
+
+(import census blocks with pop from census blkpophu dataset)
+census_blocks.sql
+
+census_block_roads.sql
+reachable_roads_high_stress.sql
+reachable_roads_low_stress.sql
+connected_census_blocks.sql
+access_population.sql
+
+(import census blocks job data)
+census_block_jobs.sql
+access_jobs.sql

@@ -1,7 +1,9 @@
 ----------------------------------------
 -- INPUTS
 -- location: cambridge
+-- maximum network distsance: 10560 ft
 ----------------------------------------
+DROP TABLE IF EXISTS generated.cambridge_reachable_roads_low_stress;
 
 CREATE TABLE generated.cambridge_reachable_roads_low_stress (
     id SERIAL PRIMARY KEY,

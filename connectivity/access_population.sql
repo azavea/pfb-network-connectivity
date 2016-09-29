@@ -2,8 +2,25 @@
 -- INPUTS
 -- location: cambridge
 ----------------------------------------
+            AND     zips.zip_code = '02138'
 
-SELECT  source_block.id AS source_id,
+-- low stress access
+
+
+
+
+
+UPDATE  cambridge_census_blocks
+SET     pop_low_stress = (
+            SELECT  SUM(pop10)
+            FROM
+        )
+
+
+        blocks.source_blockid10,
+        blocks.target_blockid10,
+
+
         source_block.blockid10 AS source_blockid10,
         target_block.id AS target_id,
         target_block.blockid10 AS target_blockid10,
