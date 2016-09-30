@@ -24,19 +24,19 @@ ANALYZE "ma_od_aux_JT00_2014" (w_geocode);
 ANALYZE "ma_od_main_JT00_2014" (w_geocode);
 
 -- create combined table
-CREATE TABLE scratch.cambridge_census_block_jobs (
+CREATE TABLE generated.cambridge_census_block_jobs (
     id SERIAL PRIMARY KEY,
     blockid10 VARCHAR(15),
     jobs INT
 );
 
 -- add blocks of interest
-INSERT INTO scratch.cambridge_census_block_jobs (blockid10)
+INSERT INTO generated.cambridge_census_block_jobs (blockid10)
 SELECT  blocks.blockid10
 FROM    cambridge_census_blocks blocks;
 
 -- add main data
-UPDATE  scratch.cambridge_census_block_jobs
+UPDATE  generated.cambridge_census_block_jobs
 SET     jobs = COALESCE((
             SELECT  SUM(j."S000")
             FROM    "ma_od_main_JT00_2014" j
@@ -44,7 +44,7 @@ SET     jobs = COALESCE((
         ),0);
 
 -- add aux data
-UPDATE  scratch.cambridge_census_block_jobs
+UPDATE  generated.cambridge_census_block_jobs
 SET     jobs =  jobs +
                 COALESCE((
                     SELECT  SUM(j."S000")

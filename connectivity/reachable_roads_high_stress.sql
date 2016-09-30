@@ -42,6 +42,6 @@ WHERE   EXISTS (
 AND     r1.road_id = v1.road_id
 AND     v2.vert_id = sheds.node;
 
-CREATE INDEX idx_cambridge_rchblrdshistrss
-ON generated.cambridge_reachable_roads_high_stress (base_road,target_road);
-ANALYZE generated.cambridge_reachable_roads_high_stress;
+CREATE INDEX idx_cambridge_rchblrdshistrss_b ON generated.cambridge_reachable_roads_high_stress (base_road);
+CREATE INDEX idx_cambridge_rchblrdshistrss_t ON generated.cambridge_reachable_roads_high_stress (target_road);
+ANALYZE generated.cambridge_reachable_roads_high_stress (base_road,target_road);
