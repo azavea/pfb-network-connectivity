@@ -4,9 +4,9 @@
 ----------------------------------------
 -- low stress access
 UPDATE  cambridge_census_blocks
-SET     pop_low_stress = (
-            SELECT  SUM(blocks2.pop10)
-            FROM    cambridge_census_blocks blocks2
+SET     emp_low_stress = (
+            SELECT  SUM(blocks2.jobs)
+            FROM    cambridge_census_block_jobs blocks2
             WHERE   EXISTS (
                         SELECT  1
                         FROM    cambridge_connected_census_blocks cb
@@ -24,9 +24,9 @@ WHERE   EXISTS (
 
 -- high stress access
 UPDATE  cambridge_census_blocks
-SET     pop_high_stress = (
-            SELECT  SUM(blocks2.pop10)
-            FROM    cambridge_census_blocks blocks2
+SET     emp_high_stress = (
+            SELECT  SUM(blocks2.jobs)
+            FROM    cambridge_census_block_jobs blocks2
             WHERE   EXISTS (
                         SELECT  1
                         FROM    cambridge_connected_census_blocks cb
