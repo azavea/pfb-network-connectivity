@@ -82,6 +82,8 @@
 
 # OsmType  Tag          DataType     Flags
 node,way   access       text         linear
+node       amenity      text         linear
+way        amenity      text         polygon
 node,way   bicycle      text         linear
 node,way   bridge       text         linear
 node,way   crossing     text         linear
@@ -104,6 +106,7 @@ node,way   motorcar     text         linear
 node,way   name         text         linear
 node,way   oneway       text         linear
 node,way   oneway:bicycle      text  linear
+node,way   operator     text         linear,polygon
 way        parking      text         linear
 way        parking:lane        text  linear
 way        parking:lane:right  text  linear
