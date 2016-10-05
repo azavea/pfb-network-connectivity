@@ -8,6 +8,8 @@ CREATE TABLE generated.cambridge_schools (
     id SERIAL PRIMARY KEY,
     osm_id BIGINT,
     school_name TEXT,
+    pop_low_stress INT,
+    pop_high_stress INT,
     geom_pt geometry(point,2249),
     geom_poly geometry(polygon,2249)
 );

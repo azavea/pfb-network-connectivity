@@ -45,3 +45,10 @@ access_population.sql
 (import census blocks job data)
 census_block_jobs.sql
 access_jobs.sql
+
+schools.sql
+school_roads.sql
+connected_census_blocks_schools.sql
+access_schools.sql
+
+overall_scores.sql
