@@ -48,7 +48,7 @@ WHERE   EXISTS (
             AND     zips.zip_code = '02138'
         );
 
--- low stress population shed for schools in neighborhood
+-- high stress population shed for schools in neighborhood
 UPDATE  cambridge_schools
 SET     pop_high_stress = (
             SELECT  SUM(cb.pop10)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # vars
-DBHOST='192.168.1.144'
+DBHOST='192.168.40.225'
 DBNAME='people_for_bikes'
 OSMPREFIX='cambridge'
 OSMFILE='/home/spencer/gis/cambridge.osm'
@@ -41,7 +41,7 @@ psql -h $DBHOST -U gis -d ${DBNAME} \
 psql -h $DBHOST -U gis -d ${DBNAME} \
   -c "DROP TABLE IF EXISTS scratch.${OSMPREFIX}_cycwys_osm_way_types;"
 
-# import the osm with highways that the above misses (bug in osm2pgrouting)
+# import the osm with highways
 osm2pgrouting \
   -f $OSMFILE \
   -h $DBHOST \
@@ -52,7 +52,7 @@ osm2pgrouting \
   --conf ./mapconfig_highway.xml \
   --clean
 
-# import the osm optimized for routing
+# import the osm with cycleways that the above misses (bug in osm2pgrouting)
 osm2pgrouting \
   -f $OSMFILE \
   -h $DBHOST \
@@ -147,6 +147,7 @@ psql -h $DBHOST -U gis -d ${DBNAME} -f ./prepare_tables.sql
 echo 'Setting values on road segments'
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./one_way.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./functional_class.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./paths.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./speed_limit.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./width_ft.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./lanes.sql

@@ -53,6 +53,7 @@ USING ST_Transform(geom,2249);
 
 -- add columns
 ALTER TABLE cambridge_ways ADD COLUMN functional_class TEXT;
+ALTER TABLE cambridge_ways ADD COLUMN path_id INTEGER;
 ALTER TABLE cambridge_ways ADD COLUMN speed_limit INT;
 ALTER TABLE cambridge_ways ADD COLUMN one_way_car VARCHAR(2);
 ALTER TABLE cambridge_ways ADD COLUMN one_way VARCHAR(2);
