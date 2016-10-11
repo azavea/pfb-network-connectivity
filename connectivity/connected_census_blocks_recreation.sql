@@ -18,7 +18,7 @@ INSERT INTO generated.cambridge_connected_census_blocks_recreation (
     source_blockid10, target_school_id, low_stress, high_stress
 )
 SELECT  blocks.blockid10,
-        schools.id,
+        paths.path_id,
         'f'::BOOLEAN,
         't'::BOOLEAN
 FROM    cambridge_census_blocks blocks,
@@ -38,8 +38,14 @@ AND     EXISTS (
             WHERE   blocks.blockid10 = source_br.blockid10
             AND     paths.path_id = target_r.path_id
             AND     hs.base_road = source_br.road_id
-            AND     hs.target_road = target_sr.road_id
+            AND     hs.target_road = target_r.road_id
+            AND     paths.path_length > 15840           --path at least 3 mi long
+            AND     paths.bbox_length > 10560           --extent of path at least 2 mi long
         );
+
+
+
+        
 
 -- block pair index
 CREATE INDEX idx_cambridge_blockschoolpairs
