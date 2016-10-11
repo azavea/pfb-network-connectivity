@@ -3,13 +3,6 @@
 
 Vagrant.require_version ">= 1.8"
 
-
-if ["up", "provision", "status"].include?(ARGV.first)
-  require_relative "deployment/vagrant/ansible_galaxy_helper"
-
-  AnsibleGalaxyHelper.install_dependent_roles("deployment/ansible")
-end
-
 VAGRANT_MOUNT_OPTIONS = if Vagrant::Util::Platform.linux? then
   ['rw', 'vers=4', 'tcp', 'nolock']
 else
@@ -34,6 +27,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "deployment/ansible/pfb.yml"
+    ansible.galaxy_role_file = "deployment/ansible/roles.yml"
     ansible.verbose = true
     ansible.raw_arguments = ["--timeout=60"]
   end
