@@ -1,8 +1,6 @@
 ---
 dependencies:
   - { role: "azavea.git" }
-  - { role: "azavea.python", python_dev: true }
-  - { role: "azavea.pip" }
   - { role: "azavea.postgresql" }
   - { role: "azavea.postgresql-support" }
   - { role: "azavea.postgis" }
