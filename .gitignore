@@ -1,0 +1,10 @@
+#System Files
+.DS_Store
+Thumbs.db
+
+#Vagrant
+.vagrant
+
+#Ansible
+deployment/ansible/roles/azavea.*
+deployment/ansible/*.retry

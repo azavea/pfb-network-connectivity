@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${PFB_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0")
+Updates application: Currently NOOP
+
+TODO: Add update operations
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]
+then
+    if [ "${1:-}" = "--help" ]
+    then
+        usage
+    else
+        echo "Nothing to update. Exiting."
+    fi
+fi
