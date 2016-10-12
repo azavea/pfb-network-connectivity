@@ -8,3 +8,8 @@ Thumbs.db
 #Ansible
 deployment/ansible/roles/azavea.*
 deployment/ansible/*.retry
+
+# Data Directory
+data/*
+!data/.gitkeep
+
