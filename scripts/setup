@@ -19,6 +19,7 @@ then
     then
         usage
     else
+        git submodule sync && git submodule update
         vagrant up --provision
         vagrant ssh -c "cd /vagrant && ./scripts/update"
     fi
