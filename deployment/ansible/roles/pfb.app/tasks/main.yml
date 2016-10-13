@@ -36,6 +36,8 @@
   become_user: postgres
   postgresql_ext: name=pgrouting db="{{ postgresql_database_name }}"
 
+- include: "install_osm2pgsql.yml"
+
 - include: "install_osm2pgrouting.yml"
 
 - include: "install_tdg_extension.yml"
