@@ -1,5 +1,7 @@
 ---
 
+- name: Install shp2pgsql (requires postgis package)
+  apt: name=postgis
 
 - name: Create PostgreSQL super user
   become_user: postgres

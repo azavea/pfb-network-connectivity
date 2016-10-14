@@ -7,17 +7,17 @@ postgresql_database_user: "gis"
 postgresql_database_password: "gis"
 
 # azavea.postgresql
-postgresql_version: "9.5"
-postgresql_package_version: "9.5.4-1.pgdg14.04+2"
+postgresql_version: "9.6"
+postgresql_package_version: "9.6.*-1.pgdg14.04+1"
 # These mappings allow the Toole analysis scripts to work as is without requiring a password
 postgresql_hba_mapping:
   - { type: "local", database: "{{ postgresql_database_name }}", user: "{{ postgresql_database_user }}", address: "", method: "trust" }
   - { type: "host", database: "{{ postgresql_database_name }}", user: "{{ postgresql_database_user }}", address: "127.0.0.1/32", method: "trust" }
 
 # azavea.postgresql-support
-postgresql_support_libpq_version: "9.5.*.pgdg14.04+2"
+postgresql_support_libpq_version: "9.6.*.pgdg14.04+1"
 postgresql_support_psycopg2_version: "2.6"
-postgresql_support_repository_channel: "9.5"
+postgresql_support_repository_channel: "9.6"
 
 # azavea.postgis
 postgis_version: "2.3"
