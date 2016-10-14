@@ -22,6 +22,10 @@
   become_user: postgres
   postgresql_ext: name=uuid-ossp db="{{ postgresql_database_name }}"
 
+- name: Add hstore extension to PFB database
+  become_user: postgres
+  postgresql_ext: name=hstore db="{{ postgresql_database_name }}"
+
 - name: Install plpythonu package
   apt: name="postgresql-plpython-{{ postgresql_version }}"
 
