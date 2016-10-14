@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd `dirname $0`
+
 # vars
 DBHOST='127.0.0.1'
 DBNAME='pfb'
@@ -127,7 +129,7 @@ osm2pgsql \
   --database "${DBNAME}" \
   --prefix "${OSMPREFIX}_osm_full" \
   --proj 2249 \
-# --style /home/spencer/dev/pfb/pfb.style \
+  --style ./pfb.style \
   "${OSMFILE}"
 
 # move the full osm tables to the received schema
