@@ -46,4 +46,6 @@
 
 - include: "install_osm2pgrouting.yml"
 
+- include: "install_quantile_extension.yml"
+
 - include: "install_tdg_extension.yml"
