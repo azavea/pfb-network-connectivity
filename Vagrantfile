@@ -18,6 +18,8 @@ Vagrant.configure("2") do |config|
   config.vm.hostname = "pfb-network-connectivity"
   config.vm.network "private_network", ip: ENV.fetch("PFB_PRIVATE_IP", "192.168.111.111")
 
+  config.vm.network "forwarded_port", guest: 5432, host: 5442
+
   config.vm.synced_folder '.', ROOT_VM_DIR, type: "nfs", mount_options: VAGRANT_MOUNT_OPTIONS
 
   config.vm.provision "shell" do |s|

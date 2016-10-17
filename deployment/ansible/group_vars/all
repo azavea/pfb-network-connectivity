@@ -10,10 +10,12 @@ postgresql_database_host: "127.0.0.1"
 # azavea.postgresql
 postgresql_version: "9.6"
 postgresql_package_version: "9.6.*-1.pgdg14.04+1"
+postgresql_listen_addresses: '*'
 # These mappings allow the Toole analysis scripts to work as is without requiring a password
 postgresql_hba_mapping:
   - { type: "local", database: "{{ postgresql_database_name }}", user: "{{ postgresql_database_user }}", address: "", method: "trust" }
   - { type: "host", database: "{{ postgresql_database_name }}", user: "{{ postgresql_database_user }}", address: "{{ postgresql_database_host }}/32", method: "trust" }
+  - { type: "host", database: "{{ postgresql_database_name }}", user: "{{ postgresql_database_user }}", address: "0.0.0.0/0", method: "md5" }
 
 # azavea.postgresql-support
 postgresql_support_libpq_version: "9.6.*.pgdg14.04+1"
