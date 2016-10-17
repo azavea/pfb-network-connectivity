@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+cd `dirname $0`
+
 # vars
-DBHOST='192.168.1.144'
-DBNAME='people_for_bikes'
+DBHOST='127.0.0.1'
+DBNAME='pfb'
 OSMPREFIX='cambridge'
-OSMFILE='/home/spencer/gis/cambridge.osm'
+OSMFILE='/vagrant/data/cambridge.osm'
 
 # drop old tables
 echo 'Dropping old tables'
@@ -120,15 +122,15 @@ psql -h $DBHOST -U gis -d ${DBNAME} \
 
 # import
 osm2pgsql \
-  --host $DBHOST \
+  --host "${DBHOST}" \
   --username gis \
   --port 5432 \
   --create \
-  --database ${DBNAME} \
-  --prefix ${OSMPREFIX}_osm_full \
+  --database "${DBNAME}" \
+  --prefix "${OSMPREFIX}_osm_full" \
   --proj 2249 \
-  --style /home/spencer/dev/pfb/pfb.style \
-  $OSMFILE
+  --style ./pfb.style \
+  "${OSMFILE}"
 
 # move the full osm tables to the received schema
 echo 'Moving tables to received schema'
