@@ -49,3 +49,8 @@
 - include: "install_quantile_extension.yml"
 
 - include: "install_tdg_extension.yml"
+
+- meta: flush_handlers
+
+- name: Update postgresql search path in user db
+  command: psql -U "{{ postgresql_database_user }}" -d "{{ postgresql_database_name }}" -h "{{ postgresql_database_host }}" -c 'ALTER USER {{ postgresql_database_user }} SET search_path TO generated,received,scratch,"$user",tdg,public;'
