@@ -14,7 +14,7 @@ Copy files from FILESHARE and extract into `./data`:
 
 Download and install each of the datasets in [Importing Related Data](#importing-related-data).
 
-Open `./pfb-analysis/import-osm.sh` and update vars in header, then run it.
+Open `./pfb-analysis/import_osm.sh` and update vars in header, then run it.
 
 Before running the analysis, it is necessary to create the network. Do so with:
 ```
