@@ -1,0 +1,3 @@
+[submodule "pfb-analysis"]
+	path = pfb-analysis
+	url = git@github.com:azavea/pfb.git 

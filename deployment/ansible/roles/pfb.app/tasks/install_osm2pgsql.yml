@@ -1,0 +1,47 @@
+---
+
+- name: Install osm2pgrouting build dependencies
+  apt: name={{ item }}
+  with_items:
+    - make
+    - cmake
+    - g++
+    - libboost-dev
+    - libboost-system-dev
+    - libboost-filesystem-dev
+    - libexpat1-dev
+    - zlib1g-dev
+    - libbz2-dev
+    - libpq-dev
+    - libgeos-dev
+    - libgeos++-dev
+    - libproj-dev
+    - lua5.2
+    - liblua5.2-dev
+
+- name: Download osm2pgrouting from GitHub
+  git: repo=https://github.com/openstreetmap/osm2pgsql.git
+       dest="{{ osm2pgsql_src_dir }}"
+       version="{{ osm2pgsql_git_tag }}"
+       accept_hostkey=true
+
+- name: Create osm2pgrouting build dir
+  file: path="{{ osm2pgsql_src_dir }}/build" state=directory
+
+- name: Run osm2pgsql cmake
+  command: cmake ..
+  args:
+   chdir: "{{ osm2pgsql_src_dir }}/build"
+   creates: /usr/local/bin/osm2pgsql
+
+- name: Run osm2pgsql make
+  command: make
+  args:
+    chdir: "{{ osm2pgsql_src_dir }}/build"
+    creates: /usr/local/bin/osm2pgsql
+
+- name: Run osm2pgsql make install
+  command: make install
+  args:
+    chdir: "{{ osm2pgsql_src_dir }}/build"
+    creates: /usr/local/bin/osm2pgsql

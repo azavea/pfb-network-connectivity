@@ -1,5 +1,7 @@
 ---
 
+- name: Install shp2pgsql (requires postgis package)
+  apt: name=postgis
 
 - name: Create PostgreSQL super user
   become_user: postgres
@@ -22,6 +24,10 @@
   become_user: postgres
   postgresql_ext: name=uuid-ossp db="{{ postgresql_database_name }}"
 
+- name: Add hstore extension to PFB database
+  become_user: postgres
+  postgresql_ext: name=hstore db="{{ postgresql_database_name }}"
+
 - name: Install plpythonu package
   apt: name="postgresql-plpython-{{ postgresql_version }}"
 
@@ -36,6 +42,15 @@
   become_user: postgres
   postgresql_ext: name=pgrouting db="{{ postgresql_database_name }}"
 
+- include: "install_osm2pgsql.yml"
+
 - include: "install_osm2pgrouting.yml"
 
+- include: "install_quantile_extension.yml"
+
 - include: "install_tdg_extension.yml"
+
+- meta: flush_handlers
+
+- name: Update postgresql search path in user db
+  command: psql -U "{{ postgresql_database_user }}" -d "{{ postgresql_database_name }}" -h "{{ postgresql_database_host }}" -c 'ALTER USER {{ postgresql_database_user }} SET search_path TO generated,received,scratch,"$user",tdg,public;'
