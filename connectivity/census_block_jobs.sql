@@ -57,5 +57,5 @@ CREATE INDEX idx_cambridge_blkjobs ON cambridge_census_block_jobs (blockid10);
 ANALYZE cambridge_census_block_jobs (blockid10);
 
 -- drop import tables
-# DROP TABLE IF EXISTS "ma_od_aux_JT00_2014";
-# DROP TABLE IF EXISTS "ma_od_main_JT00_2014";
+-- DROP TABLE IF EXISTS "ma_od_aux_JT00_2014";
+-- DROP TABLE IF EXISTS "ma_od_main_JT00_2014";
