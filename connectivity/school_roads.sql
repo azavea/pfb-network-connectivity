@@ -21,9 +21,8 @@ FROM    cambridge_schools schools,
         cambridge_ways ways
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_DWithin(zips.geom, schools.geom_pt, 11000)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_DWithin(b.geom, schools.geom_pt, 11000)
         )
 AND     schools.geom_poly IS NOT NULL
 AND     ST_DWithin(schools.geom_poly,ways.geom,50);
@@ -43,9 +42,8 @@ SELECT  schools.id,
 FROM    cambridge_schools schools
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_DWithin(zips.geom, schools.geom_pt, 11000)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_DWithin(b.geom, schools.geom_pt, 11000)
         )
 AND     NOT EXISTS (
             SELECT  1

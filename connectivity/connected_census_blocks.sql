@@ -21,13 +21,12 @@ SELECT  source_block.blockid10,
         target_block.blockid10,
         'f'::BOOLEAN,
         't'::BOOLEAN
-FROM    cambridge_census_blocks source_block,
-        cambridge_census_blocks target_block
+FROM    neighborhood_census_blocks source_block,
+        neighborhood_census_blocks target_block
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(source_block.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(source_block.geom,b.geom)
         )
 AND     source_block.geom <#> target_block.geom < 11000
 AND     EXISTS (

@@ -35,9 +35,8 @@ FROM    cambridge_ways r1,
         ) sheds
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(zips.geom,r1.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(b.geom,r1.geom)
 )
 AND     r1.road_id = v1.road_id
 AND     v2.vert_id = sheds.node;
