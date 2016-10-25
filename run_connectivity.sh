@@ -43,9 +43,6 @@ OSMPREFIX='cambridge'
   -f connectivity/school_roads.sql
 
 /usr/bin/time -v psql -h "${DBHOST}" -U gis -d "${DBNAME}" \
-  -f connectivity/school_roads.sql
-
-/usr/bin/time -v psql -h "${DBHOST}" -U gis -d "${DBNAME}" \
   -f connectivity/connected_census_blocks_schools.sql
 
 /usr/bin/time -v psql -h "${DBHOST}" -U gis -d "${DBNAME}" \
