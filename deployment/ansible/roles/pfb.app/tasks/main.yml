@@ -3,6 +3,9 @@
 - name: Install shp2pgsql (requires postgis package)
   apt: name=postgis
 
+- name: Install unzip package (used by analysis importers)
+  apt: name=unzip
+
 - name: Create PostgreSQL super user
   become_user: postgres
   postgresql_user: name="{{ postgresql_database_user }}"
