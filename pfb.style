@@ -101,6 +101,7 @@ node,way   junction     text         linear
 way        lanes        text         linear
 way        lanes:forward    text     linear
 way        lanes:backward   text     linear
+node,way   leisure      text         linear,polygon
 way        maxspeed     text         linear
 node,way   motorcar     text         linear
 node,way   name         text         linear
