@@ -22,12 +22,11 @@ SELECT  'Population',
         regexp_replace('Total population accessible by low stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- median pop access high stress
@@ -40,12 +39,11 @@ SELECT  'Population',
         regexp_replace('Total population accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- median pop access ratio
@@ -59,12 +57,11 @@ SELECT  'Population',
             to population accessible overall, expressed as
             the median of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- 70th percentile pop access ratio
@@ -78,12 +75,11 @@ SELECT  'Population',
             to population accessible overall, expressed as
             the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- avg pop access ratio
@@ -97,12 +93,11 @@ SELECT  'Population',
             to population accessible overall, expressed as
             the average of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- median jobs access low stress
@@ -115,12 +110,11 @@ SELECT  'Employment',
         regexp_replace('Total jobs accessible by low stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- median jobs access high stress
@@ -133,12 +127,11 @@ SELECT  'Employment',
         regexp_replace('Total jobs accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- median jobs access ratio
@@ -152,12 +145,11 @@ SELECT  'Employment',
             to employment accessible overall, expressed as
             the median of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- 70th percentile jobs access ratio
@@ -171,12 +163,11 @@ SELECT  'Employment',
             to employment accessible overall, expressed as
             the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- avg jobs access ratio
@@ -190,12 +181,11 @@ SELECT  'Employment',
             to employment accessible overall, expressed as
             the average of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- median schools access low stress
@@ -208,12 +198,11 @@ SELECT  'Schools',
         regexp_replace('Number of schools accessible by low stress
             expressed as an average of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- median schools access high stress
@@ -226,12 +215,11 @@ SELECT  'Schools',
         regexp_replace('Number of schools accessible by high stress
             expressed as an average of all census blocks in the
             neighborhood','\n\s+',' ')
-FROM    cambridge_census_blocks
+FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_census_blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
 -- school low stress pop shed access
@@ -247,9 +235,8 @@ SELECT  'Schools',
 FROM    cambridge_schools
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_schools.geom_pt,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(cambridge_schools.geom_pt,b.geom)
         );
 
 -- school high stress pop shed access
@@ -265,9 +252,8 @@ SELECT  'Schools',
 FROM    cambridge_schools
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_schools.geom_pt,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(cambridge_schools.geom_pt,b.geom)
         );
 
 -- school pop shed access ratio
@@ -284,7 +270,6 @@ SELECT  'Schools',
 FROM    cambridge_schools
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(cambridge_schools.geom_pt,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(cambridge_schools.geom_pt,b.geom)
         );

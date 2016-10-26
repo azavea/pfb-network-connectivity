@@ -21,13 +21,12 @@ SELECT  blocks.blockid10,
         schools.id,
         'f'::BOOLEAN,
         't'::BOOLEAN
-FROM    cambridge_census_blocks blocks,
+FROM    neighborhood_census_blocks blocks,
         cambridge_schools schools
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_Intersects(blocks.geom,zips.geom)
-            AND     zips.zip_code = '02138'
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(blocks.geom,b.geom)
         )
 AND     blocks.geom <#> schools.geom_pt < 11000
 AND     EXISTS (
