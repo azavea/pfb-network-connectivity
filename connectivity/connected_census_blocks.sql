@@ -80,6 +80,6 @@ AND     (
         ),11000) <= 1.3;
 
 -- stress index
-CREATE INDEX idx_neighborhood_blockpairs_lstress ON neighborhood_connected_census_blocks (low_stress);
-CREATE INDEX idx_neighborhood_blockpairs_hstress ON neighborhood_connected_census_blocks (high_stress);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_lstress ON neighborhood_connected_census_blocks (low_stress);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_hstress ON neighborhood_connected_census_blocks (high_stress);
 ANALYZE neighborhood_connected_census_blocks (low_stress,high_stress);

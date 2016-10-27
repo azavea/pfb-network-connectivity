@@ -20,6 +20,6 @@ FROM    neighborhood_census_blocks blocks,
         neighborhood_ways ways
 WHERE   ST_DWithin(blocks.geom,ways.geom,50);
 
-CREATE INDEX idx_neighborhood_censblkrds
+CREATE INDEX IF NOT EXISTS idx_neighborhood_censblkrds
 ON generated.neighborhood_census_block_roads (blockid10,road_id);
 ANALYZE generated.neighborhood_census_block_roads;

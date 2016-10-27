@@ -51,6 +51,6 @@ AND     NOT EXISTS (
             WHERE   schools.id = r.school_id
         );
 
-CREATE INDEX idx_neighborhood_schlrds_schlid ON generated.neighborhood_school_roads (school_id);
-CREATE INDEX idx_neighborhood_schlrds_rdid ON generated.neighborhood_school_roads (road_id);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_schlrds_schlid ON generated.neighborhood_school_roads (school_id);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_schlrds_rdid ON generated.neighborhood_school_roads (road_id);
 ANALYZE generated.neighborhood_school_roads (school_id, road_id);

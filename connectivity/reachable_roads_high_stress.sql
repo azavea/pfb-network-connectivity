@@ -41,6 +41,6 @@ WHERE   EXISTS (
 AND     r1.road_id = v1.road_id
 AND     v2.vert_id = sheds.node;
 
-CREATE INDEX idx_neighborhood_rchblrdshistrss_b ON generated.neighborhood_reachable_roads_high_stress (base_road);
-CREATE INDEX idx_neighborhood_rchblrdshistrss_t ON generated.neighborhood_reachable_roads_high_stress (target_road);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_rchblrdshistrss_b ON generated.neighborhood_reachable_roads_high_stress (base_road);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_rchblrdshistrss_t ON generated.neighborhood_reachable_roads_high_stress (target_road);
 ANALYZE generated.neighborhood_reachable_roads_high_stress (base_road,target_road);

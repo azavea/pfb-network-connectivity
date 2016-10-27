@@ -41,7 +41,7 @@ AND     EXISTS (
         );
 
 -- block pair index
-CREATE INDEX idx_neighborhood_blockschoolpairs
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockschoolpairs
 ON neighborhood_connected_census_blocks_schools (source_blockid10,target_school_id);
 ANALYZE neighborhood_connected_census_blocks_schools (source_blockid10,target_school_id);
 
@@ -80,6 +80,6 @@ AND     (
         ),11000) <= 1.3;
 
 -- stress index
-CREATE INDEX idx_neighborhood_blockschl_lstress ON neighborhood_connected_census_blocks_schools (low_stress);
-CREATE INDEX idx_neighborhood_blockschl_hstress ON neighborhood_connected_census_blocks_schools (high_stress);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockschl_lstress ON neighborhood_connected_census_blocks_schools (low_stress);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockschl_hstress ON neighborhood_connected_census_blocks_schools (high_stress);
 ANALYZE neighborhood_connected_census_blocks_schools (low_stress,high_stress);

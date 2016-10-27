@@ -3,6 +3,7 @@
 -- location: neighborhood
 ----------------------------------------
 -- low stress access
+UPDATE neighborhood_census_blocks SET emp_low_stress = NULL;
 UPDATE  neighborhood_census_blocks
 SET     emp_low_stress = (
             SELECT  SUM(blocks2.jobs)
@@ -22,6 +23,7 @@ WHERE   EXISTS (
         );
 
 -- high stress access
+UPDATE neighborhood_census_blocks SET emp_high_stress = NULL;
 UPDATE  neighborhood_census_blocks
 SET     emp_high_stress = (
             SELECT  SUM(blocks2.jobs)

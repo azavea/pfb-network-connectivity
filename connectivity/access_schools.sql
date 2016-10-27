@@ -3,6 +3,7 @@
 -- location: neighborhood
 ----------------------------------------
 -- low stress access
+UPDATE neighborhood_census_blocks SET schools_low_stress = NULL;
 UPDATE  neighborhood_census_blocks
 SET     schools_low_stress = (
             SELECT  COUNT(cbs.id)
@@ -17,6 +18,7 @@ WHERE   EXISTS (
         );
 
 -- high stress access
+UPDATE neighborhood_census_blocks SET schools_high_stress = NULL;
 UPDATE  neighborhood_census_blocks
 SET     schools_high_stress = (
             SELECT  COUNT(cbs.id)
@@ -30,6 +32,7 @@ WHERE   EXISTS (
         );
 
 -- low stress population shed for schools in neighborhood
+UPDATE neighborhood_schools SET pop_low_stress = NULL;
 UPDATE  neighborhood_schools
 SET     pop_low_stress = (
             SELECT  SUM(cb.pop10)
@@ -46,6 +49,7 @@ WHERE   EXISTS (
         );
 
 -- high stress population shed for schools in neighborhood
+UPDATE neighborhood_schools SET pop_high_stress = NULL;
 UPDATE  neighborhood_schools
 SET     pop_high_stress = (
             SELECT  SUM(cb.pop10)
