@@ -2,6 +2,8 @@
 
 set -e
 
+cd `dirname "${0}"`
+
 if [[ -n "${PFB_DEBUG}" ]]; then
     set -x
 fi
@@ -9,7 +11,10 @@ fi
 function usage() {
     echo -n \
          "Usage: $(basename "$0")
-Attempts to setup the project's development environment.
+
+Sets up the development environment by installing dependencies.
+See the Getting Started section of the project README for importing data
+
 "
 }
 
@@ -19,8 +24,11 @@ then
     then
         usage
     else
+        pushd ..
+
         git submodule sync && git submodule update
         vagrant up --provision
-        vagrant ssh -c "cd /vagrant && ./scripts/update"
+
+        popd
     fi
 fi
