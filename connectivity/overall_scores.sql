@@ -1,10 +1,10 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
-DROP TABLE IF EXISTS generated.cambridge_overall_scores;
+DROP TABLE IF EXISTS generated.neighborhood_overall_scores;
 
-CREATE TABLE generated.cambridge_overall_scores (
+CREATE TABLE generated.neighborhood_overall_scores (
     id SERIAL PRIMARY KEY,
     category TEXT,
     score_name TEXT,
@@ -13,7 +13,7 @@ CREATE TABLE generated.cambridge_overall_scores (
 );
 
 -- median pop access low stress
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Population',
@@ -30,7 +30,7 @@ WHERE   EXISTS (
         );
 
 -- median pop access high stress
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Population',
@@ -47,7 +47,7 @@ WHERE   EXISTS (
         );
 
 -- median pop access ratio
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Population',
@@ -65,7 +65,7 @@ WHERE   EXISTS (
         );
 
 -- 70th percentile pop access ratio
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Population',
@@ -83,7 +83,7 @@ WHERE   EXISTS (
         );
 
 -- avg pop access ratio
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Population',
@@ -101,7 +101,7 @@ WHERE   EXISTS (
         );
 
 -- median jobs access low stress
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Employment',
@@ -118,7 +118,7 @@ WHERE   EXISTS (
         );
 
 -- median jobs access high stress
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Employment',
@@ -135,7 +135,7 @@ WHERE   EXISTS (
         );
 
 -- median jobs access ratio
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Employment',
@@ -153,7 +153,7 @@ WHERE   EXISTS (
         );
 
 -- 70th percentile jobs access ratio
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Employment',
@@ -171,7 +171,7 @@ WHERE   EXISTS (
         );
 
 -- avg jobs access ratio
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Employment',
@@ -189,7 +189,7 @@ WHERE   EXISTS (
         );
 
 -- median schools access low stress
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Schools',
@@ -206,7 +206,7 @@ WHERE   EXISTS (
         );
 
 -- median schools access high stress
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Schools',
@@ -223,7 +223,7 @@ WHERE   EXISTS (
         );
 
 -- school low stress pop shed access
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Schools',
@@ -232,15 +232,15 @@ SELECT  'Schools',
         regexp_replace('Population with low stress access to schools
             in the neighborhood expressed as an average of all
             schools in the neighborhood','\n\s+',' ')
-FROM    cambridge_schools
+FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(cambridge_schools.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
         );
 
 -- school high stress pop shed access
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Schools',
@@ -249,15 +249,15 @@ SELECT  'Schools',
         regexp_replace('Population with high stress access to schools
             in the neighborhood expressed as an average of all
             schools in the neighborhood','\n\s+',' ')
-FROM    cambridge_schools
+FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(cambridge_schools.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
         );
 
 -- school pop shed access ratio
-INSERT INTO generated.cambridge_overall_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     category, score_name, score, notes
 )
 SELECT  'Schools',
@@ -267,9 +267,9 @@ SELECT  'Schools',
             access to schools to population with high stress access
             in the neighborhood expressed as an average of all
             schools in the neighborhood','\n\s+',' ')
-FROM    cambridge_schools
+FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(cambridge_schools.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
         );
