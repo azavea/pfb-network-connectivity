@@ -6,7 +6,7 @@ NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
-NB_OSMFILE="${NB_OSMFILE:-/vagrant/data/cambridge.osm}"
+NB_OSMFILE="${NB_OSMFILE:-/vagrant/data/neighborhood.osm}"
 
 # drop old tables
 echo 'Dropping old tables'
