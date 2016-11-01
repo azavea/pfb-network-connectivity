@@ -14,36 +14,31 @@ CREATE TABLE generated.neighborhood_connected_census_blocks (
     high_stress_cost INT
 );
 
-INSERT INTO generated.neighborhood_connected_census_blocks (  -- took 2 hrs on the server
+INSERT INTO generated.neighborhood_connected_census_blocks (
     source_blockid10, target_blockid10, low_stress, high_stress
 )
 SELECT  source_block.blockid10,
         target_block.blockid10,
         'f'::BOOLEAN,
         't'::BOOLEAN
-FROM    neighborhood_census_blocks source_block,
-        neighborhood_census_blocks target_block
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(source_block.geom,b.geom)
-        )
-AND     source_block.geom <#> target_block.geom < 11000
-AND     EXISTS (
-            SELECT  1
-            FROM    neighborhood_census_block_roads source_br,
-                    neighborhood_census_block_roads target_br,
-                    neighborhood_reachable_roads_high_stress hs
-            WHERE   source_block.blockid10 = source_br.blockid10
-            AND     target_block.blockid10 = target_br.blockid10
-            AND     hs.base_road = source_br.road_id
-            AND     hs.target_road = target_br.road_id
-        );
+FROM    neighborhood_boundary b
+JOIN    neighborhood_census_blocks source_block
+        ON  ST_Intersects(source_block.geom,b.geom)
+JOIN    neighborhood_census_blocks target_block
+        ON  source_block.geom <#> target_block.geom < 11000
+JOIN    neighborhood_census_block_roads source_br
+        ON  source_block.blockid10 = source_br.blockid10
+JOIN    neighborhood_census_block_roads target_br
+        ON  target_block.blockid10 = target_br.blockid10
+JOIN    neighborhood_reachable_roads_high_stress hs
+        ON  hs.base_road = source_br.road_id
+        AND hs.target_road = target_br.road_id
+GROUP BY source_block.blockid10, target_block.blockid10
+;
 
 -- block pair index
-CREATE INDEX idx_neighborhood_blockpairs
-ON neighborhood_connected_census_blocks (source_blockid10,target_blockid10);
-ANALYZE neighborhood_connected_census_blocks (source_blockid10,target_blockid10);
+CREATE UNIQUE INDEX idx_neighborhood_blockpairs ON neighborhood_connected_census_blocks (source_blockid10,target_blockid10);
+ANALYZE neighborhood_connected_census_blocks;
 
 -- low stress
 UPDATE  neighborhood_connected_census_blocks
@@ -82,4 +77,4 @@ AND     (
 -- stress index
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_lstress ON neighborhood_connected_census_blocks (low_stress);
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_hstress ON neighborhood_connected_census_blocks (high_stress);
-ANALYZE neighborhood_connected_census_blocks (low_stress,high_stress);
+ANALYZE neighborhood_connected_census_blocks;
