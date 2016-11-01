@@ -2,6 +2,8 @@
 
 set -e
 
+cd `dirname "${0}"`
+
 if [[ -n "${PFB_DEBUG}" ]]; then
     set -x
 fi
@@ -9,9 +11,9 @@ fi
 function usage() {
     echo -n \
          "Usage: $(basename "$0")
-Updates application: Currently NOOP
 
-TODO: Add update operations
+Re-run the PFB bike network analysis using existing data
+
 "
 }
 
@@ -21,6 +23,10 @@ then
     then
         usage
     else
-        echo "Nothing to update. Exiting."
+        pushd ..
+
+        vagrant ssh -c 'cd /vagrant && ./pfb-analysis/run_connectivity.sh'
+
+        popd
     fi
 fi
