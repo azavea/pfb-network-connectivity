@@ -1,18 +1,18 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 -- maximum network distsance: 10560 ft
 ----------------------------------------
-DROP TABLE IF EXISTS generated.cambridge_reachable_roads_high_stress;
+DROP TABLE IF EXISTS generated.neighborhood_reachable_roads_high_stress;
 
-CREATE TABLE generated.cambridge_reachable_roads_high_stress (
+CREATE TABLE generated.neighborhood_reachable_roads_high_stress (
     id SERIAL PRIMARY KEY,
     base_road INT,
     target_road INT,
     total_cost FLOAT
 );
 
-INSERT INTO generated.cambridge_reachable_roads_high_stress (
+INSERT INTO generated.neighborhood_reachable_roads_high_stress (
     base_road,
     target_road,
     total_cost
@@ -20,15 +20,15 @@ INSERT INTO generated.cambridge_reachable_roads_high_stress (
 SELECT  r1.road_id,
         v2.road_id,
         sheds.agg_cost
-FROM    cambridge_ways r1,
-        cambridge_ways_net_vert v1,
-        cambridge_ways_net_vert v2,
+FROM    neighborhood_ways r1,
+        neighborhood_ways_net_vert v1,
+        neighborhood_ways_net_vert v2,
         pgr_drivingDistance('
             SELECT  link_id AS id,
                     source_vert AS source,
                     target_vert AS target,
                     link_cost AS cost
-            FROM    cambridge_ways_net_link',
+            FROM    neighborhood_ways_net_link',
             v1.vert_id,
             10560,
             directed := true
@@ -41,6 +41,6 @@ WHERE   EXISTS (
 AND     r1.road_id = v1.road_id
 AND     v2.vert_id = sheds.node;
 
-CREATE INDEX idx_cambridge_rchblrdshistrss_b ON generated.cambridge_reachable_roads_high_stress (base_road);
-CREATE INDEX idx_cambridge_rchblrdshistrss_t ON generated.cambridge_reachable_roads_high_stress (target_road);
-ANALYZE generated.cambridge_reachable_roads_high_stress (base_road,target_road);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_neighborhood_rchblrdshistrss_b ON generated.neighborhood_reachable_roads_high_stress (base_road, target_road);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_rchblrdshistrss_t ON generated.neighborhood_reachable_roads_high_stress (target_road);
+ANALYZE generated.neighborhood_reachable_roads_high_stress;

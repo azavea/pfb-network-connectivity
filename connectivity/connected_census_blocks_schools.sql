@@ -1,10 +1,10 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
-DROP TABLE IF EXISTS generated.cambridge_connected_census_blocks_schools;
+DROP TABLE IF EXISTS generated.neighborhood_connected_census_blocks_schools;
 
-CREATE TABLE generated.cambridge_connected_census_blocks_schools (
+CREATE TABLE generated.neighborhood_connected_census_blocks_schools (
     id SERIAL PRIMARY KEY,
     source_blockid10 VARCHAR(15),
     target_school_id INT,
@@ -14,7 +14,7 @@ CREATE TABLE generated.cambridge_connected_census_blocks_schools (
     high_stress_cost INT
 );
 
-INSERT INTO generated.cambridge_connected_census_blocks_schools (
+INSERT INTO generated.neighborhood_connected_census_blocks_schools (
     source_blockid10, target_school_id, low_stress, high_stress
 )
 SELECT  blocks.blockid10,
@@ -22,7 +22,7 @@ SELECT  blocks.blockid10,
         'f'::BOOLEAN,
         't'::BOOLEAN
 FROM    neighborhood_census_blocks blocks,
-        cambridge_schools schools
+        neighborhood_schools schools
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
@@ -31,9 +31,9 @@ WHERE   EXISTS (
 AND     blocks.geom <#> schools.geom_pt < 11000
 AND     EXISTS (
             SELECT  1
-            FROM    cambridge_census_block_roads source_br,
-                    cambridge_school_roads target_sr,
-                    cambridge_reachable_roads_high_stress hs
+            FROM    neighborhood_census_block_roads source_br,
+                    neighborhood_school_roads target_sr,
+                    neighborhood_reachable_roads_high_stress hs
             WHERE   blocks.blockid10 = source_br.blockid10
             AND     schools.id = target_sr.school_id
             AND     hs.base_road = source_br.road_id
@@ -41,18 +41,18 @@ AND     EXISTS (
         );
 
 -- block pair index
-CREATE INDEX idx_cambridge_blockschoolpairs
-ON cambridge_connected_census_blocks_schools (source_blockid10,target_school_id);
-ANALYZE cambridge_connected_census_blocks_schools (source_blockid10,target_school_id);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockschoolpairs
+ON neighborhood_connected_census_blocks_schools (source_blockid10,target_school_id);
+ANALYZE neighborhood_connected_census_blocks_schools (source_blockid10,target_school_id);
 
 -- low stress
-UPDATE  cambridge_connected_census_blocks_schools
+UPDATE  neighborhood_connected_census_blocks_schools
 SET     low_stress = 't'::BOOLEAN
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_census_block_roads source_br,
-                    cambridge_school_roads target_sr,
-                    cambridge_reachable_roads_low_stress ls
+            FROM    neighborhood_census_block_roads source_br,
+                    neighborhood_school_roads target_sr,
+                    neighborhood_reachable_roads_low_stress ls
             WHERE   source_blockid10 = source_br.blockid10
             AND     target_school_id = target_sr.school_id
             AND     ls.base_road = source_br.road_id
@@ -60,9 +60,9 @@ WHERE   EXISTS (
         )
 AND     (
             SELECT  MIN(total_cost)
-            FROM    cambridge_census_block_roads source_br,
-                    cambridge_school_roads target_sr,
-                    cambridge_reachable_roads_low_stress ls
+            FROM    neighborhood_census_block_roads source_br,
+                    neighborhood_school_roads target_sr,
+                    neighborhood_reachable_roads_low_stress ls
             WHERE   source_blockid10 = source_br.blockid10
             AND     target_school_id = target_sr.school_id
             AND     ls.base_road = source_br.road_id
@@ -70,9 +70,9 @@ AND     (
         )::FLOAT /
         COALESCE((
             SELECT  MIN(total_cost) + 1
-            FROM    cambridge_census_block_roads source_br,
-                    cambridge_school_roads target_sr,
-                    cambridge_reachable_roads_high_stress hs
+            FROM    neighborhood_census_block_roads source_br,
+                    neighborhood_school_roads target_sr,
+                    neighborhood_reachable_roads_high_stress hs
             WHERE   source_blockid10 = source_br.blockid10
             AND     target_school_id = target_sr.school_id
             AND     hs.base_road = source_br.road_id
@@ -80,6 +80,6 @@ AND     (
         ),11000) <= 1.3;
 
 -- stress index
-CREATE INDEX idx_cambridge_blockschl_lstress ON cambridge_connected_census_blocks_schools (low_stress);
-CREATE INDEX idx_cambridge_blockschl_hstress ON cambridge_connected_census_blocks_schools (high_stress);
-ANALYZE cambridge_connected_census_blocks_schools (low_stress,high_stress);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockschl_lstress ON neighborhood_connected_census_blocks_schools (low_stress);
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockschl_hstress ON neighborhood_connected_census_blocks_schools (high_stress);
+ANALYZE neighborhood_connected_census_blocks_schools (low_stress,high_stress);

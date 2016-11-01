@@ -1,12 +1,13 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
 -- low stress access
+UPDATE neighborhood_census_blocks SET schools_low_stress = NULL;
 UPDATE  neighborhood_census_blocks
 SET     schools_low_stress = (
             SELECT  COUNT(cbs.id)
-            FROM    cambridge_connected_census_blocks_schools cbs
+            FROM    neighborhood_connected_census_blocks_schools cbs
             WHERE   cbs.source_blockid10 = neighborhood_census_blocks.blockid10
             AND     cbs.low_stress
         )
@@ -17,10 +18,11 @@ WHERE   EXISTS (
         );
 
 -- high stress access
+UPDATE neighborhood_census_blocks SET schools_high_stress = NULL;
 UPDATE  neighborhood_census_blocks
 SET     schools_high_stress = (
             SELECT  COUNT(cbs.id)
-            FROM    cambridge_connected_census_blocks_schools cbs
+            FROM    neighborhood_connected_census_blocks_schools cbs
             WHERE   cbs.source_blockid10 = neighborhood_census_blocks.blockid10
         )
 WHERE   EXISTS (
@@ -30,32 +32,34 @@ WHERE   EXISTS (
         );
 
 -- low stress population shed for schools in neighborhood
-UPDATE  cambridge_schools
+UPDATE neighborhood_schools SET pop_low_stress = NULL;
+UPDATE  neighborhood_schools
 SET     pop_low_stress = (
             SELECT  SUM(cb.pop10)
             FROM    neighborhood_census_blocks cb,
-                    cambridge_connected_census_blocks_schools cbs
+                    neighborhood_connected_census_blocks_schools cbs
             WHERE   cb.blockid10 = cbs.source_blockid10
-            AND     cambridge_schools.id = cbs.target_school_id
+            AND     neighborhood_schools.id = cbs.target_school_id
             AND     cbs.low_stress
         )
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary as b
-            WHERE   ST_Intersects(cambridge_schools.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
         );
 
 -- high stress population shed for schools in neighborhood
-UPDATE  cambridge_schools
+UPDATE neighborhood_schools SET pop_high_stress = NULL;
+UPDATE  neighborhood_schools
 SET     pop_high_stress = (
             SELECT  SUM(cb.pop10)
             FROM    neighborhood_census_blocks cb,
-                    cambridge_connected_census_blocks_schools cbs
+                    neighborhood_connected_census_blocks_schools cbs
             WHERE   cb.blockid10 = cbs.source_blockid10
-            AND     cambridge_schools.id = cbs.target_school_id
+            AND     neighborhood_schools.id = cbs.target_school_id
         )
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary as b
-            WHERE   ST_Intersects(cambridge_schools.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
         );

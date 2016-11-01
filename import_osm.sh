@@ -6,43 +6,43 @@ NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
-NB_OSMPREFIX="${NB_OSMPREFIX:-cambridge}"
-NB_OSMFILE="${NB_OSMFILE:-/vagrant/data/cambridge.osm}"
+NB_OSMFILE="${NB_OSMFILE:-/vagrant/data/neighborhood.osm}"
+NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-4326}"
 
 # drop old tables
 echo 'Dropping old tables'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_ways;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_ways;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_ways_intersections;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_ways_intersections;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_relations_ways;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_relations_ways;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_nodes;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_nodes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_relations;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_relations;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_way_classes;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_way_classes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_way_tags;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_way_tags;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_way_types;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_way_types;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS scratch.${NB_OSMPREFIX}_cycwys_ways;"
+  -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_ways;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS scratch.${NB_OSMPREFIX}_cycwys_ways_vertices_pgr;"
+  -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_ways_vertices_pgr;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS scratch.${NB_OSMPREFIX}_cycwys_relations_ways;"
+  -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_relations_ways;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS scratch.${NB_OSMPREFIX}_cycwys_osm_nodes;"
+  -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_osm_nodes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS scratch.${NB_OSMPREFIX}_cycwys_osm_relations;"
+  -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_osm_relations;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS scratch.${NB_OSMPREFIX}_cycwys_osm_way_classes;"
+  -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_osm_way_classes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS scratch.${NB_OSMPREFIX}_cycwys_osm_way_tags;"
+  -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_osm_way_tags;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS scratch.${NB_OSMPREFIX}_cycwys_osm_way_types;"
+  -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_osm_way_types;"
 
 # import the osm with highways
 osm2pgrouting \
@@ -51,7 +51,7 @@ osm2pgrouting \
   --dbname ${NB_POSTGRESQL_DB} \
   --username ${NB_POSTGRESQL_USER} \
   --schema received \
-  --prefix ${NB_OSMPREFIX}_ \
+  --prefix neighborhood_ \
   --conf ./mapconfig_highway.xml \
   --clean
 
@@ -62,50 +62,50 @@ osm2pgrouting \
   --dbname ${NB_POSTGRESQL_DB} \
   --username ${NB_POSTGRESQL_USER} \
   --schema scratch \
-  --prefix ${NB_OSMPREFIX}_cycwys_ \
+  --prefix neighborhood_cycwys_ \
   --conf ./mapconfig_cycleway.xml \
   --clean
 
 # rename a few tables
 echo 'Renaming tables'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.${NB_OSMPREFIX}_ways_vertices_pgr RENAME TO ${NB_OSMPREFIX}_ways_intersections;"
+  -c "ALTER TABLE received.neighborhood_ways_vertices_pgr RENAME TO neighborhood_ways_intersections;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.${NB_OSMPREFIX}_ways_intersections RENAME CONSTRAINT vertex_id TO ${NB_OSMPREFIX}_vertex_id;"
+  -c "ALTER TABLE received.neighborhood_ways_intersections RENAME CONSTRAINT vertex_id TO neighborhood_vertex_id;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_nodes RENAME TO ${NB_OSMPREFIX}_osm_nodes;"
+  -c "ALTER TABLE received.osm_nodes RENAME TO neighborhood_osm_nodes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.${NB_OSMPREFIX}_osm_nodes RENAME CONSTRAINT node_id TO ${NB_OSMPREFIX}_node_id;"
+  -c "ALTER TABLE received.neighborhood_osm_nodes RENAME CONSTRAINT node_id TO neighborhood_node_id;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_relations RENAME TO ${NB_OSMPREFIX}_osm_relations;"
+  -c "ALTER TABLE received.osm_relations RENAME TO neighborhood_osm_relations;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_way_classes RENAME TO ${NB_OSMPREFIX}_osm_way_classes;"
+  -c "ALTER TABLE received.osm_way_classes RENAME TO neighborhood_osm_way_classes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.${NB_OSMPREFIX}_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO ${NB_OSMPREFIX}_osm_way_classes_pkey;"
+  -c "ALTER TABLE received.neighborhood_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO neighborhood_osm_way_classes_pkey;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_way_tags RENAME TO ${NB_OSMPREFIX}_osm_way_tags;"
+  -c "ALTER TABLE received.osm_way_tags RENAME TO neighborhood_osm_way_tags;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_way_types RENAME TO ${NB_OSMPREFIX}_osm_way_types;"
+  -c "ALTER TABLE received.osm_way_types RENAME TO neighborhood_osm_way_types;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.${NB_OSMPREFIX}_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO ${NB_OSMPREFIX}_osm_way_types_pkey;"
+  -c "ALTER TABLE received.neighborhood_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO neighborhood_osm_way_types_pkey;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.${NB_OSMPREFIX}_cycwys_ways_vertices_pgr RENAME CONSTRAINT vertex_id TO ${NB_OSMPREFIX}_vertex_id;"
+  -c "ALTER TABLE scratch.neighborhood_cycwys_ways_vertices_pgr RENAME CONSTRAINT vertex_id TO neighborhood_vertex_id;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_nodes RENAME TO ${NB_OSMPREFIX}_cycwys_osm_nodes;"
+  -c "ALTER TABLE scratch.osm_nodes RENAME TO neighborhood_cycwys_osm_nodes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.${NB_OSMPREFIX}_cycwys_osm_nodes RENAME CONSTRAINT node_id TO ${NB_OSMPREFIX}_node_id;"
+  -c "ALTER TABLE scratch.neighborhood_cycwys_osm_nodes RENAME CONSTRAINT node_id TO neighborhood_node_id;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_relations RENAME TO ${NB_OSMPREFIX}_cycwys_osm_relations;"
+  -c "ALTER TABLE scratch.osm_relations RENAME TO neighborhood_cycwys_osm_relations;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_way_classes RENAME TO ${NB_OSMPREFIX}_cycwys_osm_way_classes;"
+  -c "ALTER TABLE scratch.osm_way_classes RENAME TO neighborhood_cycwys_osm_way_classes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.${NB_OSMPREFIX}_cycwys_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO ${NB_OSMPREFIX}_osm_way_classes_pkey;"
+  -c "ALTER TABLE scratch.neighborhood_cycwys_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO neighborhood_osm_way_classes_pkey;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_way_tags RENAME TO ${NB_OSMPREFIX}_cycwys_osm_way_tags;"
+  -c "ALTER TABLE scratch.osm_way_tags RENAME TO neighborhood_cycwys_osm_way_tags;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_way_types RENAME TO ${NB_OSMPREFIX}_cycwys_osm_way_types;"
+  -c "ALTER TABLE scratch.osm_way_types RENAME TO neighborhood_cycwys_osm_way_types;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.${NB_OSMPREFIX}_cycwys_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO ${NB_OSMPREFIX}_osm_way_types_pkey;"
+  -c "ALTER TABLE scratch.neighborhood_cycwys_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO neighborhood_osm_way_types_pkey;"
 
 # import full osm to fill out additional data needs
 # not met by osm2pgrouting
@@ -113,13 +113,13 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
 # drop old tables
 echo 'Dropping old tables'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_full_line;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_full_line;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_full_point;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_full_point;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_full_polygon;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_full_polygon;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "DROP TABLE IF EXISTS received.${NB_OSMPREFIX}_osm_full_roads;"
+  -c "DROP TABLE IF EXISTS received.neighborhood_osm_full_roads;"
 
 # import
 osm2pgsql \
@@ -128,29 +128,31 @@ osm2pgsql \
   --port 5432 \
   --create \
   --database "${NB_POSTGRESQL_DB}" \
-  --prefix "${NB_OSMPREFIX}_osm_full" \
-  --proj 2249 \
+  --prefix "neighborhood_osm_full" \
+  --proj "${NB_OUTPUT_SRID}" \
   --style ./pfb.style \
   "${NB_OSMFILE}"
 
 # move the full osm tables to the received schema
 echo 'Moving tables to received schema'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE generated.${NB_OSMPREFIX}_osm_full_line SET SCHEMA received;"
+  -c "ALTER TABLE generated.neighborhood_osm_full_line SET SCHEMA received;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE generated.${NB_OSMPREFIX}_osm_full_point SET SCHEMA received;"
+  -c "ALTER TABLE generated.neighborhood_osm_full_point SET SCHEMA received;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE generated.${NB_OSMPREFIX}_osm_full_polygon SET SCHEMA received;"
+  -c "ALTER TABLE generated.neighborhood_osm_full_polygon SET SCHEMA received;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE generated.${NB_OSMPREFIX}_osm_full_roads SET SCHEMA received;"
+  -c "ALTER TABLE generated.neighborhood_osm_full_roads SET SCHEMA received;"
 
 # process tables
 echo 'Updating field names'
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./prepare_tables.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v nb_output_srid="${NB_OUTPUT_SRID}" -f ./prepare_tables.sql
 echo 'Setting values on road segments'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./one_way.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./functional_class.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./paths.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v nb_output_srid="${NB_OUTPUT_SRID}" -f ./paths.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./speed_limit.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./width_ft.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./lanes.sql

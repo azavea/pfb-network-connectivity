@@ -1,15 +1,16 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
 -- low stress access
+UPDATE neighborhood_census_blocks SET emp_low_stress = NULL;
 UPDATE  neighborhood_census_blocks
 SET     emp_low_stress = (
             SELECT  SUM(blocks2.jobs)
-            FROM    cambridge_census_block_jobs blocks2
+            FROM    neighborhood_census_block_jobs blocks2
             WHERE   EXISTS (
                         SELECT  1
-                        FROM    cambridge_connected_census_blocks cb
+                        FROM    neighborhood_connected_census_blocks cb
                         WHERE   cb.source_blockid10 = neighborhood_census_blocks.blockid10
                         AND     cb.target_blockid10 = blocks2.blockid10
                         AND     cb.low_stress
@@ -22,13 +23,14 @@ WHERE   EXISTS (
         );
 
 -- high stress access
+UPDATE neighborhood_census_blocks SET emp_high_stress = NULL;
 UPDATE  neighborhood_census_blocks
 SET     emp_high_stress = (
             SELECT  SUM(blocks2.jobs)
-            FROM    cambridge_census_block_jobs blocks2
+            FROM    neighborhood_census_block_jobs blocks2
             WHERE   EXISTS (
                         SELECT  1
-                        FROM    cambridge_connected_census_blocks cb
+                        FROM    neighborhood_connected_census_blocks cb
                         WHERE   cb.source_blockid10 = neighborhood_census_blocks.blockid10
                         AND     cb.target_blockid10 = blocks2.blockid10
             )
