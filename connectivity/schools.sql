@@ -1,6 +1,8 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
+-- proj: :nb_output_srid psql var must be set before running this script,
+--       e.g. psql -v nb_output_srid=4326 -f schools.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_schools;
 
@@ -10,8 +12,8 @@ CREATE TABLE generated.neighborhood_schools (
     school_name TEXT,
     pop_low_stress INT,
     pop_high_stress INT,
-    geom_pt geometry(point,2249),
-    geom_poly geometry(polygon,2249)
+    geom_pt geometry(point, :nb_output_srid),
+    geom_poly geometry(polygon, :nb_output_srid)
 );
 CREATE INDEX sidx_neighborhood_schools_geompt ON neighborhood_schools USING GIST (geom_pt);
 CREATE INDEX sidx_neighborhood_schools_geomply ON neighborhood_schools USING GIST (geom_poly);

@@ -1,13 +1,15 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
+-- proj: :nb_output_srid psql var must be set before running this script,
+--       e.g. psql -v nb_output_srid=4326 -f paths.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_paths;
 DROP INDEX IF EXISTS idx_neighborhood_ways_path_id;
 
 CREATE TABLE generated.neighborhood_paths (
     path_id SERIAL PRIMARY KEY,
-    geom geometry(multilinestring,2249),
+    geom geometry(multilinestring, :nb_output_srid),
     path_length INTEGER,
     bbox_length INTEGER
 );
@@ -17,7 +19,7 @@ INSERT INTO neighborhood_paths (geom)
 SELECT  ST_CollectionExtract(
             ST_SetSRID(
                 unnest(ST_ClusterIntersecting(geom)),
-                2249
+                :nb_output_srid
             ),
             2   --linestrings
         )
@@ -36,7 +38,7 @@ SET     bbox_length = ST_Length(
                     ST_MakePoint(ST_XMin(geom), ST_YMin(geom)),
                     ST_MakePoint(ST_XMax(geom), ST_YMax(geom))
                 ),
-                2249
+                :nb_output_srid
             )
         );
 

@@ -1,7 +1,8 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- proj: 2249
+-- proj: :nb_output_srid psql var must be set before running this script,
+--       e.g. psql -v nb_output_srid=4326 -f prepare_tables.sql
 ----------------------------------------
 
 -- add tdg_id field to roads
@@ -44,12 +45,12 @@ ALTER TABLE neighborhood_ways_intersections RENAME COLUMN id TO int_id;
 ALTER TABLE neighborhood_ways_intersections RENAME COLUMN the_geom TO geom;
 
 -- reproject
-ALTER TABLE neighborhood_ways ALTER COLUMN geom TYPE geometry(linestring,2249)
-USING ST_Transform(geom,2249);
-ALTER TABLE neighborhood_cycwys_ways ALTER COLUMN the_geom TYPE geometry(linestring,2249)
-USING ST_Transform(the_geom,2249);
-ALTER TABLE neighborhood_ways_intersections ALTER COLUMN geom TYPE geometry(point,2249)
-USING ST_Transform(geom,2249);
+ALTER TABLE neighborhood_ways ALTER COLUMN geom TYPE geometry(linestring,:nb_output_srid)
+USING ST_Transform(geom,:nb_output_srid);
+ALTER TABLE neighborhood_cycwys_ways ALTER COLUMN the_geom TYPE geometry(linestring,:nb_output_srid)
+USING ST_Transform(the_geom,:nb_output_srid);
+ALTER TABLE neighborhood_ways_intersections ALTER COLUMN geom TYPE geometry(point,:nb_output_srid)
+USING ST_Transform(geom,:nb_output_srid);
 
 -- add columns
 ALTER TABLE neighborhood_ways ADD COLUMN functional_class TEXT;

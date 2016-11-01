@@ -7,6 +7,7 @@ NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 NB_OSMFILE="${NB_OSMFILE:-/vagrant/data/neighborhood.osm}"
+NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-4326}"
 
 # drop old tables
 echo 'Dropping old tables'
@@ -128,7 +129,7 @@ osm2pgsql \
   --create \
   --database "${NB_POSTGRESQL_DB}" \
   --prefix "neighborhood_osm_full" \
-  --proj 2249 \
+  --proj "${NB_OUTPUT_SRID}" \
   --style ./pfb.style \
   "${NB_OSMFILE}"
 
@@ -145,11 +146,13 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
 
 # process tables
 echo 'Updating field names'
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./prepare_tables.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v nb_output_srid="${NB_OUTPUT_SRID}" -f ./prepare_tables.sql
 echo 'Setting values on road segments'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./one_way.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./functional_class.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./paths.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v nb_output_srid="${NB_OUTPUT_SRID}" -f ./paths.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./speed_limit.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./width_ft.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ./lanes.sql
