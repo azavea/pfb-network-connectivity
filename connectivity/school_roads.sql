@@ -1,6 +1,8 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
+-- :nb_boundary_buffer psql var must be set before running this script,
+--      e.g. psql -v nb_boundary_buffer=11000 -f school_roads.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_school_roads;
 
@@ -22,7 +24,7 @@ FROM    neighborhood_schools schools,
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_DWithin(b.geom, schools.geom_pt, 11000)
+            WHERE   ST_DWithin(b.geom, schools.geom_pt, :nb_boundary_buffer)
         )
 AND     schools.geom_poly IS NOT NULL
 AND     ST_DWithin(schools.geom_poly,ways.geom,50);
@@ -43,7 +45,7 @@ FROM    neighborhood_schools schools
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_DWithin(b.geom, schools.geom_pt, 11000)
+            WHERE   ST_DWithin(b.geom, schools.geom_pt, :nb_boundary_buffer)
         )
 AND     NOT EXISTS (
             SELECT  1

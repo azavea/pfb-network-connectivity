@@ -30,7 +30,8 @@ Requires passing the state FIPS ID that the neighborhood boundary is found in. e
 Optional ENV vars:
 
 NB_INPUT_SRID - Default: 4326
-NB_OUTPUT_SRID - Default: 4326
+NB_OUTPUT_SRID - Default: 4326 (Should have units of 'ft', otherwise some portions of the
+                                analysis will not work correctly)
 NB_BOUNDARY_BUFFER - Default: 0 (Units is units of NB_OUTPUT_SRID)
 NB_POSTGRESQL_HOST - Default: 127.0.0.1
 NB_POSTGRESQL_DB - Default: pfb
