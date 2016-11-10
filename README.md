@@ -4,8 +4,6 @@ PFB Bicycle Network Connectivity
 
 ## Getting Started
 
-Copy the cambridge.osm.gz file on fileshare and unzip to `./data/neighborhood.osm`
-
 Copy the 'neighborhood_boundary_02138.zip' file on fileshare and unzip to `./data/neighborhood_boundary.shp`
 
 Run `./script/setup` to install project dependencies
@@ -26,7 +24,7 @@ Proceed to [Running the Analysis](#running-the-analysis)
 
 Run `NB_OUTPUT_SRID=2249 ./pfb-analysis/run_connectivity.sh`
 
-This will take ~2.5hrs, so just let it work. Consider piping script output to a file and running in
+This will take up to 1hr, so just let it work. Consider piping script output to a file and running in
 a screen/tmux session.
 
 #### Re-running the analysis
@@ -45,14 +43,9 @@ idempotent.
 
 ## Importing other neighborhoods
 
-Running the analysis requires a neighborhood shapefile polygon to run the analysis against,
-as well as the OSM data for that region.
+Running the analysis requires a neighborhood shapefile polygon to run the analysis against.
 
-To get started, place your neighborhood boundary shapefile at: `./data/neighborhood_boundary.shp`.
-Then, go to https://mapzen.com/data/metro-extracts/ and create an OSM extract that covers at least
-the area defined in neighborhood_boundary.shp. Include at least a 2mi buffer. Once the OSM extract
-is ready, download the "Raw OpenStreetMap XML dataset", unzip it and place it at
-`./data/neighborhood.osm`
+To get started, place your neighborhood boundary shapefile, unzipped, in the project `./data` directory.
 
 You will also need to know the following:
 - State abbrev that your neighborhood is found in, e.g. 'ma' for Massachussetts
@@ -73,14 +66,3 @@ This will create a VM, install the necessary dependencies, and load your neighbo
 the associated data.
 
 The database should now be ready for [Running the Analysis](#running-the-analysis)
-
-
-## Next Steps
-
-Performance issues. `./pfb-analysis/run_connectivity.sh` takes ~2.5hrs to run on my VM. It is possible
-we could gain significant boosts from additional indices, tweaking of postgresql.conf, and query
-rewriting to improve the execution plan. If none of that works, we'd have to rewrite the analysis
-with some other language.
-
-The scripts in the `pfb-analysis` directory are not generally well parameterized. If we want to
-run an area other than cambridge, we should rename the tables to not include the area being run.
