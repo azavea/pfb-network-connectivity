@@ -59,7 +59,7 @@ BBOX_SW_LNG=`bc <<< "$BBOX_SW_LNG - $LNG_DIFF"`
 BBOX_NE_LAT=`bc <<< "$BBOX_NE_LAT + $LAT_DIFF"`
 BBOX_NE_LNG=`bc <<< "$BBOX_NE_LNG + $LNG_DIFF"`
 # Download OSM data
-OSM_API_URL="http://www.overpass-api.de/api/xapi?way[bbox=${BBOX_SW_LNG},${BBOX_SW_LAT},${BBOX_NE_LNG},${BBOX_NE_LAT}][highway=*]"
+OSM_API_URL="http://www.overpass-api.de/api/xapi?*[bbox=${BBOX_SW_LNG},${BBOX_SW_LAT},${BBOX_NE_LNG},${BBOX_NE_LAT}]"
 OSM_TEMPDIR=`mktemp -d`
 OSM_DATA_FILE="${OSM_TEMPDIR}/overpass.osm"
 wget -O "${OSM_DATA_FILE}" "${OSM_API_URL}"
