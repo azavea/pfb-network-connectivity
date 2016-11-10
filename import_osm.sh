@@ -6,7 +6,6 @@ NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
-NB_OSMFILE="${NB_OSMFILE:-/vagrant/data/neighborhood.osm}"
 NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-4326}"
 
 # drop old tables
@@ -44,9 +43,28 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_osm_way_types;"
 
+
+# Get the neighborhood_boundary bbox
+BBOX_SW_LNG=`psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "SELECT MIN(ST_Xmin(ST_Transform(geom, 4326))) FROM neighborhood_boundary;"`
+BBOX_SW_LAT=`psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "SELECT MIN(ST_Ymin(ST_Transform(geom, 4326))) FROM neighborhood_boundary;"`
+BBOX_NE_LNG=`psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "SELECT MAX(ST_Xmax(ST_Transform(geom, 4326))) FROM neighborhood_boundary;"`
+BBOX_NE_LAT=`psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "SELECT MAX(ST_Ymax(ST_Transform(geom, 4326))) FROM neighborhood_boundary;"`
+# Buffer it
+LNG_DIFF=`bc <<< "$BBOX_NE_LNG - $BBOX_SW_LNG"`
+LAT_DIFF=`bc <<< "$BBOX_NE_LAT - $BBOX_SW_LAT"`
+BBOX_SW_LAT=`bc <<< "$BBOX_SW_LAT - $LAT_DIFF"`
+BBOX_SW_LNG=`bc <<< "$BBOX_SW_LNG - $LNG_DIFF"`
+BBOX_NE_LAT=`bc <<< "$BBOX_NE_LAT + $LAT_DIFF"`
+BBOX_NE_LNG=`bc <<< "$BBOX_NE_LNG + $LNG_DIFF"`
+# Download OSM data
+OSM_API_URL="http://www.overpass-api.de/api/xapi?way[bbox=${BBOX_SW_LNG},${BBOX_SW_LAT},${BBOX_NE_LNG},${BBOX_NE_LAT}][highway=*]"
+OSM_TEMPDIR=`mktemp -d`
+OSM_DATA_FILE="${OSM_TEMPDIR}/overpass.osm"
+wget -O "${OSM_DATA_FILE}" "${OSM_API_URL}"
+
 # import the osm with highways
 osm2pgrouting \
-  -f $NB_OSMFILE \
+  -f $OSM_DATA_FILE \
   -h $NB_POSTGRESQL_HOST \
   --dbname ${NB_POSTGRESQL_DB} \
   --username ${NB_POSTGRESQL_USER} \
@@ -57,7 +75,7 @@ osm2pgrouting \
 
 # import the osm with cycleways that the above misses (bug in osm2pgrouting)
 osm2pgrouting \
-  -f $NB_OSMFILE \
+  -f $OSM_DATA_FILE \
   -h $NB_POSTGRESQL_HOST \
   --dbname ${NB_POSTGRESQL_DB} \
   --username ${NB_POSTGRESQL_USER} \
@@ -131,7 +149,10 @@ osm2pgsql \
   --prefix "neighborhood_osm_full" \
   --proj "${NB_OUTPUT_SRID}" \
   --style ./pfb.style \
-  "${NB_OSMFILE}"
+  "${OSM_DATA_FILE}"
+
+# Delete downloaded temp OSM data
+rm -rf "${OSM_TEMPDIR}"
 
 # move the full osm tables to the received schema
 echo 'Moving tables to received schema'
