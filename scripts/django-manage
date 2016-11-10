@@ -12,8 +12,7 @@ function usage() {
     echo -n \
          "Usage: $(basename "$0")
 
-Sets up the development environment by installing dependencies.
-See the Getting Started section of the project README for importing data
+Run a Django management command in the running django container
 
 "
 }
@@ -26,10 +25,7 @@ then
     else
         pushd ..
 
-        git submodule sync && git submodule update
-        vagrant up --provision
-
-        vagrant ssh -c "cd /vagrant && ./scripts/update"
+        docker-compose exec django python manage.py "${@}"
 
         popd
     fi

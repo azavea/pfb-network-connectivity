@@ -28,4 +28,5 @@ postgis_version: "2.3"
 postgis_package_version: "2.3.0+dfsg-2.pgdg14.04+1"
 
 # azavea.docker
-docker_version: 1.12.*
+# 1.11.* to match AWS ECS
+docker_version: 1.11.*

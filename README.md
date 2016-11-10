@@ -4,25 +4,57 @@ PFB Bicycle Network Connectivity
 
 ## Getting Started
 
-Copy the 'neighborhood_boundary_02138.zip' file on fileshare and unzip to `./data/neighborhood_boundary.shp`
+Requirements:
+- Vagrant 1.8+
+- VirtualBox 4.3+
+- Ansible 2.0+
 
-Run `./script/setup` to install project dependencies
+Run `./script/setup` to install project dependencies and prepare the development environment.
 
-SSH into the VM with `vagrant ssh`, then run:
+At this point, if you only intend to run the 'Bike Network Analysis', skip directly to [Running the Analysis](#running-the-analysis)
+
+Then, SSH into the VM and start the application containers:
+```
+> vagrant ssh
+> ./scripts/server
 ```
 
-NB_INPUT_SRID=2249 NB_OUTPUT_SRID=2249 ./pfb-analysis/import.sh \
-    /vagrant/data/neighborhood_boundary.shp ma 25
-
+In order to use the API, you'll need to create a superuser in development by following the prompts:
 ```
-to import data for Cambridge MA
+./scripts/django-manage createsuperuser
+```
 
-Proceed to [Running the Analysis](#running-the-analysis)
+## Ports
+
+| Port | Service | Notes |
+| ---- | ------- | ----- |
+| 9200 | Nginx ||
+| 9202 | Gunicorn ||
+| 9203 | Django Runserver | This service is not running by default. It must be started manually via `scripts/django-manage` |
+| 9210 | Webpack | Not yet implemented |
+| 9214 | Postgresql | Allows direct connections to the database where an analysis run is stored |
+
+
+## Scripts
+
+| Name | Description |
+| ---- | ----------- |
+| setup | Bring up a dev VM, and perform initial installation steps |
+| update | Re-build application Docker containers and run database migrations |
+| server | Start the application containers |
+| console | Start a bash shell on one of the running Docker containers |
+| django-manage | Run a Django management command on the django container |
 
 
 ## Running the Analysis
 
-Run `NB_OUTPUT_SRID=2249 ./pfb-analysis/run_connectivity.sh`
+Copy the 'neighborhood_boundary_02138.zip' file on fileshare and unzip to `./data/neighborhood_boundary.shp`
+
+Run:
+```
+NB_INPUT_SRID=2249 NB_OUTPUT_SRID=2249 ./pfb-analysis/import.sh /vagrant/data/neighborhood_boundary.shp ma 25
+NB_OUTPUT_SRID=2249 ./pfb-analysis/run_connectivity.sh
+```
 
 This will take up to 1hr, so just let it work. Consider piping script output to a file and running in
 a screen/tmux session.

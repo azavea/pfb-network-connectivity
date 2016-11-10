@@ -12,9 +12,45 @@ function usage() {
     echo -n \
          "Usage: $(basename "$0")
 
-Re-run the PFB bike network analysis using existing data
+Build and pull container images using docker-compose
+
+Runs django migrations
 
 "
+}
+
+function check_database() {
+    # Check if database is set up to continue
+
+    max=21 # 1 minute
+    counter=1
+    while true
+    do
+        echo "Checking if database is up yet (try ${counter})..."
+        set +e
+        docker-compose exec -T database gosu postgres psql -d pfb -c 'select 1' >/dev/null 2>/dev/null
+        status_check=$?
+        if [ $status_check == 0 ]
+        then
+            echo "Connected to database successfully"
+            break
+        fi
+        set -e
+        if [[ ${counter} == "${max}" ]]
+        then
+            echo "Could not connect to database after some time"
+            exit 1
+        fi
+        sleep 3
+        (( counter++ ))
+    done
+}
+
+function run_database_migrations() {
+    docker-compose up -d database
+    check_database
+    docker-compose run --rm --entrypoint python django manage.py migrate --noinput
+    docker-compose stop database
 }
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]
@@ -25,7 +61,8 @@ then
     else
         pushd ..
 
-        vagrant ssh -c 'cd /vagrant && ./pfb-analysis/run_connectivity.sh'
+        docker-compose build nginx django database
+        run_database_migrations
 
         popd
     fi
