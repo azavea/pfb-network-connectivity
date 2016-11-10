@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "deployment/ansible/pfb-analysis.yml"
+    ansible.playbook = "deployment/ansible/pfb.yml"
     ansible.galaxy_role_file = "deployment/ansible/roles.yml"
     ansible.verbose = true
     ansible.raw_arguments = ["--timeout=60"]

@@ -7,4 +7,5 @@
       apt: update_cache=yes
 
   roles:
+    - { role: "pfb.docker" }
     - { role: "pfb.analysis" }

@@ -1,6 +1,7 @@
 ---
 
 # application settings
+docker_compose_version: 1.8.0
 postgresql_database_name: "pfb"
 # User 'gis' allows the Toole analysis scripts to work as is
 postgresql_database_user: "gis"
@@ -25,3 +26,6 @@ postgresql_support_repository_channel: "9.6"
 # azavea.postgis
 postgis_version: "2.3"
 postgis_package_version: "2.3.0+dfsg-2.pgdg14.04+1"
+
+# azavea.docker
+docker_version: 1.12.*
