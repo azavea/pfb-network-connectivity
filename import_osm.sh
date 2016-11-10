@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 cd `dirname $0`
 
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
