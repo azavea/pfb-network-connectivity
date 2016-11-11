@@ -7,5 +7,6 @@
       apt: update_cache=yes
 
   roles:
+    - { role: "azavea.aws-cli" }
     - { role: "pfb.docker" }
     - { role: "pfb.analysis" }
