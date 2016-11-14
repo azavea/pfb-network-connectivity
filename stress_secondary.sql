@@ -18,16 +18,29 @@ SET     ft_seg_stress =
                                                         END
                             WHEN speed_limit <= 30 THEN CASE
                                                         WHEN ft_lanes = 1 THEN 1
-                                                        ELSE 3
+                                                        ELSE 2
                                                         END
                             ELSE 3
                             END
             WHEN ft_bike_infra = 'lane'
                     THEN    CASE
-                            WHEN speed_limit <= 25
+                            WHEN speed_limit <= 20 THEN CASE
+                                                        WHEN ft_lanes = 1 THEN
+                                                                CASE
+                                                                WHEN ft_park = 0 THEN 1
+                                                                ELSE 2
+                                                                END
+                                                        WHEN ft_lanes = 2 THEN
+                                                                CASE
+                                                                WHEN ft_park = 0 THEN 2
+                                                                ELSE 2
+                                                                END
+                                                        ELSE 3
+                                                        END
+                            WHEN speed_limit = 25
                                     THEN    CASE
                                             WHEN ft_lanes = 1 THEN  CASE
-                                                                    WHEN ft_park = 0 THEN 1
+                                                                    WHEN ft_park = 0 THEN 2
                                                                     ELSE 2
                                                                     END
                                             WHEN ft_lanes > 2 THEN  3
@@ -39,8 +52,8 @@ SET     ft_seg_stress =
                             WHEN speed_limit = 30 THEN  CASE
                                                         WHEN ft_lanes = 1 THEN
                                                                 CASE
-                                                                WHEN ft_park = 0 THEN 1
-                                                                ELSE 2
+                                                                WHEN ft_park = 0 THEN 2
+                                                                ELSE 3
                                                                 END
                                                         ELSE 3
                                                         END
@@ -63,16 +76,29 @@ SET     tf_seg_stress =
                                                         END
                             WHEN speed_limit <= 30 THEN CASE
                                                         WHEN tf_lanes = 1 THEN 1
-                                                        ELSE 3
+                                                        ELSE 2
                                                         END
                             ELSE 3
                             END
             WHEN tf_bike_infra = 'lane'
                     THEN    CASE
-                            WHEN speed_limit <= 25
+                            WHEN speed_limit <= 20 THEN CASE
+                                                        WHEN tf_lanes = 1 THEN
+                                                                CASE
+                                                                WHEN tf_park = 0 THEN 1
+                                                                ELSE 2
+                                                                END
+                                                        WHEN tf_lanes = 2 THEN
+                                                                CASE
+                                                                WHEN tf_park = 0 THEN 2
+                                                                ELSE 2
+                                                                END
+                                                        ELSE 3
+                                                        END
+                            WHEN speed_limit = 25
                                     THEN    CASE
                                             WHEN tf_lanes = 1 THEN  CASE
-                                                                    WHEN tf_park = 0 THEN 1
+                                                                    WHEN tf_park = 0 THEN 2
                                                                     ELSE 2
                                                                     END
                                             WHEN tf_lanes > 2 THEN  3
@@ -84,8 +110,8 @@ SET     tf_seg_stress =
                             WHEN speed_limit = 30 THEN  CASE
                                                         WHEN tf_lanes = 1 THEN
                                                                 CASE
-                                                                WHEN tf_park = 0 THEN 1
-                                                                ELSE 2
+                                                                WHEN tf_park = 0 THEN 2
+                                                                ELSE 3
                                                                 END
                                                         ELSE 3
                                                         END
