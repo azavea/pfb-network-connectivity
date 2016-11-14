@@ -39,8 +39,8 @@ services:
   #   links:
   #     - database:database.service.pfb.internal
 
-# TODO: Re-add once we add a front-end to this app
-  # app:
+# TODO: Re-add as a separate task (issue #21)
+  # angular:
   #   image: node:6.9-slim
   #   working_dir: /usr/src
   #   ports:
@@ -48,8 +48,8 @@ services:
   #   links:
   #     - django
   #   volumes:
-  #       - ./src/app:/usr/src
-  #       - ./src/nginx/srv/dist:/usr/src/static
+  #       - ./src/angular:/usr/src
+  #       - ./src/nginx/srv/dist:/usr/src/dist
   #       # Ensure that path to node_modules cache doesn't clash with other
   #       # jobs on CI.
   #       - /var/cache/pfb-node-modules:/usr/src/node_modules
