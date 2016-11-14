@@ -7,7 +7,10 @@
 UPDATE  cambridge_ways SET ft_seg_stress = NULL, tf_seg_stress = NULL
 WHERE   functional_class IN ('tertiary','tertiary_link')
 OR      (functional_class = 'residential' AND ft_bike_infra IN ('track','buffered_lane','lane'))
-OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'));
+OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'))
+OR      (functional_class = 'residential' AND ft_lanes > 1)
+OR      (functional_class = 'residential' AND tf_lanes > 1)
+OR      (functional_class = 'residential' AND speed_limit > 30);
 
 -- ft direction
 UPDATE  cambridge_ways
@@ -84,7 +87,10 @@ SET     ft_seg_stress =
             END
 WHERE   functional_class IN ('tertiary','tertiary_link')
 OR      (functional_class = 'residential' AND ft_bike_infra IN ('track','buffered_lane','lane'))
-OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'));
+OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'))
+OR      (functional_class = 'residential' AND ft_lanes > 1)
+OR      (functional_class = 'residential' AND tf_lanes > 1)
+OR      (functional_class = 'residential' AND speed_limit > 30);
 
 -- tf direction
 UPDATE  cambridge_ways
@@ -161,4 +167,7 @@ SET     tf_seg_stress =
             END
 WHERE   functional_class IN ('tertiary','tertiary_link')
 OR      (functional_class = 'residential' AND ft_bike_infra IN ('track','buffered_lane','lane'))
-OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'));
+OR      (functional_class = 'residential' AND tf_bike_infra IN ('track','buffered_lane','lane'))
+OR      (functional_class = 'residential' AND ft_lanes > 1)
+OR      (functional_class = 'residential' AND tf_lanes > 1)
+OR      (functional_class = 'residential' AND speed_limit > 30);
