@@ -30,8 +30,11 @@ In order to use the API, you'll need to create a superuser in development by fol
 | ---- | ------- | ----- |
 | 9200 | Nginx ||
 | 9202 | Gunicorn ||
-| 9203 | Django Runserver | This service is not running by default. It must be started manually via `scripts/django-manage` |
-| 9210 | Webpack | Not yet implemented |
+| 9203 | Django Runserver | Not running by default. Must be started manually via `scripts/django-manage` |
+| 9210 | Webpack | Runs Angular webpack dev server |
+| 9211 | LiveReload | Angular webpack dev server live reload |
+| 9212 | Webpack | Runs Angular webpack prod server. Not running by default. Must start manually via `./scripts/console` |
+| 9213 | LiveReload | Angular webpack prod server live reload |
 | 9214 | Postgresql | Allows direct connections to the database where an analysis run is stored |
 
 
