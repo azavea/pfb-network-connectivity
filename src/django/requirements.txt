@@ -1,0 +1,3 @@
+djangorestframework==3.5.3
+celery[sqs]==4.0
+boto==2.43.0

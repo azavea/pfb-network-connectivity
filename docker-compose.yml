@@ -1,0 +1,57 @@
+version: '2'
+services:
+  database:
+    image: quay.io/azavea/postgis:postgres9.6-postgis2.3
+    environment:
+      - POSTGRES_USER=pfb
+      - POSTGRES_PASSWORD=pfb
+      - POSTGRES_DB=pfb
+
+  nginx:
+    image: pfb-nginx
+    build:
+      context: ./src/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "9200:443"
+    links:
+      - django
+    volumes:
+      - ./src/nginx/srv/dist:/srv/dist:ro
+
+  django:
+    image: pfb-django
+    extends:
+      service: django
+      file: common.yml
+    ports:
+      - "9202:9202"
+      - "9203:9203"
+    links:
+      - database:database.service.pfb.internal
+
+# TODO: Re-add this container once the SQS broker is setup (issue #20)
+  # celery:
+  #   image: pfb-django
+  #   extends:
+  #     service: celery
+  #     file: common.yml
+  #   links:
+  #     - database:database.service.pfb.internal
+
+  angular:
+    image: node:6.9-slim
+    working_dir: /usr/src
+    ports:
+      - "9210:9210"
+      - "9211:9211"
+      - "9212:9212"
+      - "9213:9213"
+    links:
+      - django
+    volumes:
+        - ./src/angular:/usr/src
+        # Ensure that path to node_modules cache doesn't clash with other
+        # jobs on CI.
+        - /var/cache/pfb-node-modules:/usr/src/node_modules
+    command: npm run serve

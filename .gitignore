@@ -9,7 +9,73 @@ Thumbs.db
 deployment/ansible/roles/azavea.*
 deployment/ansible/*.retry
 
+# Terraform
+*.tfstate
+*.tfstate.backup
+*.tfplan
+*.tfvars
+.terraform
+
 # Data Directory
 data/*
 !data/.gitkeep
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# NodeJS stuff
+node_modules/
+npm-debug.log
+
+.sass-cache/

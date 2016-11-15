@@ -1,0 +1,27 @@
+version: '2'
+services:
+  django:
+    build:
+      context: ./src/django
+      dockerfile: Dockerfile
+    environment:
+      - PGHOST=database.service.pfb.internal
+      - PGDATABASE=pfb
+      - PGPASSWORD=pfb
+      - PGPORT=5432
+      - PGUSER=pfb
+      - DJANGO_ENV=development
+      - DJANGO_SECRET_KEY=secret
+      - DJANGO_LOG_LEVEL=DEBUG
+    volumes:
+      - ./src/django:/usr/src
+      - ./src/nginx/srv/dist:/static/
+      - $HOME/.aws:/root/.aws:ro
+
+  celery:
+    extends:
+      service: django
+    entrypoint: ["celery"]
+    command: ["-A", "pfb_network_connectivity", "worker", "--loglevel=info", "--concurrency=4"]
+    environment:
+      - C_FORCE_ROOT=true
