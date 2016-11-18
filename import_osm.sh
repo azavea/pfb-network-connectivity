@@ -146,10 +146,10 @@ echo 'Updating field names'
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./prepare_tables.sql
 echo 'Setting values on road segments'
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./one_way.sql
+psql -h $DBHOST -U gis -d ${DBNAME} -f ./width_ft.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./functional_class.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./paths.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./speed_limit.sql
-psql -h $DBHOST -U gis -d ${DBNAME} -f ./width_ft.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./lanes.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./park.sql
 psql -h $DBHOST -U gis -d ${DBNAME} -f ./bike_infra.sql
