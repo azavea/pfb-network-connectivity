@@ -96,6 +96,7 @@ way        cycleway:left:buffer  text   linear
 way        cycleway:right:buffer text   linear
 way        cycleway:both:buffer  text   linear
 node,way   foot         text         linear
+way        footway      text         linear
 node,way   highway      text         linear
 node,way   junction     text         linear
 way        lanes        text         linear
@@ -114,6 +115,7 @@ way        parking:lane:right  text  linear
 way        parking:lane:left   text  linear
 way        parking:lane:both   text  linear
 node,way   segregated   text         linear
+way        service      text         linear
 node,way   stop         text         linear
 node,way   surface      text         linear
 way        tracktype    text         linear
