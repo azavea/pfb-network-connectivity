@@ -47,7 +47,7 @@ SET     functional_class = 'path'
 FROM    cambridge_osm_full_line osm
 WHERE   cambridge_ways.osm_id = osm.osm_id
 AND     osm.highway = 'footway'
-AND     osm.bicycle IN ('yes','permissive')
+AND     osm.bicycle IN ('yes','permissive','designated')
 AND     (osm.access IS NULL OR osm.access NOT IN ('no','private'));
 
 UPDATE  cambridge_ways
@@ -55,7 +55,7 @@ SET     functional_class = 'living_street'
 FROM    cambridge_osm_full_line osm
 WHERE   cambridge_ways.osm_id = osm.osm_id
 AND     osm.highway = 'pedestrian'
-AND     osm.bicycle IN ('yes','permissive')
+AND     osm.bicycle IN ('yes','permissive','designated')
 AND     (osm.access IS NULL OR osm.access NOT IN ('no','private'));
 
 -- remove stuff that we don't want to route over
