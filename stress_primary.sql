@@ -2,7 +2,7 @@
 -- INPUTS
 -- location: cambridge
 ----------------------------------------
-UPDATE  cambridge_ways SET tf_seg_stress = NULL, tf_seg_stress = NULL
+UPDATE  cambridge_ways SET ft_seg_stress = NULL, tf_seg_stress = NULL
 WHERE   functional_class IN ('primary','primary_link');
 
 -- ft direction
