@@ -21,6 +21,8 @@ psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_D
   -f connectivity/census_blocks.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
   -f connectivity/census_block_roads.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
@@ -43,7 +45,8 @@ psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_D
   -f connectivity/access_jobs.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v nb_output_srid="${NB_OUTPUT_SRID}" -f connectivity/schools.sql
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f connectivity/schools.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
