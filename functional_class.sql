@@ -49,19 +49,19 @@ WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.highway = 'footway'
 AND     osm.footway = 'crossing';
 
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     functional_class = 'path'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.highway = 'footway'
 AND     osm.bicycle = 'designated'
 AND     (osm.access IS NULL OR osm.access NOT IN ('no','private'))
 AND     COALESCE(width_ft,0) >= 8;
 
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     functional_class = 'path'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.highway='service'
 AND     osm.bicycle='designated';
 

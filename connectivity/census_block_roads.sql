@@ -19,10 +19,10 @@ CREATE TEMP TABLE tmp_block_buffers (
     id INTEGER PRIMARY KEY,
     blockid10 VARCHAR(15),
     geom geometry(multipolygon, :nb_output_srid)
-) ON COMMIT DROP;
+);
 INSERT INTO tmp_block_buffers
-SELECT id, blockid10, ST_Multi(ST_Buffer(geom,50)) FROM neighborhood_census_blocks;
-CREATE INDEX tidx_cambridge_blockgeoms ON tmp_block_buffers USING GIST (geom);
+SELECT gid, blockid10, ST_Multi(ST_Buffer(geom,50)) FROM neighborhood_census_blocks;
+CREATE INDEX tidx_neighborhood_blockgeoms ON tmp_block_buffers USING GIST (geom);
 ANALYZE tmp_block_buffers;
 
 -- insert blocks and roads
@@ -33,7 +33,7 @@ INSERT INTO generated.neighborhood_census_block_roads (
 SELECT  blocks.blockid10,
         ways.road_id
 FROM    tmp_block_buffers blocks,
-        cambridge_ways ways
+        neighborhood_ways ways
 WHERE   EXISTS (
             SELECT  1
             FROM neighborhood_boundary AS b
