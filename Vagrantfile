@@ -3,10 +3,21 @@
 
 Vagrant.require_version ">= 1.8"
 
-VAGRANT_MOUNT_OPTIONS = if Vagrant::Util::Platform.linux? then
-  ['rw', 'vers=4', 'tcp', 'nolock']
+
+PFB_SHARED_FOLDER_TYPE = ENV.fetch("PFB_SHARED_FOLDER_TYPE", "nfs")
+
+if PFB_SHARED_FOLDER_TYPE == "nfs"
+  if Vagrant::Util::Platform.linux? then
+    PFB_MOUNT_OPTIONS = ['rw', 'vers=4', 'tcp', 'nolock']
+  else
+    PFB_MOUNT_OPTIONS = ['vers=3', 'udp']
+  end
 else
-  ['vers=3', 'udp']
+  if ENV.has_key?("PFB_MOUNT_OPTIONS")
+    PFB_MOUNT_OPTIONS = ENV.fetch("PFB_MOUNT_OPTIONS").split
+  else
+    PFB_MOUNT_OPTIONS = ["rw"]
+  end
 end
 VAGRANT_NETWORK_OPTIONS = { auto_correct: false }
 
@@ -27,8 +38,9 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 9213, host: ENV.fetch("PFB_WEBPACK_PROD_LR_PORT", 9213)
   config.vm.network :forwarded_port, guest: 5432, host: ENV.fetch("PFB_ANALYSIS_DB_PORT", 9214)
 
+
   config.vm.synced_folder "~/.aws", "/home/vagrant/.aws"
-  config.vm.synced_folder '.', ROOT_VM_DIR, type: "nfs", mount_options: VAGRANT_MOUNT_OPTIONS
+  config.vm.synced_folder '.', ROOT_VM_DIR, type: PFB_SHARED_FOLDER_TYPE, mount_options: PFB_MOUNT_OPTIONS
 
   config.vm.provision "shell" do |s|
     s.path = 'deployment/vagrant/cd_shared_folder.sh'
