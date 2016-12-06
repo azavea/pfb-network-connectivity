@@ -102,6 +102,7 @@ node,way   junction     text         linear
 way        lanes        text         linear
 way        lanes:forward    text     linear
 way        lanes:backward   text     linear
+way        lanes:both_ways  text     linear
 node,way   leisure      text         linear,polygon
 way        maxspeed     text         linear
 node,way   motorcar     text         linear
@@ -123,6 +124,10 @@ node,way   traffic_sign text         linear
 node       traffic_signals   text    linear
 way        traffic_signals:direction  text linear
 node,way   tunnel       text         linear
+way        turn:lanes   text         linear
+way        turn:lanes:both_ways text linear
+way        turn:lanes:backward  text linear
+way        turn:lanes:forward   text linear
 node,way   width        text         linear
 
 
