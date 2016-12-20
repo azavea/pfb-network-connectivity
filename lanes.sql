@@ -2,7 +2,8 @@
 -- INPUTS
 -- location: cambridge
 ----------------------------------------
-UPDATE  cambridge_ways SET ft_lanes = NULL, tf_lanes = NULL, cross_lanes;
+UPDATE  cambridge_ways
+SET     ft_lanes = NULL, tf_lanes = NULL, ft_cross_lanes = NULL, tf_cross_lanes = NULL;
 
 UPDATE  cambridge_ways
 SET     ft_lanes =
@@ -26,8 +27,8 @@ SET     ft_lanes =
                         THEN    substring(osm."lanes:forward" FROM '\d+')::INT
                     WHEN osm."lanes" IS NOT NULL AND one_way = 'ft'
                         THEN    substring(osm."lanes" FROM '\d+')::INT
-                    WHEN osm."lanes" IS NOT NULL AND one_way IS NULL
-                        THEN    ceil(substring(osm."lanes" FROM '\d+')::FLOAT)
+                    WHEN osm."lanes" IS NOT NULL
+                        THEN    ceil(substring(osm."lanes" FROM '\d+')::FLOAT / 2)
                     END,
         tf_lanes =
                     CASE    WHEN osm."turn:lanes:backward" IS NOT NULL
@@ -50,11 +51,11 @@ SET     ft_lanes =
                                 THEN    substring(osm."lanes:backward" FROM '\d+')::INT
                             WHEN osm."lanes" IS NOT NULL AND one_way = 'tf'
                                 THEN    substring(osm."lanes" FROM '\d+')::INT
-                            WHEN osm."lanes" IS NOT NULL AND one_way IS NULL
-                                THEN    ceil(substring(osm."lanes" FROM '\d+')::FLOAT)
+                            WHEN osm."lanes" IS NOT NULL
+                                THEN    ceil(substring(osm."lanes" FROM '\d+')::FLOAT / 2)
                             END,
-        cross_lanes =
-            CASE    WHEN osm."turn:lanes:forward" IS NOT NULL AND one_way = 'ft'
+        ft_cross_lanes =
+            CASE    WHEN osm."turn:lanes:forward" IS NOT NULL
                         THEN    array_length(
                                     array_remove(
                                         regexp_split_to_array(
@@ -65,39 +66,7 @@ SET     ft_lanes =
                                     ),
                                     1               -- only one dimension
                                 )
-                    WHEN osm."turn:lanes:backward" IS NOT NULL AND one_way = 'tf'
-                        THEN    array_length(
-                                    array_remove(
-                                        regexp_split_to_array(
-                                            osm."turn:lanes:backward",
-                                            '\|'
-                                        ),
-                                        'right'     -- don't consider right-only lanes for crossing stress
-                                    ),
-                                    1               -- only one dimension
-                                )
-                    WHEN osm."turn:lanes:forward" IS NOT NULL AND osm."turn:lanes:backward" IS NOT NULL
-                        THEN    array_length(
-                                    array_remove(
-                                        regexp_split_to_array(
-                                            osm."turn:lanes:forward",
-                                            '\|'
-                                        ),
-                                        'right'     -- don't consider right-only lanes for crossing stress
-                                    ),
-                                    1               -- only one dimension
-                                ) +
-                                array_length(
-                                    array_remove(
-                                        regexp_split_to_array(
-                                            osm."turn:lanes:backward",
-                                            '\|'
-                                        ),
-                                        'right'     -- don't consider right-only lanes for crossing stress
-                                    ),
-                                    1               -- only one dimension
-                                )
-                    WHEN osm."turn:lanes" IS NOT NULL
+                    WHEN osm."turn:lanes" IS NOT NULL AND one_way = 'ft'
                         THEN    array_length(
                                     array_remove(
                                         regexp_split_to_array(
@@ -108,16 +77,50 @@ SET     ft_lanes =
                                     ),
                                     1               -- only one dimension
                                 )
-                    WHEN osm."lanes:forward" IS NOT NULL AND one_way = 'ft'
+                    WHEN osm."lanes:forward" IS NOT NULL
                         THEN    substring(osm."lanes:forward" FROM '\d+')::INT
-                    WHEN osm."lanes:backward" IS NOT NULL AND one_way = 'tf'
-                        THEN    substring(osm."lanes:backward" FROM '\d+')::INT
-                    WHEN osm."lanes:forward" IS NOT NULL AND osm."lanes:backward" IS NOT NULL
-                        THEN    substring(osm."lanes:forward" FROM '\d+')::INT +
-                                substring(osm."lanes:backward" FROM '\d+')::INT
-                    WHEN osm."lanes" IS NOT NULL
+                    WHEN osm."lanes" IS NOT NULL AND one_way = 'ft'
                         THEN    substring(osm."lanes" FROM '\d+')::INT
+                    WHEN osm."lanes" IS NOT NULL
+                        THEN    ceil(substring(osm."lanes" FROM '\d+')::FLOAT / 2)
+                    END,
+        tf_cross_lanes =
+            CASE    WHEN osm."turn:lanes:backward" IS NOT NULL
+                        THEN    array_length(
+                                    array_remove(
+                                        regexp_split_to_array(
+                                            osm."turn:lanes:backward",
+                                            '\|'
+                                        ),
+                                        'right'     -- don't consider right-only lanes for crossing stress
+                                    ),
+                                    1               -- only one dimension
+                                )
+                    WHEN osm."turn:lanes" IS NOT NULL AND one_way = 'tf'
+                        THEN    array_length(
+                                    array_remove(
+                                        regexp_split_to_array(
+                                            osm."turn:lanes",
+                                            '\|'
+                                        ),
+                                        'right'     -- don't consider right-only lanes for crossing stress
+                                    ),
+                                    1               -- only one dimension
+                                )
+                    WHEN osm."lanes:backward" IS NOT NULL
+                        THEN    substring(osm."lanes:backward" FROM '\d+')::INT
+                    WHEN osm."lanes" IS NOT NULL AND one_way = 'tf'
+                        THEN    substring(osm."lanes" FROM '\d+')::INT
+                    WHEN osm."lanes" IS NOT NULL
+                        THEN    ceil(substring(osm."lanes" FROM '\d+')::FLOAT / 2)
+                    END,
+        twltl_cross_lanes =
+            CASE    WHEN osm."lanes:both_ways" IS NOT NULL THEN 1
+                    WHEN osm."turn:lanes:both_ways" IS NOT NULL THEN 1
+                    ELSE NULL
                     END
+FROM    cambridge_osm_full_line osm
+WHERE   cambridge_ways.osm_id = osm.osm_id;
 
 -- -- forward
 -- UPDATE  cambridge_ways
