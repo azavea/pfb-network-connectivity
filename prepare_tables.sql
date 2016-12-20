@@ -62,6 +62,7 @@ ALTER TABLE cambridge_ways ADD COLUMN ft_bike_infra TEXT;
 ALTER TABLE cambridge_ways ADD COLUMN tf_bike_infra TEXT;
 ALTER TABLE cambridge_ways ADD COLUMN ft_lanes INT;
 ALTER TABLE cambridge_ways ADD COLUMN tf_lanes INT;
+ALTER TABLE cambridge_ways ADD COLUMN cross_lanes INT;
 ALTER TABLE cambridge_ways ADD COLUMN ft_park INT;
 ALTER TABLE cambridge_ways ADD COLUMN tf_park INT;
 ALTER TABLE cambridge_ways ADD COLUMN ft_seg_stress INT;
