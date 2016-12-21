@@ -1,7 +1,7 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- proj: 2249
+-- proj: 3857
 ----------------------------------------
 
 -- add tdg_id field to roads
@@ -44,12 +44,12 @@ ALTER TABLE neighborhood_ways_intersections RENAME COLUMN id TO int_id;
 ALTER TABLE neighborhood_ways_intersections RENAME COLUMN the_geom TO geom;
 
 -- reproject
-ALTER TABLE neighborhood_ways ALTER COLUMN geom TYPE geometry(linestring,2249)
-USING ST_Transform(geom,2249);
-ALTER TABLE neighborhood_cycwys_ways ALTER COLUMN the_geom TYPE geometry(linestring,2249)
-USING ST_Transform(the_geom,2249);
-ALTER TABLE neighborhood_ways_intersections ALTER COLUMN geom TYPE geometry(point,2249)
-USING ST_Transform(geom,2249);
+ALTER TABLE neighborhood_ways ALTER COLUMN geom TYPE geometry(linestring,3857)
+USING ST_Transform(geom,3857);
+ALTER TABLE neighborhood_cycwys_ways ALTER COLUMN the_geom TYPE geometry(linestring,3857)
+USING ST_Transform(the_geom,3857);
+ALTER TABLE neighborhood_ways_intersections ALTER COLUMN geom TYPE geometry(point,3857)
+USING ST_Transform(geom,3857);
 
 -- add columns
 ALTER TABLE neighborhood_ways ADD COLUMN functional_class TEXT;

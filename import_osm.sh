@@ -126,7 +126,7 @@ osm2pgsql \
   --create \
   --database ${DBNAME} \
   --prefix ${OSMPREFIX}_osm_full \
-  --proj 2249 \
+  --proj 3857 \
   --style /home/spencer/dev/pfb/pfb.style \
   $OSMFILE
 

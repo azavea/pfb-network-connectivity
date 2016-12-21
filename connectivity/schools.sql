@@ -10,8 +10,8 @@ CREATE TABLE generated.neighborhood_schools (
     school_name TEXT,
     pop_low_stress INT,
     pop_high_stress INT,
-    geom_pt geometry(point,2249),
-    geom_poly geometry(polygon,2249)
+    geom_pt geometry(point,3857),
+    geom_poly geometry(polygon,3857)
 );
 CREATE INDEX sidx_neighborhood_schools_geompt ON neighborhood_schools USING GIST (geom_pt);
 CREATE INDEX sidx_neighborhood_schools_geomply ON neighborhood_schools USING GIST (geom_poly);

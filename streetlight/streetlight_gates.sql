@@ -1,12 +1,12 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- proj: 2249
+-- proj: 3857
 ----------------------------------------
 DROP TABLE IF EXISTS neighborhood_streetlight_gates;
 CREATE TABLE generated.neighborhood_streetlight_gates (
     id SERIAL PRIMARY KEY,
-    geom geometry(polygon,2249),
+    geom geometry(polygon,3857),
     road_id BIGINT,
     functional_class TEXT,
     direction INT,
@@ -28,9 +28,9 @@ SELECT  road_id,
                     ST_LineInterpolatePoint(geom,0.5),
                     ST_LineInterpolatePoint(geom,0.55)
                 ),
-                2249
+                3857
             ),
-            100,
+            30,                     --30 meters ~~ 100 ft
             'endcap=flat'
         ) AS geom,
         degrees(ST_Azimuth(
@@ -43,7 +43,7 @@ WHERE   functional_class IN ('primary','secondary','tertiary','residential')
 AND     EXISTS (
             SELECT  1
             FROM    neighborhood_zip_codes zips
-            WHERE   ST_DWithin(neighborhood_ways.geom,zips.geom,11000)
+            WHERE   ST_DWithin(neighborhood_ways.geom,zips.geom,3350)    --3350 meters ~~ 11000 ft
             AND     zips.zip_code = '02138'
         );
 

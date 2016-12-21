@@ -15,10 +15,10 @@ CREATE TABLE generated.neighborhood_census_block_roads (
 CREATE TEMP TABLE tmp_block_buffers (
     id INTEGER PRIMARY KEY,
     blockid10 VARCHAR(15),
-    geom geometry(multipolygon,2249)
+    geom geometry(multipolygon,3857)
 ) ON COMMIT DROP;
 INSERT INTO tmp_block_buffers
-SELECT id, blockid10, ST_Multi(ST_Buffer(geom,50)) FROM neighborhood_census_blocks;
+SELECT id, blockid10, ST_Multi(ST_Buffer(geom,15)) FROM neighborhood_census_blocks; --15 meters ~~ 50 ft
 CREATE INDEX tidx_neighborhood_blockgeoms ON tmp_block_buffers USING GIST (geom);
 ANALYZE tmp_block_buffers;
 
@@ -34,7 +34,7 @@ FROM    tmp_block_buffers blocks,
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_zip_codes zips
-            WHERE   ST_DWithin(zips.geom, blocks.geom, 11000)
+            WHERE   ST_DWithin(zips.geom, blocks.geom, 3350)    --3350 meters ~~ 11000 ft
             AND     zips.zip_code = '02138'
 )
 AND     ST_Intersects(blocks.geom,ways.geom)
@@ -42,7 +42,7 @@ AND     (
             ST_Contains(blocks.geom,ways.geom)
         OR  ST_Length(
                 ST_Intersection(blocks.geom,ways.geom)
-            ) > 100
+            ) > 30                                              --30 meters ~~ 100 ft
         );
 
 CREATE INDEX idx_neighborhood_censblkrds

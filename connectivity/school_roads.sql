@@ -22,11 +22,11 @@ FROM    neighborhood_schools schools,
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_zip_codes zips
-            WHERE   ST_DWithin(zips.geom, schools.geom_pt, 11000)
+            WHERE   ST_DWithin(zips.geom, schools.geom_pt, 3350)    --3350 meters ~~ 11000 ft
             AND     zips.zip_code = '02138'
         )
 AND     schools.geom_poly IS NOT NULL
-AND     ST_DWithin(schools.geom_poly,ways.geom,50);
+AND     ST_DWithin(schools.geom_poly,ways.geom,15);                 --15 meters ~~ 50 ft
 
 -- points take the nearest road
 INSERT INTO generated.neighborhood_school_roads (
@@ -44,7 +44,7 @@ FROM    neighborhood_schools schools
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_zip_codes zips
-            WHERE   ST_DWithin(zips.geom, schools.geom_pt, 11000)
+            WHERE   ST_DWithin(zips.geom, schools.geom_pt, 3350)    --3350 meters ~~ 11000 ft
             AND     zips.zip_code = '02138'
         )
 AND     NOT EXISTS (

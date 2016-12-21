@@ -29,7 +29,7 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(blocks.geom,zips.geom)
             AND     zips.zip_code = '02138'
         )
-AND     blocks.geom <#> schools.geom_pt < 11000
+AND     blocks.geom <#> schools.geom_pt < 3350          --3350 meters ~~ 11000 ft
 AND     EXISTS (
             SELECT  1
             FROM    neighborhood_census_block_roads source_br,
@@ -78,7 +78,7 @@ AND     (
             AND     target_school_id = target_sr.school_id
             AND     hs.base_road = source_br.road_id
             AND     hs.target_road = target_sr.road_id
-        ),11000) <= 1.3;
+        ),3350) <= 1.3;             --3350 meters ~~ 11000 ft
 
 -- stress index
 CREATE INDEX idx_neighborhood_blockschl_lstress ON neighborhood_connected_census_blocks_schools (low_stress);

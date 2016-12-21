@@ -7,7 +7,7 @@ DROP INDEX IF EXISTS idx_neighborhood_ways_path_id;
 
 CREATE TABLE generated.neighborhood_paths (
     path_id SERIAL PRIMARY KEY,
-    geom geometry(multilinestring,2249),
+    geom geometry(multilinestring,3857),
     path_length INTEGER,
     bbox_length INTEGER
 );
@@ -17,7 +17,7 @@ INSERT INTO neighborhood_paths (geom)
 SELECT  ST_CollectionExtract(
             ST_SetSRID(
                 unnest(ST_ClusterIntersecting(geom)),
-                2249
+                3857
             ),
             2   --linestrings
         )
@@ -36,7 +36,7 @@ SET     bbox_length = ST_Length(
                     ST_MakePoint(ST_XMin(geom), ST_YMin(geom)),
                     ST_MakePoint(ST_XMax(geom), ST_YMax(geom))
                 ),
-                2249
+                3857
             )
         );
 
@@ -58,7 +58,7 @@ FROM    neighborhood_paths paths
 WHERE   neighborhood_ways.functional_class = 'path'
 AND     neighborhood_ways.path_id IS NULL
 AND     ST_Intersects(neighborhood_ways.geom,paths.geom)
-AND     ST_CoveredBy(neighborhood_ways.geom,ST_Buffer(paths.geom,1));
+AND     ST_CoveredBy(neighborhood_ways.geom,ST_Buffer(paths.geom,0.3));
 
 -- set index
 CREATE INDEX idx_neighborhood_ways_path_id ON neighborhood_ways (path_id);

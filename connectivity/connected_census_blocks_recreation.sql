@@ -29,7 +29,7 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(blocks.geom,zips.geom)
             AND     zips.zip_code = '02138'
         )
-AND     blocks.geom <#> paths.geom < 11000
+AND     blocks.geom <#> paths.geom < 3350           --3350 meters ~~ 11000 feet
 AND     EXISTS (
             SELECT  1
             FROM    neighborhood_census_block_roads source_br,
@@ -39,13 +39,13 @@ AND     EXISTS (
             AND     paths.path_id = target_r.path_id
             AND     hs.base_road = source_br.road_id
             AND     hs.target_road = target_r.road_id
-            AND     paths.path_length > 15840           --path at least 3 mi long
-            AND     paths.bbox_length > 10560           --extent of path at least 2 mi long
+            AND     paths.path_length > 4500            --path at least 4.5 km long
+            AND     paths.bbox_length > 3000            --extent of path at least 3 km long
         );
 
 
 
-        
+
 
 -- block pair index
 CREATE INDEX idx_neighborhood_blockschoolpairs
@@ -84,7 +84,7 @@ AND     (
             AND     target_school_id = target_sr.school_id
             AND     hs.base_road = source_br.road_id
             AND     hs.target_road = target_sr.road_id
-        ),11000) <= 1.3;
+        ),3350) <= 1.3;     --3350 meters ~~ 11000 ft
 
 -- stress index
 CREATE INDEX idx_neighborhood_blockschl_lstress ON neighborhood_connected_census_blocks_recreation (low_stress);

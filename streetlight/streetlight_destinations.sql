@@ -1,7 +1,7 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- proj: 2249
+-- proj: 3857
 ----------------------------------------
 DROP TABLE IF EXISTS neighborhood_streetlight_destinations;
 CREATE TABLE generated.neighborhood_streetlight_destinations (
