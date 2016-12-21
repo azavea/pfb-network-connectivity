@@ -1,10 +1,10 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
-UPDATE  received.cambridge_ways_intersections
+UPDATE  received.neighborhood_ways_intersections
 SET     legs = (
             SELECT  COUNT(road_id)
-            FROM    cambridge_ways
-            WHERE   cambridge_ways_intersections.int_id IN (intersection_from,intersection_to)
+            FROM    neighborhood_ways
+            WHERE   neighborhood_ways_intersections.int_id IN (intersection_from,intersection_to)
 );

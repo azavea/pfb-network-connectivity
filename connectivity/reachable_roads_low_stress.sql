@@ -1,18 +1,18 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 -- maximum network distsance: 10560 ft
 ----------------------------------------
-DROP TABLE IF EXISTS generated.cambridge_reachable_roads_low_stress;
+DROP TABLE IF EXISTS generated.neighborhood_reachable_roads_low_stress;
 
-CREATE TABLE generated.cambridge_reachable_roads_low_stress (
+CREATE TABLE generated.neighborhood_reachable_roads_low_stress (
     id SERIAL PRIMARY KEY,
     base_road INT,
     target_road INT,
     total_cost FLOAT
 );
 
-INSERT INTO generated.cambridge_reachable_roads_low_stress (
+INSERT INTO generated.neighborhood_reachable_roads_low_stress (
     base_road,
     target_road,
     total_cost
@@ -20,15 +20,15 @@ INSERT INTO generated.cambridge_reachable_roads_low_stress (
 SELECT  r1.road_id,
         v2.road_id,
         sheds.agg_cost
-FROM    cambridge_ways r1,
-        cambridge_ways_net_vert v1,
-        cambridge_ways_net_vert v2,
+FROM    neighborhood_ways r1,
+        neighborhood_ways_net_vert v1,
+        neighborhood_ways_net_vert v2,
         pgr_drivingDistance('
             SELECT  link_id AS id,
                     source_vert AS source,
                     target_vert AS target,
                     link_cost AS cost
-            FROM    cambridge_ways_net_link
+            FROM    neighborhood_ways_net_link
             WHERE   link_stress = 1',
             v1.vert_id,
             10560,
@@ -36,13 +36,13 @@ FROM    cambridge_ways r1,
         ) sheds
 WHERE   EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
+            FROM    neighborhood_zip_codes zips
             WHERE   ST_Intersects(zips.geom,r1.geom)
             AND     zips.zip_code = '02138'
 )
 AND     r1.road_id = v1.road_id
 AND     v2.vert_id = sheds.node;
 
-CREATE INDEX idx_cambridge_rchblrdslowstrss_b ON generated.cambridge_reachable_roads_low_stress (base_road);
-CREATE INDEX idx_cambridge_rchblrdslowstrss_t ON generated.cambridge_reachable_roads_low_stress (target_road);
-ANALYZE generated.cambridge_reachable_roads_low_stress (base_road,target_road);
+CREATE INDEX idx_neighborhood_rchblrdslowstrss_b ON generated.neighborhood_reachable_roads_low_stress (base_road);
+CREATE INDEX idx_neighborhood_rchblrdslowstrss_t ON generated.neighborhood_reachable_roads_low_stress (target_road);
+ANALYZE generated.neighborhood_reachable_roads_low_stress (base_road,target_road);

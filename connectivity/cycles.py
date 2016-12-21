@@ -2,7 +2,7 @@ import nxutils
 import networkx as nx
 
 zipCode = '02138'
-prefix = 'cambridge'
+prefix = 'neighborhood'
 
 n = nxutils.NXUtils(prefix, zipCode)
 n.buildNetwork()

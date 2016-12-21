@@ -1,10 +1,10 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 -- proj: 2249
 ----------------------------------------
-DROP TABLE IF EXISTS cambridge_streetlight_gates;
-CREATE TABLE generated.cambridge_streetlight_gates (
+DROP TABLE IF EXISTS neighborhood_streetlight_gates;
+CREATE TABLE generated.neighborhood_streetlight_gates (
     id SERIAL PRIMARY KEY,
     geom geometry(polygon,2249),
     road_id BIGINT,
@@ -13,7 +13,7 @@ CREATE TABLE generated.cambridge_streetlight_gates (
     is_pass INT
 );
 
-INSERT INTO cambridge_streetlight_gates (
+INSERT INTO neighborhood_streetlight_gates (
     road_id,
     functional_class,
     geom,
@@ -38,12 +38,12 @@ SELECT  road_id,
             ST_LineInterpolatePoint(geom,0.55)
         )),
         1
-FROM    cambridge_ways
+FROM    neighborhood_ways
 WHERE   functional_class IN ('primary','secondary','tertiary','residential')
 AND     EXISTS (
             SELECT  1
-            FROM    cambridge_zip_codes zips
-            WHERE   ST_DWithin(cambridge_ways.geom,zips.geom,11000)
+            FROM    neighborhood_zip_codes zips
+            WHERE   ST_DWithin(neighborhood_ways.geom,zips.geom,11000)
             AND     zips.zip_code = '02138'
         );
 
@@ -53,4 +53,4 @@ SELECT  road_id AS id,
         is_pass,
         direction,
         geom
-FROM    cambridge_streetlight_gates;
+FROM    neighborhood_streetlight_gates;

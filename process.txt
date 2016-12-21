@@ -31,8 +31,8 @@ import_osm.sh (runs the following automatically)
   - stress_lesser_ints.sql
   - stress_link_ints.sql
 
-SELECT tdgMakeNetwork('cambridge_ways');
-SELECT tdgNetworkCostFromDistance('cambridge_ways');
+SELECT tdgMakeNetwork('neighborhood_ways');
+SELECT tdgNetworkCostFromDistance('neighborhood_ways');
 
 (import census blocks with pop from census blkpophu dataset)
 census_blocks.sql

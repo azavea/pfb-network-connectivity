@@ -1,19 +1,19 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
-UPDATE  cambridge_ways SET ft_int_stress = 1, tf_int_stress = 1
+UPDATE  neighborhood_ways SET ft_int_stress = 1, tf_int_stress = 1
 WHERE   functional_class = 'secondary';
 
 -- ft
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     ft_int_stress = 3
 WHERE   functional_class = 'secondary'
 AND     EXISTS (
             SELECT  1
-            FROM    cambridge_ways w
-            WHERE   cambridge_ways.intersection_to IN (w.intersection_to,w.intersection_from)
-            AND     COALESCE(cambridge_ways.name,'a') != COALESCE(w.name,'b')
+            FROM    neighborhood_ways w
+            WHERE   neighborhood_ways.intersection_to IN (w.intersection_to,w.intersection_from)
+            AND     COALESCE(neighborhood_ways.name,'a') != COALESCE(w.name,'b')
             AND     CASE
                     WHEN w.functional_class IN ('motorway','trunk','primary')
                         THEN    CASE
@@ -48,14 +48,14 @@ AND     EXISTS (
 );
 
 -- tf
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     tf_int_stress = 3
 WHERE   functional_class = 'secondary'
 AND     EXISTS (
             SELECT  1
-            FROM    cambridge_ways w
-            WHERE   cambridge_ways.intersection_from IN (w.intersection_to,w.intersection_from)
-            AND     COALESCE(cambridge_ways.name,'a') != COALESCE(w.name,'b')
+            FROM    neighborhood_ways w
+            WHERE   neighborhood_ways.intersection_from IN (w.intersection_to,w.intersection_from)
+            AND     COALESCE(neighborhood_ways.name,'a') != COALESCE(w.name,'b')
             AND     CASE
                     WHEN w.functional_class IN ('motorway','trunk','primary')
                         THEN    CASE

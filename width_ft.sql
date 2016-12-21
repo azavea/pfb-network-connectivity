@@ -1,31 +1,31 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
-UPDATE  cambridge_ways SET width_ft = NULL;
+UPDATE  neighborhood_ways SET width_ft = NULL;
 
 -- feet
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     width_ft = substring(osm.width from '\d+\.?\d?\d?')::FLOAT
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.width IS NOT NULL
 AND     osm.width LIKE '% ft';
 
 -- meters
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     width_ft = 3.28084 * substring(osm.width from '\d+\.?\d?\d?')::FLOAT
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.width IS NOT NULL
 AND     osm.width LIKE '% m';
 
 -- no units (default=meters)
 -- N.B. we weed out anything more than 20, since that's likely either bogus
 -- or not in meters
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     width_ft = 3.28084 * substring(osm.width from '\d+\.?\d?\d?')::FLOAT
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.width IS NOT NULL
 AND     substring(osm.width from '\d+\.?\d?\d?')::FLOAT < 20;

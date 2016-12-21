@@ -1,17 +1,17 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
-UPDATE  cambridge_ways SET ft_bike_infra = NULL, tf_bike_infra = NULL;
+UPDATE  neighborhood_ways SET ft_bike_infra = NULL, tf_bike_infra = NULL;
 
 ----------------------
 -- ft direction
 ----------------------
 -- sharrow
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     ft_bike_infra = 'sharrow'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND (
             osm."cycleway:both" = 'shared_lane'
         OR  (COALESCE(one_way_car,'ft') = 'ft' AND osm.cycleway = 'shared_lane')
@@ -20,10 +20,10 @@ AND (
 );
 
 -- lane
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     ft_bike_infra = 'lane'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND (
             osm."cycleway:both" = 'lane'
         OR  (COALESCE(one_way_car,'ft') = 'ft' AND osm.cycleway = 'lane')
@@ -34,10 +34,10 @@ AND (
 );
 
 -- buffered lane
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     ft_bike_infra = 'buffered_lane'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND (
             osm."cycleway:both" = 'buffered_lane'
         OR  (COALESCE(one_way_car,'ft') = 'ft' AND osm.cycleway = 'buffered_lane')
@@ -53,10 +53,10 @@ AND (
 );
 
 -- track
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     ft_bike_infra = 'track'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND (
             osm."cycleway:both" = 'track'
         OR  (osm."cycleway:right" = 'track' AND osm."oneway:bicycle" = 'no')
@@ -74,10 +74,10 @@ AND (
 -- tf direction
 ----------------------
 -- sharrow
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     tf_bike_infra = 'sharrow'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND (
             osm."cycleway:both" = 'shared_lane'
         OR  (COALESCE(one_way_car,'tf') = 'tf' AND osm.cycleway = 'shared_lane')
@@ -86,10 +86,10 @@ AND (
 );
 
 -- lane
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     tf_bike_infra = 'lane'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND (
             osm."cycleway:both" = 'lane'
         OR  (COALESCE(one_way_car,'tf') = 'tf' AND osm.cycleway = 'lane')
@@ -100,10 +100,10 @@ AND (
 );
 
 -- buffered lane
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     tf_bike_infra = 'buffered_lane'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND (
             osm."cycleway:both" = 'buffered_lane'
         OR  (COALESCE(one_way_car,'tf') = 'tf' AND osm.cycleway = 'buffered_lane')
@@ -119,10 +119,10 @@ AND (
 );
 
 -- track
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     tf_bike_infra = 'track'
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND (
             osm."cycleway:both" = 'track'
         OR  (osm."cycleway:left" = 'track' AND osm."oneway:bicycle" = 'no')
@@ -136,17 +136,17 @@ AND (
 );
 
 -- update one_way based on bike infra
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     one_way = NULL;
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     one_way = one_way_car
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     one_way_car = 'ft'
 AND     NOT (tf_bike_infra IS NOT NULL OR COALESCE(osm."oneway:bicycle",'yes') = 'no');
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     one_way = one_way_car
-FROM    cambridge_osm_full_line osm
-WHERE   cambridge_ways.osm_id = osm.osm_id
+FROM    neighborhood_osm_full_line osm
+WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     one_way_car = 'tf'
 AND     NOT (ft_bike_infra IS NOT NULL OR COALESCE(osm."oneway:bicycle",'yes') = 'no');

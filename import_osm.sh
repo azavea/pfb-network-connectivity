@@ -3,8 +3,8 @@
 # vars
 DBHOST='192.168.1.144'
 DBNAME='people_for_bikes'
-OSMPREFIX='cambridge'
-OSMFILE='/home/spencer/gis/cambridge.osm'
+OSMPREFIX='neighborhood'
+OSMFILE='/home/spencer/gis/neighborhood.osm'
 
 # drop old tables
 echo 'Dropping old tables'

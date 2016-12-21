@@ -1,6 +1,6 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 -- data downloaded from http://lehd.ces.census.gov/data/
 -- or http://lehd.ces.census.gov/data/lodes/LODES7/
 --     "ma_od_main_JT00_2014".csv
@@ -24,37 +24,37 @@ ANALYZE "ma_od_aux_JT00_2014" (w_geocode);
 ANALYZE "ma_od_main_JT00_2014" (w_geocode);
 
 -- create combined table
-CREATE TABLE generated.cambridge_census_block_jobs (
+CREATE TABLE generated.neighborhood_census_block_jobs (
     id SERIAL PRIMARY KEY,
     blockid10 VARCHAR(15),
     jobs INT
 );
 
 -- add blocks of interest
-INSERT INTO generated.cambridge_census_block_jobs (blockid10)
+INSERT INTO generated.neighborhood_census_block_jobs (blockid10)
 SELECT  blocks.blockid10
-FROM    cambridge_census_blocks blocks;
+FROM    neighborhood_census_blocks blocks;
 
 -- add main data
-UPDATE  generated.cambridge_census_block_jobs
+UPDATE  generated.neighborhood_census_block_jobs
 SET     jobs = COALESCE((
             SELECT  SUM(j."S000")
             FROM    "ma_od_main_JT00_2014" j
-            WHERE   j.w_geocode = cambridge_census_block_jobs.blockid10
+            WHERE   j.w_geocode = neighborhood_census_block_jobs.blockid10
         ),0);
 
 -- add aux data
-UPDATE  generated.cambridge_census_block_jobs
+UPDATE  generated.neighborhood_census_block_jobs
 SET     jobs =  jobs +
                 COALESCE((
                     SELECT  SUM(j."S000")
                     FROM    "ma_od_aux_JT00_2014" j
-                    WHERE   j.w_geocode = cambridge_census_block_jobs.blockid10
+                    WHERE   j.w_geocode = neighborhood_census_block_jobs.blockid10
         ),0);
 
 -- indexes
-CREATE INDEX idx_cambridge_blkjobs ON cambridge_census_block_jobs (blockid10);
-ANALYZE cambridge_census_block_jobs (blockid10);
+CREATE INDEX idx_neighborhood_blkjobs ON neighborhood_census_block_jobs (blockid10);
+ANALYZE neighborhood_census_block_jobs (blockid10);
 
 -- drop import tables
 DROP TABLE IF EXISTS "ma_od_aux_JT00_2014";

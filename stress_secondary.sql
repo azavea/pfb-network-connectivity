@@ -1,12 +1,12 @@
 ----------------------------------------
 -- INPUTS
--- location: cambridge
+-- location: neighborhood
 ----------------------------------------
-UPDATE  cambridge_ways SET ft_seg_stress = NULL, tf_seg_stress = NULL
+UPDATE  neighborhood_ways SET ft_seg_stress = NULL, tf_seg_stress = NULL
 WHERE   functional_class IN ('secondary','secondary_link');
 
 -- ft direction
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     ft_seg_stress =
             CASE
             WHEN ft_bike_infra = 'track' THEN 1
@@ -64,7 +64,7 @@ SET     ft_seg_stress =
 WHERE   functional_class IN ('secondary','secondary_link');
 
 -- tf direction
-UPDATE  cambridge_ways
+UPDATE  neighborhood_ways
 SET     tf_seg_stress =
             CASE
             WHEN tf_bike_infra = 'track' THEN 1
