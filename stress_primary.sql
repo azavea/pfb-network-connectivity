@@ -14,21 +14,30 @@ SET     ft_seg_stress =
                     THEN    CASE
                             WHEN speed_limit = 35 THEN  CASE
                                                         WHEN ft_lanes = 1 THEN 2
-                                                        ELSE 3
+                                                        ELSE 3  -- assume more than 1 lane
                                                         END
                             WHEN speed_limit <= 30 THEN CASE
                                                         WHEN ft_lanes = 1 THEN 1
-                                                        ELSE 3
+                                                        ELSE 2  -- assume more than 1 lane
                                                         END
-                            ELSE 3
+                            ELSE 3    -- assume higher than 35
                             END
             WHEN ft_bike_infra = 'lane'
                     THEN    CASE
-                            WHEN speed_limit <= 25
+                            WHEN speed_limit <= 20 THEN CASE
+                                                        WHEN ft_lanes = 1 THEN
+                                                                CASE
+                                                                WHEN ft_park = 0 THEN 1
+                                                                ELSE 2  -- assume parking
+                                                                END
+                                                        WHEN ft_lanes > 2 THEN 3
+                                                        ELSE    2       -- assume 2 lanes
+                                                        END
+                            WHEN speed_limit = 25
                                     THEN    CASE
                                             WHEN ft_lanes = 1 THEN  CASE
                                                                     WHEN ft_park = 0 THEN 1
-                                                                    ELSE 2
+                                                                    ELSE 2  -- assume parking
                                                                     END
                                             WHEN ft_lanes > 2 THEN  3
                                             ELSE    CASE
@@ -39,8 +48,8 @@ SET     ft_seg_stress =
                             WHEN speed_limit = 30 THEN  CASE
                                                         WHEN ft_lanes = 1 THEN
                                                                 CASE
-                                                                WHEN ft_park = 0 THEN 1
-                                                                ELSE 2
+                                                                WHEN ft_park = 0 THEN 2
+                                                                ELSE 3
                                                                 END
                                                         ELSE 3
                                                         END
@@ -59,21 +68,30 @@ SET     tf_seg_stress =
                     THEN    CASE
                             WHEN speed_limit = 35 THEN  CASE
                                                         WHEN tf_lanes = 1 THEN 2
-                                                        ELSE 3
+                                                        ELSE 3  -- assume more than 1 lane
                                                         END
                             WHEN speed_limit <= 30 THEN CASE
                                                         WHEN tf_lanes = 1 THEN 1
-                                                        ELSE 3
+                                                        ELSE 2  -- assume more than 1 lane
                                                         END
-                            ELSE 3
+                            ELSE 3    -- assume higher than 35
                             END
             WHEN tf_bike_infra = 'lane'
                     THEN    CASE
-                            WHEN speed_limit <= 25
+                            WHEN speed_limit <= 20 THEN CASE
+                                                        WHEN tf_lanes = 1 THEN
+                                                                CASE
+                                                                WHEN tf_park = 0 THEN 1
+                                                                ELSE 2  -- assume parking
+                                                                END
+                                                        WHEN tf_lanes > 2 THEN 3
+                                                        ELSE    2       -- assume 2 lanes
+                                                        END
+                            WHEN speed_limit = 25
                                     THEN    CASE
                                             WHEN tf_lanes = 1 THEN  CASE
                                                                     WHEN tf_park = 0 THEN 1
-                                                                    ELSE 2
+                                                                    ELSE 2  -- assume parking
                                                                     END
                                             WHEN tf_lanes > 2 THEN  3
                                             ELSE    CASE
@@ -84,8 +102,8 @@ SET     tf_seg_stress =
                             WHEN speed_limit = 30 THEN  CASE
                                                         WHEN tf_lanes = 1 THEN
                                                                 CASE
-                                                                WHEN tf_park = 0 THEN 1
-                                                                ELSE 2
+                                                                WHEN tf_park = 0 THEN 2
+                                                                ELSE 3
                                                                 END
                                                         ELSE 3
                                                         END

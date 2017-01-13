@@ -5,10 +5,10 @@
 import_osm.sh (runs the following automatically)
   - prepare_tables.sql
   - one_way.sql
+  - width_ft.sql
   - functional_class.sql
   - paths.sql
   - speed_limit.sql
-  - width_ft.sql
   - lanes.sql
   - park.sql
   - bike_infra.sql
