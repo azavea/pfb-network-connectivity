@@ -10,7 +10,7 @@ postgresql_database_host: "127.0.0.1"
 
 # azavea.postgresql
 postgresql_version: "9.6"
-postgresql_package_version: "9.6.*-1.pgdg14.04+1"
+postgresql_package_version: "9.6.*-2.pgdg14.04+1"
 postgresql_listen_addresses: '*'
 # These mappings allow the Toole analysis scripts to work as is without requiring a password
 postgresql_hba_mapping:
@@ -25,7 +25,7 @@ postgresql_support_repository_channel: "9.6"
 
 # azavea.postgis
 postgis_version: "2.3"
-postgis_package_version: "2.3.0+dfsg-2.pgdg14.04+1"
+postgis_package_version: "2.3.1+dfsg-1.pgdg14.04+1"
 
 # azavea.docker
 # 1.11.* to match AWS ECS
