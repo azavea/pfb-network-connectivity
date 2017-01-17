@@ -55,8 +55,8 @@ Copy the 'neighborhood_boundary_02138.zip' file on fileshare and unzip to `./dat
 
 Run:
 ```
-NB_INPUT_SRID=2249 NB_OUTPUT_SRID=2249 ./pfb-analysis/import.sh /vagrant/data/neighborhood_boundary.shp ma 25
-NB_OUTPUT_SRID=2249 ./pfb-analysis/run_connectivity.sh
+NB_INPUT_SRID=2249 NB_OUTPUT_SRID=2249 NB_BOUNDARY_BUFFER=11000 ./pfb-analysis/import.sh /vagrant/data/neighborhood_boundary.shp ma 25
+NB_OUTPUT_SRID=2249 NB_BOUNDARY_BUFFER=11000 ./pfb-analysis/run_connectivity.sh
 ```
 
 This will take up to 1hr, so just let it work. Consider piping script output to a file and running in
