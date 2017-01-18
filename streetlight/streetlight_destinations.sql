@@ -1,7 +1,7 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- proj: 3857
+-- Prepares a table to be exported to StreetLightData
 ----------------------------------------
 DROP TABLE IF EXISTS neighborhood_streetlight_destinations;
 CREATE TABLE generated.neighborhood_streetlight_destinations (
@@ -20,9 +20,9 @@ INSERT INTO neighborhood_streetlight_destinations (
 )
 SELECT  blocks.blockid10,
         blocks.blockid10,
+        -- Transform to 4326, this is what StreetLightData expects
         ST_Transform(blocks.geom,4326),
         0
 FROM    neighborhood_census_blocks blocks,
-        neighborhood_zip_codes zips
-WHERE   zips.zip_code = '02138'
-AND     ST_Intersects(blocks.geom,zips.geom);
+        neighborhood_boundary b
+WHERE   ST_Intersects(blocks.geom,b.geom);
