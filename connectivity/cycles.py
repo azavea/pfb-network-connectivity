@@ -1,8 +1,10 @@
 import nxutils
 import networkx as nx
 
+# TODO: Update this to remove dependency on static zipcode
+#       if we ever need to use this code
 zipCode = '02138'
-prefix = 'cambridge'
+prefix = 'neighborhood'
 
 n = nxutils.NXUtils(prefix, zipCode)
 n.buildNetwork()
