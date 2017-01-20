@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0")
+Run application tests
+"
+}
+DIR="$(dirname "$0")"
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+    	echo "running python tests..."
+    	docker-compose -f "${DIR}/../docker-compose.yml" run \
+    		--rm --entrypoint "python manage.py test --noinput" django
+    fi
+fi
+
+

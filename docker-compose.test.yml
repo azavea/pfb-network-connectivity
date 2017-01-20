@@ -1,0 +1,13 @@
+version: '2'
+services:
+  nginx:
+    image: pfb-nginx:${GIT_COMMIT}
+    build:
+      context: ./src/nginx
+      dockerfile: Dockerfile
+
+  django:
+    image: pfb-django:${GIT_COMMIT}
+    build:
+      context: ./src/django
+      dockerfile: Dockerfile
