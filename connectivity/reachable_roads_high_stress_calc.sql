@@ -3,15 +3,6 @@
 -- location: neighborhood
 -- maximum network distsance: 10560 ft
 ----------------------------------------
-DROP TABLE IF EXISTS generated.neighborhood_reachable_roads_high_stress;
-
-CREATE TABLE generated.neighborhood_reachable_roads_high_stress (
-    id SERIAL PRIMARY KEY,
-    base_road INT,
-    target_road INT,
-    total_cost FLOAT
-);
-
 INSERT INTO generated.neighborhood_reachable_roads_high_stress (
     base_road,
     target_road,
@@ -33,7 +24,9 @@ FROM    neighborhood_ways r1,
             10560,
             directed := true
         ) sheds
-WHERE   EXISTS (
+WHERE r1.road_id % :thread_num = :thread_no
+AND
+EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
             WHERE   ST_Intersects(b.geom,r1.geom)
@@ -41,6 +34,3 @@ WHERE   EXISTS (
 AND     r1.road_id = v1.road_id
 AND     v2.vert_id = sheds.node;
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_neighborhood_rchblrdshistrss_b ON generated.neighborhood_reachable_roads_high_stress (base_road, target_road);
-CREATE INDEX IF NOT EXISTS idx_neighborhood_rchblrdshistrss_t ON generated.neighborhood_reachable_roads_high_stress (target_road);
-ANALYZE generated.neighborhood_reachable_roads_high_stress;
