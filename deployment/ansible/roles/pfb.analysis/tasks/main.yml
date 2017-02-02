@@ -6,6 +6,9 @@
 - name: Install unzip package (used by analysis importers)
   apt: name=unzip
 
+- name: Install parallel package (used by analysis)
+  apt: name=parallel
+
 - name: Create PostgreSQL super user
   become_user: postgres
   postgresql_user: name="{{ postgresql_database_user }}"
