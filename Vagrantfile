@@ -56,6 +56,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :virtualbox do |v|
     v.memory = ENV.fetch("PFB_MEM", 4096)
-    v.cpus = ENV.fetch("PFB_CPUS", 4)
+    v.cpus = ENV.fetch("PFB_CPUS", 8)
   end
 end
