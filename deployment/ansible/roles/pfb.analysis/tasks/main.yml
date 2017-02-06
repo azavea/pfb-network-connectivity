@@ -9,6 +9,9 @@
 - name: Install parallel package (used by analysis)
   apt: name=parallel
 
+- name: Install python-gdal (used to autodetect SRID for import)
+  apt: name=python-gdal
+
 - name: Create PostgreSQL super user
   become_user: postgres
   postgresql_user: name="{{ postgresql_database_user }}"
