@@ -13,6 +13,7 @@ services:
       - DJANGO_ENV=development
       - DJANGO_SECRET_KEY=secret
       - DJANGO_LOG_LEVEL=INFO
+      - AWS_PROFILE=pfb
     volumes:
       - ./src/django:/usr/src
       - ./src/nginx/srv/dist:/static/

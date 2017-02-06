@@ -26,6 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
+AWS_REGION = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
 
 SECRET_KEY = os.getenv('PFB_SECRET_KEY', 'SECRET_KEY_R$^3Pc135NUbst4OIt$Kzrd5zqLo$1h4')
@@ -33,7 +34,7 @@ if DJANGO_ENV not in ('development', 'testing') and SECRET_KEY.startswith('SECRE
     raise ImproperlyConfigured('Non-development environments require that env.PFB_SECRET_KEY ' +
                                'be set')
 
-DEV_USER = os.getenv('DEV_USER')
+DEV_USER = os.getenv('DEV_USER', None)
 
 DEBUG = DJANGO_ENV == 'development'
 
@@ -64,12 +65,15 @@ INSTALLED_APPS = [
     # 3rd party
     'django_extensions',
     'django_filters',
+    'localflavor',
     'rest_framework',
     'rest_framework.authtoken',
+    'storages',
     'watchman',
 
-    # project apps
+    # Application
     'pfb_network_connectivity',
+    'pfb_analysis',
     'users',
 ]
 
@@ -243,3 +247,11 @@ RESET_TOKEN_LENGTH = timedelta(hours=24)
 RESET_SALT = os.getenv('REPOSITORY_RESET_SALT', 'passwordreset')
 USER_EMAIL_SUBJECT = os.getenv('REPOSITORY_RESET_EMAIL_SUBJECT', 'Your PFB Account')
 RESET_EMAIL_FROM = os.getenv('REPOSITORY_RESET_EMAIL_FROM', DEFAULT_FROM_EMAIL)
+
+# Django Storages
+# https://github.com/jschneier/django-storages
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_AUTO_CREATE_BUCKET = True
+AWS_STORAGE_BUCKET_NAME = os.getenv('PFB_S3_STORAGE_BUCKET',
+                                    '{0}-pfb-storage-{1}'.format(DEV_USER, AWS_REGION))

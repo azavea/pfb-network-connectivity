@@ -1,6 +1,9 @@
 djangorestframework==3.5.3
 django-filter==1.0.1
-boto==2.45.0
+boto3==1.4.4
 django-extensions==1.7.6
+django-localflavor==1.4.1
+django-storages==1.5.2
 django-watchman==0.11.1
 requests==2.13.0
+us==0.9.1
