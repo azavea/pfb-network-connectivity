@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 if [[ -n "${PFB_DEBUG}" ]]; then
     set -x
 fi
@@ -24,6 +22,11 @@ then
     usage
 else
     SRID=`python ${DIR}/detect_utm_zone.py "${1}"`
-    echo "Detected SRID ${SRID}"
-    export NB_OUTPUT_SRID=$SRID
+    if [ $? -eq 0 ]; then
+        echo "Detected SRID ${SRID}"
+        export NB_OUTPUT_SRID=$SRID
+    else
+        echo "Failed to determine UTM Zone SRID"
+        unset NB_OUTPUT_SRID
+    fi
 fi
