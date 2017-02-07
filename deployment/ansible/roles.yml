@@ -5,7 +5,7 @@
 - src: azavea.git
   version: 0.1.0
 - src: azavea.pip
-  version: 0.2.0
+  version: 1.0.0
 - src: azavea.postgresql
   version: 0.4.0
 - src: azavea.postgresql-support
