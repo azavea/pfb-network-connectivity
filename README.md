@@ -18,7 +18,7 @@ docker run \
     -e NB_INPUT_SRID=2249 \
     -e NB_OUTPUT_SRID=2249 \
     -e NB_BOUNDARY_BUFFER=11000 \
-    -v /home/user/projects/pfb-network-connectivity/data/:/data/ \
+    -v /vagrant/data/:/data/ \
     pfb
 ```
 
