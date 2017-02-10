@@ -9,14 +9,16 @@ Requirements:
 - VirtualBox 4.3+
 - Ansible 2.0+
 
-Run `./script/setup` to install project dependencies and prepare the development environment.
+Run `./script/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
+```
+vagrant ssh
+```
 
 At this point, if you only intend to run the 'Bike Network Analysis', skip directly to [Running the Analysis](#running-the-analysis)
 
-Then, SSH into the VM and start the application containers:
+To start the application containers:
 ```
-> vagrant ssh
-> ./scripts/server
+./scripts/server
 ```
 
 In order to use the API, you'll need to create a superuser in development by following the prompts:
@@ -51,12 +53,23 @@ In order to use the API, you'll need to create a superuser in development by fol
 
 ## Running the Analysis
 
-Copy the 'neighborhood_boundary_02138.zip' file on fileshare and unzip to `./data/neighborhood_boundary.shp`
+Copy the 'neighborhood_boundary_02138.zip' file on fileshare and unzip to `./data/neighborhood_boundary.shp`.
+
+In this example, we configure the analysis to be run for Cambridge MA.
 
 Run:
 ```
-NB_INPUT_SRID=2249 NB_OUTPUT_SRID=2249 NB_BOUNDARY_BUFFER=11000 ./pfb-analysis/import.sh /vagrant/data/neighborhood_boundary.shp ma 25
-NB_OUTPUT_SRID=2249 NB_BOUNDARY_BUFFER=11000 ./pfb-analysis/run_connectivity.sh
+docker build -t pfb .
+
+docker run \
+    -e PFB_SHPFILE=/data/neighborhood_boundary.shp \
+    -e PFB_STATE=ma \
+    -e PFB_STATE_FIPS=25 \
+    -e NB_INPUT_SRID=2249 \
+    -e NB_OUTPUT_SRID=2249 \
+    -e NB_BOUNDARY_BUFFER=11000 \
+    -v /vagrant/data/:/data/ \
+    pfb
 ```
 
 This will take up to 1hr, so just let it work. Consider piping script output to a file and running in
@@ -64,16 +77,8 @@ a screen/tmux session.
 
 #### Re-running the analysis
 
-If you want to run a different neighborhood, do the following:
-- `vagrant ssh -c 'sudo -u postgres psql -c "DROP DATABASE pfb;"'`
-- Place new datasets at the location described above in [Getting Started](#getting-started)
-- `vagrant provision` to create a fresh pfb database
-- Re-run `./pfb-analysis/import.sh`, passing arguments via ENV as described above
-- Re-run `./pfb-analysis/run_connectivity.sh`, passing arguments via ENV as described above
-
-If you want to run the same neighborhood without changing any of the import data, i.e. to test
-changes to the analysis, simply re-run `./pfb-analysis/run_connectivity.sh`. The script is
-idempotent.
+If you want to run a different neighborhood, simply rerun the `docker run` command with the
+appropriate arguments, which are described below, in [Importing other neighborhoods](#importing-other-neighborhoods).
 
 
 ## Importing other neighborhoods
@@ -90,14 +95,13 @@ You will also need to know the following:
 
 Now run:
 ```
-
-# Additional arguments found in usage strings for scripts called by import.sh
-NB_INPUT_SRID='<input srid>' NB_OUTPUT_SRID='<output srid>' ./pfb-analysis/import.sh \
-    '<path to boundary file>' '<state abbrev>' '<state fips>'
-
+docker run \
+    -e PFB_SHPFILE=<path_to_boundary_shp> \
+    -e PFB_STATE=<state abbrev> \
+    -e PFB_STATE_FIPS=<state fips> \
+    -e NB_INPUT_SRID=<input srid> \
+    -e NB_OUTPUT_SRID=<output srid> \
+    -e NB_BOUNDARY_BUFFER=<buffer distance in units of NB_OUTPUT_SRID> \
+    -v /vagrant/data/:/data/ \
+    pfb
 ```
-
-This will create a VM, install the necessary dependencies, and load your neighborhood and
-the associated data.
-
-The database should now be ready for [Running the Analysis](#running-the-analysis)
