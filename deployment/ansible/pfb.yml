@@ -9,4 +9,3 @@
   roles:
     - { role: "azavea.aws-cli" }
     - { role: "pfb.docker" }
-    - { role: "pfb.analysis" }
