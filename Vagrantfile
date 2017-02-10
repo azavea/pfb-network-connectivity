@@ -47,11 +47,17 @@ Vagrant.configure("2") do |config|
     s.args = "'#{ROOT_VM_DIR}'"
   end
 
-  config.vm.provision "ansible" do |ansible|
+  config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "deployment/ansible/pfb.yml"
     ansible.galaxy_role_file = "deployment/ansible/roles.yml"
     ansible.verbose = true
     ansible.raw_arguments = ["--timeout=60"]
+
+    # local arguments
+    # Ubuntu trusty base box already has system python + pip installed, no need to reinstall here
+    ansible.install = true
+    ansible.install_mode = "pip"
+    ansible.version = "2.2.1"
   end
 
   config.vm.provider :virtualbox do |v|
