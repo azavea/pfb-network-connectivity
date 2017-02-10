@@ -68,6 +68,11 @@ then
 
         run_database_migrations
 
+        # Build the current docker analysis container
+        pushd pfb-analysis
+        docker build -t pfb .
+        popd
+
         popd
     fi
 fi
