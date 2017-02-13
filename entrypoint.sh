@@ -41,6 +41,9 @@ done
 # run job
 cd /pfb
 
+# determine coordinate reference system based on input shapefile UTM zone
+NB_OUTPUT_SRID="$(./detect_utm_zone.py $PFB_SHPFILE)"
+
 ./import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS
 ./run_connectivity.sh
 

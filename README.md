@@ -16,7 +16,6 @@ docker run \
     -e PFB_STATE=ma \
     -e PFB_STATE_FIPS=25 \
     -e NB_INPUT_SRID=2249 \
-    -e NB_OUTPUT_SRID=2249 \
     -e NB_BOUNDARY_BUFFER=11000 \
     -v /vagrant/data/:/data/ \
     pfb
