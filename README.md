@@ -8,6 +8,16 @@ Requirements:
 - Vagrant 1.8+
 - VirtualBox 4.3+
 
+
+#### Notes for Windows users
+
+1. Run all commands in a shell with administrator permissions. It's highly recommended to run all commands within the "Git for Windows" Git Bash shell, as that already includes an SSH client, and allows running the commands below as-is.
+2. Before starting the VM, ensure the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` is set. NFS is not supported on windows, so we need to ensure that Vagrant ignores our request for it.
+3. Do not use `vagrant reload`. In some cases it will create a new VM rather than autodetecting that the old one exists
+
+
+### Provisioning the VM
+
 Run `./script/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
 ```
 vagrant ssh
@@ -24,6 +34,7 @@ In order to use the API, you'll need to create a superuser in development by fol
 ```
 ./scripts/django-manage createsuperuser
 ```
+
 
 ## Ports
 
