@@ -66,7 +66,6 @@ docker run \
     -e PFB_STATE=ma \
     -e PFB_STATE_FIPS=25 \
     -e NB_INPUT_SRID=2249 \
-    -e NB_OUTPUT_SRID=2249 \
     -e NB_BOUNDARY_BUFFER=11000 \
     -v /vagrant/data/:/data/ \
     pfb
@@ -100,7 +99,6 @@ docker run \
     -e PFB_STATE=<state abbrev> \
     -e PFB_STATE_FIPS=<state fips> \
     -e NB_INPUT_SRID=<input srid> \
-    -e NB_OUTPUT_SRID=<output srid> \
     -e NB_BOUNDARY_BUFFER=<buffer distance in units of NB_OUTPUT_SRID> \
     -v /vagrant/data/:/data/ \
     pfb
