@@ -18,7 +18,7 @@ Requirements:
 
 ### Provisioning the VM
 
-Run `./script/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
+Run `./scripts/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
 ```
 vagrant ssh
 ```
