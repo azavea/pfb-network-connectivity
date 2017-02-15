@@ -7,7 +7,6 @@ PFB Bicycle Network Connectivity
 Requirements:
 - Vagrant 1.8+
 - VirtualBox 4.3+
-- Ansible 2.0+
 
 Run `./script/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
 ```
