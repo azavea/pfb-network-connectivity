@@ -19,4 +19,4 @@ CMD ["-w", "1", \
      "--error-logfile", "-", \
      "--forwarded-allow-ips", "*", \
      "-k", "gevent", \
-     "pfb_network_connectivity.wsgi"]
+     "base.wsgi"]

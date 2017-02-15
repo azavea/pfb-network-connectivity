@@ -10,8 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
-import logging.config
+from datetime import timedelta
 import os
+import logging.config
+
+from django.core.exceptions import ImproperlyConfigured
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,7 +46,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 3rd party
+    'django_extensions',
+    'django_filters',
     'rest_framework',
+    'rest_framework.authtoken',
+
+    # project apps
+    'base',
+    'pfb_network_connectivity',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +63,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -109,6 +122,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Set custom auth user
+AUTH_USER_MODEL = 'users.PFBUser'
+
+# Use a write-through cache for session information
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
+# Seconds
+SESSION_COOKIE_AGE = 14400  # 4 hours
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
@@ -161,8 +184,38 @@ logging.config.dictConfig({
 # Django Rest Framework
 # http://www.django-rest-framework.org/
 
+# Rest Framework Settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    # Token has to come first so a 401 is returned if session expires
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter'
+    ],
+    'PAGE_SIZE': 20
 }
+
+# Email
+DEFAULT_FROM_EMAIL = 'noreply@pfb.azavea.com'
+REPOSITORY_HELP_EMAIL = os.getenv('REPOSITORY_HELP_EMAIL', 'help@pfb.azavea.com')
+
+if DJANGO_ENV in ['staging', 'production']:
+    EMAIL_BACKEND = 'django_amazon_ses.backends.boto.EmailBackend'
+elif DJANGO_ENV in ['development', 'test']:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    raise ImproperlyConfigured('Unknown DJANGO_ENV')
+
+
+# Password Reset
+RESET_TOKEN_LENGTH = timedelta(hours=24)
+RESET_SALT = os.getenv('REPOSITORY_RESET_SALT', 'passwordreset')
+USER_EMAIL_SUBJECT = os.getenv('REPOSITORY_RESET_EMAIL_SUBJECT', 'Your PFB Account')
+RESET_EMAIL_FROM = os.getenv('REPOSITORY_RESET_EMAIL_FROM', DEFAULT_FROM_EMAIL)
