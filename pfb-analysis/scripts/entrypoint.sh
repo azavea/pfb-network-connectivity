@@ -2,9 +2,9 @@
 
 set -e
 
-NB_POSTGRESQL_DB=pfb
-NB_POSTGRESQL_USER=gis
-NB_POSTGRESQL_PASSWORD=gis
+export NB_POSTGRESQL_DB=pfb
+export NB_POSTGRESQL_USER=gis
+export NB_POSTGRESQL_PASSWORD=gis
 
 # start postgres and capture the PID
 /docker-entrypoint.sh postgres | tee /tmp/postgres_stdout.txt &
@@ -42,7 +42,7 @@ done
 cd /pfb
 
 # determine coordinate reference system based on input shapefile UTM zone
-NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
+export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
 
 ./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS
 ./scripts/run_connectivity.sh
