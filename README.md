@@ -9,7 +9,7 @@ Requirements:
 - VirtualBox 4.3+
 - Ansible 2.0+
 
-Run `./script/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
+Run `./scripts/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
 ```
 vagrant ssh
 ```
@@ -59,7 +59,9 @@ In this example, we configure the analysis to be run for Cambridge MA.
 
 Run:
 ```
+pushd pfb-analysis
 docker build -t pfb .
+popd
 
 docker run \
     -e PFB_SHPFILE=/data/neighborhood_boundary.shp \
