@@ -51,7 +51,9 @@ Vagrant.configure("2") do |config|
     ansible.playbook = "deployment/ansible/pfb.yml"
     ansible.galaxy_role_file = "deployment/ansible/roles.yml"
     ansible.verbose = true
-    ansible.raw_arguments = ["--timeout=60"]
+    ansible.raw_arguments = ["--timeout=60",
+                             "--extra-vars",
+                             "dev_user=#{ENV.fetch("USER", "vagrant")}"]
 
     # local arguments
     # Ubuntu trusty base box already has system python + pip installed, no need to reinstall here
