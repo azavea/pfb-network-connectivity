@@ -47,7 +47,7 @@ RUN set -xe && \
     cd /tmp/ && rm -rf /tmp/build/ /var/lib/apt/lists/* && \
     apt-get purge -y --auto-remove ${BUILD_DEPS}
 
-COPY setup_database.sh /docker-entrypoint-initdb.d/setup_database.sh
+COPY scripts/setup_database.sh /docker-entrypoint-initdb.d/setup_database.sh
 COPY ./ /pfb/
 
-ENTRYPOINT /pfb/entrypoint.sh
+ENTRYPOINT /pfb/scripts/entrypoint.sh

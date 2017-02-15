@@ -42,10 +42,10 @@ done
 cd /pfb
 
 # determine coordinate reference system based on input shapefile UTM zone
-NB_OUTPUT_SRID="$(./detect_utm_zone.py $PFB_SHPFILE)"
+NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
 
-./import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS
-./run_connectivity.sh
+./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS
+./scripts/run_connectivity.sh
 
 # print scores (TODO: replace with export script)
 psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF

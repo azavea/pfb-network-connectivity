@@ -25,8 +25,8 @@ then
     then
         usage
     else
-        ./import_neighborhood.sh "${1}" "${3}"
-        ./import_jobs.sh "${2}"
-        ./import_osm.sh
+        ../import/import_neighborhood.sh "${1}" "${3}"
+        ../import/import_jobs.sh "${2}"
+        ../import/import_osm.sh
     fi
 fi
