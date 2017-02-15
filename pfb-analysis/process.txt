@@ -1,0 +1,55 @@
+-------------------------------------------
+-scripts given in order they should be run-
+-------------------------------------------
+
+import_osm.sh (runs the following automatically)
+  - prepare_tables.sql
+  - one_way.sql
+  - width_ft.sql
+  - functional_class.sql
+  - paths.sql
+  - speed_limit.sql
+  - lanes.sql
+  - park.sql
+  - bike_infra.sql
+  - legs.sql
+  - signalized.sql
+  - stops.sql
+  - stress_motorway-trunk.sql
+  - stress_primary.sql
+  - stress_secondary.sql
+  - stress_tertiary.sql
+  - stress_residential.sql
+  - stress_living_street.sql
+  - stress_track.sql
+  - stress_path.sql
+  - stress_one_way_reset.sql
+  - stress_motorway-trunk_ints.sql
+  - stress_primary_ints.sql
+  - stress_secondary_ints.sql
+  - stress_tertiary_ints.sql
+  - stress_lesser_ints.sql
+  - stress_link_ints.sql
+
+SELECT tdgMakeNetwork('neighborhood_ways');
+SELECT tdgNetworkCostFromDistance('neighborhood_ways');
+
+(import census blocks with pop from census blkpophu dataset)
+census_blocks.sql
+
+census_block_roads.sql
+reachable_roads_high_stress.sql
+reachable_roads_low_stress.sql
+connected_census_blocks.sql
+access_population.sql
+
+(import census blocks job data)
+census_block_jobs.sql
+access_jobs.sql
+
+schools.sql
+school_roads.sql
+connected_census_blocks_schools.sql
+access_schools.sql
+
+overall_scores.sql
