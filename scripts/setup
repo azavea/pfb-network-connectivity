@@ -24,6 +24,8 @@ then
     then
         usage
     else
+        # Ensure aws config dir exists on host, so it can be mounted into VM
+        mkdir -p ~/.aws
         pushd ..
 
         vagrant up --provision

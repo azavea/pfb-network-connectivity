@@ -7,12 +7,23 @@ PFB Bicycle Network Connectivity
 Requirements:
 - Vagrant 1.8+
 - VirtualBox 4.3+
+- [AWS CLI](https://aws.amazon.com/cli/)
 
 #### Notes for Windows users
 
 1. Run all commands in a shell with administrator permissions. It's highly recommended to run all commands within the "Git for Windows" Git Bash shell, as that already includes an SSH client, and allows running the commands below as-is.
 2. Before starting the VM, ensure the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` is set. NFS is not supported on windows, so we need to ensure that Vagrant ignores our request for it.
 3. Do not use `vagrant reload`. In some cases it will create a new VM rather than autodetecting that the old one exists
+
+### Setting up AWS credentials
+
+As noted above, ensure the AWS CLI is installed on your host machine. Once it is, you can configure your PFB account credentials by running:
+```
+aws configure --profile pfb
+```
+
+If you do not have AWS credentials, this step can be skipped but some application services may not
+work as intended.
 
 ### Provisioning the VM
 
