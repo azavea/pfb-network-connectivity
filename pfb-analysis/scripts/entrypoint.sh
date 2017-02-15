@@ -52,6 +52,10 @@ psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
 SELECT * FROM neighborhood_overall_scores;
 EOF
 
+# This will exit immediately when there's no pseudo-TTY but provide a shell if there is,
+# so it enables keeping a docker container alive after processing by running it with `-t`
+bash
+
 # shutdown postgres
 kill $POSTGRES_PROC
 wait
