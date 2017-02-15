@@ -1,0 +1,4 @@
+---
+
+- name: Set DEV_USER environment variable
+  lineinfile: dest=/etc/environment regexp=^DEV_USER line="DEV_USER={{ dev_user }}"

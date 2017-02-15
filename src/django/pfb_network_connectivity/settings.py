@@ -24,6 +24,8 @@ DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
+DEV_USER = os.getenv('DEV_USER')
+
 DEBUG = DJANGO_ENV == 'development'
 
 ALLOWED_HOSTS = []

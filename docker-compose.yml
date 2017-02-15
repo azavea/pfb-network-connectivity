@@ -29,6 +29,8 @@ services:
       - "9203:9203"
     links:
       - database:database.service.pfb.internal
+    environment:
+      - DEV_USER
 
 # TODO: Re-add this container once the SQS broker is setup (issue #20)
   # celery:
