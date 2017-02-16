@@ -45,14 +45,14 @@ SET         high_stress_cost = (
                                 FROM    neighborhood_census_block_roads     roads,
                                         neighborhood_ways_net_vert          verts
                                 WHERE   source_blockid10 = roads.blockid10
-                                        roads.road_id = verts.road_id
+                                AND     roads.road_id = verts.road_id
                             ),
                             (
                                 SELECT  array_agg(verts.vert_id)
                                 FROM    neighborhood_census_block_roads     roads,
                                         neighborhood_ways_net_vert          verts
                                 WHERE   target_blockid10 = roads.blockid10
-                                        roads.road_id = verts.road_id
+                                AND     roads.road_id = verts.road_id
                             ),
                             directed := true
                         )
@@ -71,14 +71,14 @@ SET         high_stress_cost = (
                                 FROM    neighborhood_census_block_roads     roads,
                                         neighborhood_ways_net_vert          verts
                                 WHERE   source_blockid10 = roads.blockid10
-                                        roads.road_id = verts.road_id
+                                AND     roads.road_id = verts.road_id
                             ),
                             (
                                 SELECT  array_agg(verts.vert_id)
                                 FROM    neighborhood_census_block_roads     roads,
                                         neighborhood_ways_net_vert          verts
                                 WHERE   target_blockid10 = roads.blockid10
-                                        roads.road_id = verts.road_id
+                                AND     roads.road_id = verts.road_id
                             ),
                             directed := true
                         )
