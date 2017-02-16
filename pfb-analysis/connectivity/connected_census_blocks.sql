@@ -4,6 +4,22 @@
 -- :nb_boundary_buffer psql var must be set before running this script,
 --      e.g. psql -v nb_boundary_buffer=11000 -f connected_census_blocks.sql
 ----------------------------------------
+
+
+-- select *
+-- from pgr_johnson('
+--                             SELECT  nl.link_id AS id,
+--                                     nl.source_vert AS source,
+--                                     nl.target_vert AS target,
+--                                     nl.link_cost AS cost
+--                             FROM    neighborhood_ways_net_link nl,
+--                             neighborhood_boundary nb
+--                             where st_intersects(nl.geom, nb.geom)',
+--                             directed := true
+--                         )
+
+
+
 DROP TABLE IF EXISTS generated.neighborhood_connected_census_blocks;
 
 CREATE TABLE generated.neighborhood_connected_census_blocks (
