@@ -14,6 +14,8 @@ from datetime import timedelta
 import os
 import logging.config
 
+import requests
+
 from django.core.exceptions import ImproperlyConfigured
 
 
@@ -26,14 +28,28 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('PFB_SECRET_KEY', 'SECRET_KEY_R$^3Pc135NUbst4OIt$Kzrd5zqLo$1h4')
+if DJANGO_ENV not in ('development', 'testing') and SECRET_KEY.startswith('SECRET_KEY'):
+    raise ImproperlyConfigured('Non-development environments require that env.PFB_SECRET_KEY ' +
+                               'be set')
 
 DEV_USER = os.getenv('DEV_USER')
 
 DEBUG = DJANGO_ENV == 'development'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('PFB_ALLOWED_HOSTS', '').split(',')
+if '' in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.remove('')
 
+# solution from https://dryan.com/articles/elb-django-allowed-hosts/
+EC2_PRIVATE_IP = None
+try:
+    EC2_PRIVATE_IP = requests.get('http://169.254.169.254/latest/meta-data/local-ipv4',
+                                  timeout=0.1).text
+except requests.exceptions.RequestException:
+    pass
+if EC2_PRIVATE_IP:
+    ALLOWED_HOSTS.append(EC2_PRIVATE_IP)
 
 # Application definition
 
@@ -94,11 +110,11 @@ WSGI_APPLICATION = 'pfb_network_connectivity.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('PGDATABASE'),
-        'USER': os.getenv('PGUSER'),
-        'PASSWORD': os.getenv('PGPASSWORD'),
-        'HOST': os.getenv('PGHOST'),
-        'PORT': os.getenv('PGPORT', 5432)
+        'NAME': os.getenv('PFB_DB_DATABASE', 'pfb'),
+        'USER': os.getenv('PFB_DB_USER', 'pfb'),
+        'PASSWORD': os.getenv('PFB_DB_PASSWORD', 'pfb'),
+        'HOST': os.getenv('PFB_DB_HOST', 'database.service.pfb.internal'),
+        'PORT': os.getenv('PFB_DB_PORT', 5432)
     }
 }
 

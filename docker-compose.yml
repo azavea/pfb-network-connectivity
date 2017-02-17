@@ -20,7 +20,7 @@ services:
       - ./src/nginx/srv/dist:/srv/dist:ro
 
   django:
-    image: pfb-django
+    image: pfb-app
     extends:
       service: django
       file: common.yml
@@ -31,15 +31,6 @@ services:
       - database:database.service.pfb.internal
     environment:
       - DEV_USER
-
-# TODO: Re-add this container once the SQS broker is setup (issue #20)
-  # celery:
-  #   image: pfb-django
-  #   extends:
-  #     service: celery
-  #     file: common.yml
-  #   links:
-  #     - database:database.service.pfb.internal
 
   angularjs:
     image: pfb-angularjs

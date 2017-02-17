@@ -1,0 +1,60 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${PFB_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+"Usage: $(basename "$0")
+
+Publish container images to Elastic Container Registry (ECR) and
+other artifacts to S3.
+"
+}
+
+if [[ -n "${GIT_COMMIT}" ]]; then
+    GIT_COMMIT="${GIT_COMMIT:0:7}"
+else
+    GIT_COMMIT="$(git rev-parse --short HEAD)"
+fi
+
+
+DIR="$(dirname "$0")"
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        if [[ -n "${PFB_AWS_ECR_ENDPOINT}" ]]; then
+            # Evaluate the return value of the get-login subcommand, which
+            # is a docker login command with temporarily ECR credentials.
+            eval "$(aws ecr get-login)"
+
+            docker tag "pfb-nginx:${GIT_COMMIT}" \
+                   "${PFB_AWS_ECR_ENDPOINT}/pfb-nginx:${GIT_COMMIT}"
+            docker tag "pfb-app:${GIT_COMMIT}" \
+                   "${PFB_AWS_ECR_ENDPOINT}/pfb-app:${GIT_COMMIT}"
+
+            docker push "${PFB_AWS_ECR_ENDPOINT}/pfb-nginx:${GIT_COMMIT}"
+            docker push "${PFB_AWS_ECR_ENDPOINT}/pfb-app:${GIT_COMMIT}"
+
+            echo "Uploading static files to S3..."
+            PFB_S3STORAGE_BUCKET="${PFB_S3STORAGE_BUCKET}" \
+            GIT_COMMIT="${GIT_COMMIT}" \
+            docker-compose \
+                -f docker-compose.yml \
+                -f docker-compose.test.yml \
+                run --rm --no-deps --entrypoint "./manage.py" \
+                django collectstatic --noinput
+
+            echo "Upload complete!"
+
+        else
+            echo "ERROR: No PFB_AWS_ECR_ENDPOINT variable defined."
+            exit 1
+        fi
+    fi
+fi
