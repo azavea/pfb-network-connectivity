@@ -20,9 +20,12 @@ To start the application containers:
 ./scripts/server
 ```
 
-In order to use the API, you'll need to create a superuser in development by following the prompts:
+In order to use the API, you'll need to run migrations on the Django app server:
 ```
-./scripts/django-manage createsuperuser
+./scripts/django-manage migrate
+
+This will add a default admin user that can log in to http://localhost:9200/api/ as:
+systems+pfb@azavea.com / root
 ```
 
 ## Ports
