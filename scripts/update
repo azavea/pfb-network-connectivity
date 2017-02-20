@@ -61,9 +61,6 @@ then
     else
         pushd ..
 
-        docker-compose run --rm --no-deps angular \
-            npm install --quiet
-
         docker-compose build django database nginx
 
         run_database_migrations

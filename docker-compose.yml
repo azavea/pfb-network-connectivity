@@ -40,20 +40,3 @@ services:
   #     file: common.yml
   #   links:
   #     - database:database.service.pfb.internal
-
-  angular:
-    image: node:6.9-slim
-    working_dir: /usr/src
-    ports:
-      - "9210:9210"
-      - "9211:9211"
-      - "9212:9212"
-      - "9213:9213"
-    links:
-      - django
-    volumes:
-        - ./src/angular:/usr/src
-        # Ensure that path to node_modules cache doesn't clash with other
-        # jobs on CI.
-        - /var/cache/pfb-node-modules:/usr/src/node_modules
-    command: npm run serve
