@@ -31,18 +31,20 @@ function browserSyncInit(baseDir, browser) {
      * You can add a proxy to your backend by uncommenting the line below.
      * You just have to configure a context which will we redirected and the target url.
      * Example: $http.get('/users') requests will be automatically proxified.
-     *
      */
     server.middleware = proxyMiddleware('/api',
-                                        { target: 'http://enrr.vip.internal:443',
-                                          headers: {host: 'localhost:3434'},
+                                        { target: 'http://pfb.internal:443',
+                                          headers: {host: 'localhost:9301'},
                                           changeOrigin: false });
 
     browserSync.instance = browserSync.init({
         startPath: '/',
         server: server,
         browser: browser,
-        port: 3434
+        port: 9301,
+        ui: {
+            port: 9302
+        }
     });
 }
 

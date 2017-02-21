@@ -36,6 +36,8 @@ systems+pfb@azavea.com / root
 | 9202 | Gunicorn ||
 | 9203 | Django Runserver | Not running by default. Must be started manually via `scripts/django-manage` |
 | 9214 | Postgresql | Allows direct connections to the database where an analysis run is stored |
+| 9301 | Gulp | Gulp server for analysis angular app |
+| 9302 | Browsersync | Browsersync for analysis angular app |
 
 
 ## Scripts

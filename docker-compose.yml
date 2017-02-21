@@ -43,14 +43,15 @@ services:
 
   angularjs:
     image: pfb-angularjs
+    working_dir: /opt/pfb/angular
     build:
       context: ./src/angularjs
       dockerfile: Dockerfile
     links:
-      - django
+      - nginx:pfb.internal
     ports:
-      - "3434:3434"
-      - "3001:3001"
+      - "9301:9301"
+      - "9302:9302"
     volumes:
       - ./src/angularjs/.eslintrc:/opt/pfb/angular/.eslintrc
       - ./src/angularjs/gulp:/opt/pfb/angular/gulp

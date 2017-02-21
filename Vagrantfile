@@ -33,6 +33,8 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 9202, host: ENV.fetch("PFB_GUNICORN_PORT", 9202)
   config.vm.network :forwarded_port, guest: 9203, host: ENV.fetch("PFB_RUNSERVER_PORT", 9203)
   config.vm.network :forwarded_port, guest: 5432, host: ENV.fetch("PFB_ANALYSIS_DB_PORT", 9214)
+  config.vm.network :forwarded_port, guest: 9301, host: ENV.fetch("PFB_REPOSITORY_PORT", 9301)
+  config.vm.network :forwarded_port, guest: 9302, host: ENV.fetch("PFB_REPOSITORY_PORT", 9302)
 
   config.vm.synced_folder "~/.aws", "/home/vagrant/.aws"
   config.vm.synced_folder '.', ROOT_VM_DIR, type: PFB_SHARED_FOLDER_TYPE, mount_options: PFB_MOUNT_OPTIONS
