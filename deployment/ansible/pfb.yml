@@ -8,5 +8,6 @@
 
   roles:
     - { role: "azavea.aws-cli" }
+    - { role: "azavea.terraform" }
     - { role: "pfb.env" }
     - { role: "pfb.docker" }
