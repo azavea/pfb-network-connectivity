@@ -17,8 +17,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from base.filters import OrgAutoFilterBackend, SelfUserAutoFilterBackend
-from base.permissions import IsAdminOrSelfOnly, RestrictedCreate
+from pfb_network_connectivity.filters import OrgAutoFilterBackend, SelfUserAutoFilterBackend
+from pfb_network_connectivity.permissions import IsAdminOrSelfOnly, RestrictedCreate
 from users.models import Organization, PFBUser
 from users.serializers import OrganizationSerializer, PFBUserSerializer
 from users.emails import password_reset_txt, user_registration_txt

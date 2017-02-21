@@ -6,23 +6,24 @@ from rest_framework import (
     serializers
 )
 
-from pfb_network_connectivity.models import Area
-from base.serializers import PFBModelSerializer
+from pfb_network_connectivity.models import Neighborhood
+from pfb_network_connectivity.serializers import PFBModelSerializer
 from users.models import Organization, OrganizationTypes, PFBUser
-from base.permissions import is_admin, is_admin_org
+from pfb_network_connectivity.permissions import is_admin, is_admin_org
 
 
 class OrganizationSerializer(PFBModelSerializer):
     """Serializer for organization model"""
 
     orgType = serializers.CharField(source='org_type')
-    area = serializers.SlugRelatedField(slug_field='abbreviation', required=False,
-                                        allow_null=True, queryset=Area.objects.all())
+    neighborhood = serializers.SlugRelatedField(slug_field='abbreviation', required=False,
+                                                allow_null=True,
+                                                queryset=Neighborhood.objects.all())
     label = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = Organization
-        fields = ('uuid', 'name', 'label', 'orgType', 'area', 'createdBy', 'modifiedBy',
+        fields = ('uuid', 'name', 'label', 'orgType', 'neighborhood', 'createdBy', 'modifiedBy',
                   'createdAt', 'modifiedAt')
 
 
@@ -40,23 +41,23 @@ class PFBUserSerializer(PFBModelSerializer):
     organization = serializers.SlugRelatedField(queryset=Organization.objects.all(),
                                                 slug_field='label')
     orgName = serializers.SerializerMethodField()
-    area = serializers.SerializerMethodField()
+    neighborhood = serializers.SerializerMethodField()
     isAdminOrganization = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
 
     class Meta:
         model = PFBUser
         fields = ('uuid', 'username', 'email', 'isActive', 'firstName',
-                  'lastName', 'organization', 'orgName', 'area',
+                  'lastName', 'organization', 'orgName', 'neighborhood',
                   'token', 'role', 'isAdminOrganization',
                   'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy')
 
     def get_username(self, obj):
         return obj.email
 
-    def get_area(self, obj):
-        if obj.organization and obj.organization.area:
-            return obj.organization.area.abbreviation
+    def get_neighborhood(self, obj):
+        if obj.organization and obj.organization.neighborhood:
+            return obj.organization.neighborhood.abbreviation
         else:
             return None
 

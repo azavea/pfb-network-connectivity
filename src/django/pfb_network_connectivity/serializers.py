@@ -4,7 +4,7 @@ from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework.serializers import CreateOnlyDefault
 from rest_framework.fields import CurrentUserDefault
-from base.models import PFBModel
+from pfb_network_connectivity.models import PFBModel
 
 
 class PFBModelSerializer(serializers.ModelSerializer):

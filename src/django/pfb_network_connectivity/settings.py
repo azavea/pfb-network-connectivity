@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 
     # project apps
-    'base',
     'pfb_network_connectivity',
     'users',
 ]

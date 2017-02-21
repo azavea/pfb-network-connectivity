@@ -16,25 +16,25 @@ from django.db import models
 
 from rest_framework.authtoken.models import Token
 
-from base.models import PFBModel
+from pfb_network_connectivity.models import PFBModel
 
 
 class OrganizationTypes(object):
     """Enum-like object to track organization types"""
 
     ADMIN = 'ADMIN'
-    AREA = 'AREA'
+    NEIGHBORHOOD = 'NEIGHBORHOOD'
     SUBSCRIBER = 'SUBSCRIBER'
 
     CHOICES = (
         (ADMIN, 'PFB Administrator Organization'),
-        (AREA, 'Area'),
+        (NEIGHBORHOOD, 'Neighborhood'),
         (SUBSCRIBER, 'Subscriber')
     )
 
 
 class Organization(PFBModel):
-    """Model for tracking area, subscribers, and admin groups
+    """Model for tracking neighborhood, subscribers, and admin groups
 
 
     Every user will belong to an organization. Organization membership will determine
@@ -43,13 +43,13 @@ class Organization(PFBModel):
     There are 3 types of organizations:
 
     **Admin.** Membership in the admin organization will grant access to all other organizations,
-    the ability to deactivate/activate area organizations, and the ability to create/delete users
-    within the system. Membership in this organization will be tightly controlled and will be
-    limited to PFB personnel who are responsible for activating/deactivating area sites and
-    creating initial admin users within a area organization.
+    the ability to deactivate/activate neighborhood organizations, and the ability to create/delete
+    users within the system. Membership in this organization will be tightly controlled and will be
+    limited to PFB personnel who are responsible for activating/deactivating neighborhood sites and
+    creating initial admin users within a neighborhood organization.
 
-    **Area.** Membership in an organization that represents a area will only have access to
-    resources for that particular area.
+    **Neighborhood.** Membership in an organization that represents a neighborhood will only have
+    access to resources for that particular neighborhood.
 
     **Subscriber.** Membership in a subscriber organization grants read-only access to results data.
 
@@ -57,7 +57,8 @@ class Organization(PFBModel):
         name (str): Human readable, actual name for organization (e.g. Alabama, etc.)
         label (str): Slug version of name, appropriate for URLs and embeding in JSON
         org_type (str): ENUM like field for type of organization
-        area (Optional[pfb_network_connectivity.models.Area]): area associated with organization
+        neighborhood (Optional[pfb_network_connectivity.models.Neighborhood]): neighborhood
+        associated with organization
     """
 
     def __repr__(self):
@@ -66,7 +67,7 @@ class Organization(PFBModel):
     name = models.CharField(max_length=255, unique=True)
     label = models.SlugField(unique=True)
     org_type = models.CharField(choices=OrganizationTypes.CHOICES, max_length=10)
-    area = models.ForeignKey('pfb_network_connectivity.Area', null=True)
+    neighborhood = models.ForeignKey('pfb_network_connectivity.Neighborhood', null=True)
 
     def save(self, *args, **kwargs):
         """Override save method to add slug label.
@@ -134,7 +135,7 @@ class PFBUser(AbstractBaseUser, PermissionsMixin, PFBModel):
     and a single user may have the following roles defined within the Repository:
 
     **Admin.** Administrators have the most access within an organization. They can manage
-    users and manage the area site.
+    users and manage the neighborhood site.
 
     **Editor.** Editors can manage all aspects within an organization with the exception of users.
 
@@ -166,7 +167,7 @@ class PFBUser(AbstractBaseUser, PermissionsMixin, PFBModel):
                               error_messages={'unique': _("A user with that email already exists")})
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
-    organization = models.ForeignKey(Organization)
+    organization = models.ForeignKey(Organization, on_delete=models.PROTECT)
     role = models.CharField(choices=UserRoles.CHOICES, default=UserRoles.VIEWER,
                             max_length=8)
     is_staff = models.BooleanField(

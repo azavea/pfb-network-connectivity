@@ -144,7 +144,7 @@ class RestrictedCreate(permissions.BasePermission):
             return request.user.role in UserRoles.DEFAULT_CREATE
 
 
-class IsAdminOrEditorAssociatedWithArea(permissions.BasePermission):
+class IsAdminOrEditorAssociatedWithNeighborhood(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if request.method not in permissions.SAFE_METHODS:
@@ -152,7 +152,8 @@ class IsAdminOrEditorAssociatedWithArea(permissions.BasePermission):
                 return True
             if ((is_admin(request.user) or is_editor(request.user))
                     and request.user.organization
-                    and request.data['area'] == request.user.organization.area.abbreviation):
+                    and request.data['neighborhood'] ==
+                    request.user.organization.neighborhood.abbreviation):
                 return True
             return False
         return True
@@ -162,9 +163,9 @@ class IsAdminOrEditorAssociatedWithArea(permissions.BasePermission):
             return True
         if ((is_admin(request.user) or is_editor(request.user))
                 and request.user.organization
-                and obj.area == request.user.organization.area):
+                and obj.neighborhood == request.user.organization.neighborhood):
             return True
         if (request.method in permissions.SAFE_METHODS and
-                request.user.organization.area == obj.area):
+                request.user.organization.neighborhood == obj.neighborhood):
             return True
         return False
