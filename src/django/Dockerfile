@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 COPY . /usr/src
 WORKDIR /usr/src
 
-EXPOSE 9210
+EXPOSE 9202
 
 CMD ["-w", "1", \
      "-b", "0.0.0.0:9202", \
