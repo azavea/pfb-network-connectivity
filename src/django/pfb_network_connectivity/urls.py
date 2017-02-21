@@ -24,6 +24,7 @@ from users import views as user_views
 
 router = routers.DefaultRouter()
 
+router.register(r'organizations', user_views.OrganizationViewSet, base_name='organizations')
 router.register(r'users', user_views.PFBUserViewSet, base_name='users')
 
 
