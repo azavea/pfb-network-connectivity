@@ -1,0 +1,94 @@
+<repository-navbar></repository-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+                <h1 ng-if="!user.editing">Add User</h1>
+                <h1 ng-if="user.editing">Edit User</h1>
+            </div>
+        </div>
+      <form name="userForm" novalidate ng-submit="user.saveUser()">
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input ng-model="user.user.email"
+                     class="form-control"
+                     id="email" type="text" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group">
+              <label for="firstname">First Name</label>
+              <input ng-model="user.user.firstName"
+                     class="form-control" id="firstname"
+                     type="text">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group">
+              <label for="lastname">Last Name</label>
+              <input ng-model="user.user.lastName"
+                     class="form-control" id="lastname"
+                     type="text">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group">
+              <label for="role">Role</label>
+              <select name="role" ng-model="user.user.role"
+                      ng-disabled="!user.isAdminUser || user.loggedInEmail === user.user.email"
+                      class="form-control" id="role" type="text" required>
+                <option ng-repeat="(key, value) in user.roleOptions" value="{{key}}">{{value}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div ng-if="user.organizations" class="form-group">
+              <label for="organization">Organization</label>
+              <select name="organization" ng-model="user.user.organization"
+                      ng-disabled="!user.isAdminUser && !user.isAdminOrg || user.loggedInEmail == user.user.email"
+                      class="form-control" id="role" type="text" required>
+                <option ng-repeat="(key, value) in user.organizations"
+                        value="{{key}}">{{value.name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-2">
+            <div class="form-group" ng-if="user.user.uuid">
+              <label for="organization">API Token <a ng-click="user.createToken()" href="">Refresh</a></label>
+              <input ng-model="user.token" ng-readonly="true" class="form-control" type="text" size="34">
+            </div>
+          </div>
+          <div class="col-xs-8 col-sm-offset-2">
+            <button type="submit" ng-disabled="userForm.$invalid && !ctl.isAdminUser && !userForm.$dirty || userForm.organization.$error.required || userForm.role.$error.required"
+                    class="btn-primary btn">
+              <span ng-if="!user.user.uuid">Add User</span>
+              <span ng-if="user.user.uuid">Save Changes</span>
+            </button>
+            <button
+                type="button"
+                ng-if="user.user.uuid"
+                ng-click="user.setUserActive(!user.user.isActive)"
+                ng-disabled="ctl.isAdminUser || user.loggedInUsername === user.user.username"
+                class="btn-danger btn">
+              <span ng-if="!user.user.isActive">Activate User</span>
+              <span ng-if="user.user.isActive">Deactivate User</span>
+            </button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>

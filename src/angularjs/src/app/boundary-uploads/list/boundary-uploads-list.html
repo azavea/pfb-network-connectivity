@@ -1,0 +1,57 @@
+<repository-navbar></repository-navbar>
+
+<script type="text/ng-template" id="popover.html">
+  <li ng-repeat="note in boundaryUpload.notes track by $index">{{ note }}</li>
+</script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+      <button ui-sref="boundary-uploads.create" class="btn btn-primary pull-right">
+        Upload Data
+      </button>
+      <h1 class="no-margin-top">Data</h1>
+      <table class="table">
+        <thead repository-upload-filter filters="boundaryUploadList.filters"></thead>
+        <tbody>
+          <tr ng-repeat="boundaryUpload in boundaryUploadList.boundaryUploads">
+            <td>
+              {{boundaryUpload.uuid | limitTo: 5}}
+            </td>
+            <td>{{boundaryUpload.status | displayStatus}}
+              <span ng-if="boundaryUpload.notes">
+                <span style="cursor: pointer" popover-placement="bottom"
+                      uib-popover-template="'popover.html'" popover-title="XML Errors"
+                      popover-trigger="click" class="glyphicon glyphicon-info-sign"></span>
+              </span>
+            </td>
+            <td>{{boundaryUpload.area}}</td>
+            <td>{{boundaryUpload.boundary}}</td>
+            <td>{{boundaryUpload.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+            <td>
+              <span ng-if="boundaryUpload.status !== 'IN_PROGRESS'">
+                <a class="btn-link glyphicon glyphicon-download-alt"
+                   ng-href="{{boundaryUpload.url}}"
+                   uib-tooltip="Download"
+                   download="{{boundaryUpload.uuid}}.xml"></a> |</span>
+              <button ng-click="boundaryUploadList.deleteUpload(boundaryUpload)"
+                      uib-tooltip="Delete"
+                      class="btn-link glyphicon glyphicon-trash"></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="buttons-pagination">
+        <button class="btn-success btn" ng-click="boundaryUploadList.getPrev()"
+                ng-disabled="!boundaryUploadList.hasPrev">
+
+          Newer
+        </button>
+        <button class="btn-success btn" ng-click="boundaryUploadList.getNext()"
+                ng-disabled="!boundaryUploadList.hasNext">
+          Older
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

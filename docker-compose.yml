@@ -40,3 +40,21 @@ services:
   #     file: common.yml
   #   links:
   #     - database:database.service.pfb.internal
+
+  angularjs:
+    image: pfb-angularjs
+    build:
+      context: ./src/angularjs
+      dockerfile: Dockerfile
+    links:
+      - django
+    ports:
+      - "3434:3434"
+      - "3001:3001"
+    volumes:
+      - ./src/angularjs/.eslintrc:/opt/pfb/angular/.eslintrc
+      - ./src/angularjs/gulp:/opt/pfb/angular/gulp
+      - ./src/angularjs/gulpfile.js:/opt/pfb/angular/gulpfile.js
+      - ./src/angularjs/src:/opt/pfb/angular/src
+      - ./src/angularjs/docs:/opt/pfb/angular/docs
+    command: gulp serve

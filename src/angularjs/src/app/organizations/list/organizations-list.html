@@ -1,0 +1,30 @@
+<repository-navbar></repository-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+      <button ui-sref="organizations.create" class="btn btn-primary pull-right">New Organization</button>
+      <h1 class="no-margin-top">Organization Management</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Area</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="org in orgList.orgs">
+            <td>{{org.name}}</td>
+            <td>{{orgList.orgTypes[org.orgType]}}</td>
+            <td>{{org.area}}</td>
+            <td>
+              <a ui-sref="organizations.edit({uuid: org.uuid})"><button class="btn-link">Edit</button></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
