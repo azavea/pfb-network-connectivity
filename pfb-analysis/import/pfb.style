@@ -129,6 +129,22 @@ way        turn:lanes:both_ways text linear
 way        turn:lanes:backward  text linear
 way        turn:lanes:forward   text linear
 node,way   width        text         linear
+way        width:lanes  text         linear
+way        width:lanes:forward  text linear
+way        width:lanes:backward text linear
+way        width:cycleway       text linear
+way        width:cycleway:left  text linear
+way        width:cycleway:right text linear
+way        width:cycleway:both  text linear
+way        width:cycleway:buffer       text   linear
+way        width:cycleway:left:buffer  text   linear
+way        width:cycleway:right:buffer text   linear
+way        width:cycleway:both:buffer  text   linear
+way        width:parking        text linear
+way        width:parking:lane        text  linear
+way        width:parking:lane:right  text  linear
+way        width:parking:lane:left   text  linear
+way        width:parking:lane:both   text  linear
 
 
 # node,way   addr:housename      text  linear
