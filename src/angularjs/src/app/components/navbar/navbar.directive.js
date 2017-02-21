@@ -1,10 +1,10 @@
 /**
  * @ngdoc directive
- * @name repository.navbar.directive:repositoryNavbar
+ * @name pfb.navbar.directive:pfbNavbar
  * @restrict 'E'
  *
  * @description
- * Top level navigation bar for repository application
+ * Top level navigation bar for pfb application
  */
 
 (function() {
@@ -30,7 +30,7 @@
         }
     }
 
-    function repositoryNavbar() {
+    function pfbNavbar() {
         var directive = {
             restrict: 'E',
             templateUrl: 'app/components/navbar/navbar.html',
@@ -44,8 +44,8 @@
 
 
     angular
-        .module('repository')
+        .module('pfb')
         .controller('NavbarController', NavbarController)
-        .directive('repositoryNavbar', repositoryNavbar);
+        .directive('pfbNavbar', pfbNavbar);
 
 })();

@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.password-reset.controller:PasswordResetController
+ * @name pfb.password-reset.controller:PasswordResetController
  *
  * @description
  * Controller for password reset request page
@@ -26,6 +26,6 @@
     }
 
     angular
-        .module('repository.passwordReset.request')
+        .module('pfb.passwordReset.request')
         .controller('PasswordResetRequestController', PasswordResetRequestController);
 })();

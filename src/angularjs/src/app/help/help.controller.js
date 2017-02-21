@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.help.controller:HelpController
+ * @name pfb.help.controller:HelpController
  *
  * @description
  * Controller for Help page
@@ -33,8 +33,8 @@
 
         /**
          * @ngdoc function
-         * @name repository.help.controller:HelpController#scrollTo
-         * @methodOf repository.help.controller:HelpController
+         * @name pfb.help.controller:HelpController#scrollTo
+         * @methodOf pfb.help.controller:HelpController
          *
          * @description
          * Scrolls to internal header based on ID for help page
@@ -46,6 +46,6 @@
     }
 
     angular
-        .module('repository.help')
+        .module('pfb.help')
         .controller('HelpController', HelpController);
 })();

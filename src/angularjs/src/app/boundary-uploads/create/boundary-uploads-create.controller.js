@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.boundary-uploads.create.controller:BoundaryUploadCreateController
+ * @name pfb.boundary-uploads.create.controller:BoundaryUploadCreateController
  *
  * @description
  * Controller for creating a boundary upload
@@ -33,7 +33,7 @@
         }
 
         ctl.create = function() {
-            var uploadToast = toastr.info('Uploading file to repository. Please wait...',
+            var uploadToast = toastr.info('Uploading file to pfb. Please wait...',
                                           {autoDismiss: false});
             var upload = BoundaryUpload.save({area: ctl.area.fipsCode})
                 .$promise.then(
@@ -51,6 +51,6 @@
         };
     }
     angular
-        .module('repository.boundaryUploads.create')
+        .module('pfb.boundaryUploads.create')
         .controller('BoundaryUploadCreateController', BoundaryUploadCreateController);
 })();

@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.users.list.users-list.controller:UserDetailController
+ * @name pfb.users.list.users-list.controller:UserDetailController
  *
  * @description
  * Controller for user detail page. This pulls double-duty for creating and editing
@@ -97,6 +97,6 @@
     }
 
     angular
-        .module('repository.users.list')
+        .module('pfb.users.list')
         .controller('UserListController', UserListController);
 })();

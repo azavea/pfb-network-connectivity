@@ -1,6 +1,6 @@
 (function () {
     'use strict';
 
-    angular.module('repository.boundaryUploads',
-                   ['repository.boundaryUploads.create', 'repository.boundaryUploads.list']);
+    angular.module('pfb.boundaryUploads',
+                   ['pfb.boundaryUploads.create', 'pfb.boundaryUploads.list']);
 })();

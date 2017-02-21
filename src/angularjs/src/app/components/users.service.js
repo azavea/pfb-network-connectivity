@@ -3,7 +3,7 @@
 
     /**
      * @ngdoc service
-     * @name repository.components.User:User
+     * @name pfb.components.User:User
      *
      * @description
      * Resource for user
@@ -26,7 +26,7 @@
 
     /**
      * @ngdoc service
-     * @name repository.components.UserRoles:UserRoles
+     * @name pfb.components.UserRoles:UserRoles
      *
      * @description
      * Resource for user roles
@@ -46,7 +46,7 @@
         return module;
     }
 
-    angular.module('repository.components')
+    angular.module('pfb.components')
         .factory('User', User)
         .factory('UserRoles', UserRoles);
 })();

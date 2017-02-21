@@ -1,5 +1,5 @@
 (function () {
     'use strict';
 
-    angular.module('repository.help', ['hljs']);
+    angular.module('pfb.help', ['hljs']);
 })();

@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.organizations.list.organizations-list.controller:OrganizationListController
+ * @name pfb.organizations.list.organizations-list.controller:OrganizationListController
  *
  * @description
  * Controller for Organization list page
@@ -27,6 +27,6 @@
     }
 
     angular
-        .module('repository.organizations.list')
+        .module('pfb.organizations.list')
         .controller('OrganizationListController', OrganizationListController);
 })();

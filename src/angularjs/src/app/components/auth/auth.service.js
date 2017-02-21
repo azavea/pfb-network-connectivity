@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name repository.auth.service:AuthService
+ * @name pfb.auth.service:AuthService
  *
  * @description
  * Handles logging user in, logging out, accessing information on authenticated user
@@ -121,6 +121,6 @@
         }
     }
 
-    angular.module('repository.components.auth').factory('AuthService', AuthService);
+    angular.module('pfb.components.auth').factory('AuthService', AuthService);
 
 })();

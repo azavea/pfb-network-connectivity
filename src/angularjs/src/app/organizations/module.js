@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('repository.organizations',
-                   ['repository.organizations.list',
-                    'repository.organizations.detail']);
+    angular.module('pfb.organizations',
+                   ['pfb.organizations.list',
+                    'pfb.organizations.detail']);
 })();

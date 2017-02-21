@@ -1,5 +1,5 @@
 (function () {
     'use strict';
 
-    angular.module('repository.login', []);
+    angular.module('pfb.login', []);
 })();

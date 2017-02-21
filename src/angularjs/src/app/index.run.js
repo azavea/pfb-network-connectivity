@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('repository')
+    .module('pfb')
     .run(runBlock);
 
   /** @ngInject */

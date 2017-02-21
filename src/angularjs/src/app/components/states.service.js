@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name repository.components.stats:Area
+ * @name pfb.components.stats:Area
  *
  * @description
  * Resource for areas
@@ -13,6 +13,6 @@
         return $resource('/api/areas/');
     }
 
-    angular.module('repository.components')
+    angular.module('pfb.components')
         .factory('Area', Area);
 })();

@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.users.users-detail.controller:UserDetailController
+ * @name pfb.users.users-detail.controller:UserDetailController
  *
  * @description
  * Controller for user detail page. This pulls double-duty for creating and editing
@@ -106,6 +106,6 @@
     }
 
     angular
-        .module('repository.users.detail')
+        .module('pfb.users.detail')
         .controller('UserDetailController', UserDetailController);
 })();

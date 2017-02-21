@@ -1,5 +1,5 @@
 (function () {
     'use strict';
 
-    angular.module('repository.boundaryUploads.create', ['ngFileUpload']);
+    angular.module('pfb.boundaryUploads.create', ['ngFileUpload']);
 })();

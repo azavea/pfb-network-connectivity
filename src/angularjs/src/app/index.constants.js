@@ -3,7 +3,7 @@
   'use strict';
 
   angular
-    .module('repository')
+    .module('pfb')
     .constant('moment', moment);
 
 })();

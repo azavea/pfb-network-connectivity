@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.boundary-uploads.list.controller:BoundaryUploadListController
+ * @name pfb.boundary-uploads.list.controller:BoundaryUploadListController
  *
  * @description
  * Controller for listing boundary uploads
@@ -95,6 +95,6 @@
     }
 
     angular
-        .module('repository.boundaryUploads.list')
+        .module('pfb.boundaryUploads.list')
         .controller('BoundaryUploadListController', BoundaryUploadListController);
 })();

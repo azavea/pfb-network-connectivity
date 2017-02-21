@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name repository.components.organization:Organization
+ * @name pfb.components.organization:Organization
  *
  * @description
  * Resource for Organization
@@ -23,6 +23,6 @@
         });
     }
 
-    angular.module('repository')
+    angular.module('pfb')
         .factory('Organization', Organization);
 })();

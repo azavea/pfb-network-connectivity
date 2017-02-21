@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    angular.module('repository.components',
-                   ['repository.components.boundary-uploads',
-                    'repository.components.auth',
-                    'repository.components.filters']);
+    angular.module('pfb.components',
+                   ['pfb.components.boundary-uploads',
+                    'pfb.components.auth',
+                    'pfb.components.filters']);
 })();

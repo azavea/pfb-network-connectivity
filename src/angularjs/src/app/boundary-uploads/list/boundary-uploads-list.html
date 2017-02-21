@@ -1,4 +1,4 @@
-<repository-navbar></repository-navbar>
+<pfb-navbar></pfb-navbar>
 
 <script type="text/ng-template" id="popover.html">
   <li ng-repeat="note in boundaryUpload.notes track by $index">{{ note }}</li>
@@ -12,7 +12,7 @@
       </button>
       <h1 class="no-margin-top">Data</h1>
       <table class="table">
-        <thead repository-upload-filter filters="boundaryUploadList.filters"></thead>
+        <thead pfb-upload-filter filters="boundaryUploadList.filters"></thead>
         <tbody>
           <tr ng-repeat="boundaryUpload in boundaryUploadList.boundaryUploads">
             <td>

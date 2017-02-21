@@ -1,5 +1,5 @@
 (function () {
     'use strict';
 
-    angular.module('repository.users.list', []);
+    angular.module('pfb.users.list', []);
 })();

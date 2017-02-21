@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.login.user-login.controller:LoginController
+ * @name pfb.login.user-login.controller:LoginController
  *
  * @description
  * Controller handling logging a user in
@@ -34,7 +34,7 @@
     }
 
     angular
-        .module('repository.login')
+        .module('pfb.login')
         .controller('LoginController', LoginController);
 
 })();

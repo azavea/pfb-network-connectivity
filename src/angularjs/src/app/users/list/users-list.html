@@ -1,4 +1,4 @@
-<repository-navbar></repository-navbar>
+<pfb-navbar></pfb-navbar>
 
 <div class="container">
   <div class="row">
@@ -6,7 +6,7 @@
       <button ui-sref="users.create" class="btn btn-primary pull-right">New User</button>
       <h1 class="no-margin-top">User Management</h1>
       <table class="table">
-        <thead repository-user-filter filters="userList.filters"></thead>
+        <thead pfb-user-filter filters="userList.filters"></thead>
         <tbody>
           <tr ng-repeat="user in userList.users" ng-class="{'inactive-user': !user.isActive}">
             <td>{{user.email}}</td>

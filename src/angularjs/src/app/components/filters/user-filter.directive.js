@@ -1,7 +1,7 @@
 (function() {
     /**
      * @ngdoc controller
-     * @name repository.components.filters.UserFilterController
+     * @name pfb.components.filters.UserFilterController
      *
      * @description
      * Controller for the User filtering table header
@@ -50,7 +50,7 @@
     /**
      * @ngdoc directive
      * @scope
-     * @name repository.components.filters.UserFilterDirective:repositoryUserFilter
+     * @name pfb.components.filters.UserFilterDirective:pfbUserFilter
      *
      * @description
      * Directive for the User filtering table header
@@ -71,7 +71,7 @@
         return module;
     }
 
-    angular.module('repository.components.filters')
+    angular.module('pfb.components.filters')
         .controller('UserFilterController', UserFilterController)
-        .directive('repositoryUserFilter', UserFilterDirective);
+        .directive('pfbUserFilter', UserFilterDirective);
 })();

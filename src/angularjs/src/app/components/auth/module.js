@@ -1,6 +1,6 @@
 (function () {
     'use strict';
 
-    angular.module('repository.components.auth', []);
+    angular.module('pfb.components.auth', []);
 
 })();

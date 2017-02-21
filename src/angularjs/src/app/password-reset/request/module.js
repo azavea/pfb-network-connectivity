@@ -1,5 +1,5 @@
 (function () {
     'use strict';
 
-    angular.module('repository.passwordReset.request', []);
+    angular.module('pfb.passwordReset.request', []);
 })();

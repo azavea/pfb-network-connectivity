@@ -3,7 +3,7 @@
 
     /**
      * @ngdoc service
-     * @name repository.boundary-uploads.BoundaryUpload:BoundaryUpload
+     * @name pfb.boundary-uploads.BoundaryUpload:BoundaryUpload
      *
      * @description
      * Resource for boundary uploads
@@ -21,7 +21,7 @@
 
     /**
      * @ngdoc service
-     * @name repository.boundary-uploads.BoundaryUploadStatuses:BoundaryUploadStatuses
+     * @name pfb.boundary-uploads.BoundaryUploadStatuses:BoundaryUploadStatuses
      *
      * @description
      * Resource for boundary upload statuses
@@ -43,7 +43,7 @@
         return module;
     }
 
-    angular.module('repository.components.boundary-uploads')
+    angular.module('pfb.components.boundary-uploads')
         .factory('BoundaryUpload', BoundaryUpload)
         .factory('BoundaryUploadStatuses', BoundaryUploadStatuses);
 })();

@@ -1,5 +1,5 @@
 (function () {
     'use strict';
 
-    angular.module('repository.boundaryUploads.list', []);
+    angular.module('pfb.boundaryUploads.list', []);
 })();

@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name repository.components.Pagination:Pagination
+ * @name pfb.components.Pagination:Pagination
  *
  * @description
  * Handles parsing next/previous links for params to aid pagination
@@ -27,6 +27,6 @@
         }
     }
 
-    angular.module('repository.components')
+    angular.module('pfb.components')
         .factory('Pagination', Pagination);
 })();

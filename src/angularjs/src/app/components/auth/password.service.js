@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name repository.auth.PasswordResetService:PasswordResetService
+ * @name pfb.auth.PasswordResetService:PasswordResetService
  *
  * @description
  * Handles requesting and processing password resets
@@ -45,7 +45,7 @@
 
     }
 
-    angular.module('repository.components.auth')
+    angular.module('pfb.components.auth')
         .factory('PasswordResetService', PasswordResetService);
 
 })();

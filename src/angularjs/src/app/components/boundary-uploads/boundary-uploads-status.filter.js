@@ -1,6 +1,6 @@
 /**
  * @ngdoc filter
- * @name repository.boundary-uploads.status:displayStatus
+ * @name pfb.boundary-uploads.status:displayStatus
  *
  * @description
  * Transforms boundary upload status into user friendly string
@@ -22,6 +22,6 @@
         };
     }
 
-    angular.module('repository.components.boundary-uploads')
+    angular.module('pfb.components.boundary-uploads')
         .filter('displayStatus', displayStatus);
 })();

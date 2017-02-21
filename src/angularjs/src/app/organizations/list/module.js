@@ -1,5 +1,5 @@
 (function () {
     'use strict';
 
-    angular.module('repository.organizations.list', []);
+    angular.module('pfb.organizations.list', []);
 })();

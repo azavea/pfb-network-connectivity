@@ -13,7 +13,7 @@ gulp.task('docs', function () {
             'bower/angular/angular.min.js',
             'bower/angular-animate/angular-animate.min.js'
         ],
-        title: 'Repository Angular Docs',
+        title: 'PfB Network Connectivity Angular Docs',
         html5Mode: false
     };
 

@@ -1,6 +1,6 @@
 /**
  * @ngdoc service
- * @name repository.auth.token:TokenService
+ * @name pfb.auth.token:TokenService
  *
  * @description
  * Handles requesting and regenerating tokens
@@ -48,7 +48,7 @@
 
     }
 
-    angular.module('repository.components.auth')
+    angular.module('pfb.components.auth')
         .factory('TokenService', TokenService);
 
 })();

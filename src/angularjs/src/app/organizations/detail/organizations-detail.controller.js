@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name repository.organizations.organizations-detail.controller:OrganizationDetailController
+ * @name pfb.organizations.organizations-detail.controller:OrganizationDetailController
  *
  * @description
  * Handles creating/editing an organization; only available to admins in admin org
@@ -63,6 +63,6 @@
     }
 
     angular
-        .module('repository.organizations.detail')
+        .module('pfb.organizations.detail')
         .controller('OrganizationDetailController', OrganizationDetailController);
 })();

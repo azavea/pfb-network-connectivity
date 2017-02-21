@@ -2,7 +2,7 @@
 
     /**
      * @ngdoc controller
-     * @name repository.components.filters.UploadFilterController
+     * @name pfb.components.filters.UploadFilterController
      *
      * @description
      * Controller for the Boundary upload filtering table header
@@ -60,7 +60,7 @@
     /**
      * @ngdoc directive
      * @scope
-     * @name repository.components.filters.UploadFilterDirective:repositoryUploadFilter
+     * @name pfb.components.filters.UploadFilterDirective:pfbUploadFilter
      *
      * @description
      * Directive for the Boundary upload filtering table header
@@ -80,7 +80,7 @@
         return module;
     }
 
-    angular.module('repository.components.filters')
+    angular.module('pfb.components.filters')
         .controller('UploadFilterController', UploadFilterController)
-        .directive('repositoryUploadFilter', UploadFilterDirective);
+        .directive('pfbUploadFilter', UploadFilterDirective);
 })();
