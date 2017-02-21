@@ -20,13 +20,28 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from rest_framework import routers
 
+from users import views as user_views
+
 router = routers.DefaultRouter()
+
+router.register(r'users', user_views.PFBUserViewSet, base_name='users')
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(router.urls, namespace='api')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    # User Views
+    url(r'^api/login/', user_views.PFBUserLoginView.as_view()),
+    url(r'^api/logout/', user_views.PFBUserLogoutView.as_view()),
+    url(r'^api/users/(?P<pk>.+)/set-password',
+        user_views.PFBUserViewSet.as_view({'post': 'set_password'})),
+
+    # Password Reset
+    url(r'^api/request-password-reset/', user_views.PFBRequestPasswordReset.as_view()),
+    url(r'^api/reset-password/', user_views.PFBResetPassword.as_view()),
+
 ]
 
 if settings.DEBUG:
