@@ -12,16 +12,17 @@ usage() {
     echo -n "$(basename "${0}") [OPTION]
 Login to a running Docker container\'s shell.
 Options:
-    database  Database container
-    django    Django container
-    celery    Celery container
-    nginx     Nginx container
-    help      Display this help text
+    database   Database container
+    django     Django container
+    angularjs  AngularJS container
+    celery     Celery container
+    nginx      Nginx container
+    help       Display this help text
 "
 }
 
 case $1 in
-    django|celery|nginx) NORMAL_CONTAINER=1 ;;
+    django|celery|nginx|angularjs) NORMAL_CONTAINER=1 ;;
     database)         DATABASE_CONTAINER=1 ;;
     help|*)           usage; exit 1 ;;
 esac
