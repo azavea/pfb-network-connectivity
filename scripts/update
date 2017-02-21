@@ -61,7 +61,7 @@ then
     else
         pushd ..
 
-        docker-compose build django database nginx
+        docker-compose build
 
         run_database_migrations
 
