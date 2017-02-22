@@ -43,6 +43,8 @@ urlpatterns = [
     url(r'^api/request-password-reset/', user_views.PFBRequestPasswordReset.as_view()),
     url(r'^api/reset-password/', user_views.PFBResetPassword.as_view()),
 
+    # 3rd party
+    url(r'^healthcheck/', include('watchman.urls'))
 ]
 
 if settings.DEBUG:

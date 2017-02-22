@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
+    'watchman',
 
     # project apps
     'pfb_network_connectivity',
@@ -216,6 +217,14 @@ REST_FRAMEWORK = {
     ],
     'PAGE_SIZE': 20
 }
+
+# Watchman
+# http://django-watchman.readthedocs.io/en/latest/
+WATCHMAN_ERROR_CODE = 503
+WATCHMAN_CHECKS = (
+    'watchman.checks.databases',
+)
+
 
 # Email
 DEFAULT_FROM_EMAIL = 'noreply@pfb.azavea.com'
