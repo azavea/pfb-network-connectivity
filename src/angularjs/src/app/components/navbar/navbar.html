@@ -1,0 +1,42 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" ui-sref="boundary-uploads.list">
+        <img class="logo" src="assets/images/logo-pfb.png" alt="PfB Logo">
+      </a>
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li ui-sref-active="active">
+          <a ui-sref="help">Help</a>
+        </li>
+        <li ui-sref-active="{'active': 'boundary-uploads'}">
+          <a ui-sref="boundary-uploads.list">Data</a>
+        </li>
+        <li ui-sref-active="{'active': 'users'}">
+          <a ng-if="navbar.isAdminUser" ui-sref="users.list">User Management</a>
+        </li>
+        <li ng-if="navbar.isAdminUser && navbar.isAdminOrg" ui-sref-active="{'active': 'organizations'}">
+          <a ng-if="navbar.isAdminUser" ui-sref="organizations.list">Org Management</a>
+        </li>
+        <li uib-dropdown class="dropdown"
+            ng-mouseenter="status.isopen = true" and ng-mouseleave="status.isopen = false"
+            is-open="status.isopen">
+          <a  uib-dropdown-toggle role="button">{{navbar.userName}}<span class="caret"></span></a>
+          <ul uib-dropdown-menu class="dropdown-menu">
+            <li><a ui-sref="users.edit({uuid: navbar.userUuid})">Account Settings</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a ui-sref="login" ng-click="navbar.logout()">Sign Out</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

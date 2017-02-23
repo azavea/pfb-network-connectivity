@@ -1,0 +1,19 @@
+{
+  "extends": "eslint:recommended",
+  "plugins": ["angular"],
+  "env": {
+    "browser": true,
+    "jasmine": true
+  },
+  "globals": {
+    "angular": true,
+    "module": true,
+    "URI": true,
+    "_": true,
+    "inject": true
+  },
+  "rules": {
+    "angular/controller-as-vm": [2, "ctl"],
+    "no-unreachable": 0
+  }
+}

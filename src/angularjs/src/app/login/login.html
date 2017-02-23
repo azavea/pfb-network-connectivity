@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="login">
+        <img class="logo" src="assets/images/logo-pfb.png" alt="PfB Logo">
+        <form name="loginForm" novalidate ng-submit="login.login()">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input class="form-control"
+                   ng-model="login.email"
+                   id="email"
+                   type="text" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input class="form-control" ng-model="login.password" id="password" type="password" required>
+          </div>
+          <div class="form-action">
+            <button class="btn btn-primary btn-block" ng-disabled="loginForm.$invalid"
+                    type="submit">Sign In</button>
+            <div class="link-block">
+              <a class="secondary-link" ui-sref="request-password-reset">Reset Password</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

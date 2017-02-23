@@ -1,0 +1,33 @@
+<pfb-navbar></pfb-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+      <button ui-sref="users.create" class="btn btn-primary pull-right">New User</button>
+      <h1 class="no-margin-top">User Management</h1>
+      <table class="table">
+        <thead pfb-user-filter filters="userList.filters"></thead>
+        <tbody>
+          <tr ng-repeat="user in userList.users" ng-class="{'inactive-user': !user.isActive}">
+            <td>{{user.email}}</td>
+            <td>{{user.firstName}} {{user.lastName}}</td>
+            <td>{{user.orgName}}</td>
+            <td>{{userList.roleOptions[user.role]}}</td>
+            <td>
+              <a ui-sref="users.edit({uuid: user.uuid})"><button class="btn-link">Edit</button></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Paginate after 10 records; hide pagination when fewer than 10 records. -->
+        <button class="btn-success btn" ng-click="userList.getPrev()"
+                ng-disabled="!userList.hasPrev">
+          Previous
+        </button>
+        <button class="btn-success btn" ng-click="userList.getNext()"
+                ng-disabled="!userList.hasNext">
+          Next
+        </button>
+    </div>
+  </div>
+</div>

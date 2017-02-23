@@ -41,19 +41,21 @@ services:
   #   links:
   #     - database:database.service.pfb.internal
 
-  angular:
-    image: node:6.9-slim
-    working_dir: /usr/src
-    ports:
-      - "9210:9210"
-      - "9211:9211"
-      - "9212:9212"
-      - "9213:9213"
+  angularjs:
+    image: pfb-angularjs
+    working_dir: /opt/pfb/angularjs
+    build:
+      context: ./src/angularjs
+      dockerfile: Dockerfile
     links:
-      - django
+      - nginx:pfb.internal
+    ports:
+      - "9301:9301"
+      - "9302:9302"
     volumes:
-        - ./src/angular:/usr/src
-        # Ensure that path to node_modules cache doesn't clash with other
-        # jobs on CI.
-        - /var/cache/pfb-node-modules:/usr/src/node_modules
-    command: npm run serve
+      - ./src/angularjs/.eslintrc:/opt/pfb/angularjs/.eslintrc
+      - ./src/angularjs/gulp:/opt/pfb/angularjs/gulp
+      - ./src/angularjs/gulpfile.js:/opt/pfb/angularjs/gulpfile.js
+      - ./src/angularjs/src:/opt/pfb/angularjs/src
+      - ./src/angularjs/docs:/opt/pfb/angularjs/docs
+    command: gulp serve

@@ -1,0 +1,24 @@
+.btn-link {
+    padding: 0;
+    border: 0;
+}
+
+.buttons-pagination {
+    float: right;
+    button {
+        min-width: 8.4rem;
+    }
+}
+
+.btn {
+    border-width: 0;
+    padding: 6px 12px;
+}
+
+.btn.disabled {
+    opacity: .25;
+}
+
+.btn-default {
+  border: 1px solid #ccc;
+}

@@ -12,7 +12,7 @@ services:
       - PGUSER=pfb
       - DJANGO_ENV=development
       - DJANGO_SECRET_KEY=secret
-      - DJANGO_LOG_LEVEL=DEBUG
+      - DJANGO_LOG_LEVEL=INFO
     volumes:
       - ./src/django:/usr/src
       - ./src/nginx/srv/dist:/static/

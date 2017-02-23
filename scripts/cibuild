@@ -24,21 +24,25 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
-        echo "Building static asset bundle"
-        docker-compose \
-            -f "${DIR}/../docker-compose.yml" \
-            run --rm --no-deps --entrypoint "/bin/bash -c" \
-            angular "npm install --quiet && npm run build"
+        # Note: tests are run and the files are copied using the :latest images, which should be
+        # fine because CI first runs scripts/update, which builds all containers.
 
         echo "Running tests"
         "${DIR}/test"
         echo "All tests pass!"
 
-        echo "Building container image for nginx and django"
+        # Copy static angular site to nginx srv directory
+        echo "Copying angular site to nginx"
+        pushd "${DIR}/../src/nginx"
+        docker run -i -v "${PWD}/srv/dist:/static-export/dist" pfb-angularjs \
+               rsync -rlptDv --delete --exclude .gitkeep \
+                 /opt/pfb/angularjs/dist /static-export/
+        popd
+
+        echo "Building container images"
         GIT_COMMIT="${GIT_COMMIT}" docker-compose \
                   -f "${DIR}/../docker-compose.yml" \
                   -f "${DIR}/../docker-compose.test.yml" \
-                  build nginx django
-
+                  build
     fi
 fi
