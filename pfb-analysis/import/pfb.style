@@ -95,6 +95,10 @@ way        cycleway:buffer    text   linear
 way        cycleway:left:buffer  text   linear
 way        cycleway:right:buffer text   linear
 way        cycleway:both:buffer  text   linear
+way        cycleway:width       text   linear
+way        cycleway:left:width  text linear
+way        cycleway:right:width text linear
+way        cycleway:both:width  text linear
 node,way   foot         text         linear
 way        footway      text         linear
 node,way   highway      text         linear
@@ -115,6 +119,10 @@ way        parking:lane        text  linear
 way        parking:lane:right  text  linear
 way        parking:lane:left   text  linear
 way        parking:lane:both   text  linear
+way        parking:lane:width        text  linear
+way        parking:lane:right:width  text  linear
+way        parking:lane:left:width   text  linear
+way        parking:lane:both:width   text  linear
 node,way   segregated   text         linear
 way        service      text         linear
 node,way   stop         text         linear
@@ -132,19 +140,7 @@ node,way   width        text         linear
 way        width:lanes  text         linear
 way        width:lanes:forward  text linear
 way        width:lanes:backward text linear
-way        width:cycleway       text linear
-way        width:cycleway:left  text linear
-way        width:cycleway:right text linear
-way        width:cycleway:both  text linear
-way        width:cycleway:buffer       text   linear
-way        width:cycleway:left:buffer  text   linear
-way        width:cycleway:right:buffer text   linear
-way        width:cycleway:both:buffer  text   linear
-way        width:parking        text linear
-way        width:parking:lane        text  linear
-way        width:parking:lane:right  text  linear
-way        width:parking:lane:left   text  linear
-way        width:parking:lane:both   text  linear
+
 
 
 # node,way   addr:housename      text  linear
