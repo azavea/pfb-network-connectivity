@@ -65,6 +65,13 @@ then
 
         run_database_migrations
 
+        echo "Copying angular site to nginx"
+        pushd "src/nginx"
+        docker run -i -v "${PWD}/srv/dist:/static-export/dist" pfb-angularjs \
+               rsync -rlptDv --delete --exclude .gitkeep \
+                 /opt/pfb/angularjs/dist /static-export/
+        popd
+
         # Build the current docker analysis container
         pushd pfb-analysis
         docker build -t pfb .
