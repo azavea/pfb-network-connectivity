@@ -2,14 +2,14 @@ FROM node:6.9.5-wheezy
 
 MAINTAINER Azavea
 
-ENV ANGULAR_DIR /opt/pfb/angular
+ENV ANGULAR_DIR /opt/pfb/angularjs
 
 RUN apt-get update && apt-get install -y rsync \
     && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g bower gulp
 
-WORKDIR /opt/pfb/angular
+WORKDIR /opt/pfb/angularjs
 COPY package.json ${ANGULAR_DIR}/package.json
 RUN npm install
 
