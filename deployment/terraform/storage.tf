@@ -14,3 +14,13 @@ resource "aws_s3_bucket" "static" {
     Project     = "${var.project}"
   }
 }
+
+resource "aws_s3_bucket" "storage" {
+  bucket = "${lower("${var.environment}")}-pfb-storage-${var.aws_region}"
+  acl    = "private"
+
+  tags {
+    Environment = "${var.environment}"
+    Project     = "${var.project}"
+  }
+}
