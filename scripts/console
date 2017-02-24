@@ -15,14 +15,13 @@ Options:
     database   Database container
     django     Django container
     angularjs  AngularJS container
-    celery     Celery container
     nginx      Nginx container
     help       Display this help text
 "
 }
 
 case $1 in
-    django|celery|nginx|angularjs) NORMAL_CONTAINER=1 ;;
+    django|nginx|angularjs) NORMAL_CONTAINER=1 ;;
     database)         DATABASE_CONTAINER=1 ;;
     help|*)           usage; exit 1 ;;
 esac
