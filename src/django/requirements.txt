@@ -3,3 +3,5 @@ django-filter==1.0.1
 celery[sqs]==4.0
 boto==2.45.0
 django-extensions==1.7.6
+django-watchman==0.11.1
+requests==2.13.0

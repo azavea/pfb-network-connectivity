@@ -20,6 +20,42 @@ node {
         sh 'scripts/cibuild'
       }
     }
+
+    if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('release/')) {
+      env.AWS_PROFILE = 'pfb'
+      env.AWS_DEFAULT_REGION = 'us-east-1'
+      env.PFB_SETTINGS_BUCKET = 'staging-pfb-config-us-east-1'
+      env.PFB_S3STORAGE_BUCKET = 'staging-pfb-static-us-east-1'
+
+      // Publish container images built and tested during `cibuild`
+      // to the private Amazon Container Registry tagged with the
+      // first seven characters of the revision SHA.
+      stage('cipublish') {
+        // Decode the `AWS_ECR_ENDPOINT` credential stored within
+        // Jenkins. In includes the Amazon ECR registry endpoint.
+        withCredentials([[$class: 'StringBinding',
+                          credentialsId: 'PFB_AWS_ECR_ENDPOINT',
+                          variable: 'PFB_AWS_ECR_ENDPOINT']]) {
+          wrap([$class: 'AnsiColorBuildWrapper']) {
+            sh './scripts/cipublish'
+          }
+        }
+      }
+
+      // Plan and apply the current state of the instracture as
+      //
+      // Also, use the container image revision referenced above to
+      // cycle in the newest version of the application into Amazon
+      // ECS.
+      stage('infra') {
+        // Use `git` to get the primary repository's current commmit SHA and
+        // set it as the value of the `GIT_COMMIT` environment variable.
+        wrap([$class: 'AnsiColorBuildWrapper']) {
+          sh './scripts/infra plan'
+          sh './scripts/infra apply'
+        }
+      }
+    }
   } catch (err) {
     // Some exception was raised in the `try` block above. Assemble
     // an appropirate error message for Slack.

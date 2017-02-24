@@ -1,0 +1,70 @@
+[
+  {
+    "cpu": 0,
+    "memory": 2048,
+    "entryPoint": [
+      "./manage.py"
+    ],
+    "mountPoints": [],
+    "name": "management",
+    "image": "${management_url}",
+    "environment": [
+      {
+        "name": "DJANGO_ENV",
+        "value": "${django_env}"
+      },
+      {
+        "name": "PFB_SECRET_KEY",
+        "value": "${django_secret_key}"
+      },
+      {
+        "name": "PFB_DB_HOST",
+        "value": "${rds_host}"
+      },
+      {
+        "name": "PFB_DB_PORT",
+        "value": "5432"
+      },
+      {
+        "name": "PFB_DB_PASSWORD",
+        "value": "${rds_password}"
+      },
+      {
+        "name": "PFB_DB_USER",
+        "value": "${rds_username}"
+      },
+      {
+        "name": "PFB_DB_DATABASE",
+        "value": "${rds_database_name}"
+      },
+      {
+        "name": "AWS_DEFAULT_REGION",
+        "value": "${aws_region}"
+      },
+      {
+        "name": "PFB_S3STORAGE_BUCKET",
+        "value": "${s3_storage_bucket}"
+      },
+      {
+        "name": "PFB_ALLOWED_HOSTS",
+        "value": "${django_allowed_hosts}"
+      },
+      {
+        "name": "COMMIT",
+        "value": "${git_commit}"
+      },
+      {
+        "name": "DJANGO_LOG_LEVEL",
+        "value": "INFO"
+      }
+    ],
+    "logConfiguration": {
+        "logDriver": "syslog",
+        "options": {
+            "syslog-address": "${pfb_app_papertrail_endpoint}",
+            "syslog-tls-ca-cert": "/etc/papertrail-bundle.pem",
+            "tag": "management"
+        }
+    }
+  }
+]

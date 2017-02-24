@@ -1,0 +1,29 @@
+[
+  {
+    "cpu": 10,
+    "essential": true,
+    "image": "${app_server_nginx_url}",
+    "extraHosts": [
+        {
+            "hostname": "django",
+            "ipAddress": "127.0.0.1"
+        }
+    ],
+    "memory": 256,
+    "name": "nginx",
+    "portMappings": [
+        {
+            "containerPort": 80,
+            "hostPort": 0
+        }
+    ],
+    "logConfiguration": {
+        "logDriver": "syslog",
+        "options": {
+            "syslog-address": "${pfb_app_papertrail_endpoint}",
+            "syslog-tls-ca-cert": "/etc/papertrail-bundle.pem",
+            "tag": "nginx-redirect"
+        }
+    }
+  }
+]

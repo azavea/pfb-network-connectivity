@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
 
   django:
-    image: pfb-django:${GIT_COMMIT}
+    image: pfb-app:${GIT_COMMIT}
     build:
       context: ./src/django
       dockerfile: Dockerfile
