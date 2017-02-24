@@ -6,6 +6,9 @@ node {
       checkout scm
     }
 
+    env.AWS_PROFILE = 'pfb'
+    env.GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+
     // Execute `setup` wrapped within a plugin that translates
     // ANSI color codes to something that renders inside the Jenkins
     // console.
@@ -22,7 +25,6 @@ node {
     }
 
     if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('release/')) {
-      env.AWS_PROFILE = 'pfb'
       env.AWS_DEFAULT_REGION = 'us-east-1'
       env.PFB_SETTINGS_BUCKET = 'staging-pfb-config-us-east-1'
       env.PFB_S3STORAGE_BUCKET = 'staging-pfb-static-us-east-1'
