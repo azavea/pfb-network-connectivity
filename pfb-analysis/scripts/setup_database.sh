@@ -8,9 +8,9 @@ NB_POSTGRESQL_PASSWORD=gis
 
 # set up database
 su postgres bash -c psql <<EOF
-CREATE USER gis WITH PASSWORD 'gis';
-ALTER USER gis WITH SUPERUSER;
-CREATE DATABASE pfb WITH OWNER gis ENCODING 'UTF-8';
+CREATE USER ${NB_POSTGRESQL_USER} WITH PASSWORD '${NB_POSTGRESQL_PASSWORD}';
+ALTER USER ${NB_POSTGRESQL_USER} WITH SUPERUSER;
+CREATE DATABASE ${NB_POSTGRESQL_DB} WITH OWNER ${NB_POSTGRESQL_USER} ENCODING 'UTF-8';
 EOF
 
 # install extensions
@@ -22,5 +22,5 @@ CREATE EXTENSION "plpythonu";
 CREATE EXTENSION "pgrouting";
 CREATE EXTENSION "quantile";
 CREATE EXTENSION "tdg";
-ALTER USER gis SET search_path TO generated,received,scratch,"\$user",tdg,public;
+ALTER USER ${NB_POSTGRESQL_USER} SET search_path TO generated,received,scratch,"\$user",tdg,public;
 EOF
