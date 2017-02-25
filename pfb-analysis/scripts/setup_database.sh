@@ -6,6 +6,13 @@ NB_POSTGRESQL_DB=pfb
 NB_POSTGRESQL_USER=gis
 NB_POSTGRESQL_PASSWORD=gis
 
+# Set configuration parameters
+su postgres bash -c psql <<EOF
+ALTER SYSTEM SET work_mem TO '4096MB';
+ALTER SYSTEM SET checkpoint_completion_target TO 0.8;
+ALTER SYSTEM SET max_wal_size TO '5GB';
+EOF
+
 # set up database
 su postgres bash -c psql <<EOF
 CREATE USER ${NB_POSTGRESQL_USER} WITH PASSWORD '${NB_POSTGRESQL_PASSWORD}';
