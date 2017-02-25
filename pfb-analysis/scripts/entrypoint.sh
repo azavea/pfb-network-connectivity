@@ -57,5 +57,5 @@ EOF
 bash
 
 # shutdown postgres
-kill $POSTGRES_PROC
+su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl stop"
 wait
