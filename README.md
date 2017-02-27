@@ -60,7 +60,7 @@ In this example, we configure the analysis to be run for Cambridge MA.
 Run:
 ```
 pushd pfb-analysis
-docker build -t pfb .
+docker build -t pfb-analysis .
 popd
 
 docker run \
@@ -68,9 +68,9 @@ docker run \
     -e PFB_STATE=ma \
     -e PFB_STATE_FIPS=25 \
     -e NB_INPUT_SRID=2249 \
-    -e NB_BOUNDARY_BUFFER=11000 \
+    -e NB_BOUNDARY_BUFFER=3600 \
     -v /vagrant/data/:/data/ \
-    pfb
+    pfb-analysis
 ```
 
 This will take up to 1hr, so just let it work. Consider piping script output to a file and running in
@@ -101,7 +101,7 @@ docker run \
     -e PFB_STATE=<state abbrev> \
     -e PFB_STATE_FIPS=<state fips> \
     -e NB_INPUT_SRID=<input srid> \
-    -e NB_BOUNDARY_BUFFER=<buffer distance in units of NB_OUTPUT_SRID> \
+    -e NB_BOUNDARY_BUFFER=<buffer distance in meters> \
     -v /vagrant/data/:/data/ \
-    pfb
+    pfb-analysis
 ```

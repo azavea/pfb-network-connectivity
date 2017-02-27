@@ -44,5 +44,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                   -f "${DIR}/../docker-compose.yml" \
                   -f "${DIR}/../docker-compose.test.yml" \
                   build
+
+        echo "Building pfb-analysis container image"
+        pushd pfb-analysis
+        GIT_COMMIT="${GIT_COMMIT}" docker build -t "pfb-analysis:${GIT_COMMIT}" .
+        popd
     fi
 fi

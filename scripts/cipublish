@@ -37,9 +37,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                    "${PFB_AWS_ECR_ENDPOINT}/pfb-nginx:${GIT_COMMIT}"
             docker tag "pfb-app:${GIT_COMMIT}" \
                    "${PFB_AWS_ECR_ENDPOINT}/pfb-app:${GIT_COMMIT}"
+            docker tag "pfb-analysis:${GIT_COMMIT}" \
+                   "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}"
 
             docker push "${PFB_AWS_ECR_ENDPOINT}/pfb-nginx:${GIT_COMMIT}"
             docker push "${PFB_AWS_ECR_ENDPOINT}/pfb-app:${GIT_COMMIT}"
+            docker push "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}"
 
             echo "Uploading static files to S3..."
             PFB_S3STORAGE_BUCKET="${PFB_S3STORAGE_BUCKET}" \
