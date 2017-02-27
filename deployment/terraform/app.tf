@@ -148,6 +148,9 @@ data "template_file" "pfb_app_https_ecs_task" {
     git_commit                 = "${var.git_commit}"
     pfb_app_papertrail_endpoint = "${var.papertrail_host}:${var.papertrail_port}"
     aws_region                 = "${var.aws_region}"
+    batch_analysis_compute_environment_arn = "${var.batch_analysis_compute_environment_arn}"
+    batch_analysis_job_queue_name = "${var.batch_analysis_job_queue_name}"
+    batch_analysis_job_definition_name_revision = "${var.batch_analysis_job_definition_name_revision}"
   }
 }
 
@@ -189,6 +192,9 @@ data "template_file" "pfb_app_management_ecs_task" {
     git_commit                 = "${var.git_commit}"
     pfb_app_papertrail_endpoint = "${var.papertrail_host}:${var.papertrail_port}"
     aws_region                 = "${var.aws_region}"
+    batch_analysis_compute_environment_arn = "${var.batch_analysis_compute_environment_arn}"
+    batch_analysis_job_queue_name = "${var.batch_analysis_job_queue_name}"
+    batch_analysis_job_definition_name_revision = "${var.batch_analysis_job_definition_name_revision}"
   }
 }
 

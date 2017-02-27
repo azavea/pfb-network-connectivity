@@ -6,6 +6,7 @@ Thumbs.db
 .vagrant
 
 #Ansible
+deployment/ansible/group_vars/all
 deployment/ansible/roles/azavea.*
 deployment/ansible/*.retry
 

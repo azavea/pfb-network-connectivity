@@ -11,3 +11,4 @@
     - { role: "azavea.terraform" }
     - { role: "pfb.env" }
     - { role: "pfb.docker" }
+    - { role: "pfb.boto3" }

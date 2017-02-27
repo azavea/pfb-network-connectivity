@@ -8,6 +8,10 @@ node {
 
     env.AWS_PROFILE = 'pfb'
     env.GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+    // Use dummy values for now, these resources don't actually exist
+    env.PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN = 'arn:aws:batch:us-east-1:account-id:compute-environment/dummy-test-environment'
+    env.PFB_AWS_BATCH_JOB_QUEUE_NAME = 'dummy-test-pfb-analysis-job-queue'
+    env.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION = 'dummy-test-pfb-analysis-run-job:1'
 
     // Execute `setup` wrapped within a plugin that translates
     // ANSI color codes to something that renders inside the Jenkins

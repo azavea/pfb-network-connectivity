@@ -1,0 +1,21 @@
+{
+    "jobDefinitionName": "{environment}-pfb-analysis-run-job",
+    "type": "container",
+    "parameters": {},
+    "containerProperties": {
+        "image": "{image}",
+        "vcpus": 4,
+        "memory": 4096,
+        "command": [
+            "/pfb/scripts/entrypoint.sh"
+        ],
+        "jobRoleArn": "",
+        "volumes": [],
+        "environment": [],
+        "mountPoints": [],
+        "readonlyRootFilesystem": false,
+        "privileged": true,
+        "ulimits": [],
+        "user": ""
+    }
+}

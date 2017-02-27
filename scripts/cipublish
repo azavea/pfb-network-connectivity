@@ -52,9 +52,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 -f docker-compose.test.yml \
                 run --rm --no-deps --entrypoint "./manage.py" \
                 django collectstatic --noinput
-
             echo "Upload complete!"
-
         else
             echo "ERROR: No PFB_AWS_ECR_ENDPOINT variable defined."
             exit 1

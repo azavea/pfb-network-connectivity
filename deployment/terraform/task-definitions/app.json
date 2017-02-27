@@ -78,6 +78,18 @@
       {
         "name": "COMMIT",
         "value": "${git_commit}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN",
+        "value": "${batch_analysis_compute_environment_arn}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_JOB_QUEUE_NAME",
+        "value": "${batch_analysis_job_queue_name}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION",
+        "value": "${batch_analysis_job_definition_name_revision}"
       }
     ],
     "logConfiguration": {
