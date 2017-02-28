@@ -6,11 +6,16 @@ NB_POSTGRESQL_DB=pfb
 NB_POSTGRESQL_USER=gis
 NB_POSTGRESQL_PASSWORD=gis
 
+# Set defaults for overridable configuration params
+PFB_WORK_MEM="${PFB_WORK_MEM:-2048MB}"
+PFB_CHECKPOINT_COMPLETION="${PFB_CHECKPOINT_COMPLETION:-0.8}"
+PFB_MAX_WAL_SIZE="${PFB_MAX_WAL_SIZE:-2GB}"
+
 # Set configuration parameters
 su postgres bash -c psql <<EOF
-ALTER SYSTEM SET work_mem TO '4096MB';
-ALTER SYSTEM SET checkpoint_completion_target TO 0.8;
-ALTER SYSTEM SET max_wal_size TO '5GB';
+ALTER SYSTEM SET work_mem TO '${PFB_WORK_MEM}';
+ALTER SYSTEM SET checkpoint_completion_target TO ${PFB_CHECKPOINT_COMPLETION};
+ALTER SYSTEM SET max_wal_size TO '${PFB_MAX_WAL_SIZE}';
 EOF
 
 # set up database
