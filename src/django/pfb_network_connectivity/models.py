@@ -34,15 +34,3 @@ class PFBModel(models.Model):
 
     class Meta:
         abstract = True
-
-
-class Neighborhood(models.Model):
-    """Neighborhood used for analysis
-
-    TODO: fully implement
-    """
-
-    def __repr__(self):
-        return "<Neighborhood: {}>".format(self.name)
-
-    name = models.TextField()

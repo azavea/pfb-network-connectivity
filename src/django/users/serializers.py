@@ -6,7 +6,6 @@ from rest_framework import (
     serializers
 )
 
-from pfb_network_connectivity.models import Neighborhood
 from pfb_network_connectivity.serializers import PFBModelSerializer
 from users.models import Organization, OrganizationTypes, PFBUser
 from pfb_network_connectivity.permissions import is_admin, is_admin_org
@@ -16,14 +15,11 @@ class OrganizationSerializer(PFBModelSerializer):
     """Serializer for organization model"""
 
     orgType = serializers.CharField(source='org_type')
-    neighborhood = serializers.SlugRelatedField(slug_field='abbreviation', required=False,
-                                                allow_null=True,
-                                                queryset=Neighborhood.objects.all())
     label = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = Organization
-        fields = ('uuid', 'name', 'label', 'orgType', 'neighborhood', 'createdBy', 'modifiedBy',
+        fields = ('uuid', 'name', 'label', 'orgType', 'createdBy', 'modifiedBy',
                   'createdAt', 'modifiedAt')
 
 
@@ -41,25 +37,18 @@ class PFBUserSerializer(PFBModelSerializer):
     organization = serializers.SlugRelatedField(queryset=Organization.objects.all(),
                                                 slug_field='label')
     orgName = serializers.SerializerMethodField()
-    neighborhood = serializers.SerializerMethodField()
     isAdminOrganization = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
 
     class Meta:
         model = PFBUser
         fields = ('uuid', 'username', 'email', 'isActive', 'firstName',
-                  'lastName', 'organization', 'orgName', 'neighborhood',
+                  'lastName', 'organization', 'orgName',
                   'token', 'role', 'isAdminOrganization',
                   'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy')
 
     def get_username(self, obj):
         return obj.email
-
-    def get_neighborhood(self, obj):
-        if obj.organization and obj.organization.neighborhood:
-            return obj.organization.neighborhood.abbreviation
-        else:
-            return None
 
     def get_orgName(self, obj):
         if obj.organization:

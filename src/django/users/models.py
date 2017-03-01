@@ -23,33 +23,28 @@ class OrganizationTypes(object):
     """Enum-like object to track organization types"""
 
     ADMIN = 'ADMIN'
-    NEIGHBORHOOD = 'NEIGHBORHOOD'
     SUBSCRIBER = 'SUBSCRIBER'
 
     CHOICES = (
         (ADMIN, 'PFB Administrator Organization'),
-        (NEIGHBORHOOD, 'Neighborhood'),
         (SUBSCRIBER, 'Subscriber')
     )
 
 
 class Organization(PFBModel):
-    """Model for tracking neighborhood, subscribers, and admin groups
+    """Model for tracking subscribers and admin groups
 
 
     Every user will belong to an organization. Organization membership will determine
     whether or not a user can access or edit certain resources.
 
-    There are 3 types of organizations:
+    There are 2 types of organizations:
 
     **Admin.** Membership in the admin organization will grant access to all other organizations,
-    the ability to deactivate/activate neighborhood organizations, and the ability to create/delete
-    users within the system. Membership in this organization will be tightly controlled and will be
-    limited to PFB personnel who are responsible for activating/deactivating neighborhood sites and
-    creating initial admin users within a neighborhood organization.
-
-    **Neighborhood.** Membership in an organization that represents a neighborhood will only have
-    access to resources for that particular neighborhood.
+    and the ability to create/delete users within the system. Membership in this organization
+    will be tightly controlled and will be limited to PFB personnel who are responsible
+    for activating/deactivating neighborhood sites and creating initial admin users
+    within a neighborhood organization.
 
     **Subscriber.** Membership in a subscriber organization grants read-only access to results data.
 
@@ -57,7 +52,6 @@ class Organization(PFBModel):
         name (str): Human readable, actual name for organization (e.g. Alabama, etc.)
         label (str): Slug version of name, appropriate for URLs and embeding in JSON
         org_type (str): ENUM like field for type of organization
-        neighborhood (Optional[pfb_network_connectivity.models.Neighborhood]): neighborhood
         associated with organization
     """
 
@@ -67,7 +61,6 @@ class Organization(PFBModel):
     name = models.CharField(max_length=255, unique=True)
     label = models.SlugField(unique=True)
     org_type = models.CharField(choices=OrganizationTypes.CHOICES, max_length=10)
-    neighborhood = models.ForeignKey('pfb_network_connectivity.Neighborhood', null=True)
 
     def save(self, *args, **kwargs):
         """Override save method to add slug label.
