@@ -44,7 +44,7 @@ cd /pfb
 # determine coordinate reference system based on input shapefile UTM zone
 export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
 
-./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS
+./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS $PFB_OSM_FILE
 ./scripts/run_connectivity.sh
 
 # print scores (TODO: replace with export script)
