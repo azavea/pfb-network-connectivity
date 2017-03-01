@@ -9,7 +9,7 @@ NB_POSTGRESQL_PASSWORD=gis
 # Set defaults for overridable configuration params
 PFB_WORK_MEM="${PFB_WORK_MEM:-2048MB}"
 PFB_CHECKPOINT_COMPLETION="${PFB_CHECKPOINT_COMPLETION:-0.8}"
-PFB_MAX_WAL_SIZE="${PFB_MAX_WAL_SIZE:-2GB}"
+PFB_MAX_WAL_SIZE="${PFB_MAX_WAL_SIZE:-256MB}"
 
 # Set configuration parameters
 su postgres bash -c psql <<EOF
