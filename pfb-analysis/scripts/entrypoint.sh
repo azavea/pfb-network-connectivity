@@ -46,6 +46,7 @@ export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
 
 ./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS $PFB_OSM_FILE
 ./scripts/run_connectivity.sh
+./scripts/export_connectivity.sh $NB_OUTPUT_DIR
 
 # print scores (TODO: replace with export script)
 psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
