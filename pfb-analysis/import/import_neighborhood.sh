@@ -56,8 +56,12 @@ then
 
         # Get blocks for the state requested
         NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
-        wget -P "${NB_TEMPDIR}" "http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
-        unzip "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip" -d "${NB_TEMPDIR}"
+        if [[ -f "/data/${NB_BLOCK_FILENAME}.zip" ]]; then
+            unzip "/data/${NB_BLOCK_FILENAME}.zip" -d "${NB_TEMPDIR}"
+        else
+            wget -P "${NB_TEMPDIR}" "http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
+            unzip "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip" -d "${NB_TEMPDIR}"
+        fi
 
         # Import block shapefile
         echo "START: Importing blocks"

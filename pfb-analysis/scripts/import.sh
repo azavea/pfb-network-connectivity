@@ -27,6 +27,6 @@ then
     else
         ../import/import_neighborhood.sh "${1}" "${3}"
         ../import/import_jobs.sh "${2}"
-        ../import/import_osm.sh
+        ../import/import_osm.sh "${4}"
     fi
 fi
