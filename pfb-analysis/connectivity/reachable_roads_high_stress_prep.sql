@@ -1,7 +1,6 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- maximum network distsance: 10560 ft
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_reachable_roads_high_stress;
 
