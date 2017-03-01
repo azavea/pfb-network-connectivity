@@ -38,8 +38,12 @@ function import_job_data() {
     NB_DATA_TYPE="${2-main}"    # Either 'main' or 'aux'
     NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2014.csv"
 
-    wget -P "${NB_TEMPDIR}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
-    gunzip -c "${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
+    if [[ -f "/data/${NB_JOB_FILENAME}.gz" ]]; then
+        gunzip -c "/data/${NB_JOB_FILENAME}.gz" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
+    else
+        wget -P "${NB_TEMPDIR}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
+        gunzip -c "${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
+    fi
 
     # Import to postgresql
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
