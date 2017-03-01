@@ -51,7 +51,7 @@ then
         NB_STATE_FIPS="${2}"
 
         # Import neighborhood boundary
-        shp2pgsql -d -s "${NB_INPUT_SRID}":"${NB_OUTPUT_SRID}" "${NB_BOUNDARY_FILE}" neighborhood_boundary \
+        shp2pgsql -I -d -s "${NB_INPUT_SRID}":"${NB_OUTPUT_SRID}" "${NB_BOUNDARY_FILE}" neighborhood_boundary \
             | psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}"
 
         # Get blocks for the state requested
@@ -65,7 +65,7 @@ then
 
         # Import block shapefile
         echo "START: Importing blocks"
-        shp2pgsql -d -s 4326:"${NB_OUTPUT_SRID}" "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks \
+        shp2pgsql -I -d -s 4326:"${NB_OUTPUT_SRID}" "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks \
             | psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" > /dev/null
         echo "DONE: Importing blocks"
 
