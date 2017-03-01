@@ -7,6 +7,26 @@ PFB Bicycle Network Connectivity
 Requirements:
 - Vagrant 1.8+
 - VirtualBox 4.3+
+- [AWS CLI](https://aws.amazon.com/cli/)
+
+#### Notes for Windows users
+
+1. Ensure all project files checkout with LF (unix) line endings. The easiest way is to run `git config --global core.autocrlf false` before checking out the project. Alternatively, you can checkout the project, then run `git config core.autocrlf false` within the project dir, then manually fix all remaining CRLF line endings before running `vagrant up`.
+2. Run all commands in a shell with administrator permissions. It's highly recommended to run all commands within the "Git for Windows" Git Bash shell, as that already includes an SSH client, and allows running the commands below as-is.
+3. Before starting the VM, ensure the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` is set. NFS is not supported on windows, so we need to ensure that Vagrant ignores our request for it.
+4. Do not use `vagrant reload`. In some cases it will create a new VM rather than autodetecting that the old one exists
+
+### Setting up AWS credentials
+
+As noted above, ensure the AWS CLI is installed on your host machine. Once it is, you can configure your PFB account credentials by running:
+```
+aws configure --profile pfb
+```
+
+If you do not have AWS credentials, this step can be skipped but some application services may not
+work as intended.
+
+### Provisioning the VM
 
 Run `./scripts/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
 ```
@@ -27,6 +47,7 @@ In order to use the API, you'll need to run migrations on the Django app server:
 This will add a default admin user that can log in to http://localhost:9200/api/ as:
 systems+pfb@azavea.com / root
 ```
+
 
 ## Ports
 
