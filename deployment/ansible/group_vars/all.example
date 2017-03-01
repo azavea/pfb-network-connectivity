@@ -35,6 +35,7 @@ postgis_package_version: "2.3.1+dfsg-1.pgdg14.04+1"
 # azavea.docker
 # 1.11.* to match AWS ECS
 docker_version: 1.11.*
+docker_options: "--storage-opt dm.basesize=20G"
 
 # azavea.terraform
 terraform_version: 0.8.7
