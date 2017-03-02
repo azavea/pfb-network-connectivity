@@ -35,7 +35,7 @@ NB_POSTGRESQL_PASSWORD - Default: gis
 function import_job_data() {
     NB_TEMPDIR=`mktemp -d`
     NB_STATE_ABBREV="${1}"
-    NB_DATA_TYPE="${2-main}"    # Either 'main' or 'aux'
+    NB_DATA_TYPE="${2:-main}"    # Either 'main' or 'aux'
     NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2014.csv"
 
     if [[ -f "/data/${NB_JOB_FILENAME}.gz" ]]; then
