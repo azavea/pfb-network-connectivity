@@ -1,5 +1,6 @@
 FROM quay.io/azavea/postgis:postgres9.6-postgis2.3
 MAINTAINER Azavea
+LABEL type=pfb-analysis
 
 ENV GIT_BRANCH_OSM2PGROUTING osm2pgrouting-2.1.0
 ENV GIT_BRANCH_OSM2PGSQL 0.90.1

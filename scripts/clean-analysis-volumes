@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+
+cd $(dirname "${0}")
+
+if [[ -n "${PFB_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0")
+
+Removes all 'pfb-analysis' docker containers and their volumes to free up storage space,
+as well as any dangling docker volumes.
+
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]
+then
+    if [ "${1:-}" = "--help" ]
+    then
+        usage
+    else
+        FILTERS='--filter "label=type=pfb-analysis" --filter "status=exited"'
+
+        echo "The following containers and their volumes will be deleted:"
+        eval docker ps -a $FILTERS
+        echo "The following dangling docker volumes will be deleted:"
+        docker volume ls -f 'dangling=true'
+
+        read -r -p "Are you sure? [y/N] " response
+        response=${response,,}    # tolower
+        if [[ "$response" =~ ^(yes|y)$ ]]
+        then
+            docker rm -v $(eval docker ps -aq $FILTERS)
+            docker volume rm $(docker volume ls -f 'dangling=true' -q)
+        fi
+    fi
+fi

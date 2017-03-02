@@ -102,6 +102,13 @@ a screen/tmux session.
 If you want to run a different neighborhood, simply rerun the `docker run` command with the
 appropriate arguments, which are described below, in [Importing other neighborhoods](#importing-other-neighborhoods).
 
+#### Cleaning up old analysis runs
+
+Each analysis run takes up a significant amount of limited VM disk space. To clear old analysis volumes once finished with them, run:
+```
+./scripts/clean-analysis-volumes
+```
+
 
 ## Importing other neighborhoods
 
