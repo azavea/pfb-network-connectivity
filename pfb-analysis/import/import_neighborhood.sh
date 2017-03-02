@@ -30,8 +30,7 @@ Requires passing the state FIPS ID that the neighborhood boundary is found in. e
 Optional ENV vars:
 
 NB_INPUT_SRID - Default: 4326
-NB_OUTPUT_SRID - Default: 4326 (Should have units of 'ft', otherwise some portions of the
-                                analysis will not work correctly)
+NB_OUTPUT_SRID - Default: 4326
 NB_BOUNDARY_BUFFER - Default: 0 (Units is units of NB_OUTPUT_SRID)
 NB_POSTGRESQL_HOST - Default: 127.0.0.1
 NB_POSTGRESQL_DB - Default: pfb
@@ -45,9 +44,10 @@ NB_POSTGRESQL_PASSWORD - Default: gis
 function import_and_transform_shapefile() {
     IMPORT_FILE="${1}"
     IMPORT_TABLENAME="${2}"
+    IMPORT_SRID="${3:-4326}"
 
     echo "START: Importing ${IMPORT_TABLENAME}"
-    shp2pgsql -I -d -D -s 4326 "${IMPORT_FILE}" "${IMPORT_TABLENAME}" \
+    shp2pgsql -I -d -D -s "${IMPORT_SRID}" "${IMPORT_FILE}" "${IMPORT_TABLENAME}" \
         | psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" > /dev/null
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
         -c "ALTER TABLE ${IMPORT_TABLENAME} ALTER COLUMN geom \
@@ -65,7 +65,7 @@ then
         NB_STATE_FIPS="${2}"
 
         # Import neighborhood boundary
-        import_and_transform_shapefile "${NB_BOUNDARY_FILE}" neighborhood_boundary
+        import_and_transform_shapefile "${NB_BOUNDARY_FILE}" neighborhood_boundary "${NB_INPUT_SRID}"
 
         # Get blocks for the state requested
         NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
@@ -83,7 +83,7 @@ then
         unzip "${BLOCK_DOWNLOAD}" -d "${NB_TEMPDIR}"
 
         # Import block shapefile
-        import_and_transform_shapefile "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks
+        import_and_transform_shapefile "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks 4326
 
 
         # Only keep blocks in boundary+buffer
