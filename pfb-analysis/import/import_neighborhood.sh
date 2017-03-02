@@ -41,6 +41,20 @@ NB_POSTGRESQL_PASSWORD - Default: gis
 "
 }
 
+# Function to import a shapefile (using 'dump' mode for quickness) and convert it to the target SRID
+function import_and_transform_shapefile() {
+    IMPORT_FILE="${1}"
+    IMPORT_TABLENAME="${2}"
+
+    echo "START: Importing ${IMPORT_TABLENAME}"
+    shp2pgsql -I -d -D -s 4326 "${IMPORT_FILE}" "${IMPORT_TABLENAME}" \
+        | psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" > /dev/null
+    psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+        -c "ALTER TABLE ${IMPORT_TABLENAME} ALTER COLUMN geom \
+            TYPE geometry(MultiPolygon,${NB_OUTPUT_SRID}) USING ST_Transform(geom,${NB_OUTPUT_SRID});"
+    echo "DONE: Importing ${IMPORT_TABLENAME}"
+}
+
 if [ "${BASH_SOURCE[0]}" = "${0}" ]
 then
     if [ "${1:-}" = "--help" ] || [ -z "${1:-}" ]
@@ -51,8 +65,7 @@ then
         NB_STATE_FIPS="${2}"
 
         # Import neighborhood boundary
-        shp2pgsql -I -d -s "${NB_INPUT_SRID}":"${NB_OUTPUT_SRID}" "${NB_BOUNDARY_FILE}" neighborhood_boundary \
-            | psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}"
+        import_and_transform_shapefile "${NB_BOUNDARY_FILE}" neighborhood_boundary
 
         # Get blocks for the state requested
         NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
@@ -64,10 +77,8 @@ then
         fi
 
         # Import block shapefile
-        echo "START: Importing blocks"
-        shp2pgsql -I -d -s 4326:"${NB_OUTPUT_SRID}" "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks \
-            | psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" > /dev/null
-        echo "DONE: Importing blocks"
+        import_and_transform_shapefile "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks
+
 
         # Only keep blocks in boundary+buffer
         psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \

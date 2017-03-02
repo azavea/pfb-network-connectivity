@@ -74,7 +74,9 @@ then
     then
         ec_usage
     else
+        echo "Exporting analysis to ${NB_OUTPUT_DIR}"
         NB_OUTPUT_DIR="${1}"
+        mkdir -p "${NB_OUTPUT_DIR}"
 
         # Export neighborhood_ways as SHP
         ec_export_table_shp "${NB_OUTPUT_DIR}" "neighborhood_ways"
