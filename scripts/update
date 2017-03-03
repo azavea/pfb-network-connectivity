@@ -74,7 +74,7 @@ then
 
         # Build the current docker analysis container
         pushd pfb-analysis
-        docker build -t pfb .
+        docker build -t pfb-analysis .
         popd
 
         popd
