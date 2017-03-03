@@ -16,8 +16,6 @@ services:
       - "9200:443"
     links:
       - django
-    volumes:
-      - ./src/nginx/srv/dist:/srv/dist:ro
 
   django:
     image: pfb-app
