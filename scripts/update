@@ -61,7 +61,7 @@ then
     else
         pushd ..
 
-        docker-compose build
+        docker-compose build database django angularjs
 
         run_database_migrations
 
@@ -71,6 +71,10 @@ then
                rsync -rlptDv --delete --exclude .gitkeep \
                  /opt/pfb/angularjs/dist /static-export/
         popd
+
+        # Build the nginx container after building angularjs and copying the files, so
+        # it includes them
+        docker-compose build nginx
 
         # Build the current docker analysis container
         pushd pfb-analysis
