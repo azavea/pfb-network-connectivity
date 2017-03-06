@@ -40,7 +40,7 @@ GROUP BY source_block.blockid10, target_block.blockid10
 
 -- block pair index
 CREATE UNIQUE INDEX idx_neighborhood_blockpairs ON neighborhood_connected_census_blocks (source_blockid10,target_blockid10);
-ANALYZE neighborhood_connected_census_blocks;
+VACUUM ANALYZE neighborhood_connected_census_blocks;
 
 -- low stress
 UPDATE  neighborhood_connected_census_blocks
@@ -79,4 +79,4 @@ AND     (
 -- stress index
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_lstress ON neighborhood_connected_census_blocks (low_stress);
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_hstress ON neighborhood_connected_census_blocks (high_stress);
-ANALYZE neighborhood_connected_census_blocks;
+VACUUM ANALYZE neighborhood_connected_census_blocks;
