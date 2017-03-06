@@ -6,3 +6,4 @@ class AnalysisJobSerializer(PFBModelSerializer):
 
     class Meta:
         model = AnalysisJob
+        fields = '__all__'
