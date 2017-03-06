@@ -21,11 +21,13 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework import routers
 
 from users import views as user_views
+from pfb_analysis import views as analysis_views
 
 router = routers.DefaultRouter()
 
 router.register(r'organizations', user_views.OrganizationViewSet, base_name='organizations')
 router.register(r'users', user_views.PFBUserViewSet, base_name='users')
+router.register(r'analysis_jobs', analysis_views.AnalysisJobViewSet, base_name='analysis_jobs')
 
 
 urlpatterns = [
