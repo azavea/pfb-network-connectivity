@@ -1,20 +1,18 @@
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ModelViewSet
 
 from pfb_analysis.models import AnalysisJob
 from pfb_analysis.serializers import AnalysisJobSerializer
+from pfb_network_connectivity.permissions import RestrictedCreate
 
 
-class AnalysisJobViewSet(ViewSet):
+class AnalysisJobViewSet(ModelViewSet):
     """
     For listing or retrieving analysis jobs.
     """
-    def list(self, request):
-        queryset = AnalysisJob.objects.all()
-        serializer = AnalysisJobSerializer(queryset, many=True)
-        return Response(serializer.data)
+    queryset = AnalysisJob.objects.all()
+    serializer_class = AnalysisJobSerializer
+    permission_classes = (RestrictedCreate,)
 
-    def retrieve(self, request, pk=None):
-        queryset = AnalysisJob.objects.all()
-        job = get_object_or_404(queryset, pk=pk)
-        serializer = AnalysisJobSerializer(user)
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        instance.run()
