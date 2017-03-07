@@ -24,7 +24,7 @@ def get_neighborhood_file_upload_path(instance, filename):
     return 'neighborhood_boundaries/{0}/{1}'.format(instance.name, os.path.basename(filename))
 
 
-class Neighborhood(models.Model):
+class Neighborhood(PFBModel):
     """Neighborhood boundary used for an AnalysisJob """
 
     def __repr__(self):
@@ -43,8 +43,11 @@ class Neighborhood(models.Model):
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
+        if not self.label:
+            self.label = slugify(self.name)
         self.full_clean()
-        super(Neighborhood, self).save(*args, **kwargs)
+        neighborhood = super(Neighborhood, self).save(*args, **kwargs)
+        return neighborhood
 
     @property
     def state(self):
