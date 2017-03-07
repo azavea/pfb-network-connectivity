@@ -34,7 +34,7 @@ cp deployment/ansible/group_vars/all.example deployment/group_vars/all
 ```
 If you have access to the AWS console, copy the appropriate values at the links below into `deployment/ansible/group_vars/all`, choosing the resources with 'staging' in the name:
 - [AWS Batch Compute Environments](https://console.aws.amazon.com/batch/home?region=us-east-1#/compute-environments): The value in "Compute environment ARN" to `pfb_aws_batch_compute_environment_arn`
-- [AWS Batch Job Queues](https://console.aws.amazon.com/batch/home?region=us-east-1#/queues): The value in "Job queue name" to `pfb_aws_batch_job_queue_arn`
+- [AWS Batch Job Queues](https://console.aws.amazon.com/batch/home?region=us-east-1#/queues): The value in "Job queue name" to `pfb_aws_batch_job_queue_name`
 If you don't have access to the console, copying the values into `group_vars/all` can be skipped. Like above, some features of the application may fail unexpectedly.
 
 Run `./scripts/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
