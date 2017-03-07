@@ -56,9 +56,13 @@ node {
       stage('infra') {
         // Use `git` to get the primary repository's current commmit SHA and
         // set it as the value of the `GIT_COMMIT` environment variable.
-        wrap([$class: 'AnsiColorBuildWrapper']) {
-          sh './scripts/infra plan'
-          sh './scripts/infra apply'
+        withCredentials([[$class: 'StringBinding',
+                          credentialsId: 'PFB_AWS_ECR_ENDPOINT',
+                          variable: 'PFB_AWS_ECR_ENDPOINT']]) {
+          wrap([$class: 'AnsiColorBuildWrapper']) {
+            sh './scripts/infra plan'
+            sh './scripts/infra apply'
+          }
         }
       }
     }
