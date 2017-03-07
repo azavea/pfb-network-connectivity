@@ -21,8 +21,15 @@ class AnalysisJobViewSet(ModelViewSet):
     ordering_fields = ('created',)
 
     def perform_create(self, serializer):
+        """ Start analysis jobs as soon as created """
         instance = serializer.save()
         instance.run()
+
+    def perform_update(self, serializer):
+        """ If an existing analysis job has its status set back to CREATED, re-run analysis """
+        instance = serializer.save()
+        if instance.status == AnalysisJob.Status.CREATED:
+            instance.run()
 
 
 class NeighborhoodViewSet(ModelViewSet):
