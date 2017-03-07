@@ -20,7 +20,7 @@ class AnalysisJobViewSet(ModelViewSet):
     filter_fields = ('status', 'neighborhood',)
     filter_backends = (DjangoFilterBackend, OrderingFilter,
                        OrgAutoFilterBackend, SelfUserAutoFilterBackend)
-    ordering_fields = ('created',)
+    ordering_fields = ('created_at',)
 
     def perform_create(self, serializer):
         """ Start analysis jobs as soon as created """
@@ -38,7 +38,7 @@ class NeighborhoodViewSet(ModelViewSet):
     filter_fields = ('organization', 'name', 'label', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter,
                        OrgAutoFilterBackend, SelfUserAutoFilterBackend)
-    ordering_fields = ('created',)
+    ordering_fields = ('created_at',)
 
     def perform_create(self, serializer):
         if serializer.is_valid():
