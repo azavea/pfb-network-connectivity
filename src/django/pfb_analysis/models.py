@@ -106,9 +106,13 @@ class AnalysisJob(PFBModel):
         # so force truncate to that to keep jobs from failing
         definition_name, revision = job_definition.split(':')
         job_name = '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
-        environment = create_environment(PFB_SHPFILE=self.neighborhood.boundary_file.url,
-                                         PFB_STATE=self.neighborhood.state_abbrev,
-                                         PFB_STATE_FIPS=self.neighborhood.state.fips)
+        environment = create_environment(
+            PFB_SHPFILE_URL=self.neighborhood.boundary_file.url,
+            PFB_STATE=self.neighborhood.state_abbrev,
+            PFB_STATE_FIPS=self.neighborhood.state.fips,
+            PFB_JOB_ID=str(self.uuid),
+            AWS_STORAGE_BUCKET_NAME=settings.AWS_STORAGE_BUCKET_NAME,
+        )
         container_overrides = {
             'environment': environment,
         }
