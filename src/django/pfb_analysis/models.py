@@ -27,7 +27,7 @@ def get_neighborhood_file_upload_path(instance, filename):
 class Neighborhood(PFBModel):
     """Neighborhood boundary used for an AnalysisJob """
 
-    def __repr__(self):
+    def __str__(self):
         return "<Neighborhood: {} ({})>".format(self.name, self.organization.name)
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -63,6 +63,10 @@ class Neighborhood(PFBModel):
 
 
 class AnalysisJob(PFBModel):
+
+    def __str__(self):
+        return "<AnalysisJob: {status} {neighborhood}>".format(status=self.status,
+                                                               neighborhood=self.neighborhood.label)
 
     class Status(object):
         CREATED = 'CREATED'
