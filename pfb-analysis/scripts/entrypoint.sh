@@ -67,7 +67,7 @@ SELECT * FROM neighborhood_overall_scores;
 EOF
 
 NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR}"
-./scripts/export_connectivity.sh $NB_OUTPUT_DIR $PFB_NEIGHBORHOOD_NAME
+./scripts/export_connectivity.sh $NB_OUTPUT_DIR $PFB_JOB_ID
 
 # This will exit immediately when there's no pseudo-TTY but provide a shell if there is,
 # so it enables keeping a docker container alive after processing by running it with `-t`
