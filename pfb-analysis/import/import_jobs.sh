@@ -87,7 +87,7 @@ then
     then
         usage
     else
-        NB_STATE_ABBREV="${1}"
+        NB_STATE_ABBREV="${1,,}"  # force to lower case to match the jobs file download paths
 
         import_job_data "${NB_STATE_ABBREV}" "main"
         import_job_data "${NB_STATE_ABBREV}" "aux"
