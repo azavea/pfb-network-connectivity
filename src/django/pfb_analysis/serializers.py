@@ -6,13 +6,14 @@ class AnalysisJobSerializer(PFBModelSerializer):
 
     class Meta:
         model = AnalysisJob
-        fields = '__all__'
-        read_only_fields = ('uuid', 'created', 'created_by', 'modified_by')
+        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by')
+        read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy')
 
 
 class NeighborhoodSerializer(PFBModelSerializer):
 
     class Meta:
         model = Neighborhood
-        fields = '__all__'
-        read_only_fields = ('uuid', 'created', 'created_by', 'modified_by', 'organization')
+        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by')
+        read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
+                            'organization')
