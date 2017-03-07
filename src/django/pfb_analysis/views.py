@@ -25,12 +25,6 @@ class AnalysisJobViewSet(ModelViewSet):
         instance = serializer.save()
         instance.run()
 
-    def perform_update(self, serializer):
-        """ If an existing analysis job has its status set back to CREATED, re-run analysis """
-        instance = serializer.save()
-        if instance.status == AnalysisJob.Status.CREATED:
-            instance.run()
-
 
 class NeighborhoodViewSet(ModelViewSet):
     """
