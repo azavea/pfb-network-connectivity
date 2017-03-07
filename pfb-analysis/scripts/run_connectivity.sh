@@ -74,7 +74,23 @@ EOF
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
-  -f ../connectivity/schools.sql
+  -f ../connectivity/destinations/medical.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f ../connectivity/destinations/retail.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f ../connectivity/destinations/schools.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f ../connectivity/destinations/social_services.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f ../connectivity/destinations/supermarkets.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
