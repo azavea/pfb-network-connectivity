@@ -6,6 +6,7 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 
 import botocore
 import boto3
@@ -43,8 +44,8 @@ class Neighborhood(PFBModel):
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
-        if not self.label:
-            self.label = slugify(self.name)
+        if not self.name:
+            self.name = slugify(self.label)
         self.full_clean()
         super(Neighborhood, self).save(*args, **kwargs)
 

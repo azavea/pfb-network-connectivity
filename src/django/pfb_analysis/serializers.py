@@ -17,4 +17,4 @@ class NeighborhoodSerializer(PFBModelSerializer):
         model = Neighborhood
         exclude = ('created_at', 'modified_at', 'created_by', 'modified_by')
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                            'organization')
+                            'organization', 'name')

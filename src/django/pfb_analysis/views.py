@@ -1,3 +1,5 @@
+from django.utils.text import slugify
+
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 
@@ -39,4 +41,6 @@ class NeighborhoodViewSet(ModelViewSet):
     ordering_fields = ('created',)
 
     def perform_create(self, serializer):
-        instance = serializer.save(organization=self.request.user.organization)
+        if serializer.is_valid():
+            instance = serializer.save(organization=self.request.user.organization,
+                                       name=slugify(serializer.validated_data['label']))
