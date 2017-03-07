@@ -46,8 +46,7 @@ class Neighborhood(PFBModel):
         if not self.label:
             self.label = slugify(self.name)
         self.full_clean()
-        neighborhood = super(Neighborhood, self).save(*args, **kwargs)
-        return neighborhood
+        super(Neighborhood, self).save(*args, **kwargs)
 
     @property
     def state(self):

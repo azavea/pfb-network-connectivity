@@ -67,8 +67,7 @@ class Organization(PFBModel):
         """
         if not self.label:
             self.label = slugify(self.name)
-        org = super(Organization, self).save(*args, **kwargs)
-        return org
+        super(Organization, self).save(*args, **kwargs)
 
 
 class UserRoles(object):
