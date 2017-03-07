@@ -142,3 +142,29 @@ docker run \
     -v /vagrant/data/:/data/ \
     pfb-analysis
 ```
+
+
+## Verifying the Analysis
+
+The output from the analysis run may be compared to previous output to see if it has changed.
+
+Build the docker container for the verification tool within the VM:
+```
+docker-compose build verifier
+```
+
+Ensure the exported output from the analysis to check exists in the `data/output` directory. It will be there by default if the `data` directory was used for the neighborhood input shapefile.
+
+To compare the analysis output for Boulder, run the verification tool with:
+```
+docker-compose run verifier boulder.csv
+```
+
+Any output in the `verified_output` directory may be used for comparison.
+
+To compare to analysis output that has a non-default filename (`analysis_neighborhood_overall_scores.csv`), run the verification tool with the name of the file in `data/output` as the second argument:
+```
+docker-compose run verifier boulder.csv my_output_to_verify.csv
+```
+
+If there are any differences in the outputs, they will be output to the console in JSON format.

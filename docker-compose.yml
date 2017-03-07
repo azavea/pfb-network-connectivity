@@ -48,3 +48,12 @@ services:
       - ./src/angularjs/src:/opt/pfb/angularjs/src
       - ./src/angularjs/docs:/opt/pfb/angularjs/docs
     command: gulp serve
+
+  verifier:
+      image: pfb-verifier
+      build:
+        context: ./src/verifier
+        dockerfile: Dockerfile
+      volumes:
+        - ./data/output:/opt/verifier/output
+        - ./verified_output:/opt/verifier/verified_output
