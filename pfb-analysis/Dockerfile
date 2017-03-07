@@ -34,6 +34,7 @@ RUN set -xe && \
         postgresql-$PG_MAJOR-pgrouting \
         python-gdal \
         unzip \
+        zip \
         postgis" && \
     apt-get update && apt-get install -y ${BUILD_DEPS} ${DEPS} --no-install-recommends && \
     mkdir /tmp/build/ && cd /tmp/build && \
