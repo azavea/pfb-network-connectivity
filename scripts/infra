@@ -61,10 +61,20 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 terraform remote push
                 ;;
             plan)
+                pushd "../aws-batch"
+                # TODO: Only trigger this if the pfb-analysis container has changed, otherwise skip
+                #       and reuse old version
+                # TODO: This is a bit awkward. If we `plan` but never `apply`, we'll have created
+                #       an orphaned job definition that never gets used.
+                echo "Updating AWS Batch job definitions"
+                BATCH_JOB_NAME_REVISION=$(python update_job_definition.py pfb-analysis-run-job.json "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}")
+                popd
+
                 terraform get -update
                 terraform plan \
                           -var-file="${PFB_SETTINGS_BUCKET}.tfvars" \
                           -var="git_commit=${GIT_COMMIT}" \
+                          -var="batch_analysis_job_definition_name_revision=${BATCH_JOB_NAME_REVISION}" \
                           -out="${PFB_SETTINGS_BUCKET}.tfplan"
                 ;;
             apply)

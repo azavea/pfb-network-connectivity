@@ -18,6 +18,8 @@ import requests
 
 from django.core.exceptions import ImproperlyConfigured
 
+from pfb_analysis.aws_batch import NoActiveJobDefinitionRevision, get_latest_job_definition
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -230,6 +232,15 @@ WATCHMAN_CHECKS = (
 )
 
 
+# Django Storages
+# https://github.com/jschneier/django-storages
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_AUTO_CREATE_BUCKET = True
+AWS_STORAGE_BUCKET_NAME = os.getenv('PFB_S3_STORAGE_BUCKET',
+                                    '{0}-pfb-storage-{1}'.format(DEV_USER, AWS_REGION))
+
+
 # Email
 DEFAULT_FROM_EMAIL = 'noreply@pfb.azavea.com'
 REPOSITORY_HELP_EMAIL = os.getenv('REPOSITORY_HELP_EMAIL', 'help@pfb.azavea.com')
@@ -248,10 +259,30 @@ RESET_SALT = os.getenv('REPOSITORY_RESET_SALT', 'passwordreset')
 USER_EMAIL_SUBJECT = os.getenv('REPOSITORY_RESET_EMAIL_SUBJECT', 'Your PFB Account')
 RESET_EMAIL_FROM = os.getenv('REPOSITORY_RESET_EMAIL_FROM', DEFAULT_FROM_EMAIL)
 
-# Django Storages
-# https://github.com/jschneier/django-storages
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_AUTO_CREATE_BUCKET = True
-AWS_STORAGE_BUCKET_NAME = os.getenv('PFB_S3_STORAGE_BUCKET',
-                                    '{0}-pfb-storage-{1}'.format(DEV_USER, AWS_REGION))
+# AWS Batch Analysis Job settings
+PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN = os.getenv('PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN')
+if not PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN:
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN is required')
+
+PFB_AWS_BATCH_JOB_QUEUE_NAME = os.getenv('PFB_AWS_BATCH_JOB_QUEUE_NAME')
+if not PFB_AWS_BATCH_JOB_QUEUE_NAME:
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_JOB_QUEUE_NAME is required')
+
+# Configure with either:
+# 1. PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION = '<name>:<revision>'
+#  -- or --
+# 2. PFB_AWS_BATCH_JOB_DEFINITION_NAME = '<name>'
+#   In this case, revision will be autodetected by querying the AWS API
+# Case 1 takes precedence and is the value set for use in the app
+PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION = os.getenv('PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION')
+PFB_AWS_BATCH_JOB_DEFINITION_NAME = os.getenv('PFB_AWS_BATCH_JOB_DEFINITION_NAME')
+if PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION:
+    pass
+elif PFB_AWS_BATCH_JOB_DEFINITION_NAME:
+    revision = get_latest_job_definition(PFB_AWS_BATCH_JOB_DEFINITION_NAME)['revision']
+    PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION = '{}:{}'.format(PFB_AWS_BATCH_JOB_DEFINITION_NAME,
+                                                                revision)
+else:
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION or ' +
+                               'env.PFB_AWS_BATCH_JOB_DEFINITION_NAME is required.')

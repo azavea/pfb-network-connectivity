@@ -1,15 +1,22 @@
 from __future__ import unicode_literals
 
 import os
+import logging
 import uuid
 
+from django.conf import settings
 from django.db import models
 
+import botocore
+import boto3
 from localflavor.us.models import USStateField
 import us
 
 from pfb_network_connectivity.models import PFBModel
 from users.models import Organization
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_neighborhood_file_upload_path(instance, filename):
@@ -75,19 +82,62 @@ class AnalysisJob(PFBModel):
             (ERROR, 'Error',),
         )
 
+    batch_job_id = models.CharField(max_length=256, blank=True, null=True)
+    neighborhood = models.ForeignKey(Neighborhood,
+                                     related_name='analysis_jobs',
+                                     on_delete=models.CASCADE)
     status = models.CharField(choices=Status.CHOICES,
                               default=Status.CREATED,
                               max_length=12,
                               help_text='The current status of the AnalysisJob')
 
-    neighborhood = models.ForeignKey(Neighborhood,
-                                     related_name='analysis_jobs',
-                                     on_delete=models.CASCADE)
-
     def run(self):
-        """ Run the analysis job
+        """ Run the analysis job, configuring ENV appropriately """
+        def create_environment(**kwargs):
+            return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
 
-        TODO: Implement
+        if self.batch_job_id is not None:
+            logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
+            return
+
+        client = boto3.client('batch')
+        job_definition = settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION
+        # Due to CloudWatch logs limits, job name must be no more than 50 chars
+        # so force truncate to that to keep jobs from failing
+        definition_name, revision = job_definition.split(':')
+        job_name = '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
+        environment = create_environment(PFB_SHPFILE=self.neighborhood.boundary_file.url,
+                                         PFB_STATE=self.neighborhood.state_abbrev,
+                                         PFB_STATE_FIPS=self.neighborhood.state.fips)
+        container_overrides = {
+            'environment': environment,
+        }
+        response = client.submit_job(jobName=job_name,
+                                     jobDefinition=job_definition,
+                                     jobQueue=settings.PFB_AWS_BATCH_JOB_QUEUE_NAME,
+                                     containerOverrides=container_overrides)
+        try:
+            self.batch_job_id = response['jobId']
+            # TODO: Possibly refactor status to use the AWS Batch status rather than some
+            #       custom status we may not have the ability to easily update
+            self.status = self.Status.IMPORTING
+            self.save()
+        except (botocore.exceptions.BotoCoreError, KeyError):
+            logger.exception('Error starting AnalysisJob {}'.format(self.uuid))
+
+    def batch_job_status(self):
+        """ Return current AWS Batch job status for this job
+
+        List of available statuses: http://docs.aws.amazon.com/batch/latest/userguide/jobs.html
+        TODO: Refactor to cache in db?
 
         """
-        pass
+        if not self.batch_job_id:
+            return None
+        client = boto3.client('batch')
+        try:
+            jobs = client.describe_jobs(jobs=[self.batch_job_id])['jobs']
+            return jobs[0]['status']
+        except KeyError:
+            logger.exception('Error retrieving AWS Batch job status for job'.format(self.uuid))
+            return None

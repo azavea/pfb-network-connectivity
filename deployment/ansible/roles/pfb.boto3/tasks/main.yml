@@ -1,0 +1,3 @@
+---
+- name: Install boto3 via pip
+  pip: name=boto3 version="{{ boto3_version }}"

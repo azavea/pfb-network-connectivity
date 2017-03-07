@@ -36,6 +36,31 @@ data "aws_iam_policy_document" "container_instance_ses_send_email" {
   }
 }
 
+data "aws_iam_policy_document" "batch_manage_jobs" {
+  statement {
+    effect = "Allow"
+
+    resources = ["*"]
+    actions = [
+      "batch:CancelJob",
+      "batch:DescribeJobDefinitions",
+      "batch:DescribeJobQueues",
+      "batch:DescribeJobs",
+      "batch:ListJobs",
+      "batch:SubmitJob",
+      "batch:TerminateJob"
+    ]
+  }
+}
+
+#
+# Custom policies
+#
+resource "aws_iam_policy" "batch_manage_jobs" {
+  name = "BatchManageJobs"
+  policy = "${data.aws_iam_policy_document.batch_manage_jobs.json}"
+}
+
 #
 # ECS roles
 #
@@ -71,6 +96,11 @@ resource "aws_iam_role_policy_attachment" "sqs_read_write" {
 resource "aws_iam_role" "container_instance_ec2" {
   name               = "${var.environment}ContainerInstanceProfile"
   assume_role_policy = "${data.aws_iam_policy_document.container_instance_ec2_assume_role.json}"
+}
+
+resource "aws_iam_role_policy_attachment" "batch_manage_jobs_policy_container_instance_role" {
+  role       = "${aws_iam_role.container_instance_ec2.name}"
+  policy_arn = "${aws_iam_policy.batch_manage_jobs.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_logs_policy_container_instance_role" {
