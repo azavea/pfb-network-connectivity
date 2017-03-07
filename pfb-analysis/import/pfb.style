@@ -105,6 +105,7 @@ node,way   foot         text         linear
 way        footway      text         linear
 node,way   highway      text         linear
 node,way   junction     text         linear
+way        landuse      text         linear,polygon
 way        lanes        text         linear
 way        lanes:forward    text     linear
 way        lanes:backward   text     linear
@@ -127,6 +128,7 @@ way        parking:lane:left:width   text  linear
 way        parking:lane:both:width   text  linear
 node,way   segregated   text         linear
 way        service      text         linear
+node,way   shop         text         linear,polygon
 node,way   stop         text         linear
 node,way   surface      text         linear
 way        tracktype    text         linear
