@@ -15,4 +15,4 @@ class NeighborhoodSerializer(PFBModelSerializer):
     class Meta:
         model = Neighborhood
         fields = '__all__'
-        read_only_fields = ('uuid', 'created', 'created_by', 'modified_by')
+        read_only_fields = ('uuid', 'created', 'created_by', 'modified_by', 'organization')

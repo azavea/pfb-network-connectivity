@@ -5,6 +5,7 @@ from pfb_analysis.models import AnalysisJob, Neighborhood
 from pfb_analysis.serializers import AnalysisJobSerializer, NeighborhoodSerializer
 from pfb_network_connectivity.filters import OrgAutoFilterBackend, SelfUserAutoFilterBackend
 from pfb_network_connectivity.permissions import RestrictedCreate
+from users.models import PFBUser
 
 
 class AnalysisJobViewSet(ModelViewSet):
@@ -35,3 +36,6 @@ class NeighborhoodViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter,
                        OrgAutoFilterBackend, SelfUserAutoFilterBackend)
     ordering_fields = ('created',)
+
+    def perform_create(self, serializer):
+        instance = serializer.save(organization=self.request.user.organization)
