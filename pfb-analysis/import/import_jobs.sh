@@ -38,12 +38,17 @@ function import_job_data() {
     NB_DATA_TYPE="${2:-main}"    # Either 'main' or 'aux'
     NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2014.csv"
 
-    if [[ -f "/data/${NB_JOB_FILENAME}.gz" ]]; then
-        gunzip -c "/data/${NB_JOB_FILENAME}.gz" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
+    if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
+        JOB_DOWNLOAD="/data/${NB_JOB_FILENAME}.gz"
+    elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"; then
+        JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+        aws s3 cp "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz" "${JOB_DOWNLOAD}"
     else
-        wget -P "${NB_TEMPDIR}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
-        gunzip -c "${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
+        JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+        wget -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
     fi
+    gunzip -c "${JOB_DOWNLOAD}" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
+
 
     # Import to postgresql
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \

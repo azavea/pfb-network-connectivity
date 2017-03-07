@@ -69,12 +69,18 @@ then
 
         # Get blocks for the state requested
         NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
-        if [[ -f "/data/${NB_BLOCK_FILENAME}.zip" ]]; then
-            unzip "/data/${NB_BLOCK_FILENAME}.zip" -d "${NB_TEMPDIR}"
+        if [ -f "/data/${NB_BLOCK_FILENAME}.zip" ]; then
+            echo "Using local census blocks file"
+            BLOCK_DOWNLOAD="/data/${NB_BLOCK_FILENAME}.zip"
+        elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip"; then
+            echo "Using census blocks file from S3"
+            BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
+            aws s3 cp "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip" "${BLOCK_DOWNLOAD}"
         else
-            wget -P "${NB_TEMPDIR}" "http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
-            unzip "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip" -d "${NB_TEMPDIR}"
+            BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
+            wget -O "${BLOCK_DOWNLOAD}" "http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
         fi
+        unzip "${BLOCK_DOWNLOAD}" -d "${NB_TEMPDIR}"
 
         # Import block shapefile
         import_and_transform_shapefile "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks
