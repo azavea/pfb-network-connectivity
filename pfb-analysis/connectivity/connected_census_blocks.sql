@@ -77,6 +77,6 @@ AND     (
         ), :nb_boundary_buffer) <= 1.3;
 
 -- stress index
-CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_lstress ON neighborhood_connected_census_blocks (low_stress);
-CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_hstress ON neighborhood_connected_census_blocks (high_stress);
-VACUUM ANALYZE neighborhood_connected_census_blocks;
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_lstress ON neighborhood_connected_census_blocks (low_stress) WHERE low_stress IS TRUE;
+CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_hstress ON neighborhood_connected_census_blocks (high_stress) WHERE high_stress IS TRUE;
+ANALYZE neighborhood_connected_census_blocks;
