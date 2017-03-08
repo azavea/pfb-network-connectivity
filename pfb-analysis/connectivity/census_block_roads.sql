@@ -23,7 +23,7 @@ CREATE TEMP TABLE tmp_block_buffers (
 INSERT INTO tmp_block_buffers
 SELECT gid, blockid10, ST_Multi(ST_Buffer(geom,50)) FROM neighborhood_census_blocks;
 CREATE INDEX tidx_neighborhood_blockgeoms ON tmp_block_buffers USING GIST (geom);
-ANALYZE tmp_block_buffers;
+VACUUM ANALYZE tmp_block_buffers;
 
 -- insert blocks and roads
 INSERT INTO generated.neighborhood_census_block_roads (
@@ -49,4 +49,4 @@ AND     (
 
 CREATE INDEX IF NOT EXISTS idx_neighborhood_censblkrds
 ON generated.neighborhood_census_block_roads (blockid10,road_id);
-ANALYZE generated.neighborhood_census_block_roads;
+VACUUM ANALYZE generated.neighborhood_census_block_roads;
