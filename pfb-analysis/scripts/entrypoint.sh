@@ -52,6 +52,18 @@ then
     popd
 fi
 
+# If given a URL for the OSM file, dowload and unzip it. Overrides PFB_OSM_FILE.
+if [ "${PFB_OSM_FILE_URL}" ]
+then
+    echo "Downloading OSM file"
+    pushd "${PFB_TEMPDIR}"
+    wget "${PFB_OSM_FILE_URL}" -O neighborhood_osm.zip
+    unzip neighborhood_osm.zip
+    PFB_OSM_FILE="${PFB_TEMPDIR}"/$(ls *.osm)  # Assumes there's exactly one .osm file
+    echo "OSM file is ${PFB_OSM_FILE}"
+    popd
+fi
+
 # run job
 cd /pfb
 

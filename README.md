@@ -83,65 +83,7 @@ systems+pfb@azavea.com / root
 
 ## Running the Analysis
 
-Copy the 'neighborhood_boundary_02138.zip' file on fileshare and unzip to `./data/neighborhood_boundary.shp`.
-
-In this example, we configure the analysis to be run for Cambridge MA.
-
-Run:
-```
-pushd pfb-analysis
-docker build -t pfb-analysis .
-popd
-
-docker run \
-    -e PFB_SHPFILE=/data/neighborhood_boundary.shp \
-    -e PFB_STATE=ma \
-    -e PFB_STATE_FIPS=25 \
-    -e NB_INPUT_SRID=2249 \
-    -e NB_BOUNDARY_BUFFER=3600 \
-    -v /vagrant/data/:/data/ \
-    pfb-analysis
-```
-
-This will take up to 1hr, so just let it work. Consider piping script output to a file and running in
-a screen/tmux session.
-
-#### Re-running the analysis
-
-If you want to run a different neighborhood, simply rerun the `docker run` command with the
-appropriate arguments, which are described below, in [Importing other neighborhoods](#importing-other-neighborhoods).
-
-#### Cleaning up old analysis runs
-
-Each analysis run takes up a significant amount of limited VM disk space. To clear old analysis volumes once finished with them, run:
-```
-./scripts/clean-analysis-volumes
-```
-
-
-## Importing other neighborhoods
-
-Running the analysis requires a neighborhood shapefile polygon to run the analysis against.
-
-To get started, place your neighborhood boundary shapefile, unzipped, in the project `./data` directory.
-
-You will also need to know the following:
-- State abbrev that your neighborhood is found in, e.g. 'ma' for Massachussetts
-- State FIPS code that your neighborhood is found in: https://www.census.gov/geo/reference/ansi_statetables.html
-- SRID of your neighborhood boundary file (input)
-- SRID you want to run the analysis in (output)
-
-Now run:
-```
-docker run \
-    -e PFB_SHPFILE=<path_to_boundary_shp> \
-    -e PFB_STATE=<state abbrev> \
-    -e PFB_STATE_FIPS=<state fips> \
-    -e NB_INPUT_SRID=<input srid> \
-    -e NB_BOUNDARY_BUFFER=<buffer distance in meters> \
-    -v /vagrant/data/:/data/ \
-    pfb-analysis
-```
+See [Running the Analysis Locally](README.RUNNING.md).
 
 
 ## Verifying the Analysis
@@ -170,8 +112,7 @@ docker-compose run verifier boulder.csv my_output_to_verify.csv
 
 If there are any differences in the outputs, a summary of the differences will be output to console.
 
-
-## Verified Output Parameters
+### Verified Output Parameters
 
 The analysis output in the `verified_output` directory was generated using the following input parameters and files:
 
