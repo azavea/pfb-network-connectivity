@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS generated.neighborhood_community_centers;
 
 CREATE TABLE generated.neighborhood_community_centers (
     id SERIAL PRIMARY KEY,
+    blockid10 CHARACTER VARYING(15)[],
     osm_id BIGINT,
     center_name TEXT,
     pop_low_stress INT,
@@ -23,7 +24,7 @@ CREATE INDEX sidx_neighborhood_community_centers_geomply ON neighborhood_communi
 INSERT INTO generated.neighborhood_community_centers (
     geom_poly
 )
-SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3)
+SELECT  ST_Multi(ST_Buffer(ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3),0))
 FROM    neighborhood_osm_full_polygon
 WHERE   amenity IN ('community_centre','community_center');
 
@@ -46,4 +47,13 @@ AND     NOT EXISTS (
             WHERE   ST_Intersects(s.geom_poly,neighborhood_osm_full_point.way)
         );
 
- ANALYZE generated.neighborhood_community_centers;
+ANALYZE generated.neighborhood_community_centers;
+
+-- set blockid10
+UPDATE  generated.neighborhood_community_centers
+SET     blockid10 = array((
+            SELECT  cb.blockid10
+            FROM    neighborhood_census_blocks cb
+            WHERE   ST_Intersects(neighborhood_community_centers.geom_poly,cb.geom)
+            OR      ST_Intersects(neighborhood_community_centers.geom_pt,cb.geom)
+        ));

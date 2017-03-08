@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS generated.neighborhood_medical;
 
 CREATE TABLE generated.neighborhood_medical (
     id SERIAL PRIMARY KEY,
+    blockid10 CHARACTER VARYING(15)[],
     osm_id BIGINT,
     medical_name TEXT,
     medical_type TEXT,
@@ -24,7 +25,7 @@ CREATE INDEX sidx_neighborhood_medical_geomply ON neighborhood_medical USING GIS
 INSERT INTO generated.neighborhood_medical (
     geom_poly
 )
-SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3)
+SELECT  ST_Multi(ST_Buffer(ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3),0))
 FROM    neighborhood_osm_full_polygon
 WHERE   amenity IN ('clinic','dentist','doctors','hospital','pharmacy');
 
@@ -49,3 +50,12 @@ AND     NOT EXISTS (
         );
 
 ANALYZE generated.neighborhood_medical;
+
+-- set blockid10
+UPDATE  generated.neighborhood_medical
+SET     blockid10 = array((
+            SELECT  cb.blockid10
+            FROM    neighborhood_census_blocks cb
+            WHERE   ST_Intersects(neighborhood_medical.geom_poly,cb.geom)
+            OR      ST_Intersects(neighborhood_medical.geom_pt,cb.geom)
+        ));
