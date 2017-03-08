@@ -150,7 +150,8 @@ The output from the analysis run may be compared to previous output to see if it
 
 Build the docker container for the verification tool within the VM:
 ```
-docker-compose build verifier
+cd src/verifier
+docker-compose build
 ```
 
 Ensure the exported output from the analysis to check exists in the `data/output` directory. It will be there by default if the `data` directory was used for the neighborhood input shapefile.
@@ -167,4 +168,4 @@ To compare to analysis output that has a non-default filename (`analysis_neighbo
 docker-compose run verifier boulder.csv my_output_to_verify.csv
 ```
 
-If there are any differences in the outputs, they will be output to the console in JSON format.
+If there are any differences in the outputs, a summary of the differences will be output to console.
