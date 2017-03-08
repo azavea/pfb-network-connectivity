@@ -1,0 +1,78 @@
+#cloud-config
+
+packages:
+    - awslogs
+
+fs_setup:
+  - label: nvme0n1
+    filesystem: ext4
+    extra_opts: ["-E", "nodiscard"]
+    device: /dev/nvme0n1
+    partition: auto
+
+mounts:
+  - [ /dev/nvme0n1, null ]
+  - [ /dev/nvme0n1, "/media/nvme0n1", "ext4", "defaults,nobootwait,discard", "0", "2" ]
+
+runcmd:
+  - curl -o /etc/papertrail-bundle.pem https://papertrailapp.com/tools/papertrail-bundle.pem
+
+write_files:
+  - path: /etc/ecs/ecs.config
+    permissions: 0644
+    owner: root:root
+    content: |
+      ECS_CLUSTER=${ecs_cluster_name}
+  - path: /etc/awslogs/awslogs.conf
+    permissions: 0644
+    owner: root:root
+    content: |
+      [general]
+      state_file = /var/lib/awslogs/agent-state
+
+      [/var/log/dmesg]
+      file = /var/log/dmesg
+      log_group_name = log${environment}BatchContainerInstance
+      log_stream_name = dmesg/{instance_id}
+
+      [/var/log/messages]
+      file = /var/log/messages
+      log_group_name = log${environment}BatchContainerInstance
+      log_stream_name = messages/{instance_id}
+      datetime_format = %b %d %H:%M:%S
+
+      [/var/log/docker]
+      file = /var/log/docker
+      log_group_name = log${environment}BatchContainerInstance
+      log_stream_name = docker/{instance_id}
+      datetime_format = %Y-%m-%dT%H:%M:%S.%f
+
+      [/var/log/ecs/ecs-init.log]
+      file = /var/log/ecs/ecs-init.log.*
+      log_group_name = log${environment}BatchContainerInstance
+      log_stream_name = ecs-init/{instance_id}
+      datetime_format = %Y-%m-%dT%H:%M:%SZ
+
+      [/var/log/ecs/ecs-agent.log]
+      file = /var/log/ecs/ecs-agent.log.*
+      log_group_name = log${environment}BatchContainerInstance
+      log_stream_name = ecs-agent/{instance_id}
+      datetime_format = %Y-%m-%dT%H:%M:%SZ
+
+  - path: /etc/init/awslogs.conf
+    permissions: 0644
+    owner: root:root
+    content: |
+      description "Configure and start CloudWatch Logs agent on Amazon ECS container instance"
+      author "Amazon Web Services"
+      start on started ecs
+      script
+          exec 2>>/var/log/ecs/cloudwatch-logs-start.log
+          set -x
+          until curl -s http://localhost:51678/v1/metadata
+          do
+              sleep 1
+          done
+          service awslogs start
+          chkconfig awslogs on
+      end script

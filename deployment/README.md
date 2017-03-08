@@ -2,6 +2,8 @@
 
 Amazon Web Services deployment is driven by [Terraform](https://terraform.io/) and the [AWS Command Line Interface (CLI)](http://aws.amazon.com/cli/).
 
+**NOTE**: Before deploying an AWS stack for the first time, ensure you've created the necessary resources detailed in the [AWS Batch](#aws-batch) section of this README.
+
 ## Table of Contents
 
 * [AWS Credentials](#aws-credentials)
@@ -60,27 +62,12 @@ Once these are created, the automated deployment handles creation of the latest 
 Login to the AWS Console and navigate to [AWS Batch: Compute Environments](https://console.aws.amazon.com/batch/home?region=us-east-1#/compute-environments)
 
 Click the 'Create Environment' button, then edit the new form with the inputs below:
-- Compute environment type: 'managed'
-- Compute environment name: '<environment>-pfb-analysis-<on-demand|spot>-compute-environment'
+- Compute environment type: 'unmanaged'
+- Compute environment name: '<environment>-pfb-analysis-unmanaged-compute-environment'
 - Service role: AWSBatchServiceRole
 - Instance role: StagingContainerInstanceRole
 - EC2 key pair: your choice
 - Enable compute environment: [x]
-- Provisioning model:
-  - staging: 'on-demand' -- better fits fewer, should always be available for developers
-  - production: 'spot' -- better fits larger jobs with less stringent completion requirements
-- Allowed instance types:
-  - staging: 'm3.xlarge'
-  - production: 'm3.2xlarge'
-- Minimum vCPUs: 0
-- Desired vCPUs: 0
-- Maximum vCPUs: 256 (default is fine)
-- VPC ID: Choose the VPC that matches to the environment you're launching in
-  - e.g. VPC 'pfbStaging' for the staging environment
-- Subnets: Select all of the private subnets for the VPC you chose
-- Security groups: 'default'
-- EC2 tags:
-  - Key: 'environment', Value: '<staging|production>'
 Click 'Create' and wait for the compute environment to provision.
 
 Next, go to 'Job queues' -> 'Create queue' then edit the form with the inputs below:
@@ -88,7 +75,8 @@ Next, go to 'Job queues' -> 'Create queue' then edit the form with the inputs be
 - Priority: leave blank
 - Enable job queue: [x]
 - Select a compute environment: Choose the name of the environment you just created
-Lastly, click create.
+Click create. The job queue should be ready pretty much immediately.
 
-Congratulations, the necessary resources for your environment are ready!
+Once the unmanaged compute environment has a 'VALID' status, navigate to [EC2 Container Service](https://console.aws.amazon.com/ecs/home?region=us-east-1) and copy the full name of the newly created ECS Cluster into the `batch_ecs_cluster_name` tfvar for the appropriate environment.
 
+Congratulations, the necessary resources for your environment are ready. The ECS instance configuration and autoscaling group attached to the compute environment are managed by Terraform.
