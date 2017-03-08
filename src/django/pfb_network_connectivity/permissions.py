@@ -134,8 +134,7 @@ class RestrictedCreate(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # TODO: implement AnalysisResultViewSet or remove
-        if 'AnalysisResultViewSet' == view.__class__.__name__:
+        if 'AnalysisJobViewSet' == view.__class__.__name__:
             return request.user.role != UserRoles.VIEWER
         elif ('OrganizationViewSet' == view.__class__.__name__ and
               is_admin(request.user) and is_admin_org(request.user)):

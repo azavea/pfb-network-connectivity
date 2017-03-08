@@ -20,7 +20,7 @@ class PFBModelSerializer(serializers.ModelSerializer):
         self.request = self.context.get('request')
 
     uuid = serializers.UUIDField(read_only=True)
-    createdAt = serializers.DateTimeField(default=CreateOnlyDefault(now),read_only=True,
+    createdAt = serializers.DateTimeField(default=CreateOnlyDefault(now), read_only=True,
                                           source='created_at')
     modifiedAt = serializers.DateTimeField(default=now, read_only=True,
                                            source='modified_at')

@@ -18,7 +18,8 @@ def add_root_user(apps, schema_editor):
     PFBUser = apps.get_model('users', 'PFBUser')
     root_user = PFBUser(role='ADMIN',
                         password='root',
-                        email='systems+pfb@azavea.com')
+                        email='systems+pfb@azavea.com',
+                        uuid='bba2038e-863e-4c1e-a64c-c06b6000a61f')
     root_user.save()
 
     root_user.created_by = root_user

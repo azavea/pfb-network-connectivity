@@ -55,7 +55,7 @@ class Organization(PFBModel):
         associated with organization
     """
 
-    def __repr__(self):
+    def __str__(self):
         return "<Organization: {}>".format(self.label)
 
     name = models.CharField(max_length=255, unique=True)
@@ -67,8 +67,7 @@ class Organization(PFBModel):
         """
         if not self.label:
             self.label = slugify(self.name)
-        org = super(Organization, self).save(*args, **kwargs)
-        return org
+        super(Organization, self).save(*args, **kwargs)
 
 
 class UserRoles(object):

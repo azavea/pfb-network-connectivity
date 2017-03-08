@@ -50,6 +50,7 @@ function run_database_migrations() {
     docker-compose up -d database
     check_database
     docker-compose run --rm --entrypoint python django manage.py migrate --noinput
+    docker-compose run --rm --entrypoint python django manage.py collectstatic
     docker-compose stop database
 }
 

@@ -6,6 +6,7 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 
 import botocore
 import boto3
@@ -24,10 +25,10 @@ def get_neighborhood_file_upload_path(instance, filename):
     return 'neighborhood_boundaries/{0}/{1}'.format(instance.name, os.path.basename(filename))
 
 
-class Neighborhood(models.Model):
+class Neighborhood(PFBModel):
     """Neighborhood boundary used for an AnalysisJob """
 
-    def __repr__(self):
+    def __str__(self):
         return "<Neighborhood: {} ({})>".format(self.name, self.organization.name)
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -43,6 +44,8 @@ class Neighborhood(models.Model):
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
+        if not self.name:
+            self.name = slugify(self.label)
         self.full_clean()
         super(Neighborhood, self).save(*args, **kwargs)
 
@@ -60,6 +63,10 @@ class Neighborhood(models.Model):
 
 
 class AnalysisJob(PFBModel):
+
+    def __str__(self):
+        return "<AnalysisJob: {status} {neighborhood}>".format(status=self.status,
+                                                               neighborhood=self.neighborhood.label)
 
     class Status(object):
         CREATED = 'CREATED'
