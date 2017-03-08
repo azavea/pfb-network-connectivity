@@ -21,3 +21,5 @@ INSERT INTO generated.neighborhood_retail (
 SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,150)),3)
 FROM    neighborhood_osm_full_polygon
 WHERE   landuse = 'retail';
+
+ANALYZE generated.neighborhood_retail;

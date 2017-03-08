@@ -52,3 +52,5 @@ AND     NOT EXISTS (
             FROM    neighborhood_social_services s
             WHERE   ST_Intersects(s.geom_poly,neighborhood_osm_full_point.way)
         );
+
+ANALYZE generated.neighborhood_social_services;
