@@ -4,15 +4,24 @@
     "parameters": {},
     "containerProperties": {
         "image": "{image}",
-        "vcpus": 4,
+        "vcpus": 2,
         "memory": 4096,
         "command": [
             "/pfb/scripts/entrypoint.sh"
         ],
         "jobRoleArn": "",
-        "volumes": [],
+        "volumes": [{
+            "name": "pgdata",
+            "host": {
+                "sourcePath": "/media/nvme0n1/pgdata"
+            }
+        }],
         "environment": [],
-        "mountPoints": [],
+        "mountPoints": [{
+            "sourceVolume": "pgdata",
+            "containerPath": "/pgdata",
+            "readOnly": false
+        }],
         "readonlyRootFilesystem": false,
         "privileged": true,
         "ulimits": [],
