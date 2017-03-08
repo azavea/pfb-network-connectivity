@@ -12,6 +12,10 @@ NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-4326}"
 NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-0}"
+TOLERANCE_COMM_CTR="${TOLERANCE_COMM_CTR:-150}"     # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_MEDICAL="${TOLERANCE_MEDICAL:-150}"       # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_PARKS="${TOLERANCE_PARKS:-150}"           # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_RETAIL="${TOLERANCE_RETAIL:-150}"         # cluster tolerance given in units of $NB_OUTPUT_SRID
 
 psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -c "SELECT tdgMakeNetwork('neighborhood_ways');"
@@ -74,7 +78,35 @@ EOF
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
-  -f ../connectivity/schools.sql
+  -v cluster_tolerance="${TOLERANCE_COMM_CTR}" \
+  -f ../connectivity/destinations/community_centers.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_MEDICAL}" \
+  -f ../connectivity/destinations/medical.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_PARKS}" \
+  -f ../connectivity/destinations/parks.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_RETAIL}" \
+  -f ../connectivity/destinations/retail.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f ../connectivity/destinations/schools.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f ../connectivity/destinations/social_services.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f ../connectivity/destinations/supermarkets.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
