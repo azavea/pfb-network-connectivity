@@ -5,7 +5,7 @@
     "containerProperties": {
         "image": "{image}",
         "vcpus": 2,
-        "memory": 4096,
+        "memory": 12288,
         "command": [
             "/pfb/scripts/entrypoint.sh"
         ],
@@ -16,7 +16,19 @@
                 "sourcePath": "/media/nvme0n1/pgdata"
             }
         }],
-        "environment": [],
+        "environment": [{
+            "name": "PFB_MAINTENANCE_WORK_MEM",
+            "value": "2048MB"
+        }, {
+            "name": "PFB_SHARED_BUFFERS",
+            "value": "3072MB"
+        }, {
+            "name": "PFB_TEMP_FILE_LIMIT",
+            "value": "104857600"
+        }, {
+            "name": "PFB_WORK_MEM",
+            "value": "1536MB"
+        }],
         "mountPoints": [{
             "sourceVolume": "pgdata",
             "containerPath": "/pgdata",
