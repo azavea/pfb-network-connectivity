@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS generated.neighborhood_parks;
 
 CREATE TABLE generated.neighborhood_parks (
     id SERIAL PRIMARY KEY,
+    blockid10 CHARACTER VARYING(15)[],
     osm_id BIGINT,
     park_name TEXT,
     pop_low_stress INT,
@@ -23,7 +24,7 @@ CREATE INDEX sidx_neighborhood_parks_geomply ON neighborhood_parks USING GIST (g
 INSERT INTO generated.neighborhood_parks (
     geom_poly
 )
-SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3)
+SELECT  ST_Multi(ST_Buffer(ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3),0))
 FROM    neighborhood_osm_full_polygon
 WHERE   amenity = 'park'
         OR leisure = 'park'
@@ -55,3 +56,12 @@ AND     NOT EXISTS (
         );
 
 ANALYZE generated.neighborhood_parks;
+
+-- set blockid10
+UPDATE  generated.neighborhood_parks
+SET     blockid10 = array((
+            SELECT  cb.blockid10
+            FROM    neighborhood_census_blocks cb
+            WHERE   ST_Intersects(neighborhood_parks.geom_poly,cb.geom)
+            OR      ST_Intersects(neighborhood_parks.geom_pt,cb.geom)
+        ));

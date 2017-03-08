@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS generated.neighborhood_schools;
 
 CREATE TABLE generated.neighborhood_schools (
     id SERIAL PRIMARY KEY,
+    blockid10 CHARACTER VARYING(15)[],
     osm_id BIGINT,
     school_name TEXT,
     pop_low_stress INT,
@@ -54,3 +55,12 @@ AND     NOT EXISTS (
         );
 
 ANALYZE generated.neighborhood_schools;
+
+-- set blockid10
+UPDATE  generated.neighborhood_schools
+SET     blockid10 = array((
+            SELECT  cb.blockid10
+            FROM    neighborhood_census_blocks cb
+            WHERE   ST_Intersects(neighborhood_schools.geom_poly,cb.geom)
+            OR      ST_Intersects(neighborhood_schools.geom_pt,cb.geom)
+        ));

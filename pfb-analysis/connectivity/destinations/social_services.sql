@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS generated.neighborhood_social_services;
 
 CREATE TABLE generated.neighborhood_social_services (
     id SERIAL PRIMARY KEY,
+    blockid10 CHARACTER VARYING(15)[],
     osm_id BIGINT,
     service_name TEXT,
     pop_low_stress INT,
@@ -54,3 +55,12 @@ AND     NOT EXISTS (
         );
 
 ANALYZE generated.neighborhood_social_services;
+
+-- set blockid10
+UPDATE  generated.neighborhood_social_services
+SET     blockid10 = array((
+            SELECT  cb.blockid10
+            FROM    neighborhood_census_blocks cb
+            WHERE   ST_Intersects(neighborhood_social_services.geom_poly,cb.geom)
+            OR      ST_Intersects(neighborhood_social_services.geom_pt,cb.geom)
+        ));
