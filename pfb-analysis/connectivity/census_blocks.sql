@@ -12,8 +12,10 @@ ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS emp_low_stress I
 ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS emp_high_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS schools_low_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS schools_high_stress INT;
-ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS rec_low_stress INT;
-ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS rec_high_stress INT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS trails_low_stress INT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS trails_high_stress INT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS parks_low_stress INT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN IF NOT EXISTS parks_high_stress INT;
 
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blocks10 ON neighborhood_census_blocks (blockid10);
 CREATE INDEX IF NOT EXISTS idx_neighborhood_geom ON neighborhood_census_blocks USING GIST (geom);
