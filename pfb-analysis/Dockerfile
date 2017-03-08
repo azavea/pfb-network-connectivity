@@ -34,6 +34,7 @@ RUN set -xe && \
         postgresql-$PG_MAJOR-pgrouting \
         python-gdal \
         unzip \
+        zip \
         postgis" && \
     apt-get update && apt-get install -y ${BUILD_DEPS} ${DEPS} --no-install-recommends && \
     mkdir /tmp/build/ && cd /tmp/build && \
@@ -47,6 +48,12 @@ RUN set -xe && \
         (cd TDG-Tools/TDG\ SQL\ Tools && make clean && make install) && \
     cd /tmp/ && rm -rf /tmp/build/ /var/lib/apt/lists/* && \
     apt-get purge -y --auto-remove ${BUILD_DEPS}
+
+RUN set -xe && \
+    wget -q "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" && \
+    unzip awscli-bundle.zip && \
+    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
+    rm -r ./awscli-bundle*
 
 COPY scripts/setup_database.sh /docker-entrypoint-initdb.d/setup_database.sh
 COPY ./ /pfb/

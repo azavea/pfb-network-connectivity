@@ -38,6 +38,20 @@ do
     ((counter++))
 done
 
+PFB_TEMPDIR=`mktemp -d`
+
+# If given a URL for the shapefile, dowload and unzip it. Overrides PFB_SHPFILE.
+if [ "${PFB_SHPFILE_URL}" ]
+then
+    echo "Downloading shapefile"
+    pushd "${PFB_TEMPDIR}"
+    wget "${PFB_SHPFILE_URL}" -O boundary.zip
+    unzip boundary.zip
+    PFB_SHPFILE="${PFB_TEMPDIR}"/$(ls *.shp)  # Assumes there's exactly one .shp file
+    echo "Boundary shapefile is ${PFB_SHPFILE}"
+    popd
+fi
+
 # run job
 cd /pfb
 
@@ -46,16 +60,20 @@ export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
 
 ./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS $PFB_OSM_FILE
 ./scripts/run_connectivity.sh
-./scripts/export_connectivity.sh $NB_OUTPUT_DIR
 
 # print scores (TODO: replace with export script)
 psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
 SELECT * FROM neighborhood_overall_scores;
 EOF
 
+NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR}"
+./scripts/export_connectivity.sh $NB_OUTPUT_DIR $PFB_JOB_ID
+
 # This will exit immediately when there's no pseudo-TTY but provide a shell if there is,
 # so it enables keeping a docker container alive after processing by running it with `-t`
 bash
+
+rm -rf "${PFB_TEMPDIR}"
 
 # shutdown postgres
 su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl stop"
