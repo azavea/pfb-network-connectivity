@@ -2,7 +2,8 @@
 -- INPUTS
 -- location: neighborhood
 -- proj: :nb_output_srid psql var must be set before running this script,
---       e.g. psql -v nb_output_srid=4326 -f community_centers.sql
+-- :cluster_tolerance psql var must be set before running this script.
+--       e.g. psql -v nb_output_srid=4326 -v cluster_tolerance=150 -f community_centers.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_community_centers;
 
@@ -22,7 +23,7 @@ CREATE INDEX sidx_neighborhood_community_centers_geomply ON neighborhood_communi
 INSERT INTO generated.neighborhood_community_centers (
     geom_poly
 )
-SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,150)),3)
+SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3)
 FROM    neighborhood_osm_full_polygon
 WHERE   amenity IN ('community_centre','community_center');
 

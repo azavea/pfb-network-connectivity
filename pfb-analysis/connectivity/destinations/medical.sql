@@ -2,7 +2,8 @@
 -- INPUTS
 -- location: neighborhood
 -- proj: :nb_output_srid psql var must be set before running this script,
---       e.g. psql -v nb_output_srid=4326 -f medical.sql
+-- :cluster_tolerance psql var must be set before running this script.
+--       e.g. psql -v nb_output_srid=4326 -v cluster_tolerance=150 -f medical.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_medical;
 
@@ -23,7 +24,7 @@ CREATE INDEX sidx_neighborhood_medical_geomply ON neighborhood_medical USING GIS
 INSERT INTO generated.neighborhood_medical (
     geom_poly
 )
-SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,150)),3)
+SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3)
 FROM    neighborhood_osm_full_polygon
 WHERE   amenity IN ('clinic','dentist','doctors','hospital','pharmacy');
 

@@ -2,7 +2,8 @@
 -- INPUTS
 -- location: neighborhood
 -- proj: :nb_output_srid psql var must be set before running this script,
---       e.g. psql -v nb_output_srid=4326 -f parks.sql
+-- :cluster_tolerance psql var must be set before running this script.
+--       e.g. psql -v nb_output_srid=4326 cluster_tolerance=150 -f parks.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_parks;
 
@@ -22,7 +23,7 @@ CREATE INDEX sidx_neighborhood_parks_geomply ON neighborhood_parks USING GIST (g
 INSERT INTO generated.neighborhood_parks (
     geom_poly
 )
-SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,150)),3)
+SELECT  ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3)
 FROM    neighborhood_osm_full_polygon
 WHERE   amenity = 'park'
         OR leisure = 'park'
