@@ -13,11 +13,10 @@ CREATE TABLE generated.neighborhood_social_services (
     service_name TEXT,
     pop_low_stress INT,
     pop_high_stress INT,
+    pop_ratio FLOAT,
     geom_pt geometry(point, :nb_output_srid),
     geom_poly geometry(polygon, :nb_output_srid)
 );
-CREATE INDEX sidx_neighborhood_social_services_geompt ON neighborhood_social_services USING GIST (geom_pt);
-CREATE INDEX sidx_neighborhood_social_services_geomply ON neighborhood_social_services USING GIST (geom_poly);
 
 -- insert points from polygons
 INSERT INTO generated.neighborhood_social_services (
@@ -39,6 +38,10 @@ WHERE   EXISTS (
             AND     s.id != generated.neighborhood_social_services.id
 );
 
+-- index
+CREATE INDEX sidx_neighborhood_social_services_geomply ON neighborhood_social_services USING GIST (geom_poly);
+ANALYZE neighborhood_social_services (geom_poly);
+
 -- insert points
 INSERT INTO generated.neighborhood_social_services (
     osm_id, service_name, geom_pt
@@ -54,7 +57,9 @@ AND     NOT EXISTS (
             WHERE   ST_Intersects(s.geom_poly,neighborhood_osm_full_point.way)
         );
 
-ANALYZE generated.neighborhood_social_services;
+-- index
+CREATE INDEX sidx_neighborhood_social_services_geompt ON neighborhood_social_services USING GIST (geom_pt);
+ANALYZE generated.neighborhood_social_services (geom_pt);
 
 -- set blockid10
 UPDATE  generated.neighborhood_social_services
@@ -64,3 +69,7 @@ SET     blockid10 = array((
             WHERE   ST_Intersects(neighborhood_social_services.geom_poly,cb.geom)
             OR      ST_Intersects(neighborhood_social_services.geom_pt,cb.geom)
         ));
+
+-- block index
+CREATE INDEX IF NOT EXISTS aidx_neighborhood_social_services_blockid10 ON neighborhood_social_services USING GIN (blockid10);
+ANALYZE generated.neighborhood_social_services (blockid10);

@@ -76,6 +76,11 @@ AND     (
             AND     hs.target_road = target_br.road_id
         ), :nb_boundary_buffer) <= 1.3;
 
+-- set low stress for a block connecting to itself
+UPDATE  neighborhood_connected_census_blocks
+SET     low_stress = TRUE
+WHERE   source_blockid10 = target_blockid10;
+
 -- stress index
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_lstress ON neighborhood_connected_census_blocks (low_stress) WHERE low_stress IS TRUE;
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_hstress ON neighborhood_connected_census_blocks (high_stress) WHERE high_stress IS TRUE;
