@@ -14,11 +14,10 @@ CREATE TABLE generated.neighborhood_community_centers (
     center_name TEXT,
     pop_low_stress INT,
     pop_high_stress INT,
+    pop_ratio FLOAT,
     geom_pt geometry(point, :nb_output_srid),
     geom_poly geometry(multipolygon, :nb_output_srid)
 );
-CREATE INDEX sidx_neighborhood_community_centers_geompt ON neighborhood_community_centers USING GIST (geom_pt);
-CREATE INDEX sidx_neighborhood_community_centers_geomply ON neighborhood_community_centers USING GIST (geom_poly);
 
 -- insert polygons
 INSERT INTO generated.neighborhood_community_centers (
@@ -31,6 +30,10 @@ WHERE   amenity IN ('community_centre','community_center');
 -- set points on polygons
 UPDATE  generated.neighborhood_community_centers
 SET     geom_pt = ST_Centroid(geom_poly);
+
+-- index
+CREATE INDEX sidx_neighborhood_community_centers_geomply ON neighborhood_community_centers USING GIST (geom_poly);
+ANALYZE neighborhood_community_centers (geom_poly);
 
 -- insert points
 INSERT INTO generated.neighborhood_community_centers (
@@ -47,7 +50,9 @@ AND     NOT EXISTS (
             WHERE   ST_Intersects(s.geom_poly,neighborhood_osm_full_point.way)
         );
 
-ANALYZE generated.neighborhood_community_centers;
+-- index
+CREATE INDEX sidx_neighborhood_community_centers_geompt ON neighborhood_community_centers USING GIST (geom_pt);
+ANALYZE generated.neighborhood_community_centers (geom_pt);
 
 -- set blockid10
 UPDATE  generated.neighborhood_community_centers
@@ -57,3 +62,7 @@ SET     blockid10 = array((
             WHERE   ST_Intersects(neighborhood_community_centers.geom_poly,cb.geom)
             OR      ST_Intersects(neighborhood_community_centers.geom_pt,cb.geom)
         ));
+
+-- block index
+CREATE INDEX IF NOT EXISTS aidx_neighborhood_community_centers_blockid10 ON neighborhood_community_centers USING GIN (blockid10);
+ANALYZE generated.neighborhood_community_centers (blockid10);

@@ -12,9 +12,9 @@ CREATE TABLE generated.neighborhood_retail (
     blockid10 CHARACTER VARYING(15)[],
     pop_low_stress INT,
     pop_high_stress INT,
+    pop_ratio FLOAT,
     geom_poly geometry(multipolygon, :nb_output_srid)
 );
-CREATE INDEX sidx_neighborhood_retail_geomply ON neighborhood_retail USING GIST (geom_poly);
 
 -- insert
 INSERT INTO generated.neighborhood_retail (
@@ -24,7 +24,9 @@ SELECT  ST_Multi(ST_Buffer(ST_CollectionExtract(unnest(ST_ClusterWithin(way,:clu
 FROM    neighborhood_osm_full_polygon
 WHERE   landuse = 'retail';
 
-ANALYZE generated.neighborhood_retail;
+-- index
+CREATE INDEX sidx_neighborhood_retail_geomply ON neighborhood_retail USING GIST (geom_poly);
+ANALYZE generated.neighborhood_retail (geom_poly);
 
 -- set blockid10
 UPDATE  generated.neighborhood_retail
@@ -33,3 +35,7 @@ SET     blockid10 = array((
             FROM    neighborhood_census_blocks cb
             WHERE   ST_Intersects(neighborhood_retail.geom_poly,cb.geom)
         ));
+
+-- block index
+CREATE INDEX IF NOT EXISTS aidx_neighborhood_retail_blockid10 ON neighborhood_retail USING GIN (blockid10);
+ANALYZE generated.neighborhood_retail (blockid10);
