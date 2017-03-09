@@ -13,11 +13,7 @@
     function OrganizationListController(Organization) {
         var ctl = this;
         ctl.organizations = [];
-        ctl.orgTypes = {
-            SUBSCRIBER: 'Subscriber',
-            AREA: 'Area',
-            ADMIN: 'Admin'
-        };
+        ctl.orgTypes = Organization.orgTypes;
 
         initialize();
 
