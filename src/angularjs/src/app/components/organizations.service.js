@@ -10,8 +10,7 @@
 
     /* @ngInject */
     function Organization($resource) {
-
-        return $resource('/api/organizations/:uuid/', {uuid: '@uuid'}, {
+        var module = $resource('/api/organizations/:uuid/', {uuid: '@uuid'}, {
             'update': {
                 method: 'PUT'
             },
@@ -21,6 +20,14 @@
                 isArray: true
             }
         });
+
+        module.orgTypes = {
+            ADMIN: 'Administrator Organization',
+            LOCAL: 'Local Agency',
+            SUBSCRIBER: 'Subscription'
+        };
+
+        return module;
     }
 
     angular.module('pfb')

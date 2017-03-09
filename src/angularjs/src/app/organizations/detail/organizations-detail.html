@@ -33,17 +33,6 @@
         </div>
         <div class="row">
           <div class="col-sm-8 col-sm-offset-2">
-            <div class="form-group">
-              <label for="area">Area</label>
-              <select ng-model="org.org.area"
-                      ng-disabled="!org.isAdminUser && !org.isAdminOrg"
-                      class="form-control" id="role" type="text"
-                      ng-options="area.abbreviation as area.name for area in org.areas">
-                <option value="">&nbsp;</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-sm-8 col-sm-offset-2">
             <button type="submit" ng-disabled="userForm.$invalid && !ctl.isAdminUser"
                     class="btn-primary btn">
               <span ng-if="!org.editing">Add Organization</span>

@@ -39,8 +39,8 @@
 
         function filterUploads(filters) {
             var params = {};
-            if (filters.area) {
-                params.area = filters.area;
+            if (filters.neighborhood) {
+                params.neighborhood = filters.neighborhood;
             }
             if (filters.status) {
                 params.status = filters.status;

@@ -20,7 +20,6 @@
             ctl.isAdminOrg = AuthService.isAdminOrg();
             ctl.isAdminUser = AuthService.isAdminUser();
             ctl.logout = AuthService.logout;
-            ctl.userArea = AuthService.getUserOrgArea();
             ctl.userUuid = AuthService.getUserId();
             ctl.userName = AuthService.getUserName();
 

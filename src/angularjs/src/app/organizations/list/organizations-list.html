@@ -10,7 +10,6 @@
           <tr>
             <th>Name</th>
             <th>Type</th>
-            <th>Area</th>
             <th></th>
           </tr>
         </thead>
@@ -18,7 +17,6 @@
           <tr ng-repeat="org in orgList.orgs">
             <td>{{org.name}}</td>
             <td>{{orgList.orgTypes[org.orgType]}}</td>
-            <td>{{org.area}}</td>
             <td>
               <a ui-sref="organizations.edit({uuid: org.uuid})"><button class="btn-link">Edit</button></a>
             </td>

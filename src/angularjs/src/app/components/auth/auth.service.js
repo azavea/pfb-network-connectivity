@@ -18,7 +18,6 @@
         var userNameCookie = 'Authservice.userName';
         var userRoleCookie = 'AuthService.role';
         var userIsAdminOrg = 'AuthService.isAdminOrg';
-        var userOrgArea = 'AuthService.userOrgArea';
 
         var module = {
             login: login,
@@ -29,8 +28,6 @@
             getEmail: getEmail,
             isAdminUser: isAdminUser,
             isAdminOrg: isAdminOrg,
-            getUserOrgArea: getUserOrgArea,
-            canViewAreaSite: canViewAreaSite,
             getUserName: getUserName
         };
 
@@ -45,7 +42,6 @@
                     $cookies.putObject(userIdCookie, user.uuid);
                     $cookies.putObject(userRoleCookie, user.role);
                     $cookies.putObject(userIsAdminOrg, user.isAdminOrganization);
-                    $cookies.putObject(userOrgArea, user.area);
                     var userName = user.firstName;
                     if (!userName.length) {
                         userName = user.email;
@@ -68,7 +64,6 @@
                     $cookies.putObject(userIdCookie, null);
                     $cookies.putObject(userRoleCookie, null);
                     $cookies.putObject(userIsAdminOrg, null);
-                    $cookies.putObject(userOrgArea, null);
                     dfd.resolve();
                     $state.go('login');
                 })
@@ -103,10 +98,6 @@
         function getUserName() {
             return $cookies.getObject(userNameCookie);
         }
-        function canViewAreaSite() {
-            return ($cookies.getObject(userRoleCookie) !== 'SUBSCRIBER' &&
-                    $cookies.getObject(userRoleCookie) !== 'UPLOADER');
-        }
 
         function isAdminUser() {
             return $cookies.getObject(userRoleCookie) === 'ADMIN';
@@ -114,10 +105,6 @@
 
         function isAdminOrg() {
             return $cookies.getObject(userIsAdminOrg);
-        }
-
-        function getUserOrgArea() {
-            return $cookies.getObject(userOrgArea);
         }
     }
 

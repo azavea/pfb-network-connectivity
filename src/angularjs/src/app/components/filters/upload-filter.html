@@ -13,13 +13,14 @@
         </div>
     </th>
     <th>
-        <div class="dropdown area">
-            <ui-select ng-model="ctl.areaFilter" title="Filter by Area">
-                <ui-select-match allow-clear="true" placeholder="Area" >
+        <div class="dropdown neighborhood">
+            <ui-select ng-model="ctl.neighborhoodFilter" title="Filter by Neighborhood">
+                <ui-select-match allow-clear="true" placeholder="Neighborhood" >
                     {{$select.selected.name}}
                 </ui-select-match>
-                <ui-select-choices repeat="area.fipsCode as area in ctl.areas | filter: {name : $select.search}">
-                    <div ng-bind-html="area.name | highlight: $select.search"></div>
+                <ui-select-choices repeat="neighborhood.fipsCode as neighborhood in
+                                           ctl.neighborhoods | filter: {name : $select.search}">
+                    <div ng-bind-html="neighborhood.name | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
         </div>

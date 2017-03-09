@@ -11,7 +11,7 @@
 
     /** @ngInject */
     function OrganizationDetailController($log, $stateParams, $state, toastr, AuthService,
-                                          Organization, Area) {
+                                          Organization) {
         var ctl = this;
 
         initialize();
@@ -21,26 +21,15 @@
             ctl.isAdminUser = AuthService.isAdminUser();
             ctl.isAdminOrg = AuthService.isAdminOrg();
             ctl.saveOrg = saveOrg;
-            ctl.orgTypes = {
-                ADMIN: 'Administrator Organization',
-                AREA: 'Area Agency',
-                SUBSCRIBER: 'Subscription'
-            };
+            ctl.orgTypes = Organization.orgTypes;
             ctl.org = {};
             loadData();
         }
 
-        // Load data, load org after areas to prevent race condition in dropdown
         function loadData() {
-            var areas = Area.query();
-            areas.$promise.then(function() {
-                ctl.areas = _.keyBy(areas, function(area) {
-                    return area.abbreviation;
-                });
-                if ($stateParams.uuid) {
-                    ctl.org = Organization.get($stateParams);
-                }
-            });
+            if ($stateParams.uuid) {
+                ctl.org = Organization.get($stateParams);
+            }
         }
 
         function saveOrg() {
