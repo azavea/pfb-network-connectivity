@@ -146,7 +146,7 @@ docker run \
 
 ## Verifying the Analysis
 
-The output from the analysis run may be compared to previous output to see if it has changed.
+The output from the analysis run may be compared to previous output to see if it has changed. See the section below for the input parameters used to generate the verified output.
 
 Build the docker container for the verification tool within the VM:
 ```
@@ -169,3 +169,13 @@ docker-compose run verifier boulder.csv my_output_to_verify.csv
 ```
 
 If there are any differences in the outputs, a summary of the differences will be output to console.
+
+
+## Verified Output Parameters
+
+The analysis output in the `verified_output` directory was generated using the following input parameters and files:
+
+Boulder:
+- BOUNDARY_BUFFER=50
+- https://s3.amazonaws.com/test-pfb-inputs/boulder/boulder.osm
+- https://s3.amazonaws.com/test-pfb-inputs/boulder/boulder.zip
