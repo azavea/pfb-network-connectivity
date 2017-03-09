@@ -15,23 +15,23 @@
         function initialize() {
             loadOptions(ctl.param);
             $scope.$watch(function(){return ctl.statusFilter;}, filterStatus);
-            $scope.$watch(function(){return ctl.areaFilter;}, filterArea);
+            $scope.$watch(function(){return ctl.neighborhoodFilter;}, filterNeighborhood);
             $scope.$watch(function(){return ctl.boundaryFilter;}, filterBoundary);
         }
 
         function loadOptions() {
-            $http.get('/api/areas/').success(function(data) {
-                ctl.areas = data;
+            $http.get('/api/neighborhoods/').success(function(data) {
+                ctl.neighborhoods = data;
             });
             ctl.statuses = BoundaryUploadStatuses.statuses;
         }
 
-        function filterArea(newFilter, oldFilter) {
+        function filterNeighborhood(newFilter, oldFilter) {
             if (newFilter === oldFilter) {
                 return;
             }
             ctl.filters = {
-                area: newFilter,
+                neighborhood: newFilter,
                 status: BoundaryUploadStatuses.filterMap[ctl.statusFilter]
             };
         }
@@ -41,7 +41,7 @@
                 return;
             }
             ctl.filters = {
-                area: ctl.areaFilter,
+                neighborhood: ctl.neighborhoodFilter,
                 status: BoundaryUploadStatuses.filterMap[newFilter]
             };
         }
@@ -51,7 +51,7 @@
                 return;
             }
             ctl.filters = {
-                area: ctl.areaFilter,
+                neighborhood: ctl.neighborhoodFilter,
                 status: BoundaryUploadStatuses.filterMap[ctl.statusFilter]
             };
         }
@@ -64,7 +64,7 @@
      *
      * @description
      * Directive for the Boundary upload filtering table header
-     * Filters by area and status with client-side auto-complete
+     * Filters by neighborhood and status with client-side auto-complete
      */
     function UploadFilterDirective() {
         var module = {

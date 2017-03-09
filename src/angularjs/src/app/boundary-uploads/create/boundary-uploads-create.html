@@ -16,9 +16,9 @@
           </div>
           <div class="col-sm-4">
             <div class="form-group">
-              <label for="role">Area</label>
-              <select ng-model="boundaryUpload.area"
-                      ng-options="area as area.name for area in boundaryUpload.areas track by area.fipsCode"
+              <label for="role">Neighborhood</label>
+              <select ng-model="boundaryUpload.neighborhood"
+                      ng-options="neighborhood as neighborhood.name for neighborhood in boundaryUpload.neighborhoods track by neighborhood.uuid"
                       class="form-control" id="role" type="text" required>
               </select>
             </div>

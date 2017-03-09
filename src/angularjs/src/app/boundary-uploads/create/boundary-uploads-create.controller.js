@@ -10,13 +10,14 @@
     'use strict';
 
     /** @ngInject */
-    function BoundaryUploadCreateController($log, $state, $filter, toastr, Upload, Area, BoundaryUpload) {
+    function BoundaryUploadCreateController($log, $state, $filter, toastr, Upload, Neighborhood,
+                                            BoundaryUpload) {
         var ctl = this;
 
         function initialize() {
-            ctl.areas = Area.query();
-            ctl.areas.$promise.then(function(result) {
-                ctl.area = result[0];
+            ctl.neighborhoods = Neighborhood.query();
+            ctl.neighborhoods.$promise.then(function(result) {
+                ctl.neighborhood = result[0];
             });
         }
 
@@ -35,14 +36,14 @@
         ctl.create = function() {
             var uploadToast = toastr.info('Uploading file to pfb. Please wait...',
                                           {autoDismiss: false});
-            var upload = BoundaryUpload.save({area: ctl.area.fipsCode})
+            var upload = BoundaryUpload.save({neighborhood: ctl.neighborhood.uuid})
                 .$promise.then(
                     function (result) {
                         return uploadFile(result.url);
                     });
             upload.then(function() {
                 toastr.clear(uploadToast);
-                toastr.success('Successfully uploaded file for processing');
+                toastr.success('Successfully uploaded boundary file');
                 $state.go('boundary-uploads.list');
             }).catch(function(error) {
                 toastr.clear(uploadToast);
