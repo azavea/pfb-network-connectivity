@@ -14,11 +14,10 @@ CREATE TABLE generated.neighborhood_parks (
     park_name TEXT,
     pop_low_stress INT,
     pop_high_stress INT,
+    pop_ratio FLOAT,
     geom_pt geometry(point, :nb_output_srid),
     geom_poly geometry(multipolygon, :nb_output_srid)
 );
-CREATE INDEX sidx_neighborhood_parks_geompt ON neighborhood_parks USING GIST (geom_pt);
-CREATE INDEX sidx_neighborhood_parks_geomply ON neighborhood_parks USING GIST (geom_poly);
 
 -- insert polygons
 INSERT INTO generated.neighborhood_parks (
@@ -34,6 +33,10 @@ WHERE   amenity = 'park'
 -- set points on polygons
 UPDATE  generated.neighborhood_parks
 SET     geom_pt = ST_Centroid(geom_poly);
+
+-- index
+CREATE INDEX sidx_neighborhood_parks_geomply ON neighborhood_parks USING GIST (geom_poly);
+ANALYZE neighborhood_parks (geom_poly);
 
 -- insert points
 INSERT INTO generated.neighborhood_parks (
@@ -55,7 +58,9 @@ AND     NOT EXISTS (
             WHERE   ST_Intersects(s.geom_poly,neighborhood_osm_full_point.way)
         );
 
-ANALYZE generated.neighborhood_parks;
+-- index
+CREATE INDEX sidx_neighborhood_parks_geompt ON neighborhood_parks USING GIST (geom_pt);
+ANALYZE generated.neighborhood_parks (geom_pt);
 
 -- set blockid10
 UPDATE  generated.neighborhood_parks
@@ -65,3 +70,7 @@ SET     blockid10 = array((
             WHERE   ST_Intersects(neighborhood_parks.geom_poly,cb.geom)
             OR      ST_Intersects(neighborhood_parks.geom_pt,cb.geom)
         ));
+
+-- block index
+CREATE INDEX IF NOT EXISTS aidx_neighborhood_parks_blockid10 ON neighborhood_parks USING GIN (blockid10);
+ANALYZE generated.neighborhood_parks (blockid10);

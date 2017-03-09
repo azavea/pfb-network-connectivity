@@ -13,11 +13,10 @@ CREATE TABLE generated.neighborhood_schools (
     school_name TEXT,
     pop_low_stress INT,
     pop_high_stress INT,
+    pop_ratio FLOAT,
     geom_pt geometry(point, :nb_output_srid),
     geom_poly geometry(polygon, :nb_output_srid)
 );
-CREATE INDEX sidx_neighborhood_schools_geompt ON neighborhood_schools USING GIST (geom_pt);
-CREATE INDEX sidx_neighborhood_schools_geomply ON neighborhood_schools USING GIST (geom_poly);
 
 -- insert points from polygons
 INSERT INTO generated.neighborhood_schools (
@@ -39,6 +38,10 @@ WHERE   EXISTS (
             AND     s.id != generated.neighborhood_schools.id
 );
 
+-- index
+CREATE INDEX sidx_neighborhood_schools_geomply ON neighborhood_schools USING GIST (geom_poly);
+ANALYZE generated.neighborhood_schools (geom_poly);
+
 -- insert points
 INSERT INTO generated.neighborhood_schools (
     osm_id, school_name, geom_pt
@@ -54,7 +57,9 @@ AND     NOT EXISTS (
             WHERE   ST_Intersects(s.geom_poly,neighborhood_osm_full_point.way)
         );
 
-ANALYZE generated.neighborhood_schools;
+-- index
+CREATE INDEX sidx_neighborhood_schools_geompt ON neighborhood_schools USING GIST (geom_pt);
+ANALYZE generated.neighborhood_schools (geom_pt);
 
 -- set blockid10
 UPDATE  generated.neighborhood_schools
@@ -64,3 +69,7 @@ SET     blockid10 = array((
             WHERE   ST_Intersects(neighborhood_schools.geom_poly,cb.geom)
             OR      ST_Intersects(neighborhood_schools.geom_pt,cb.geom)
         ));
+
+-- block index
+CREATE INDEX IF NOT EXISTS aidx_neighborhood_schools_blockid10 ON neighborhood_schools USING GIN (blockid10);
+ANALYZE generated.neighborhood_schools (blockid10);
