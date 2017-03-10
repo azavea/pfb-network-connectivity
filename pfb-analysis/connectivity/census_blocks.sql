@@ -36,6 +36,12 @@ ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS social_services_rat
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS supermarkets_low_stress;
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS supermarkets_high_stress;
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS supermarkets_ratio;
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS universities_low_stress;
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS universities_high_stress;
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS universities_ratio;
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS colleges_low_stress;
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS colleges_high_stress;
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS colleges_ratio;
 
 ALTER TABLE neighborhood_census_blocks ADD COLUMN pop_low_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN pop_high_stress INT;
@@ -67,6 +73,12 @@ ALTER TABLE neighborhood_census_blocks ADD COLUMN social_services_ratio FLOAT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN supermarkets_low_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN supermarkets_high_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN supermarkets_ratio FLOAT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN universities_low_stress INT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN universities_high_stress INT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN universities_ratio FLOAT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN colleges_low_stress INT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN colleges_high_stress INT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN colleges_ratio FLOAT;
 
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blocks10 ON neighborhood_census_blocks (blockid10);
 CREATE INDEX IF NOT EXISTS idx_neighborhood_geom ON neighborhood_census_blocks USING GIST (geom);
