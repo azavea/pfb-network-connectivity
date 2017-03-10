@@ -10,6 +10,7 @@ DROP INDEX IF EXISTS idx_neighborhood_ways_path_id;
 CREATE TABLE generated.neighborhood_paths (
     path_id SERIAL PRIMARY KEY,
     geom geometry(multilinestring, :nb_output_srid),
+    road_ids INTEGER[],
     path_length INTEGER,
     bbox_length INTEGER
 );
@@ -42,6 +43,10 @@ SET     bbox_length = ST_Length(
             )
         );
 
+-- index
+CREATE INDEX sidx_neighborhood_paths_geom ON neighborhood_paths USING GIST (geom);
+ANALYZE neighborhood_paths (geom);
+
 -- set path_id on each road segment (if path)
 UPDATE  neighborhood_ways
 SET     path_id = (
@@ -65,3 +70,15 @@ AND     ST_CoveredBy(neighborhood_ways.geom,ST_Buffer(paths.geom,1));
 -- set index
 CREATE INDEX idx_neighborhood_ways_path_id ON neighborhood_ways (path_id);
 ANALYZE neighborhood_ways (path_id);
+
+-- set road_ids
+UPDATE  neighborhood_paths
+SET     road_ids = array((
+            SELECT  road_id
+            FROM    neighborhood_ways
+            WHERE   neighborhood_ways.path_id = neighborhood_paths.path_id
+        ));
+
+-- index
+CREATE INDEX aidx_neighborhood_paths_road_ids ON neighborhood_paths USING GIN (road_ids);
+ANALYZE neighborhood_paths (road_ids);
