@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
-NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-4326}"
+NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
 NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-3300}"
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
@@ -30,7 +30,7 @@ Requires passing the state FIPS ID that the neighborhood boundary is found in. e
 Optional ENV vars:
 
 NB_INPUT_SRID - Default: 4326
-NB_OUTPUT_SRID - Default: 4326
+NB_OUTPUT_SRID - Default: 2163
 NB_MAX_TRIP_DISTANCE - Default: 3300 (in the units of NB_OUTPUT_SRID)
 NB_BOUNDARY_BUFFER - Default: half of NB_MAX_TRIP_DISTANCE (in the units of NB_OUTPUT_SRID)
 NB_POSTGRESQL_HOST - Default: 127.0.0.1
@@ -45,7 +45,7 @@ NB_POSTGRESQL_PASSWORD - Default: gis
 function import_and_transform_shapefile() {
     IMPORT_FILE="${1}"
     IMPORT_TABLENAME="${2}"
-    IMPORT_SRID="${3:-4326}"
+    IMPORT_SRID="${3:-2163}"
 
     echo "START: Importing ${IMPORT_TABLENAME}"
     shp2pgsql -I -d -D -s "${IMPORT_SRID}" "${IMPORT_FILE}" "${IMPORT_TABLENAME}" \
