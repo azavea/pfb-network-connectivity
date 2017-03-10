@@ -1,8 +1,9 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- :nb_boundary_buffer psql var must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=11000 -f school_roads.sql
+-- :nb_max_trip_distance psql var must be set before running this script, with a value
+--  in the units of the projection used in neighborhood_ways (generally meters)
+--      e.g. psql -v nb_max_trip_distance=3300 -f school_roads.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_school_roads;
 
@@ -24,7 +25,7 @@ FROM    neighborhood_schools schools,
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_DWithin(b.geom, schools.geom_pt, :nb_boundary_buffer)
+            WHERE   ST_DWithin(b.geom, schools.geom_pt, :nb_max_trip_distance)
         )
 AND     schools.geom_poly IS NOT NULL
 AND     ST_DWithin(schools.geom_poly,ways.geom,50);
@@ -45,7 +46,7 @@ FROM    neighborhood_schools schools
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_DWithin(b.geom, schools.geom_pt, :nb_boundary_buffer)
+            WHERE   ST_DWithin(b.geom, schools.geom_pt, :nb_max_trip_distance)
         )
 AND     NOT EXISTS (
             SELECT  1

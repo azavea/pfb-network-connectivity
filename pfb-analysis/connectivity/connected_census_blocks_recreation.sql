@@ -1,8 +1,9 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- :nb_boundary_buffer psql var must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=11000 -f connected_census_blocks_recreation.sql
+-- :nb_max_trip_distance psql var must be set before running this script, with a value
+--  in the units of the projection used in neighborhood_census_blocks (generally meters)
+--      e.g. psql -v nb_max_trip_distance=3300 -f connected_census_blocks_recreation.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_connected_census_blocks_recreation;
 
@@ -31,7 +32,7 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(blocks.geom,zips.geom)
             AND     zips.zip_code = '02138'
         )
-AND     blocks.geom <#> paths.geom < :nb_boundary_buffer
+AND     blocks.geom <#> paths.geom < :nb_max_trip_distance
 AND     EXISTS (
             SELECT  1
             FROM    neighborhood_census_block_roads source_br,
@@ -86,7 +87,7 @@ AND     (
             AND     target_school_id = target_sr.school_id
             AND     hs.base_road = source_br.road_id
             AND     hs.target_road = target_sr.road_id
-        ), :nb_boundary_buffer) <= 1.3;
+        ), :nb_max_trip_distance) <= 1.3;
 
 -- stress index
 CREATE INDEX idx_neighborhood_blockschl_lstress ON neighborhood_connected_census_blocks_recreation (low_stress);

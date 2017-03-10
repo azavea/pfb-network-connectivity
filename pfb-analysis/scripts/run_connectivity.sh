@@ -11,7 +11,7 @@ NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-4326}"
-NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-0}"
+NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-3300}"
 TOLERANCE_COMM_CTR="${TOLERANCE_COMM_CTR:-150}"     # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_MEDICAL="${TOLERANCE_MEDICAL:-150}"       # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_PARKS="${TOLERANCE_PARKS:-150}"           # cluster tolerance given in units of $NB_OUTPUT_SRID
@@ -27,21 +27,21 @@ psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_D
   -f ../connectivity/census_blocks.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
+  -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
   -f ../connectivity/census_block_roads.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -f ../connectivity/reachable_roads_high_stress_prep.sql
 
 /usr/bin/time -v parallel<<EOF
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=0 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_high_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=1 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_high_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=2 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_high_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=3 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_high_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=4 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_high_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=5 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_high_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=6 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_high_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=7 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_high_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=0 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_high_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=1 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_high_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=2 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_high_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=3 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_high_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=4 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_high_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=5 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_high_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=6 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_high_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=7 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_high_stress_calc.sql
 EOF
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -f ../connectivity/reachable_roads_high_stress_cleanup.sql
@@ -50,21 +50,21 @@ EOF
   -f ../connectivity/reachable_roads_low_stress_prep.sql
 
 /usr/bin/time -v parallel<<EOF
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=0 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_low_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=1 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_low_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=2 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_low_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=3 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_low_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=4 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_low_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=5 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_low_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=6 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_low_stress_calc.sql
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=7 -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" -f ../connectivity/reachable_roads_low_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=0 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_low_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=1 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_low_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=2 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_low_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=3 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_low_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=4 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_low_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=5 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_low_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=6 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_low_stress_calc.sql
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -v thread_num=8 -v thread_no=7 -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" -f ../connectivity/reachable_roads_low_stress_calc.sql
 EOF
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/reachable_roads_low_stress_cleanup.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
+  -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" \
   -f ../connectivity/connected_census_blocks.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
@@ -109,11 +109,11 @@ EOF
   -f ../connectivity/destinations/supermarkets.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
+  -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" \
   -f ../connectivity/school_roads.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
+  -v nb_max_trip_distance="${NB_MAX_TRIP_DISTANCE}" \
   -f ../connectivity/connected_census_blocks_schools.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \

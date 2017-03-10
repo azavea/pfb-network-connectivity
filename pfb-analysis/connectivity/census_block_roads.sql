@@ -1,9 +1,10 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- :nb_boundary_buffer psql var must be set before running this script,
 -- :nb_output_srid psql var must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=11000 -v nb_output_srid=2249 -f census_block_roads.sql
+-- :nb_max_trip_distance psql var must be set before running this script,
+--  with a value in the units of nb_output_srid
+--      e.g. psql -v nb_output_srid=32613 -v nb_max_trip_distance=3300 -f census_block_roads.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_census_block_roads;
 
@@ -37,7 +38,7 @@ FROM    tmp_block_buffers blocks,
 WHERE   EXISTS (
             SELECT  1
             FROM neighborhood_boundary AS b
-            WHERE ST_DWithin(blocks.geom, b.geom, :nb_boundary_buffer)
+            WHERE ST_DWithin(blocks.geom, b.geom, :nb_max_trip_distance)
 )
 AND     ST_Intersects(blocks.geom,ways.geom)
 AND     (
