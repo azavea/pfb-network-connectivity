@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -e
+
+cd $(dirname "${0}")
+
+if [[ -n "${PFB_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0") PFB_SHPFILE[_URL] PFB_STATE PFB_STATE_FIPS ['extra args']
+
+Run an analysis job in local development. Sets a bunch of the required
+arguments to useful defaults.
+
+The first argument can be either the path to a shapefile (within the container,
+/data/boulder.shp, assuming the default mapping of ./data to /data) or a URL from
+which to download the zipped shapefile. Anything that starts with 'http' will be
+treated as a URL.
+
+'extra args' should be a string that will be fed through to the `docker run` command, e.g. '-ti'
+
+Optional, set them in the environment to override:
+NB_INPUT_SRID (default: 4326)
+NB_BOUNDARY_BUFFER (in meters. default: 3600)
+PFB_OSM_FILE (default: none, downloaded by the analysis job)
+PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
+NB_OUTPUT_DIR (default: /data/output)
+AWS_PROFILE (default: pfb)
+AWS_STORAGE_BUCKET_NAME (default: ${DEV_USER}-pfb-storage-us-east-1)
+PFB_JOB_ID (default: 'local-job')
+
+EXAMPLES:
+A boulder run with local shapefile and all defaults:
+   ./scripts/run-local-analysis /data/boulder.shp pa 42
+
+Override the buffer size and supply an OSM file:
+   PFB_OSM_FILE=/data/boulder.osm NB_BOUNDARY_BUFFER=1000 \\
+       ./scripts/run-local-analysis /data/boulder.shp pa 42
+"
+}
+
+
+if [ "${1:-}" = "--help" ] || [ -z "${3}" ]
+then
+    usage
+else
+    if [[ $1 =~ ^http ]]; then
+        PFB_SHPFILE_URL="${1}"
+    else
+        PFB_SHPFILE="${1}"
+    fi
+    PFB_STATE="${2}"
+    PFB_STATE_FIPS="${3}"
+    EXTRA_ARGS="${4}"
+
+    NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
+    NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-3600}"
+    NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
+    PFB_JOB_ID="${PFB_JOB_ID:-local-job}"
+
+    docker run $EXTRA_ARGS \
+        -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
+        -e PFB_SHPFILE=$PFB_SHPFILE \
+        -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
+        -e PFB_OSM_FILE=$PFB_OSM_FILE \
+        -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
+        -e NB_INPUT_SRID=$NB_INPUT_SRID \
+        -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
+        -e NB_OUTPUT_DIR=$NB_OUTPUT_DIR \
+        -e PFB_JOB_ID=$PFB_JOB_ID \
+        -e AWS_PROFILE=pfb \
+        -e AWS_STORAGE_BUCKET_NAME="${DEV_USER}-pfb-storage-us-east-1" \
+        -v /vagrant/data/:/data/ \
+        -v /home/vagrant/.aws:/root/.aws \
+        pfb-analysis
+fi
