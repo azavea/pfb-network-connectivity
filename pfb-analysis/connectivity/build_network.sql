@@ -229,7 +229,7 @@ CREATE INDEX idx_neighborhood_ways_net_link_int_id ON received.neighborhood_ways
 CREATE INDEX idx_neighborhood_ways_net_link_src_trgt ON received.neighborhood_ways_net_link (source_vert,target_vert);
 CREATE INDEX idx_neighborhood_ways_net_link_src_rdid ON received.neighborhood_ways_net_link (source_road_id);
 CREATE INDEX idx_neighborhood_ways_net_link_tgt_rdid ON received.neighborhood_ways_net_link (target_road_id);
-EXECUTE 'ANALYZE received.neighborhood_ways_net_link;';
+ANALYZE received.neighborhood_ways_net_link;
 
 --set source and target roads
 UPDATE  received.neighborhood_ways_net_link
@@ -347,3 +347,9 @@ WHERE   received.neighborhood_ways_net_link.target_road_id = road.road_id;
 --link_stress
 UPDATE  received.neighborhood_ways_net_link
 SET     link_stress = GREATEST(source_stress,int_stress,target_stress);
+
+--------------
+-- set cost --
+--------------
+UPDATE  received.neighborhood_ways_net_link
+SET     link_cost = ROUND((source_road_length + target_road_length) / 2);
