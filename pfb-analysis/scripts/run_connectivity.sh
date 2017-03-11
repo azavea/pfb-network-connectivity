@@ -65,6 +65,7 @@ EOF
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
   -f ../connectivity/connected_census_blocks.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
