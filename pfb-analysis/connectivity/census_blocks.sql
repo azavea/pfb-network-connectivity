@@ -4,8 +4,11 @@
 -- code to be run on table that has
 -- been imported directly from US Census
 -- blkpophu file
+-- :nb_output_srid psql var must be set before running this script,
+--      e.g. psql -v nb_output_srid=2249 -f census_blocks.sql
 ----------------------------------------
 
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS road_ids;
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS pop_low_stress;
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS pop_high_stress;
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS pop_ratio;
@@ -43,6 +46,7 @@ ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS colleges_low_stress
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS colleges_high_stress;
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS colleges_ratio;
 
+ALTER TABLE neighborhood_census_blocks ADD COLUMN road_ids INTEGER[];
 ALTER TABLE neighborhood_census_blocks ADD COLUMN pop_low_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN pop_high_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN pop_ratio FLOAT;
@@ -80,6 +84,37 @@ ALTER TABLE neighborhood_census_blocks ADD COLUMN colleges_low_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN colleges_high_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN colleges_ratio FLOAT;
 
+-- indexes
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blocks10 ON neighborhood_census_blocks (blockid10);
 CREATE INDEX IF NOT EXISTS idx_neighborhood_geom ON neighborhood_census_blocks USING GIST (geom);
 ANALYZE neighborhood_census_blocks;
+
+------------------------------
+-- add road_ids
+------------------------------
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS tmp_geom_buffer;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN tmp_geom_buffer geometry(multipolygon, :nb_output_srid);
+
+UPDATE  neighborhood_census_blocks
+SET     tmp_geom_buffer = ST_Multi(ST_Buffer(geom,50));
+CREATE INDEX tsidx_neighborhood_cblockbuffgeoms ON neighborhood_census_blocks USING GIST (tmp_geom_buffer);
+ANALYZE neighborhood_census_blocks (tmp_geom_buffer);
+
+UPDATE  neighborhood_census_blocks
+SET     road_ids = array((
+            SELECT  ways.road_id
+            FROM    neighborhood_ways ways
+            WHERE   ST_Intersects(neighborhood_census_blocks.tmp_geom_buffer,ways.geom)
+            AND     (
+                        ST_Contains(neighborhood_census_blocks.tmp_geom_buffer,ways.geom)
+                    OR  ST_Length(
+                            ST_Intersection(neighborhood_census_blocks.tmp_geom_buffer,ways.geom)
+                        ) > 100
+                    )
+        ));
+
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS tmp_geom_buffer;
+
+-- index
+CREATE INDEX aidx_neighborhood_census_blocks_road_ids ON neighborhood_census_blocks USING GIN (road_ids);
+ANALYZE neighborhood_census_blocks (road_ids);
