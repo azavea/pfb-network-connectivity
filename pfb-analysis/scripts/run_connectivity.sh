@@ -148,8 +148,8 @@ EOF
   -f ../connectivity/access_supermarkets.sql
 
   /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-    -v min_path_length=4800 \
-    -v min_bbox_length=3300 \
+    -v min_path_length="${MIN_PATH_LENGTH}" \
+    -v min_bbox_length="${MIN_PATH_BBOX}" \
     -f ../connectivity/access_trails.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
