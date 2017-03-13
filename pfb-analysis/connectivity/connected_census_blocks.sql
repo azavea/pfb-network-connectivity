@@ -2,7 +2,7 @@
 -- INPUTS
 -- location: neighborhood
 -- :nb_boundary_buffer and :nb_output_srid psql vars must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=11000 -v nb_output_srid=2163 -f connected_census_blocks.sql
+--      e.g. psql -v nb_boundary_buffer=3300 -v nb_output_srid=2163 -f connected_census_blocks.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_connected_census_blocks;
 

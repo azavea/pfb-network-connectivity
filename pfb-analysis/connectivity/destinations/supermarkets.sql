@@ -2,7 +2,7 @@
 -- INPUTS
 -- location: neighborhood
 -- proj: :nb_output_srid psql var must be set before running this script,
---       e.g. psql -v nb_output_srid=4326 -f supermarkets.sql
+--       e.g. psql -v nb_output_srid=2163 -f supermarkets.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_supermarkets;
 
