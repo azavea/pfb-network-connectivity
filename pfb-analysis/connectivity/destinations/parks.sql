@@ -3,7 +3,7 @@
 -- location: neighborhood
 -- proj: :nb_output_srid psql var must be set before running this script,
 -- :cluster_tolerance psql var must be set before running this script.
---       e.g. psql -v nb_output_srid=4326 cluster_tolerance=150 -f parks.sql
+--       e.g. psql -v nb_output_srid=2163 cluster_tolerance=50 -f parks.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_parks;
 
