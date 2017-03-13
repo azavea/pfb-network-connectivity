@@ -43,16 +43,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             docker push "${PFB_AWS_ECR_ENDPOINT}/pfb-nginx:${GIT_COMMIT}"
             docker push "${PFB_AWS_ECR_ENDPOINT}/pfb-app:${GIT_COMMIT}"
             docker push "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}"
-
-            echo "Uploading static files to S3..."
-            PFB_S3STORAGE_BUCKET="${PFB_S3STORAGE_BUCKET}" \
-            GIT_COMMIT="${GIT_COMMIT}" \
-            docker-compose \
-                -f docker-compose.yml \
-                -f docker-compose.test.yml \
-                run --rm --no-deps --entrypoint "./manage.py" \
-                django collectstatic --noinput
-            echo "Upload complete!"
         else
             echo "ERROR: No PFB_AWS_ECR_ENDPOINT variable defined."
             exit 1
