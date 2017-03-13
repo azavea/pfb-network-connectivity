@@ -5,7 +5,7 @@
 -- been imported directly from US Census
 -- blkpophu file
 -- :nb_output_srid psql var must be set before running this script,
---      e.g. psql -v nb_output_srid=2249 -f census_blocks.sql
+--      e.g. psql -v nb_output_srid=2163 -f census_blocks.sql
 ----------------------------------------
 
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS road_ids;
