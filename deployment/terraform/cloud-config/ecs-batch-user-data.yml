@@ -3,19 +3,14 @@
 packages:
     - awslogs
 
-fs_setup:
-  - label: nvme0n1
-    filesystem: ext4
-    extra_opts: ["-E", "nodiscard"]
-    device: /dev/nvme0n1
-    partition: auto
-
-mounts:
-  - [ /dev/nvme0n1, null ]
-  - [ /dev/nvme0n1, "/media/nvme0n1", "ext4", "defaults,nobootwait,discard", "0", "2" ]
-
 runcmd:
   - curl -o /etc/papertrail-bundle.pem https://papertrailapp.com/tools/papertrail-bundle.pem
+  # Manually mount i3 family ephemeral storage, see:
+  # https://bugs.launchpad.net/cloud-init/+bug/1672833
+  - mkfs.ext4 -E nodiscard /dev/nvme0n1
+  - mkdir -p /media/nvme0n1
+  - echo -e "/dev/nvme0n1\t/media/nvme0n1\text4\tdefaults,nofail,discard\t0\t2" >> /etc/fstab
+  - mount -a
 
 write_files:
   - path: /etc/ecs/ecs.config
