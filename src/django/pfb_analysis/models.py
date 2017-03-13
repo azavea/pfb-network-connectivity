@@ -114,6 +114,7 @@ class AnalysisJob(PFBModel):
         definition_name, revision = job_definition.split(':')
         job_name = '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
         environment = create_environment(
+            PGDATA=os.path.join('/pgdata', str(self.uuid)),
             PFB_SHPFILE_URL=self.neighborhood.boundary_file.url,
             PFB_STATE=self.neighborhood.state_abbrev,
             PFB_STATE_FIPS=self.neighborhood.state.fips,

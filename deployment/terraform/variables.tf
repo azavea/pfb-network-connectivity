@@ -101,14 +101,22 @@ variable "rds_alarm_disk_queue_threshold" {}
 variable "rds_alarm_free_disk_threshold" {}
 variable "rds_alarm_free_memory_threshold" {}
 
-# Batch
-variable "batch_analysis_compute_environment_arn" {}
-variable "batch_analysis_job_queue_name" {}
-variable "batch_analysis_job_definition_name_revision" {} # format: 'name:revision'
+# Batch ECS Cluster
+variable "batch_ecs_cluster_name" {}
+variable "batch_container_instance_type" {
+  description = "Must be one of the instance types in the AWS EC2 'i3' family"
+}
+variable "batch_container_instance_asg_desired_capacity" {}
+variable "batch_container_instance_asg_min_size" {}
+variable "batch_container_instance_asg_max_size" {}
 
+# Django
 variable "django_env" {}
 variable "django_secret_key" {}
 variable "django_allowed_hosts" {}
+variable "batch_analysis_compute_environment_arn" {}
+variable "batch_analysis_job_queue_name" {}
+variable "batch_analysis_job_definition_name_revision" {} # format: 'name:revision'
 
 variable "papertrail_host" {}
 variable "papertrail_port" {}
