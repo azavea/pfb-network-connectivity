@@ -1,9 +1,9 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- :min_path_length and :min_path_bbox must
+-- :min_path_length and :min_bbox_length must
 -- be set before running this script
---       e.g. psql -v nb_output_srid=4326 -v min_path_length=15840 -v min_bbox_length=10560 -f community_centers.sql
+--       e.g. psql -v nb_output_srid=2163 -v min_path_length=4800 -v min_bbox_length=3300 -f access_trails.sql
 ----------------------------------------
 -- low stress access
 UPDATE  neighborhood_census_blocks
