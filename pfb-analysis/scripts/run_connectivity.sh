@@ -20,12 +20,17 @@ TOLERANCE_RETAIL="${TOLERANCE_RETAIL:-50}"              # cluster tolerance give
 TOLERANCE_UNIVERSITIES="${TOLERANCE_UNIVERSITIES:-150}" # cluster tolerance given in units of $NB_OUTPUT_SRID
 MIN_PATH_LENGTH="${MIN_PATH_LENGTH:-4800}"              # minimum path length to be considered for recreation access
 MIN_PATH_BBOX="${MIN_PATH_BBOX:-3300}"                  # minimum corner-to-corner span of path bounding box to be considered for recreation access
+BLOCK_ROAD_BUFFER="${BLOCK_ROAD_BUFFER:-15}"            # buffer distance to find roads associated with a block
+BLOCK_ROAD_MIN_LENGTH="${BLOCK_ROAD_MIN_LENGTH:-30}"    # minimum length road must overlap with block buffer to be associated
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
   -f ../connectivity/build_network.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v block_road_buffer="${BLOCK_ROAD_BUFFER}" \
+  -v block_road_min_length="${BLOCK_ROAD_MIN_LENGTH}" \
   -f ../connectivity/census_blocks.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \

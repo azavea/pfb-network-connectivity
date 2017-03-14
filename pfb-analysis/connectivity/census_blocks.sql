@@ -4,8 +4,10 @@
 -- code to be run on table that has
 -- been imported directly from US Census
 -- blkpophu file
--- :nb_output_srid psql var must be set before running this script,
---      e.g. psql -v nb_output_srid=2163 -f census_blocks.sql
+-- :nb_output_srid psql, :block_road_buffer, and :block_road_min_length vars
+-- must be set before running this script,
+--      e.g. psql -v nb_output_srid=2163 -v block_road_buffer=15
+--                -v block_road_min_length=30 -f census_blocks.sql
 ----------------------------------------
 
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS road_ids;
@@ -96,7 +98,7 @@ ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS tmp_geom_buffer;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN tmp_geom_buffer geometry(multipolygon, :nb_output_srid);
 
 UPDATE  neighborhood_census_blocks
-SET     tmp_geom_buffer = ST_Multi(ST_Buffer(geom,15));
+SET     tmp_geom_buffer = ST_Multi(ST_Buffer(geom,:block_road_buffer));
 CREATE INDEX tsidx_neighborhood_cblockbuffgeoms ON neighborhood_census_blocks USING GIST (tmp_geom_buffer);
 ANALYZE neighborhood_census_blocks (tmp_geom_buffer);
 
@@ -109,7 +111,7 @@ SET     road_ids = array((
                         ST_Contains(neighborhood_census_blocks.tmp_geom_buffer,ways.geom)
                     OR  ST_Length(
                             ST_Intersection(neighborhood_census_blocks.tmp_geom_buffer,ways.geom)
-                        ) > 30
+                        ) > :block_road_min_length
                     )
         ));
 
