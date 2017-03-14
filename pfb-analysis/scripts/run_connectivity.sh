@@ -12,10 +12,14 @@ NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-4326}"
 NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-0}"
-TOLERANCE_COMM_CTR="${TOLERANCE_COMM_CTR:-150}"     # cluster tolerance given in units of $NB_OUTPUT_SRID
-TOLERANCE_MEDICAL="${TOLERANCE_MEDICAL:-150}"       # cluster tolerance given in units of $NB_OUTPUT_SRID
-TOLERANCE_PARKS="${TOLERANCE_PARKS:-150}"           # cluster tolerance given in units of $NB_OUTPUT_SRID
-TOLERANCE_RETAIL="${TOLERANCE_RETAIL:-150}"         # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_COLLEGES="${TOLERANCE_COLLEGES:-100}"         # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_COMM_CTR="${TOLERANCE_COMM_CTR:-50}"          # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_MEDICAL="${TOLERANCE_MEDICAL:-50}"            # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_PARKS="${TOLERANCE_PARKS:-50}"                # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_RETAIL="${TOLERANCE_RETAIL:-50}"              # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_UNIVERSITIES="${TOLERANCE_UNIVERSITIES:-150}" # cluster tolerance given in units of $NB_OUTPUT_SRID
+MIN_PATH_LENGTH="${MIN_PATH_LENGTH:-4800}"              # minimum path length to be considered for recreation access
+MIN_PATH_BBOX="${MIN_PATH_BBOX:-3300}"                  # minimum corner-to-corner span of path bounding box to be considered for recreation access
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
@@ -63,6 +67,7 @@ EOF
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
   -f ../connectivity/connected_census_blocks.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
@@ -73,6 +78,11 @@ EOF
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/access_jobs.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_COLLEGES}" \
+  -f ../connectivity/destinations/colleges.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
@@ -107,15 +117,41 @@ EOF
   -f ../connectivity/destinations/supermarkets.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
-  -f ../connectivity/school_roads.sql
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_UNIVERSITIES}" \
+  -f ../connectivity/destinations/universities.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
-  -f ../connectivity/connected_census_blocks_schools.sql
+  -f ../connectivity/access_colleges.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_community_centers.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_medical.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_parks.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_retail.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/access_schools.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_social_services.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_supermarkets.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v min_path_length="${MIN_PATH_LENGTH}" \
+  -v min_bbox_length="${MIN_PATH_BBOX}" \
+  -f ../connectivity/access_trails.sql
+
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_universities.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/overall_scores.sql
