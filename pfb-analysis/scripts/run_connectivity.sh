@@ -33,11 +33,6 @@ BLOCK_ROAD_MIN_LENGTH="${BLOCK_ROAD_MIN_LENGTH:-30}"    # minimum length road mu
   -v block_road_min_length="${BLOCK_ROAD_MIN_LENGTH}" \
   -f ../connectivity/census_blocks.sql
 
-/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
-  -v nb_output_srid="${NB_OUTPUT_SRID}" \
-  -f ../connectivity/census_block_roads.sql
-
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -f ../connectivity/reachable_roads_high_stress_prep.sql
 
 /usr/bin/time -v parallel<<EOF

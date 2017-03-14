@@ -15,10 +15,8 @@ SET     trails_low_stress = (
             AND     EXISTS (
                         SELECT  1
                         FROM    neighborhood_reachable_roads_low_stress ls
-                        JOIN    neighborhood_census_block_roads cbr
-                                ON ls.base_road = cbr.road_id
-                                AND neighborhood_census_blocks.blockid10 = cbr.blockid10
                         WHERE   ls.target_road = ANY(neighborhood_paths.road_ids)
+                        AND     ls.base_road = ANY(neighborhood_census_blocks.road_ids)
             )
         ),
         trails_high_stress = (
@@ -29,10 +27,8 @@ SET     trails_low_stress = (
             AND     EXISTS (
                         SELECT  1
                         FROM    neighborhood_reachable_roads_high_stress hs
-                        JOIN    neighborhood_census_block_roads cbr
-                                ON hs.base_road = cbr.road_id
-                                AND neighborhood_census_blocks.blockid10 = cbr.blockid10
                         WHERE   hs.target_road = ANY(neighborhood_paths.road_ids)
+                        AND     hs.base_road = ANY(neighborhood_census_blocks.road_ids)
             )
         )
 WHERE   EXISTS (
