@@ -96,7 +96,7 @@ ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS tmp_geom_buffer;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN tmp_geom_buffer geometry(multipolygon, :nb_output_srid);
 
 UPDATE  neighborhood_census_blocks
-SET     tmp_geom_buffer = ST_Multi(ST_Buffer(geom,50));
+SET     tmp_geom_buffer = ST_Multi(ST_Buffer(geom,15));
 CREATE INDEX tsidx_neighborhood_cblockbuffgeoms ON neighborhood_census_blocks USING GIST (tmp_geom_buffer);
 ANALYZE neighborhood_census_blocks (tmp_geom_buffer);
 
@@ -109,7 +109,7 @@ SET     road_ids = array((
                         ST_Contains(neighborhood_census_blocks.tmp_geom_buffer,ways.geom)
                     OR  ST_Length(
                             ST_Intersection(neighborhood_census_blocks.tmp_geom_buffer,ways.geom)
-                        ) > 100
+                        ) > 30
                     )
         ));
 
