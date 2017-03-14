@@ -1,8 +1,9 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- :nb_boundary_buffer psql var must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=11000 -f connected_census_blocks.sql
+-- :nb_max_trip_distance psql var must be set before running this script, with a value
+--  in the units of the projection used in neighborhood_boundary (generally meters)
+--      e.g. psql -v nb_max_trip_distance=3300 -f connected_census_blocks.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_connected_census_blocks;
 
@@ -27,7 +28,7 @@ FROM    neighborhood_boundary b
 JOIN    neighborhood_census_blocks source_block
         ON  ST_Intersects(source_block.geom,b.geom)
 JOIN    neighborhood_census_blocks target_block
-        ON  source_block.geom <#> target_block.geom < :nb_boundary_buffer
+        ON  source_block.geom <#> target_block.geom < :nb_max_trip_distance
 JOIN    neighborhood_census_block_roads source_br
         ON  source_block.blockid10 = source_br.blockid10
 JOIN    neighborhood_census_block_roads target_br
@@ -74,7 +75,7 @@ AND     (
             AND     target_blockid10 = target_br.blockid10
             AND     hs.base_road = source_br.road_id
             AND     hs.target_road = target_br.road_id
-        ), :nb_boundary_buffer) <= 1.3;
+        ), :nb_max_trip_distance) <= 1.3;
 
 -- stress index
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blockpairs_lstress ON neighborhood_connected_census_blocks (low_stress);

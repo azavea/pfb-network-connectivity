@@ -1,9 +1,10 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- :nb_boundary_buffer psql var must be set before running this script,
 -- :nb_output_srid psql var must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=11000 -v nb_output_srid=2249 -f streetlight_gates.sql
+-- :nb_max_trip_distance psql var must be set before running this script,
+--  with a value in the units of nb_output_srid
+--      e.g. psql -v nb_output_srid=32613 -v nb_max_trip_distance=3300 -f streetlight_gates.sql
 ----------------------------------------
 DROP TABLE IF EXISTS neighborhood_streetlight_gates;
 CREATE TABLE generated.neighborhood_streetlight_gates (
@@ -45,7 +46,7 @@ WHERE   functional_class IN ('primary','secondary','tertiary','residential')
 AND     EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS nb
-            WHERE   ST_DWithin(neighborhood_ways.geom,nb.geom, :nb_boundary_buffer)
+            WHERE   ST_DWithin(neighborhood_ways.geom,nb.geom, :nb_max_trip_distance)
         );
 
 -- formatting for upload to SLD
