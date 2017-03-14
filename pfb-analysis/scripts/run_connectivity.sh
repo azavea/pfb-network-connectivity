@@ -17,11 +17,9 @@ TOLERANCE_MEDICAL="${TOLERANCE_MEDICAL:-150}"       # cluster tolerance given in
 TOLERANCE_PARKS="${TOLERANCE_PARKS:-150}"           # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_RETAIL="${TOLERANCE_RETAIL:-150}"         # cluster tolerance given in units of $NB_OUTPUT_SRID
 
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -c "SELECT tdgMakeNetwork('neighborhood_ways');"
-
-psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -c "SELECT tdgNetworkCostFromDistance('neighborhood_ways');"
+/usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -f ../connectivity/build_network.sql
 
 /usr/bin/time -v psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/census_blocks.sql

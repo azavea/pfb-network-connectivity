@@ -44,8 +44,6 @@ RUN set -xe && \
         (cd osm2pgsql && mkdir build && cd build && cmake ../ && make install) && \
       git clone --branch $GIT_BRANCH_QUANTILE https://github.com/tvondra/quantile.git && \
         (cd quantile && make install) && \
-      git clone --branch $GIT_BRANCH_TDGTOOLS https://github.com/spencerrecneps/TDG-Tools.git && \
-        (cd TDG-Tools/TDG\ SQL\ Tools && make clean && make install) && \
     cd /tmp/ && rm -rf /tmp/build/ /var/lib/apt/lists/* && \
     apt-get purge -y --auto-remove ${BUILD_DEPS}
 
