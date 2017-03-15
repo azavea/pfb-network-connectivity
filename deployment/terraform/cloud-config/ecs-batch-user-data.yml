@@ -3,24 +3,18 @@
 packages:
     - awslogs
 
-runcmd:
-  - curl -o /etc/papertrail-bundle.pem https://papertrailapp.com/tools/papertrail-bundle.pem
+bootcmd:
   # Manually mount i3 family ephemeral storage, see:
   # https://bugs.launchpad.net/cloud-init/+bug/1672833
-  # Before mounting, we need to stop the docker daemon and ECS agent. If we don't, then those
-  # services don't see the changed file handles at the mount point and continue to write data
-  # to the root volume at the block device mount point
-  # NOTE: It may be possible for a job to get taken before we have a chance to stop these
-  #       services. Not sure what the behavior is in that case. If we start seeing that once
-  #       autoscaling is implemented we'll need to address it separately
-  - stop ecs
-  - service docker stop
+  # Mounting in bootcmd ensures that the drive is mounted before the docker daemon
+  #   and ECS agent start, which avoids orphaned file handles
   - mkfs.ext4 -E nodiscard /dev/nvme0n1
   - mkdir -p /media/nvme0n1
   - echo -e "/dev/nvme0n1\t/media/nvme0n1\text4\tdefaults,nofail,discard\t0\t2" >> /etc/fstab
   - mount -a
-  - service docker start
-  - start ecs
+
+runcmd:
+  - curl -o /etc/papertrail-bundle.pem https://papertrailapp.com/tools/papertrail-bundle.pem
 
 write_files:
   - path: /etc/ecs/ecs.config
