@@ -3,7 +3,7 @@
 -- location: neighborhood
 -- :nb_boundary_buffer psql var must be set before running this script,
 -- :nb_output_srid psql var must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=11000 -v nb_output_srid=2249 -f streetlight_gates.sql
+--      e.g. psql -v nb_boundary_buffer=1700 -v nb_output_srid=2163 -f streetlight_gates.sql
 ----------------------------------------
 DROP TABLE IF EXISTS neighborhood_streetlight_gates;
 CREATE TABLE generated.neighborhood_streetlight_gates (
