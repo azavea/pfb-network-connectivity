@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
-NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-4326}"
+NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
 NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-0}"
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
@@ -30,7 +30,7 @@ Requires passing the state FIPS ID that the neighborhood boundary is found in. e
 Optional ENV vars:
 
 NB_INPUT_SRID - Default: 4326
-NB_OUTPUT_SRID - Default: 4326
+NB_OUTPUT_SRID - Default: 2163
 NB_BOUNDARY_BUFFER - Default: 0 (Units is units of NB_OUTPUT_SRID)
 NB_POSTGRESQL_HOST - Default: 127.0.0.1
 NB_POSTGRESQL_DB - Default: pfb
