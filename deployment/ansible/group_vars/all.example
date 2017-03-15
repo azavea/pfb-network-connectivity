@@ -7,30 +7,6 @@ pfb_aws_batch_job_definition_name: "staging-pfb-analysis-run-job"
 
 # application settings
 docker_compose_version: 1.8.0
-postgresql_database_name: "pfb"
-# User 'gis' allows the Toole analysis scripts to work as is
-postgresql_database_user: "gis"
-postgresql_database_password: "gis"
-postgresql_database_host: "127.0.0.1"
-
-# azavea.postgresql
-postgresql_version: "9.6"
-postgresql_package_version: "9.6.*-2.pgdg14.04+1"
-postgresql_listen_addresses: '*'
-# These mappings allow the Toole analysis scripts to work as is without requiring a password
-postgresql_hba_mapping:
-  - { type: "local", database: "{{ postgresql_database_name }}", user: "{{ postgresql_database_user }}", address: "", method: "trust" }
-  - { type: "host", database: "{{ postgresql_database_name }}", user: "{{ postgresql_database_user }}", address: "{{ postgresql_database_host }}/32", method: "trust" }
-  - { type: "host", database: "{{ postgresql_database_name }}", user: "{{ postgresql_database_user }}", address: "0.0.0.0/0", method: "md5" }
-
-# azavea.postgresql-support
-postgresql_support_libpq_version: "9.6.*.pgdg14.04+1"
-postgresql_support_psycopg2_version: "2.6"
-postgresql_support_repository_channel: "9.6"
-
-# azavea.postgis
-postgis_version: "2.3"
-postgis_package_version: "2.3.1+dfsg-1.pgdg14.04+1"
 
 # azavea.docker
 # 1.12.* to match AWS ECS
