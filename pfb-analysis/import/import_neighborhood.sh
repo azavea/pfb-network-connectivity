@@ -2,7 +2,7 @@
 
 NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
 NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
-NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-0}"
+NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-3300}"
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
@@ -31,7 +31,8 @@ Optional ENV vars:
 
 NB_INPUT_SRID - Default: 4326
 NB_OUTPUT_SRID - Default: 2163
-NB_BOUNDARY_BUFFER - Default: 0 (Units is units of NB_OUTPUT_SRID)
+NB_MAX_TRIP_DISTANCE - Default: 3300 (in the units of NB_OUTPUT_SRID)
+NB_BOUNDARY_BUFFER - Default: half of NB_MAX_TRIP_DISTANCE (in the units of NB_OUTPUT_SRID)
 NB_POSTGRESQL_HOST - Default: 127.0.0.1
 NB_POSTGRESQL_DB - Default: pfb
 NB_POSTGRESQL_USER - Default: gis
@@ -64,6 +65,9 @@ then
         NB_BOUNDARY_FILE="${1}"
         NB_STATE_FIPS="${2}"
 
+        let HALF_MAX_TRIP="${NB_MAX_TRIP_DISTANCE}"/2
+        NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$HALF_MAX_TRIP}"
+
         # Import neighborhood boundary
         import_and_transform_shapefile "${NB_BOUNDARY_FILE}" neighborhood_boundary "${NB_INPUT_SRID}"
 
@@ -88,7 +92,9 @@ then
 
         # Only keep blocks in boundary+buffer
         psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-            -c "DELETE FROM neighborhood_census_blocks AS blocks USING neighborhood_boundary AS boundary WHERE NOT ST_DWithin(blocks.geom, boundary.geom, ${NB_BOUNDARY_BUFFER});"
+            -c "DELETE FROM neighborhood_census_blocks AS blocks USING neighborhood_boundary \
+                AS boundary WHERE NOT ST_DWithin(blocks.geom, boundary.geom, \
+                ${NB_BOUNDARY_BUFFER});"
 
         # Remove NB_TEMPDIR
         rm -rf "${NB_TEMPDIR}"

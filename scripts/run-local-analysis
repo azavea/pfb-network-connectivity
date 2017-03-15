@@ -24,21 +24,22 @@ treated as a URL.
 
 Optional, set them in the environment to override:
 NB_INPUT_SRID (default: 4326)
-NB_BOUNDARY_BUFFER (in meters. default: 3600)
+NB_MAX_TRIP_DISTANCE (in meters. default: 3300)
+NB_BOUNDARY_BUFFER (in meters. default: half of NB_MAX_TRIP_DISTANCE)
 PFB_OSM_FILE (default: none, downloaded by the analysis job)
 PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
 NB_OUTPUT_DIR (default: /data/output)
 AWS_PROFILE (default: pfb)
 AWS_STORAGE_BUCKET_NAME (default: ${DEV_USER}-pfb-storage-us-east-1)
-PFB_JOB_ID (default: 'local-job')
+PFB_JOB_ID (default: 'local-job-YYYY-MM-DD-HHMM')
 
 EXAMPLES:
 A boulder run with local shapefile and all defaults:
-   ./scripts/run-local-analysis /data/boulder.shp pa 42
+   ./scripts/run-local-analysis /data/boulder.shp co 08
 
-Override the buffer size and supply an OSM file:
-   PFB_OSM_FILE=/data/boulder.osm NB_BOUNDARY_BUFFER=1000 \\
-       ./scripts/run-local-analysis /data/boulder.shp pa 42
+Override the max trip distance and supply an OSM file:
+   PFB_OSM_FILE=/data/boulder.osm NB_MAX_TRIP_DISTANCE=2000 \\
+       ./scripts/run-local-analysis /data/boulder.shp co 08
 "
 }
 
@@ -57,9 +58,9 @@ else
     EXTRA_ARGS="${4}"
 
     NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
-    NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-3600}"
+    NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-3300}"
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
-    PFB_JOB_ID="${PFB_JOB_ID:-local-job}"
+    PFB_JOB_ID="${PFB_JOB_ID:-local-job-`date +%F-%H%M`}"
 
     docker run $EXTRA_ARGS \
         -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
@@ -68,6 +69,7 @@ else
         -e PFB_OSM_FILE=$PFB_OSM_FILE \
         -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
         -e NB_INPUT_SRID=$NB_INPUT_SRID \
+        -e NB_MAX_TRIP_DISTANCE=$NB_MAX_TRIP_DISTANCE \
         -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
         -e NB_OUTPUT_DIR=$NB_OUTPUT_DIR \
         -e PFB_JOB_ID=$PFB_JOB_ID \
