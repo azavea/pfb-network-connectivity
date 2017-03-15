@@ -21,6 +21,10 @@ deployment/ansible/*.retry
 data/*
 !data/.gitkeep
 
+# Static Directory
+src/nginx/srv/static/*
+!src/nginx/srv/static/.gitkeep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

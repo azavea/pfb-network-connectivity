@@ -35,12 +35,20 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         echo "All tests pass!"
 
         # Copy static site from angularjs container to local nginx srv directory
-        echo "Copying angular site to nginx"
+        echo "Copying angular site to nginx..."
         pushd "${DIR}/../src/nginx"
         docker run -i -v "${PWD}/srv/dist:/static-export/dist" pfb-angularjs \
                rsync -rlptDv --delete --exclude .gitkeep \
                  /opt/pfb/angularjs/dist /static-export/
         popd
+
+        echo "Running Django collectstatic..."
+        GIT_COMMIT="${GIT_COMMIT}" \
+        docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.test.yml \
+            run --rm --no-deps --entrypoint "./manage.py" \
+            django collectstatic --noinput
 
         echo "Building nginx image"
         GIT_COMMIT="${GIT_COMMIT}" docker-compose \
