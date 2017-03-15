@@ -1,8 +1,8 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- :nb_boundary_buffer psql var must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=11000 -f connected_census_blocks.sql
+-- :nb_max_trip_distance psql var must be set before running this script,
+--      e.g. psql -v nb_max_trip_distance=3300 -f reachable_roads_low_stress_calc.sql
 ----------------------------------------
 INSERT INTO generated.neighborhood_reachable_roads_low_stress (
     base_road,
@@ -23,7 +23,7 @@ FROM    neighborhood_ways r1,
             FROM    neighborhood_ways_net_link
             WHERE   link_stress = 1',
             v1.vert_id,
-            :nb_boundary_buffer,
+            :nb_max_trip_distance,
             directed := true
         ) sheds
 WHERE r1.road_id % :thread_num = :thread_no

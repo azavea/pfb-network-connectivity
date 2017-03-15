@@ -1,8 +1,8 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
--- :nb_boundary_buffer and :nb_output_srid psql vars must be set before running this script,
---      e.g. psql -v nb_boundary_buffer=3300 -v nb_output_srid=2163 -f connected_census_blocks.sql
+-- :nb_max_trip_distance and :nb_output_srid psql vars must be set before running this script,
+--      e.g. psql -v nb_max_trip_distance=3300 -v nb_output_srid=2163 -f connected_census_blocks.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_connected_census_blocks;
 
@@ -40,7 +40,7 @@ FROM    neighborhood_census_blocks source,
         neighborhood_census_blocks target,
         neighborhood_boundary
 WHERE   ST_Intersects(source.geom,neighborhood_boundary.geom)
-AND     ST_DWithin(source.geom,target.geom,:nb_boundary_buffer);
+AND     ST_DWithin(source.geom,target.geom,:nb_max_trip_distance);
 
 -- set low_stress
 UPDATE  generated.neighborhood_connected_census_blocks
