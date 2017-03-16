@@ -63,8 +63,3 @@ services:
       - ./data:/data
       - /home/vagrant/.aws:/root/.aws
       - ./src/django:/opt/pfb/django
-    environment:
-      - PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN
-      - PFB_AWS_BATCH_JOB_QUEUE_NAME
-      - PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION
-      - PFB_AWS_BATCH_JOB_DEFINITION_NAME
