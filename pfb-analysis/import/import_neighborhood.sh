@@ -82,19 +82,20 @@ then
             aws s3 cp "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip" "${BLOCK_DOWNLOAD}"
         else
             BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
-            wget -O "${BLOCK_DOWNLOAD}" "http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
+            wget -nv -O "${BLOCK_DOWNLOAD}" "http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
         fi
         unzip "${BLOCK_DOWNLOAD}" -d "${NB_TEMPDIR}"
 
         # Import block shapefile
         import_and_transform_shapefile "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks 4326
 
-
         # Only keep blocks in boundary+buffer
+        echo "START: Removing blocks outside buffer with size ${NB_BOUNDARY_BUFFER}"
         psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
             -c "DELETE FROM neighborhood_census_blocks AS blocks USING neighborhood_boundary \
                 AS boundary WHERE NOT ST_DWithin(blocks.geom, boundary.geom, \
                 ${NB_BOUNDARY_BUFFER});"
+        echo "DONE: Finished removing blocks outside buffer"
 
         # Remove NB_TEMPDIR
         rm -rf "${NB_TEMPDIR}"
