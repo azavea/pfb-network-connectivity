@@ -3,14 +3,18 @@
 packages:
     - awslogs
 
-runcmd:
-  - curl -o /etc/papertrail-bundle.pem https://papertrailapp.com/tools/papertrail-bundle.pem
+bootcmd:
   # Manually mount i3 family ephemeral storage, see:
   # https://bugs.launchpad.net/cloud-init/+bug/1672833
+  # Mounting in bootcmd ensures that the drive is mounted before the docker daemon
+  #   and ECS agent start, which avoids orphaned file handles
   - mkfs.ext4 -E nodiscard /dev/nvme0n1
   - mkdir -p /media/nvme0n1
   - echo -e "/dev/nvme0n1\t/media/nvme0n1\text4\tdefaults,nofail,discard\t0\t2" >> /etc/fstab
   - mount -a
+
+runcmd:
+  - curl -o /etc/papertrail-bundle.pem https://papertrailapp.com/tools/papertrail-bundle.pem
 
 write_files:
   - path: /etc/ecs/ecs.config
