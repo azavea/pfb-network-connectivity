@@ -7,7 +7,7 @@ ENV GIT_BRANCH_OSM2PGSQL 0.90.1
 ENV GIT_BRANCH_QUANTILE master
 
 # Copy in the django app
-COPY ./src/django /opt/pfb/django
+COPY ./django /opt/pfb/django
 
 RUN set -xe && \
     BUILD_DEPS=" \
@@ -61,7 +61,7 @@ RUN set -xe && \
     ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
     rm -r ./awscli-bundle*
 
-COPY ./pfb-analysis/scripts/setup_database.sh /docker-entrypoint-initdb.d/setup_database.sh
-COPY ./pfb-analysis/ /opt/pfb/analysis/
+COPY ./analysis/scripts/setup_database.sh /docker-entrypoint-initdb.d/setup_database.sh
+COPY ./analysis/ /opt/pfb/analysis/
 
 ENTRYPOINT /opt/pfb/analysis/scripts/entrypoint.sh

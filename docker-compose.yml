@@ -55,8 +55,8 @@ services:
       service: django
       file: common.yml
     build:
-      context: .
-      dockerfile: pfb-analysis/Dockerfile
+      context: ./src
+      dockerfile: analysis/Dockerfile
     links:
       - database:database.service.pfb.internal
     volumes:
