@@ -9,6 +9,9 @@ NB_POSTGRESQL_PASSWORD=gis
 PFB_AUTOVACUUM="${PFB_AUTOVACUUM:-off}"
 # Set defaults for overridable configuration params
 PFB_CHECKPOINT_COMPLETION="${PFB_CHECKPOINT_COMPLETION:-0.8}"
+# Since WAL size is deliberately small, suppress the checkpoint warnings
+# Default postgresql setting is 30, units are seconds
+PFB_CHECKPOINT_WARNING_INTERVAL="${PFB_CHECKPOINT_WARNING_INTERVAL:-0}"
 # Disable to improve performance, if disabled, data loss occurs on server crash (ok for analysis)
 PFB_FSYNC="${PFB_FSYNC:-on}"
 # Only one process at a time, can be higher, set to 1/4 of available system memory
@@ -30,6 +33,7 @@ PFB_WORK_MEM="${PFB_WORK_MEM:-512MB}"
 su postgres bash -c psql <<EOF
 ALTER SYSTEM SET autovacuum TO ${PFB_AUTOVACUUM};
 ALTER SYSTEM SET checkpoint_completion_target TO ${PFB_CHECKPOINT_COMPLETION};
+ALTER SYSTEM SET checkpoint_warning TO ${PFB_CHECKPOINT_WARNING_INTERVAL};
 ALTER SYSTEM SET fsync TO ${PFB_FSYNC};
 ALTER SYSTEM SET maintenance_work_mem TO '${PFB_MAINTENANCE_WORK_MEM}';
 ALTER SYSTEM SET max_wal_size TO '${PFB_MAX_WAL_SIZE}';
