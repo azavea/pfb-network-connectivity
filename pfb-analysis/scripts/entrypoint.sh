@@ -45,7 +45,7 @@ if [ "${PFB_SHPFILE_URL}" ]
 then
     echo "Downloading shapefile"
     pushd "${PFB_TEMPDIR}"
-    wget "${PFB_SHPFILE_URL}" -O boundary.zip
+    wget -nv "${PFB_SHPFILE_URL}" -O boundary.zip
     unzip boundary.zip
     PFB_SHPFILE="${PFB_TEMPDIR}"/$(ls *.shp)  # Assumes there's exactly one .shp file
     echo "Boundary shapefile is ${PFB_SHPFILE}"
@@ -57,7 +57,7 @@ if [ "${PFB_OSM_FILE_URL}" ]
 then
     echo "Downloading OSM file"
     pushd "${PFB_TEMPDIR}"
-    wget "${PFB_OSM_FILE_URL}" -O neighborhood_osm.zip
+    wget -nv "${PFB_OSM_FILE_URL}" -O neighborhood_osm.zip
     unzip neighborhood_osm.zip
     PFB_OSM_FILE="${PFB_TEMPDIR}"/$(ls *.osm)  # Assumes there's exactly one .osm file
     echo "OSM file is ${PFB_OSM_FILE}"

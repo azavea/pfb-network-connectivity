@@ -68,7 +68,7 @@ else
   OSM_API_URL="http://www.overpass-api.de/api/xapi?*[bbox=${BBOX_SW_LNG},${BBOX_SW_LAT},${BBOX_NE_LNG},${BBOX_NE_LAT}]"
   OSM_TEMPDIR=`mktemp -d`
   OSM_DATA_FILE="${OSM_TEMPDIR}/overpass.osm"
-  wget -O "${OSM_DATA_FILE}" "${OSM_API_URL}"
+  wget -nv -O "${OSM_DATA_FILE}" "${OSM_API_URL}"
 fi
 
 # import the osm with highways

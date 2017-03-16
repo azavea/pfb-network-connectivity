@@ -20,6 +20,9 @@
             "name": "PFB_MAINTENANCE_WORK_MEM",
             "value": "2048MB"
         }, {
+            "name": "PFB_MAX_WAL_SIZE",
+            "value": "4096MB"
+        }, {
             "name": "PFB_SHARED_BUFFERS",
             "value": "3072MB"
         }, {

@@ -98,6 +98,23 @@ class AnalysisJob(PFBModel):
                               max_length=12,
                               help_text='The current status of the AnalysisJob')
 
+    @property
+    def batch_job_name(self):
+        job_definition = settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION
+        # Due to CloudWatch logs limits, job name must be no more than 50 chars
+        # so force truncate to that to keep jobs from failing
+        definition_name, revision = job_definition.split(':')
+        return '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
+
+    @property
+    def logs_url(self):
+        url = ('https://console.aws.amazon.com/cloudwatch/home?region={aws_region}' +
+               '#logStream:group=/aws/batch/job;prefix={batch_job_name}/{batch_job_id}' +
+               ';streamFilter=typeLogStreamPrefix')
+        return url.format(aws_region=settings.AWS_REGION,
+                          batch_job_name=self.batch_job_name,
+                          batch_job_id=self.batch_job_id)
+
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
         def create_environment(**kwargs):
@@ -108,11 +125,6 @@ class AnalysisJob(PFBModel):
             return
 
         client = boto3.client('batch')
-        job_definition = settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION
-        # Due to CloudWatch logs limits, job name must be no more than 50 chars
-        # so force truncate to that to keep jobs from failing
-        definition_name, revision = job_definition.split(':')
-        job_name = '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
         environment = create_environment(
             PGDATA=os.path.join('/pgdata', str(self.uuid)),
             PFB_SHPFILE_URL=self.neighborhood.boundary_file.url,
@@ -124,8 +136,8 @@ class AnalysisJob(PFBModel):
         container_overrides = {
             'environment': environment,
         }
-        response = client.submit_job(jobName=job_name,
-                                     jobDefinition=job_definition,
+        response = client.submit_job(jobName=self.batch_job_name,
+                                     jobDefinition=settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION, # NOQA
                                      jobQueue=settings.PFB_AWS_BATCH_JOB_QUEUE_NAME,
                                      containerOverrides=container_overrides)
         try:
