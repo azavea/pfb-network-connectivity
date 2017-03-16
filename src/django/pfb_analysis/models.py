@@ -165,3 +165,14 @@ class AnalysisJob(PFBModel):
         except KeyError:
             logger.exception('Error retrieving AWS Batch job status for job'.format(self.uuid))
             return None
+
+
+class AnalysisJobStatusUpdate(models.Model):
+    job = models.ForeignKey(AnalysisJob, related_name='status_updates', on_delete=models.CASCADE)
+    status = models.CharField(choices=AnalysisJob.Status.CHOICES, max_length=12)
+    step = models.CharField(max_length=50)
+    message = models.CharField(max_length=256, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('timestamp',)
