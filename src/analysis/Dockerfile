@@ -22,9 +22,7 @@ RUN set -xe && \
         libgeos-dev \
         libgeos++-dev \
         libproj-dev \
-        git \
-        python-dev \
-        python-pip" \
+        git" \
     DEPS=" \
         ca-certificates \
         liblua5.2-dev \
@@ -39,7 +37,9 @@ RUN set -xe && \
         python-gdal \
         unzip \
         zip \
-        postgis" && \
+        postgis \
+        python-dev \
+        python-pip" && \
     apt-get update && apt-get install -y ${BUILD_DEPS} ${DEPS} --no-install-recommends && \
     \
     mkdir /tmp/build/ && cd /tmp/build && \
@@ -50,6 +50,7 @@ RUN set -xe && \
       git clone --branch $GIT_BRANCH_QUANTILE https://github.com/tvondra/quantile.git && \
         (cd quantile && make install) && \
     \
+    pip install --upgrade pip && \
     pip install -r /opt/pfb/django/requirements.txt && \
     \
     cd /tmp/ && rm -rf /tmp/build/ /var/lib/apt/lists/* && \
