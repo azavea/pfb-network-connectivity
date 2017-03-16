@@ -20,7 +20,8 @@ The first argument can be either the path to a shapefile (within the container,
 which to download the zipped shapefile. Anything that starts with 'http' will be
 treated as a URL.
 
-'extra args' should be a string that will be fed through to the `docker run` command, e.g. '-ti'
+'extra args' should be a string that will be fed through to the `docker-compose run`
+command, e.g. '-T' to disable pseudo-TTY allocation.
 
 Optional, set them in the environment to override:
 NB_INPUT_SRID (default: 4326)
@@ -62,7 +63,7 @@ else
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
     PFB_JOB_ID="${PFB_JOB_ID:-local-job-`date +%F-%H%M`}"
 
-    docker run $EXTRA_ARGS \
+    docker-compose run $EXTRA_ARGS \
         -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
         -e PFB_SHPFILE=$PFB_SHPFILE \
         -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
@@ -75,7 +76,5 @@ else
         -e PFB_JOB_ID=$PFB_JOB_ID \
         -e AWS_PROFILE=pfb \
         -e AWS_STORAGE_BUCKET_NAME="${DEV_USER}-pfb-storage-us-east-1" \
-        -v /vagrant/data/:/data/ \
-        -v /home/vagrant/.aws:/root/.aws \
-        pfb-analysis
+        analysis
 fi
