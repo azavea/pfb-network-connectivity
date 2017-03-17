@@ -18,7 +18,7 @@ import requests
 
 from django.core.exceptions import ImproperlyConfigured
 
-from pfb_analysis.aws_batch import NoActiveJobDefinitionRevision, get_latest_job_definition
+from pfb_analysis.aws_batch import get_latest_job_definition
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

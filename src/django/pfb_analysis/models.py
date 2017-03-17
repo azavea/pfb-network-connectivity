@@ -1,15 +1,23 @@
 from __future__ import unicode_literals
 
-import os
 import logging
+import json
+import os
+import shutil
+import tempfile
 import uuid
+import zipfile
 
 from django.conf import settings
+from django.contrib.gis.geos import MultiPolygon
+from django.core.files import File
 from django.db import models
 from django.utils.text import slugify
 
 import botocore
 import boto3
+import fiona
+from fiona.crs import from_epsg
 from localflavor.us.models import USStateField
 import us
 
@@ -23,6 +31,50 @@ logger = logging.getLogger(__name__)
 def get_neighborhood_file_upload_path(instance, filename):
     """ Upload each boundary file to its own directory """
     return 'neighborhood_boundaries/{0}/{1}'.format(instance.name, os.path.basename(filename))
+
+
+class NeighborhoodManager(models.Manager):
+
+    def create_from_geom(self, geom, **kwargs):
+        """ Create a Neighborhood object from the passed GEOSGeometry
+
+        geom must be either a Polygon or MultiPolygon
+
+        """
+        boundary_file = None
+        try:
+            tmpdir = tempfile.mkdtemp()
+            file_name = slugify(kwargs['label'])
+            local_shpfile = os.path.join(tmpdir, '{}.shp'.format(file_name))
+            schema = {'geometry': 'MultiPolygon', 'properties': {}}
+            with fiona.open(local_shpfile, 'w',
+                            driver='ESRI Shapefile',
+                            crs=from_epsg(4326),
+                            schema=schema) as source:
+                if geom.geom_type == 'Polygon':
+                    geom = MultiPolygon([geom])
+                feature = {
+                    'geometry': json.loads(geom.json),
+                    'properties': {}
+                }
+                source.write(feature)
+
+            zip_filename = os.path.join(tmpdir, '{}.zip'.format(file_name))
+            shpfiles = os.listdir(tmpdir)
+            with zipfile.ZipFile(zip_filename, 'w') as zip_handle:
+                for shpfile in shpfiles:
+                    if shpfile.startswith(file_name):
+                        zip_handle.write(os.path.join(tmpdir, shpfile), shpfile)
+            boundary_file = File(open(zip_filename))
+            kwargs['boundary_file'] = boundary_file
+            neighborhood = self.create(**kwargs)
+        except:
+            raise
+        finally:
+            if boundary_file:
+                boundary_file.close()
+            shutil.rmtree(tmpdir, ignore_errors=True)
+        return neighborhood
 
 
 class Neighborhood(PFBModel):
@@ -42,10 +94,12 @@ class Neighborhood(PFBModel):
                                      help_text='A zipped shapefile boundary to run the ' +
                                                'bike network analysis on')
 
+    objects = NeighborhoodManager()
+
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
         if not self.name:
-            self.name = slugify(self.label)
+            self.name = self.name_for_label(self.label)
         self.full_clean()
         super(Neighborhood, self).save(*args, **kwargs)
 
@@ -57,6 +111,10 @@ class Neighborhood(PFBModel):
 
         """
         return us.states.lookup(self.state_abbrev)
+
+    @classmethod
+    def name_for_label(cls, label):
+        return slugify(label)
 
     class Meta:
         unique_together = ('name', 'organization',)
