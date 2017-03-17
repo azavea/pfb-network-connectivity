@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 
-from pfb_analysis.models import AnalysisJob, Neighborhood
+from pfb_analysis.models import AnalysisBatch, AnalysisJob, Neighborhood
 
 
 def download_file(url, local_filename=None):
@@ -26,7 +26,7 @@ def download_file(url, local_filename=None):
 
 
 class Command(BaseCommand):
-    help = """ Create a new AnalysisJob for each shapefile feature
+    help = """ Create a new AnalysisBatch based on the input shapefile
 
     A new analysis job is created for each Polygon/MultiPolygon feature in the shapefile.
     Each feature must have the following attributes:
@@ -48,6 +48,8 @@ class Command(BaseCommand):
 
         User = get_user_model()
         user = User.objects.get(email=options['user'])
+
+        batch = AnalysisBatch.objects.create(created_by=user, modified_by=user)
 
         try:
             tmpdir = tempfile.mkdtemp()
@@ -88,13 +90,20 @@ class Command(BaseCommand):
 
                     # Create new job
                     job = AnalysisJob.objects.create(neighborhood=neighborhood,
+                                                     batch=batch,
                                                      created_by=user,
                                                      modified_by=user)
-                    if options['submit']:
-                        job.run()
                     self.stdout.write('ID: {} -- {}'.format(str(job.uuid), str(job)))
+            self.stdout.write('Batch created: {}'.format(str(batch)))
         except Exception:
+            # If job creation failed, delete the batch
+            batch.delete()
             raise
         finally:
             self.stdout.write('Removing temporary files...')
             shutil.rmtree(tmpdir, ignore_errors=True)
+
+        if options['submit']:
+            self.stdout.write('Starting all jobs...')
+            batch.submit()
+            self.stdout.write('Started {} jobs.'.format(batch.jobs.count()))

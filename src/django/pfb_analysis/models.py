@@ -129,7 +129,12 @@ class AnalysisBatch(PFBModel):
 
     """
     def __str__(self):
-        return '<AnalysisBatch: {} -- {}'.format(self.created_by.email, self.created_at)
+        return '<AnalysisBatch: {} -- {}>'.format(str(self.uuid), self.created_at)
+
+    def submit(self):
+        """ Start all jobs in the batch """
+        for job in self.jobs:
+            job.run()
 
 
 class AnalysisJob(PFBModel):
