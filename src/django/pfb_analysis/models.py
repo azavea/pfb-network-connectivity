@@ -70,6 +70,7 @@ class AnalysisJob(PFBModel):
 
     class Status(object):
         CREATED = 'CREATED'
+        QUEUED = 'QUEUED'
         IMPORTING = 'IMPORTING'
         BUILDING = 'BUILDING'
         CONNECTIVITY = 'CONNECTIVITY'
@@ -80,6 +81,7 @@ class AnalysisJob(PFBModel):
 
         CHOICES = (
             (CREATED, 'Created',),
+            (QUEUED, 'Queued',),
             (IMPORTING, 'Importing Data',),
             (BUILDING, 'Building Network Graph',),
             (CONNECTIVITY, 'Calculating Connectivity',),
@@ -93,10 +95,43 @@ class AnalysisJob(PFBModel):
     neighborhood = models.ForeignKey(Neighborhood,
                                      related_name='analysis_jobs',
                                      on_delete=models.CASCADE)
-    status = models.CharField(choices=Status.CHOICES,
-                              default=Status.CREATED,
-                              max_length=12,
-                              help_text='The current status of the AnalysisJob')
+
+    @property
+    def status(self):
+        """ Return current status for this job
+
+        Uses AnalysisJobStatusUpdate but checks the batch job for situations that status
+        updates don't cover.
+        """
+        # If there's no job ID that means it's brand new
+        if self.batch_job_id is None:
+            return self.Status.CREATED
+
+        if self.batch_job_status == 'FAILED':
+            return self.Status.ERROR
+        try:
+            # If the job hasn't failed and has sent any status updates, use the latest
+            return self.status_updates.last().status
+        except AttributeError:
+            # Not failed but no status updates means it must be in the queue
+            return self.Status.QUEUED
+
+    @property
+    def batch_job_status(self):
+        """ Return current AWS Batch job status for this job
+
+        List of available statuses: http://docs.aws.amazon.com/batch/latest/userguide/jobs.html
+        TODO: Refactor to cache in db?
+        """
+        if not self.batch_job_id:
+            return None
+        client = boto3.client('batch')
+        try:
+            jobs = client.describe_jobs(jobs=[self.batch_job_id])['jobs']
+            return jobs[0]['status']
+        except (KeyError, IndexError):
+            logger.exception('Error retrieving AWS Batch job status for job'.format(self.uuid))
+            return None
 
     @property
     def batch_job_name(self):
@@ -155,29 +190,9 @@ class AnalysisJob(PFBModel):
                                      containerOverrides=container_overrides)
         try:
             self.batch_job_id = response['jobId']
-            # TODO: Possibly refactor status to use the AWS Batch status rather than some
-            #       custom status we may not have the ability to easily update
-            self.status = self.Status.IMPORTING
             self.save()
         except (botocore.exceptions.BotoCoreError, KeyError):
             logger.exception('Error starting AnalysisJob {}'.format(self.uuid))
-
-    def batch_job_status(self):
-        """ Return current AWS Batch job status for this job
-
-        List of available statuses: http://docs.aws.amazon.com/batch/latest/userguide/jobs.html
-        TODO: Refactor to cache in db?
-
-        """
-        if not self.batch_job_id:
-            return None
-        client = boto3.client('batch')
-        try:
-            jobs = client.describe_jobs(jobs=[self.batch_job_id])['jobs']
-            return jobs[0]['status']
-        except KeyError:
-            logger.exception('Error retrieving AWS Batch job status for job'.format(self.uuid))
-            return None
 
 
 class AnalysisJobStatusUpdate(models.Model):
