@@ -120,6 +120,18 @@ class Neighborhood(PFBModel):
         unique_together = ('name', 'organization',)
 
 
+class AnalysisBatch(PFBModel):
+    """ Container for a grouping of AnalysisJobs that are run together
+
+    Allows us to track whether each job in a batch succeeded
+
+    An AnalysisJob does not need to belong to an AnalysisBatch
+
+    """
+    def __str__(self):
+        return '<AnalysisBatch: {} -- {}'.format(self.created_by.email, self.created_at)
+
+
 class AnalysisJob(PFBModel):
 
     def __str__(self):
@@ -197,6 +209,11 @@ class AnalysisJob(PFBModel):
         except (KeyError, IndexError):
             logger.exception('Error retrieving AWS Batch job status for job'.format(self.uuid))
             return None
+
+    batch = models.ForeignKey(AnalysisBatch,
+                              related_name='jobs',
+                              on_delete=models.CASCADE,
+                              null=True, blank=True)
 
     @property
     def batch_job_name(self):
