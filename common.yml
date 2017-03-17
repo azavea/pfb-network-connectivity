@@ -5,15 +5,15 @@ services:
       context: ./src/django
       dockerfile: Dockerfile
     environment:
+      - DJANGO_ENV=development
+      - DJANGO_LOG_LEVEL=INFO
+      - AWS_PROFILE=pfb
       - PFB_DB_HOST=database.service.pfb.internal
       - PFB_DB_DATABASE=pfb
       - PFB_DB_PASSWORD=pfb
       - PFB_DB_PORT=5432
       - PFB_DB_USER=pfb
-      - DJANGO_ENV=development
       - PFB_SECRET_KEY=secret
-      - DJANGO_LOG_LEVEL=INFO
-      - AWS_PROFILE=pfb
       - PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN
       - PFB_AWS_BATCH_JOB_QUEUE_NAME
       - PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION

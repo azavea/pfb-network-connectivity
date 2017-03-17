@@ -132,6 +132,19 @@ class AnalysisJob(PFBModel):
             PFB_STATE_FIPS=self.neighborhood.state.fips,
             PFB_JOB_ID=str(self.uuid),
             AWS_STORAGE_BUCKET_NAME=settings.AWS_STORAGE_BUCKET_NAME,
+
+            # Since we run django manage commands in the analysis container, it needs a copy of
+            # all the environment variables that this app needs, most of which are conveniently
+            # prefixed with 'PFB_'
+            # For the ones that aren't, send the settings rather than the original environment
+            # variables because the environment variables might be None, which is not acceptable
+            # as a container override environment value, but the settings values will be set
+            # to whatever they default to in settings.
+            DJANGO_ENV=settings.DJANGO_ENV,
+            DJANGO_LOG_LEVEL=settings.DJANGO_LOG_LEVEL,
+            AWS_DEFAULT_REGION=settings.AWS_REGION,
+            **{key: val for (key, val) in os.environ.items()
+                if key.startswith('PFB_') and val is not None}
         )
         container_overrides = {
             'environment': environment,

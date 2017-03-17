@@ -178,6 +178,7 @@ STATIC_ROOT = '/static/'
 # https://docs.djangoproject.com/en/1.10/topics/logging/
 
 LOGGING_CONFIG = None
+DJANGO_LOG_LEVEL = os.getenv('DJANGO_LOG_LEVEL', 'INFO')
 logging.config.dictConfig({
     'version': 1,
     'disable_existing_loggers': False,
@@ -197,7 +198,7 @@ logging.config.dictConfig({
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': DJANGO_LOG_LEVEL,
         }
     }
 })
