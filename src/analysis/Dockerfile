@@ -6,8 +6,9 @@ ENV GIT_BRANCH_OSM2PGROUTING osm2pgrouting-2.1.0
 ENV GIT_BRANCH_OSM2PGSQL 0.90.1
 ENV GIT_BRANCH_QUANTILE master
 
-# Copy in the django app
-COPY ./django /opt/pfb/django
+# Copy django requirements (will copy the rest later, so that any change to
+# the code doesn't trigger re-running the whole provisioning step)
+COPY ./django/requirements.txt /opt/pfb/django/requirements.txt
 
 RUN set -xe && \
     BUILD_DEPS=" \
@@ -61,6 +62,8 @@ RUN set -xe && \
     unzip awscli-bundle.zip && \
     ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
     rm -r ./awscli-bundle*
+
+COPY ./django /opt/pfb/django
 
 COPY ./analysis/scripts/setup_database.sh /docker-entrypoint-initdb.d/setup_database.sh
 COPY ./analysis/ /opt/pfb/analysis/
