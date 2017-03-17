@@ -10,6 +10,8 @@ NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 
 NB_TEMPDIR=`mktemp -d`
 
+source "$(dirname $0)"/../scripts/utils.sh
+
 set -e
 
 if [[ -n "${PFB_DEBUG}" ]]; then
@@ -69,9 +71,11 @@ then
         NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$HALF_MAX_TRIP}"
 
         # Import neighborhood boundary
+        update_status "IMPORTING" "Importing boundary shapefile"
         import_and_transform_shapefile "${NB_BOUNDARY_FILE}" neighborhood_boundary "${NB_INPUT_SRID}"
 
         # Get blocks for the state requested
+        update_status "IMPORTING" "Downloading census blocks"
         NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
         if [ -f "/data/${NB_BLOCK_FILENAME}.zip" ]; then
             echo "Using local census blocks file"
@@ -87,9 +91,11 @@ then
         unzip "${BLOCK_DOWNLOAD}" -d "${NB_TEMPDIR}"
 
         # Import block shapefile
+        update_status "IMPORTING" "Loading census blocks"
         import_and_transform_shapefile "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks 4326
 
         # Only keep blocks in boundary+buffer
+        update_status "IMPORTING" "Applying boundary buffer"
         echo "START: Removing blocks outside buffer with size ${NB_BOUNDARY_BUFFER}"
         psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
             -c "DELETE FROM neighborhood_census_blocks AS blocks USING neighborhood_boundary \
