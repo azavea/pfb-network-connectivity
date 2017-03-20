@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from datetime import datetime
 import logging
 import json
 import os
@@ -21,6 +22,7 @@ from fiona.crs import from_epsg
 from localflavor.us.models import USStateField
 import us
 
+from pfb_analysis.aws_batch import JobState
 from pfb_network_connectivity.models import PFBModel
 from users.models import Organization
 
@@ -133,8 +135,27 @@ class AnalysisBatch(PFBModel):
 
     def submit(self):
         """ Start all jobs in the batch """
-        for job in self.jobs:
+        for job in self.jobs.all():
             job.run()
+
+    def cancel(self, reason=None):
+        """ Cancel all still-running jobs in the batch """
+        def chunks(l, n):
+            for i in range(0, len(l), n):
+                yield l[i:i + n]
+
+        client = boto3.client('batch')
+        if not reason:
+            reason = 'AnalysisBatch terminated by user at {}'.format(datetime.utcnow())
+
+        batch_job_ids = self.jobs.values_list('batch_job_id', flat=True)
+        for jobs in chunks(batch_job_ids, 100):
+            jobs_list = client.describe_jobs(jobs=jobs)['jobs']
+            for job in jobs_list:
+                if job['status'] in (JobState.SUBMITTED, JobState.PENDING, JobState.RUNNABLE,
+                                     JobState.STARTING, JobState.RUNNING,):
+                    response = client.terminate_job(jobId=job['jobId'], reason=reason)
+                    print response
 
 
 class AnalysisJob(PFBModel):
