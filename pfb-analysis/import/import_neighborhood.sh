@@ -52,7 +52,7 @@ function import_and_transform_shapefile() {
         | psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" > /dev/null
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
         -c "ALTER TABLE ${IMPORT_TABLENAME} ALTER COLUMN geom \
-            TYPE geometry(MultiPolygon,${NB_OUTPUT_SRID}) USING ST_Transform(geom,${NB_OUTPUT_SRID});"
+            TYPE geometry(MultiPolygon,${NB_OUTPUT_SRID}) USING ST_Force2d(ST_Transform(geom,${NB_OUTPUT_SRID}));"
     echo "DONE: Importing ${IMPORT_TABLENAME}"
 }
 
