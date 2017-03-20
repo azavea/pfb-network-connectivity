@@ -2,13 +2,13 @@
 
     /**
      * @ngdoc controller
-     * @name pfb.components.filters.UploadFilterController
+     * @name pfb.components.filters.AnalysisJobFilterController
      *
      * @description
-     * Controller for the Boundary upload filtering table header
+     * Controller for the analysis job filtering table header
      */
     /** @ngInject */
-    function UploadFilterController($scope, $http, AuthService, BoundaryUploadStatuses) {
+    function AnalysisJobFilterController($scope, $http, AuthService, AnalysisJobStatuses) {
         var ctl = this;
         initialize();
 
@@ -16,14 +16,17 @@
             loadOptions(ctl.param);
             $scope.$watch(function(){return ctl.statusFilter;}, filterStatus);
             $scope.$watch(function(){return ctl.neighborhoodFilter;}, filterNeighborhood);
-            $scope.$watch(function(){return ctl.boundaryFilter;}, filterBoundary);
+            $scope.$watch(function(){return ctl.analysisJobFilter;}, filterBoundary);
         }
 
         function loadOptions() {
             $http.get('/api/neighborhoods/').success(function(data) {
                 ctl.neighborhoods = data.results;
             });
-            ctl.statuses = BoundaryUploadStatuses.statuses;
+
+            ctl.statusFilter = null;
+            ctl.neighborhoodFilter = null;
+            ctl.statuses = AnalysisJobStatuses.statuses;
         }
 
         function filterNeighborhood(newFilter, oldFilter) {
@@ -32,7 +35,7 @@
             }
             ctl.filters = {
                 neighborhood: newFilter,
-                status: BoundaryUploadStatuses.filterMap[ctl.statusFilter]
+                status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
             };
         }
 
@@ -42,7 +45,7 @@
             }
             ctl.filters = {
                 neighborhood: ctl.neighborhoodFilter,
-                status: BoundaryUploadStatuses.filterMap[newFilter]
+                status: AnalysisJobStatuses.filterMap[newFilter]
             };
         }
 
@@ -52,7 +55,7 @@
             }
             ctl.filters = {
                 neighborhood: ctl.neighborhoodFilter,
-                status: BoundaryUploadStatuses.filterMap[ctl.statusFilter]
+                status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
             };
         }
     }
@@ -60,17 +63,17 @@
     /**
      * @ngdoc directive
      * @scope
-     * @name pfb.components.filters.UploadFilterDirective:pfbUploadFilter
+     * @name pfb.components.filters.AnalysisJobFilterDirective:pfbAnalysisJobFilter
      *
      * @description
-     * Directive for the Boundary upload filtering table header
+     * Directive for the analysis filtering table header
      * Filters by neighborhood and status with client-side auto-complete
      */
-    function UploadFilterDirective() {
+    function AnalysisJobFilterDirective() {
         var module = {
             restrict: 'A',
-            templateUrl: 'app/components/filters/upload-filter.html',
-            controller: 'UploadFilterController',
+            templateUrl: 'app/components/filters/analysis-job-filter.html',
+            controller: 'AnalysisJobFilterController',
             controllerAs: 'ctl',
             bindToController: true,
             scope: {
@@ -81,6 +84,6 @@
     }
 
     angular.module('pfb.components.filters')
-        .controller('UploadFilterController', UploadFilterController)
-        .directive('pfbUploadFilter', UploadFilterDirective);
+        .controller('AnalysisJobFilterController', AnalysisJobFilterController)
+        .directive('pfbAnalysisJobFilter', AnalysisJobFilterDirective);
 })();
