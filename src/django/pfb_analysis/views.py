@@ -7,7 +7,6 @@ from pfb_analysis.models import AnalysisJob, Neighborhood
 from pfb_analysis.serializers import AnalysisJobSerializer, NeighborhoodSerializer
 from pfb_network_connectivity.filters import OrgAutoFilterBackend, SelfUserAutoFilterBackend
 from pfb_network_connectivity.permissions import RestrictedCreate
-from users.models import PFBUser
 
 
 class AnalysisJobViewSet(ModelViewSet):
@@ -42,5 +41,5 @@ class NeighborhoodViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         if serializer.is_valid():
-            instance = serializer.save(organization=self.request.user.organization,
-                                       name=slugify(serializer.validated_data['label']))
+            serializer.save(organization=self.request.user.organization,
+                            name=slugify(serializer.validated_data['label']))
