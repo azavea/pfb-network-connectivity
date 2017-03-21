@@ -59,8 +59,17 @@ if [ "${PFB_OSM_FILE_URL}" ]
 then
     update_status "IMPORTING" "Downloading OSM file"
     pushd "${PFB_TEMPDIR}"
-    wget -nv "${PFB_OSM_FILE_URL}" -O neighborhood_osm.zip
-    unzip neighborhood_osm.zip
+    wget -nv "${PFB_OSM_FILE_URL}"
+
+    PFB_OSM_FILE_ZIPPED="${PFB_TEMPDIR}"/$(ls *.osm.* || true)
+    echo "Zipped OSM file is ${PFB_OSM_FILE_ZIPPED}"
+    case "${PFB_OSM_FILE_ZIPPED}" in
+        *.bz2)     bunzip2 "${PFB_OSM_FILE_ZIPPED}" ;;
+        *.gz)      gunzip "${PFB_OSM_FILE_ZIPPED}" ;;
+        *.zip)     unzip "${PFB_OSM_FILE_ZIPPED}" ;;
+        *)         echo "Unrecognized zip format, skipping..." ;;
+    esac
+
     PFB_OSM_FILE="${PFB_TEMPDIR}"/$(ls *.osm)  # Assumes there's exactly one .osm file
     echo "OSM file is ${PFB_OSM_FILE}"
     popd
