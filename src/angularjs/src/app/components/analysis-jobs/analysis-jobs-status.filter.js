@@ -3,26 +3,21 @@
  * @name pfb.analysis-jobs.status:displayStatus
  *
  * @description
- * Transforms analysis job status into user friendly string
+ * Transforms analysis job status into user friendly long description string
  */
 (function () {
     'use strict';
 
     /* ngInject */
-    function displayStatus() {
-        var statuses = {
-            CREATED: 'Created',
-            IMPORTING: 'Importing Data',
-            BUILDING: 'Building Network Graph',
-            CONNECTIVITY: 'Calculating Connectivity',
-            METRICS: 'Calculating Graph Metrics',
-            EXPORTING: 'Exporting Results',
-            COMPLETE: 'Complete',
-            ERROR: 'Error'
-        };
+    function displayStatus($log, JOB_STATUSES) {
 
         return function (input) {
-            return statuses[input];
+            if (input in JOB_STATUSES) {
+                return JOB_STATUSES[input].long;
+            }
+
+            $log.warn(input + ' is not a recognized job status');
+            return input;
         };
     }
 

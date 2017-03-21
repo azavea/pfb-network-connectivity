@@ -26,21 +26,14 @@
      * @description
      * Resource for analysis job statuses
      */
-    function AnalysisJobStatuses() {
-        var statuses = [
-            'Created', 'Importing', 'Building', 'Connectivity', 'Metrics', 'Exporting',
-            'Complete', 'Error'
-        ];
-        var filterMap = {
-            'Created': 'CREATED',
-            'Importing': 'IMPORTING',
-            'Building': 'BUILDING',
-            'Connectivity': 'CONNECTIVITY',
-            'Metrics': 'METRICS',
-            'Exporting': 'EXPORTING',
-            'Complete': 'COMPLETE',
-            'Error': 'ERROR'
-        };
+    function AnalysisJobStatuses(JOB_STATUSES) {
+        var statuses = [];  // short labels
+        var filterMap = {}; // short label -> key
+        angular.forEach(JOB_STATUSES, function(labels, key) {
+            statuses.push(labels.short);
+            filterMap[labels.short] = key;
+        });
+
         var module = {
             statuses: statuses,
             filterMap: filterMap
