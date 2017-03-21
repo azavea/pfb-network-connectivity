@@ -11,7 +11,7 @@
             <th>Name</th>
             <th>State</th>
             <th>Created</th>
-            <th></th>
+            <th ng-if="navbar.isAdminUser"></th>
           </tr>
         </thead>
         <tbody>
@@ -20,7 +20,7 @@
             <td>{{neighborhood.label}}</td>
             <td>{{neighborhood.state_abbrev}}</td>
             <td>{{neighborhood.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-            <td>
+            <td ng-if="navbar.isAdminUser">
               <button ng-click="neighborhoodList.deleteUpload(neighborhood)"
                       uib-tooltip="Delete"
                       class="btn-link glyphicon glyphicon-trash"></button>
