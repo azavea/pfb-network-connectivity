@@ -35,10 +35,32 @@ def get_neighborhood_file_upload_path(instance, filename):
     return 'neighborhood_boundaries/{0}/{1}'.format(instance.name, os.path.basename(filename))
 
 
-class NeighborhoodManager(models.Manager):
+class Neighborhood(PFBModel):
+    """Neighborhood boundary used for an AnalysisJob """
 
-    def create_from_geom(self, geom, **kwargs):
-        """ Create a Neighborhood object from the passed GEOSGeometry
+    def __str__(self):
+        return "<Neighborhood: {} ({})>".format(self.name, self.organization.name)
+
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
+    label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
+    organization = models.ForeignKey(Organization,
+                                     related_name='neighborhoods',
+                                     on_delete=models.CASCADE)
+    state_abbrev = USStateField(help_text='The US state of the uploaded neighborhood')
+    boundary_file = models.FileField(upload_to=get_neighborhood_file_upload_path,
+                                     help_text='A zipped shapefile boundary to run the ' +
+                                               'bike network analysis on')
+
+    def save(self, *args, **kwargs):
+        """ Override to do validation checks before saving, which disallows blank state_abbrev """
+        if not self.name:
+            self.name = self.name_for_label(self.label)
+        self.full_clean()
+        super(Neighborhood, self).save(*args, **kwargs)
+
+    def set_boundary_file(self, geom):
+        """ Create a new boundary shapefile that mirrors geom, upload and save
 
         geom must be either a Polygon or MultiPolygon
 
@@ -46,7 +68,7 @@ class NeighborhoodManager(models.Manager):
         boundary_file = None
         try:
             tmpdir = tempfile.mkdtemp()
-            file_name = slugify(kwargs['label'])
+            file_name = self.name
             local_shpfile = os.path.join(tmpdir, '{}.shp'.format(file_name))
             schema = {'geometry': 'MultiPolygon', 'properties': {}}
             with fiona.open(local_shpfile, 'w',
@@ -68,42 +90,14 @@ class NeighborhoodManager(models.Manager):
                     if shpfile.startswith(file_name):
                         zip_handle.write(os.path.join(tmpdir, shpfile), shpfile)
             boundary_file = File(open(zip_filename))
-            kwargs['boundary_file'] = boundary_file
-            neighborhood = self.create(**kwargs)
+            self.boundary_file = boundary_file
+            self.save()
         except:
             raise
         finally:
             if boundary_file:
                 boundary_file.close()
             shutil.rmtree(tmpdir, ignore_errors=True)
-        return neighborhood
-
-
-class Neighborhood(PFBModel):
-    """Neighborhood boundary used for an AnalysisJob """
-
-    def __str__(self):
-        return "<Neighborhood: {} ({})>".format(self.name, self.organization.name)
-
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
-    label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
-    organization = models.ForeignKey(Organization,
-                                     related_name='neighborhoods',
-                                     on_delete=models.CASCADE)
-    state_abbrev = USStateField(help_text='The US state of the uploaded neighborhood')
-    boundary_file = models.FileField(upload_to=get_neighborhood_file_upload_path,
-                                     help_text='A zipped shapefile boundary to run the ' +
-                                               'bike network analysis on')
-
-    objects = NeighborhoodManager()
-
-    def save(self, *args, **kwargs):
-        """ Override to do validation checks before saving, which disallows blank state_abbrev """
-        if not self.name:
-            self.name = self.name_for_label(self.label)
-        self.full_clean()
-        super(Neighborhood, self).save(*args, **kwargs)
 
     @property
     def state(self):

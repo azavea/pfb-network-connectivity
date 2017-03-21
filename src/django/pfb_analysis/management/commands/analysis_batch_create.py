@@ -74,19 +74,23 @@ class Command(BaseCommand):
                     name = Neighborhood.name_for_label(label)
 
                     # Get or create neighborhood for feature
-                    neighborhoods = Neighborhood.objects.filter(organization=user.organization,
-                                                                name=name)
+                    neighborhood_dict = {
+                        'name': name,
+                        'label': label,
+                        'state_abbrev': state,
+                        'organization': user.organization,
+                        'created_by': user,
+                        'modified_by': user,
+                    }
+                    geom = GEOSGeometry(json.dumps(feature['geometry']))
                     try:
-                        neighborhood = neighborhoods[0]
-                    except IndexError:
-                        geom = GEOSGeometry(json.dumps(feature['geometry']))
-                        neighborhood = Neighborhood.objects.create_from_geom(geom, **{
-                            'label': '{}, {}'.format(city, state),
-                            'state_abbrev': state,
-                            'organization': user.organization,
-                            'created_by': user,
-                            'modified_by': user,
-                        })
+                        neighborhood = Neighborhood.objects.get(**neighborhood_dict)
+                    except Neighborhood.DoesNotExist:
+                        neighborhood = Neighborhood(**neighborhood_dict)
+                        self.stdout.write('CREATED: {}'.format(neighborhood))
+
+                    neighborhood.set_boundary_file(geom)
+                    neighborhood.save()
 
                     # Create new job
                     job = AnalysisJob.objects.create(neighborhood=neighborhood,
