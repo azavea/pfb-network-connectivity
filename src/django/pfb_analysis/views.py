@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 from pfb_analysis.models import AnalysisJob, Neighborhood
 from pfb_analysis.serializers import AnalysisJobSerializer, NeighborhoodSerializer
 from pfb_network_connectivity.filters import OrgAutoFilterBackend, SelfUserAutoFilterBackend
-from pfb_network_connectivity.permissions import RestrictedCreate
+from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
 
 
 class AnalysisJobViewSet(ModelViewSet):
@@ -33,10 +33,10 @@ class NeighborhoodViewSet(ModelViewSet):
     """
     queryset = Neighborhood.objects.all()
     serializer_class = NeighborhoodSerializer
-    permission_classes = (RestrictedCreate,)
+    permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
     filter_fields = ('organization', 'name', 'label', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter,
-                       OrgAutoFilterBackend, SelfUserAutoFilterBackend)
+                       OrgAutoFilterBackend)
     ordering_fields = ('created_at',)
 
     def perform_create(self, serializer):
