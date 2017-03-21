@@ -152,10 +152,8 @@ class AnalysisBatch(PFBModel):
         for jobs in chunks(batch_job_ids, 100):
             jobs_list = client.describe_jobs(jobs=jobs)['jobs']
             for job in jobs_list:
-                if job['status'] in (JobState.SUBMITTED, JobState.PENDING, JobState.RUNNABLE,
-                                     JobState.STARTING, JobState.RUNNING,):
-                    response = client.terminate_job(jobId=job['jobId'], reason=reason)
-                    print response
+                if job['status'] in JobState.ACTIVE_STATUSES:
+                    client.terminate_job(jobId=job['jobId'], reason=reason)
 
 
 class AnalysisJob(PFBModel):

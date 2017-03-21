@@ -21,6 +21,8 @@ class JobState(object):
     SUCCEEDED = 'SUCCEEDED'
     FAILED = 'FAILED'
 
+    ACTIVE_STATUSES = (SUBMITTED, PENDING, RUNNABLE, STARTING, RUNNING,)
+
 
 class NoActiveJobDefinitionRevision(BotoCoreError):
     """ Raised when an AWS Batch Job Definition has no active revision
