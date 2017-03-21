@@ -25,7 +25,7 @@ then
     else
         pushd ..
 
-        docker-compose up
+        docker-compose up nginx django angularjs
 
         popd
     fi

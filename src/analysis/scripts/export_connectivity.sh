@@ -5,6 +5,8 @@
 set -e
 
 cd $(dirname "$0")
+source ./utils.sh
+
 
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
@@ -87,6 +89,7 @@ then
         JOB_ID="${2}"
         OUTPUT_DIR="${NB_OUTPUT_DIR}/${JOB_ID}"
         echo "Exporting analysis to ${OUTPUT_DIR}"
+        update_status "EXPORTING" "Exporting results"
         mkdir -p "${OUTPUT_DIR}"
 
         # Export neighborhood_ways as SHP
@@ -105,6 +108,7 @@ then
         if [ -v AWS_STORAGE_BUCKET_NAME ]
         then
           sync  # Probably superfluous, but the s3 command said "file changed while reading" once
+          update_status "EXPORTING" "Uploading results"
           aws s3 cp --recursive "${OUTPUT_DIR}" "s3://${AWS_STORAGE_BUCKET_NAME}/results/${JOB_ID}"
         fi
     fi

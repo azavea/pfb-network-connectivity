@@ -12,6 +12,8 @@ if [[ -n "${PFB_DEBUG}" ]]; then
     set -x
 fi
 
+source "$(dirname $0)"/../scripts/utils.sh
+
 function usage() {
     echo -n \
 "
@@ -89,6 +91,7 @@ then
     else
         NB_STATE_ABBREV="${1,,}"  # force to lower case to match the jobs file download paths
 
+        update_status "IMPORTING" "Importing jobs data"
         import_job_data "${NB_STATE_ABBREV}" "main"
         import_job_data "${NB_STATE_ABBREV}" "aux"
 

@@ -6,6 +6,8 @@ export NB_POSTGRESQL_DB=pfb
 export NB_POSTGRESQL_USER=gis
 export NB_POSTGRESQL_PASSWORD=gis
 
+source "$(dirname $0)"/utils.sh
+
 # start postgres and capture the PID
 /docker-entrypoint.sh postgres | tee /tmp/postgres_stdout.txt &
 POSTGRES_PROC=$!
@@ -43,7 +45,7 @@ PFB_TEMPDIR=`mktemp -d`
 # If given a URL for the shapefile, dowload and unzip it. Overrides PFB_SHPFILE.
 if [ "${PFB_SHPFILE_URL}" ]
 then
-    echo "Downloading shapefile"
+    update_status "IMPORTING" "Downloading shapefile"
     pushd "${PFB_TEMPDIR}"
     wget -nv "${PFB_SHPFILE_URL}" -O boundary.zip
     unzip boundary.zip
@@ -55,7 +57,7 @@ fi
 # If given a URL for the OSM file, dowload and unzip it. Overrides PFB_OSM_FILE.
 if [ "${PFB_OSM_FILE_URL}" ]
 then
-    echo "Downloading OSM file"
+    update_status "IMPORTING" "Downloading OSM file"
     pushd "${PFB_TEMPDIR}"
     wget -nv "${PFB_OSM_FILE_URL}" -O neighborhood_osm.zip
     unzip neighborhood_osm.zip
@@ -65,7 +67,7 @@ then
 fi
 
 # run job
-cd /pfb
+cd /opt/pfb/analysis
 
 # determine coordinate reference system based on input shapefile UTM zone
 export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
@@ -86,6 +88,8 @@ NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR}"
 bash
 
 rm -rf "${PFB_TEMPDIR}"
+
+update_status "COMPLETE" "Finished"
 
 # shutdown postgres
 su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl stop"

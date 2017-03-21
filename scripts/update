@@ -50,7 +50,7 @@ function run_database_migrations() {
     docker-compose up -d database
     check_database
     docker-compose run --rm --entrypoint python django manage.py migrate --noinput
-    docker-compose run --rm --entrypoint python django manage.py collectstatic
+    docker-compose run --rm --entrypoint python django manage.py collectstatic --noinput
     docker-compose stop database
 }
 
@@ -62,7 +62,7 @@ then
     else
         pushd ..
 
-        docker-compose build database django angularjs
+        docker-compose build database django angularjs analysis
 
         run_database_migrations
 
@@ -76,11 +76,6 @@ then
         # Build the nginx container after building angularjs and copying the files, so
         # it includes them
         docker-compose build nginx
-
-        # Build the current docker analysis container
-        pushd pfb-analysis
-        docker build -t pfb-analysis .
-        popd
 
         popd
     fi

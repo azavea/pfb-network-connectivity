@@ -48,3 +48,18 @@ services:
       - ./src/angularjs/src:/opt/pfb/angularjs/src
       - ./src/angularjs/docs:/opt/pfb/angularjs/docs
     command: gulp serve
+
+  analysis:
+    image: pfb-analysis
+    extends:
+      service: django
+      file: common.yml
+    build:
+      context: ./src
+      dockerfile: analysis/Dockerfile
+    links:
+      - database:database.service.pfb.internal
+    volumes:
+      - ./data:/data
+      - /home/vagrant/.aws:/root/.aws
+      - ./src/django:/opt/pfb/django

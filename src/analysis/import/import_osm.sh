@@ -3,6 +3,8 @@
 set -e
 
 cd `dirname $0`
+source ../scripts/utils.sh
+
 
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
@@ -60,10 +62,10 @@ BBOX_NE_LAT=`bc <<< "$BBOX_NE_LAT + $LAT_DIFF"`
 BBOX_NE_LNG=`bc <<< "$BBOX_NE_LNG + $LNG_DIFF"`
 
 if [[ -f ${1} ]]; then
-  echo "Importing provided OSM file"
+  update_status "IMPORTING" "Downloading provided OSM file"
   OSM_DATA_FILE=${1}
 else
-  echo "Downloading OSM data"
+  update_status "IMPORTING" "Downloading OSM data"
   # Download OSM data
   OSM_API_URL="http://www.overpass-api.de/api/xapi?*[bbox=${BBOX_SW_LNG},${BBOX_SW_LAT},${BBOX_NE_LNG},${BBOX_NE_LAT}]"
   OSM_TEMPDIR=`mktemp -d`
@@ -72,6 +74,7 @@ else
 fi
 
 # import the osm with highways
+update_status "IMPORTING" "Importing OSM data"
 osm2pgrouting \
   -f $OSM_DATA_FILE \
   -h $NB_POSTGRESQL_HOST \

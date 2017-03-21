@@ -11,3 +11,9 @@ services:
     build:
       context: ./src/django
       dockerfile: Dockerfile
+
+  analysis:
+    image: pfb-analysis:${GIT_COMMIT}
+    build:
+      context: ./src
+      dockerfile: analysis/Dockerfile

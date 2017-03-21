@@ -48,7 +48,7 @@ def main():
             old_job_definition = '{}:{}'.format(response['jobDefinitionName'], old_revision)
             client.deregister_job_definition(jobDefinition=old_job_definition)
 
-        print('{}:{}'.format(response['jobDefinitionName'], response['revision']))
+        print('{}:{}'.format(response['jobDefinitionName'], response['revision']), end='')
 
 
 if __name__ == "__main__":
