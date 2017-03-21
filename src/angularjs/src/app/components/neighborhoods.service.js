@@ -10,7 +10,12 @@
 
     /* @ngInject */
     function Neighborhood($resource) {
-        return $resource('/api/neighborhoods/');
+        return $resource('/api/neighborhoods/:uuid/', {uuid: '@uuid'}, {
+            'query': {
+                method: 'GET',
+                isArray: false
+            }
+        });
     }
 
     angular.module('pfb.components')

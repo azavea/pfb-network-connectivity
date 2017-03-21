@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('pfb.components',
-                   ['pfb.components.boundary-uploads',
+                   ['pfb.components.analysis-jobs',
                     'pfb.components.auth',
                     'pfb.components.filters']);
 })();

@@ -1,16 +1,16 @@
 /**
  * @ngdoc controller
- * @name pfb.boundary-uploads.list.controller:BoundaryUploadListController
+ * @name pfb.analysis-jobs.list.controller:AnalysisJobListController
  *
  * @description
- * Controller for listing boundary uploads
+ * Controller for listing analysis jobs
  *
  */
 (function() {
     'use strict';
 
     /** @ngInject */
-    function BoundaryUploadListController($state, $stateParams, $scope, Pagination, BoundaryUpload) {
+    function AnalysisJobListController($state, $stateParams, $scope, Pagination, AnalysisJob) {
         var ctl = this;
 
         var defaultParams = {
@@ -28,31 +28,32 @@
 
             ctl.hasPrev = false;
             ctl.getPrev = getPrev;
-            ctl.boundaryUploads = [];
+            ctl.analysisJobs = [];
 
             ctl.deleteUpload = deleteUpload;
             ctl.filters = {};
 
-            $scope.$watch(function(){return ctl.filters;}, filterUploads);
-            getUploads();
+            $scope.$watch(function(){return ctl.filters;}, filterJobs);
+            getAnalysisJobs();
         }
 
-        function filterUploads(filters) {
-            var params = {};
+        function filterJobs(filters) {
+            var params = _.merge({}, defaultParams, filters);
+
             if (filters.neighborhood) {
                 params.neighborhood = filters.neighborhood;
             }
             if (filters.status) {
                 params.status = filters.status;
             }
-            getUploads(params);
+            getAnalysisJobs(params);
         }
 
-        function getUploads(params) {
+        function getAnalysisJobs(params) {
             params = params || $stateParams;
-            BoundaryUpload.query(params).$promise.then(function(data) {
-                ctl.boundaryUploads = _.map(data.results, function(obj) {
-                    return new BoundaryUpload(obj);
+            AnalysisJob.query(params).$promise.then(function(data) {
+                ctl.analysisJobs = _.map(data.results, function(obj) {
+                    return new AnalysisJob(obj);
                 });
 
                 if (data.next) {
@@ -76,25 +77,25 @@
 
         function getNext() {
             var params = _.merge({}, defaultParams, nextParams);
-            $state.go('boundary-uploads.list', params, {notify: false});
-            getUploads(params);
+            $state.go('analysis-jobs.list', params, {notify: false});
+            getAnalysisJobs(params);
         }
 
         function getPrev() {
             var params = _.merge({}, defaultParams, prevParams);
-            $state.go('boundary-uploads.list', params, {notify: false});
-            getUploads(params);
+            $state.go('analysis-jobs.list', params, {notify: false});
+            getAnalysisJobs(params);
         }
 
-        function deleteUpload (boundaryUpload) {
-            boundaryUpload.$delete().then(function() {
-                getUploads();
+        function deleteUpload (AnalysisJob) {
+            AnalysisJob.$delete().then(function() {
+                getAnalysisJobs();
             });
         }
 
     }
 
     angular
-        .module('pfb.boundaryUploads.list')
-        .controller('BoundaryUploadListController', BoundaryUploadListController);
+        .module('pfb.analysisJobs.list')
+        .controller('AnalysisJobListController', AnalysisJobListController);
 })();

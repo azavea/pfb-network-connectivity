@@ -78,22 +78,16 @@
                 controllerAs: 'user',
                 templateUrl: 'app/users/detail/users-detail.html'
             })
-            .state('boundary-uploads', {
+            .state('analysis-jobs', {
                 abstract: true,
-                url: '/boundary-uploads/?limit&offset',
+                url: '/analysis-jobs/?limit&offset',
                 template: '<ui-view/>'
             })
-            .state('boundary-uploads.list', {
+            .state('analysis-jobs.list', {
                 url: '',
-                controller: 'BoundaryUploadListController',
-                controllerAs: 'boundaryUploadList',
-                templateUrl: 'app/boundary-uploads/list/boundary-uploads-list.html'
-            })
-            .state('boundary-uploads.create', {
-                url: '/create/',
-                controller: 'BoundaryUploadCreateController',
-                controllerAs: 'boundaryUpload',
-                templateUrl: 'app/boundary-uploads/create/boundary-uploads-create.html'
+                controller: 'AnalysisJobListController',
+                controllerAs: 'analysisJobList',
+                templateUrl: 'app/analysis-jobs/list/analysis-jobs-list.html'
             });
         $urlRouterProvider.otherwise('/login/');
     }
