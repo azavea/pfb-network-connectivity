@@ -1,0 +1,44 @@
+<pfb-navbar></pfb-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+      <h1 class="no-margin-top">Neighborhoods</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>State</th>
+            <th>Created</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="neighborhood in neighborhoodList.neighborhoods">
+            <td>{{neighborhood.uuid}}</td>
+            <td>{{neighborhood.label}}</td>
+            <td>{{neighborhood.state_abbrev}}</td>
+            <td>{{neighborhood.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+            <td>
+              <button ng-click="neighborhoodList.deleteUpload(neighborhood)"
+                      uib-tooltip="Delete"
+                      class="btn-link glyphicon glyphicon-trash"></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="buttons-pagination">
+        <button class="btn-success btn" ng-click="neighborhoodList.getPrev()"
+                ng-disabled="!neighborhoodList.hasPrev">
+
+          Newer
+        </button>
+        <button class="btn-success btn" ng-click="neighborhoodList.getNext()"
+                ng-disabled="!neighborhoodList.hasNext">
+          Older
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
