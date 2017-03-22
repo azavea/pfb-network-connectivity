@@ -14,15 +14,13 @@ from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnl
 
 
 class AnalysisJobViewSet(ModelViewSet):
-    """
-    For listing or retrieving analysis jobs.
-    """
+    """For listing or retrieving analysis jobs."""
+
     queryset = AnalysisJob.objects.all()
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate,)
     filter_fields = ('neighborhood', 'batch',)
-    filter_backends = (DjangoFilterBackend, OrderingFilter,
-                       OrgAutoFilterBackend, SelfUserAutoFilterBackend)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at',)
 
     def perform_create(self, serializer):
@@ -32,18 +30,23 @@ class AnalysisJobViewSet(ModelViewSet):
 
 
 class NeighborhoodViewSet(ModelViewSet):
-    """
-    For listing or retrieving neighborhoods
-    """
+    """For listing or retrieving neighborhoods."""
+
     queryset = Neighborhood.objects.all()
     serializer_class = NeighborhoodSerializer
     permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
     filter_fields = ('organization', 'name', 'label', 'state_abbrev')
-    filter_backends = (DjangoFilterBackend, OrderingFilter,
-                       OrgAutoFilterBackend)
+    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at',)
 
     def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save(organization=self.request.user.organization,
                             name=slugify(serializer.validated_data['label']))
+
+
+class USStateView(APIView):
+    """Convenience endpoint for available U.S. state options."""
+
+    def get(self, request, format=None):
+        return Response([{'abbr': state.abbr, 'name': state.name} for state in us.STATES])

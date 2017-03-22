@@ -131,6 +131,9 @@ class RestrictedCreate(permissions.BasePermission):
             request (rest_framework.request.Request): request to check for
         """
 
+        if not request.user or not request.user.is_authenticated():
+            return False
+
         if request.method in permissions.SAFE_METHODS:
             return True
 

@@ -6,6 +6,7 @@ or role within an organization
 from rest_framework import filters, exceptions
 
 from pfb_network_connectivity.permissions import is_admin_org, is_admin
+from pfb_analysis.models import AnalysisJob
 from users.models import Organization
 
 
@@ -15,6 +16,8 @@ class OrgAutoFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         if queryset.model == Organization:
             return queryset.filter(uuid=request.user.organization_id)
+        elif queryset.model == AnalysisJob:
+            return queryset.filter(neighborhood__organization=request.user.organization)
         else:
             return queryset.filter(organization=request.user.organization)
 
