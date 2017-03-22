@@ -317,8 +317,8 @@ class AnalysisJob(PFBModel):
             self.batch_job_id = response['jobId']
             self.save()
             AnalysisJobStatusUpdate.objects.create(job=self,
-                                                   status=self.Status.CREATED,
-                                                   step='CREATED')
+                                                   status=self.Status.QUEUED,
+                                                   step=self.Status.QUEUED)
         except (botocore.exceptions.BotoCoreError, KeyError):
             logger.exception('Error starting AnalysisJob {}'.format(self.uuid))
 
