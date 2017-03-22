@@ -196,7 +196,7 @@ logging.config.dictConfig({
         },
     },
     'loggers': {
-        'django': {
+        'pfb_analysis': {
             'handlers': ['console'],
             'level': DJANGO_LOG_LEVEL,
         }

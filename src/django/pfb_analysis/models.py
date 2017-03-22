@@ -183,6 +183,15 @@ class AnalysisJob(PFBModel):
         environment.update(**{key: val for (key, val) in os.environ.items()
                               if key.startswith('PFB_') and val is not None})
 
+        # Workaround for not being able to run development jobs on the actual batch cluster:
+        # bail out with a helpful message
+        if settings.DJANGO_ENV == 'development':
+            logger.warn("Can't actually run development jobs on AWS. Try this:"
+                        "\nPFB_JOB_ID='{PFB_JOB_ID}' "
+                        "./scripts/run-local-analysis "
+                        "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
+            return
+
         client = boto3.client('batch')
         container_overrides = {
             'environment': create_environment(environment),
