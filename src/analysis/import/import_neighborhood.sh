@@ -34,7 +34,7 @@ Optional ENV vars:
 NB_INPUT_SRID - Default: 4326
 NB_OUTPUT_SRID - Default: 2163
 NB_MAX_TRIP_DISTANCE - Default: 3300 (in the units of NB_OUTPUT_SRID)
-NB_BOUNDARY_BUFFER - Default: half of NB_MAX_TRIP_DISTANCE (in the units of NB_OUTPUT_SRID)
+NB_BOUNDARY_BUFFER - Default: NB_MAX_TRIP_DISTANCE (in the units of NB_OUTPUT_SRID)
 NB_POSTGRESQL_HOST - Default: 127.0.0.1
 NB_POSTGRESQL_DB - Default: pfb
 NB_POSTGRESQL_USER - Default: gis
@@ -67,8 +67,7 @@ then
         NB_BOUNDARY_FILE="${1}"
         NB_STATE_FIPS="${2}"
 
-        let HALF_MAX_TRIP="${NB_MAX_TRIP_DISTANCE}"/2
-        NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$HALF_MAX_TRIP}"
+        NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
 
         # Import neighborhood boundary
         update_status "IMPORTING" "Importing boundary shapefile"
