@@ -179,7 +179,7 @@ data "template_file" "pfb_app_management_ecs_task" {
   template = "${file("task-definitions/management.json")}"
 
   vars {
-    management_url             = "${var.aws_account_id}.dkr.ecr.us-east-1.amazonaws.com/pfb:${var.git_commit}"
+    management_url             = "${var.aws_account_id}.dkr.ecr.us-east-1.amazonaws.com/pfb-app:${var.git_commit}"
     django_env                 = "${var.django_env}"
     django_secret_key          = "${var.django_secret_key}"
     rds_host                   = "${module.database.hostname}"
