@@ -23,6 +23,7 @@ RUN set -xe && \
         libgeos-dev \
         libgeos++-dev \
         libproj-dev \
+        libgdal-dev \
         git" \
     DEPS=" \
         ca-certificates \
