@@ -102,6 +102,9 @@ then
                 AS boundary WHERE NOT ST_DWithin(blocks.geom, boundary.geom, \
                 ${NB_BOUNDARY_BUFFER});"
         echo "DONE: Finished removing blocks outside buffer"
+        echo "Census Blocks in analysis:"
+        psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+            -c "SELECT count(*) as total_census_blocks FROM neighborhood_census_blocks;"
 
         # Remove NB_TEMPDIR
         rm -rf "${NB_TEMPDIR}"
