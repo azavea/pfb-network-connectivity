@@ -150,6 +150,23 @@ class AnalysisJob(PFBModel):
                           batch_job_name=self.batch_job_name,
                           batch_job_id=self.batch_job_id)
 
+    @property
+    def running_time(self):
+        """ Return the running time of the job in seconds """
+        first_update = self.status_updates.first()
+        last_update = self.status_updates.last()
+        if first_update is None or last_update is None:
+            return 0
+        start = first_update.timestamp
+        end = last_update.timestamp
+        diff = end - start
+        return int(diff.total_seconds())
+
+    @property
+    def start_time(self):
+        first_update = self.status_updates.first()
+        return first_update.timestamp if first_update else None
+
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
         def create_environment(**kwargs):
@@ -191,6 +208,9 @@ class AnalysisJob(PFBModel):
         try:
             self.batch_job_id = response['jobId']
             self.save()
+            AnalysisJobStatusUpdate.objects.create(job=self,
+                                                   status=self.Status.CREATED,
+                                                   step='CREATED')
         except (botocore.exceptions.BotoCoreError, KeyError):
             logger.exception('Error starting AnalysisJob {}'.format(self.uuid))
 
@@ -203,4 +223,6 @@ class AnalysisJobStatusUpdate(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        # NOTE: Changing ordering=timestamp would invalidate assumptions about the ordering of
+        #       these objects elsewhere in the model. Proceed with caution.
         ordering = ('timestamp',)

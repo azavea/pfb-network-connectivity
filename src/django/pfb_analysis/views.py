@@ -17,7 +17,7 @@ class AnalysisJobViewSet(ModelViewSet):
     queryset = AnalysisJob.objects.all()
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate,)
-    filter_fields = ('status', 'neighborhood',)
+    filter_fields = ('neighborhood',)
     filter_backends = (DjangoFilterBackend, OrderingFilter,
                        OrgAutoFilterBackend, SelfUserAutoFilterBackend)
     ordering_fields = ('created_at',)
