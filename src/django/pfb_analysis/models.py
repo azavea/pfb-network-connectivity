@@ -164,6 +164,7 @@ class AnalysisJob(PFBModel):
 
     @property
     def start_time(self):
+        """ Return start time of the job as a datetime object """
         first_update = self.status_updates.first()
         return first_update.timestamp if first_update else None
 
