@@ -13,6 +13,16 @@ class OrgAutoFilterBackend(filters.BaseFilterBackend):
     """Filter that only allows users to see their organization's own objects."""
 
     def filter_queryset(self, request, queryset, view):
+        if queryset.model == Organization:
+            return queryset.filter(uuid=request.user.organization_id)
+        else:
+            return queryset.filter(organization=request.user.organization)
+
+
+class OrgOrAdminAutoFilterBackend(filters.BaseFilterBackend):
+    """Filter that allows non-admin users to see only their own organization's objects."""
+
+    def filter_queryset(self, request, queryset, view):
         if is_admin_org(request.user):
             return queryset
         elif queryset.model == Organization:

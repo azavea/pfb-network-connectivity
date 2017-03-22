@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from pfb_network_connectivity.filters import OrgAutoFilterBackend, SelfUserAutoFilterBackend
+from pfb_network_connectivity.filters import OrgOrAdminAutoFilterBackend, SelfUserAutoFilterBackend
 from pfb_network_connectivity.permissions import IsAdminOrSelfOnly, RestrictedCreate
 from users.models import Organization, PFBUser
 from users.serializers import OrganizationSerializer, PFBUserSerializer
@@ -87,7 +87,7 @@ class PFBUserViewSet(viewsets.ModelViewSet):
     serializer_class = PFBUserSerializer
     filter_fields = ('organization', 'role')
     filter_backends = (DjangoFilterBackend, OrderingFilter,
-                       OrgAutoFilterBackend, SelfUserAutoFilterBackend)
+                       OrgOrAdminAutoFilterBackend, SelfUserAutoFilterBackend)
 
     def create(self, request, *args, **kwargs):
         """Override create to send registration email after user creation
@@ -192,7 +192,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     Only admins within the admin organization will be able to view/edit/create organizations
     """
     permission_classes = (IsAuthenticated, RestrictedCreate)
-    filter_backends = (OrgAutoFilterBackend,)
+    filter_backends = (OrgOrAdminAutoFilterBackend,)
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
     pagination_class = None
