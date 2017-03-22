@@ -9,7 +9,9 @@ from rest_framework.response import Response
 
 from pfb_analysis.models import AnalysisJob, Neighborhood
 from pfb_analysis.serializers import AnalysisJobSerializer, NeighborhoodSerializer
-from pfb_network_connectivity.filters import OrgAutoFilterBackend, SelfUserAutoFilterBackend
+from pfb_network_connectivity.filters import (OrgAutoFilterBackend,
+                                              SelfUserAutoFilterBackend,
+                                              AnalysisJobStatusFilterSet)
 from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
 
 
@@ -19,7 +21,7 @@ class AnalysisJobViewSet(ModelViewSet):
     queryset = AnalysisJob.objects.all()
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate,)
-    filter_fields = ('neighborhood', 'batch',)
+    filter_class = AnalysisJobStatusFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at',)
 
