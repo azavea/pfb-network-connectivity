@@ -198,23 +198,9 @@ class AnalysisJob(PFBModel):
 
     @property
     def status(self):
-        """ Return current status for this job
-
-        Uses AnalysisJobStatusUpdate but checks the batch job for situations that status
-        updates don't cover.
-        """
-        # If there's no job ID that means it's brand new
-        if self.batch_job_id is None:
-            return self.Status.CREATED
-
-        if self.batch_job_status == JobState.FAILED:
-            return self.Status.ERROR
-        try:
-            # If the job hasn't failed and has sent any status updates, use the latest
-            return self.status_updates.last().status
-        except AttributeError:
-            # Not failed but no status updates means it must be in the queue
-            return self.Status.QUEUED
+        """ Return current status for this job """
+        latest_update = self.status_updates.last()
+        return latest_update.status if latest_update else self.Status.CREATED
 
     @property
     def batch_job_status(self):
