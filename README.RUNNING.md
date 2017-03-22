@@ -37,20 +37,20 @@ PFB_OSM_FILE=/data/boulder.osm ./scripts/run-local-analysis /data/boulder.shp co
 
 ### Analysis parameters
 
-See the usage message of `scripts/run-local-analysis` for options and defaults.
-
-`run-local-analysis` maps `/vagrant/data` in the VM to `/data/` within the container.
+See the usage message of `scripts/run-local-analysis` for all options and defaults, but
+here's a table of the environment variables that can be set to affect the analyis:
 
 | Variable | Purpose | Default value |
 | -------- | ------- | ------------- |
 | NB_INPUT_SRID | SRID of the input shapefile | 4326 |
-| NB_BOUNDARY_BUFFER | The distance beyond the edge of the boundary given by the shapefile to include in the imported geographic data. Also the maximum trip distance considered in the connectivity calculations. | 3600 |
+| NB_MAX_TRIP_DISTANCE | The maximum trip distance (in meters) considered in the connectivity calculations. | 3300 |
+| NB_BOUNDARY_BUFFER | The distance (in meters) beyond the edge of the boundary given by the shapefile to include in the imported geographic data. | 1/2 * NB_MAX_TRIP_DISTANCE |
 | PFB_OSM_FILE | An exported OSM file to use instead of downloading current OSM data during the analysis | |
 | PFB_OSM_FILE_URL | A URL from which a zipped .osm file can be downloaded. Overrides PFB_OSM_FILE. | none |
 | NB_OUTPUT_DIR | The path, within the analysis container, to write results to. The directory will be created (if possible) if it doesn't exist. | /data/output |
 | AWS_STORAGE_BUCKET_NAME | The S3 bucket to upload results to. Requires `AWS_PROFILE` be set. | {DEV_USER}-pfb-storage-us-east-1 |
 | AWS_PROFILE | The name of the AWS profile, configured in `~/.aws` to use for uploading to S3. | pfb |
-| PFB_JOB_ID | The job ID of the analysis job, which isn't really applicable when directly running a local analysis but which is required because it's used in the results upload path. | 'local-job' |
+| PFB_JOB_ID | The job ID of the analysis job, which isn't really applicable when directly running a local analysis but which is required because it's used in the results upload path. | 'local-job-YYYY-MM-DD-HHMM' |
 
 
 ### Running other neighborhoods
