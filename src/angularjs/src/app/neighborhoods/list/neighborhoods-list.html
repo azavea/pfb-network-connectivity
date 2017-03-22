@@ -3,6 +3,10 @@
 <div class="container">
   <div class="row">
     <div class="col-md-10 col-md-push-1">
+      <button ng-if="navbar.isAdminUser"
+        ui-sref="neighborhoods.create" class="btn btn-primary pull-right">
+        Upload Neighborhood
+      </button>
       <h1 class="no-margin-top">Neighborhoods</h1>
       <table class="table">
         <thead>
