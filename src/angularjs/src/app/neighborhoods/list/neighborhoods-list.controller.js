@@ -64,13 +64,13 @@
 
         function getNext() {
             var params = _.merge({}, defaultParams, nextParams);
-            $state.go('neighborhood.list', params, {notify: false});
+            $state.go('neighborhoods.list', params, {notify: false});
             getNeighborhoods(params);
         }
 
         function getPrev() {
             var params = _.merge({}, defaultParams, prevParams);
-            $state.go('neighborhood.list', params, {notify: false});
+            $state.go('neighborhoods.list', params, {notify: false});
             getNeighborhoods(params);
         }
 
