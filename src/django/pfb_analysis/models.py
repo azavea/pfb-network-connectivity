@@ -138,16 +138,10 @@ class AnalysisBatch(PFBModel):
             for i in range(0, len(l), n):
                 yield l[i:i + n]
 
-        client = boto3.client('batch')
         if not reason:
             reason = 'AnalysisBatch terminated by user at {}'.format(datetime.utcnow())
-
-        batch_job_ids = self.jobs.values_list('batch_job_id', flat=True)
-        for jobs in chunks(batch_job_ids, 100):
-            jobs_list = client.describe_jobs(jobs=jobs)['jobs']
-            for job in jobs_list:
-                if job['status'] in JobState.ACTIVE_STATUSES:
-                    client.terminate_job(jobId=job['jobId'], reason=reason)
+        for job in self.jobs.all():
+            job.cancel(reason=reason)
 
 
 class AnalysisJob(PFBModel):
@@ -164,8 +158,12 @@ class AnalysisJob(PFBModel):
         CONNECTIVITY = 'CONNECTIVITY'
         METRICS = 'METRICS'
         EXPORTING = 'EXPORTING'
+        CANCELLED = 'CANCELLED'
         COMPLETE = 'COMPLETE'
         ERROR = 'ERROR'
+
+        ACTIVE_STATUSES = (CREATED, QUEUED, IMPORTING, BUILDING, CONNECTIVITY,
+                           METRICS, EXPORTING,)
 
         CHOICES = (
             (CREATED, 'Created',),
@@ -175,6 +173,7 @@ class AnalysisJob(PFBModel):
             (CONNECTIVITY, 'Calculating Connectivity',),
             (METRICS, 'Calculating Graph Metrics',),
             (EXPORTING, 'Exporting Results',),
+            (CANCELLED, 'Cancelled',),
             (COMPLETE, 'Complete',),
             (ERROR, 'Error',),
         )
@@ -202,7 +201,7 @@ class AnalysisJob(PFBModel):
         if self.batch_job_id is None:
             return self.Status.CREATED
 
-        if self.batch_job_status == 'FAILED':
+        if self.batch_job_status == JobState.FAILED:
             return self.Status.ERROR
         try:
             # If the job hasn't failed and has sent any status updates, use the latest
@@ -267,6 +266,16 @@ class AnalysisJob(PFBModel):
         """ Return start time of the job as a datetime object """
         first_update = self.status_updates.first()
         return first_update.timestamp if first_update else None
+
+    def cancel(self, reason=None):
+        """ Cancel the analysis job, if its running """
+        if not reason:
+            reason = 'AnalysisJob terminated by user at {}'.format(datetime.utcnow())
+
+        if self.status in self.Status.ACTIVE_STATUSES:
+            client = boto3.client('batch')
+            client.terminate_job(jobId=self.batch_job_id, reason=reason)
+            AnalysisJobStatusUpdate.objects.create(job=self, status=self.Status.CANCELLED, step='')
 
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
