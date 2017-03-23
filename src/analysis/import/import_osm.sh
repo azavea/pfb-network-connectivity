@@ -61,14 +61,18 @@ BBOX_SW_LNG=`bc <<< "$BBOX_SW_LNG - $LNG_DIFF"`
 BBOX_NE_LAT=`bc <<< "$BBOX_NE_LAT + $LAT_DIFF"`
 BBOX_NE_LNG=`bc <<< "$BBOX_NE_LNG + $LNG_DIFF"`
 
+OSM_TEMPDIR=`mktemp -d`
+
 if [[ -f ${1} ]]; then
-  update_status "IMPORTING" "Downloading provided OSM file"
-  OSM_DATA_FILE=${1}
+  update_status "IMPORTING" "Clipping provided OSM file"
+  osmconvert "${1}" \
+    -b="${BBOX_SW_LNG}","${BBOX_SW_LAT}","${BBOX_NE_LNG}","${BBOX_NE_LAT}" \
+    -o="${OSM_TEMPDIR}/converted.osm"
+  OSM_DATA_FILE="${OSM_TEMPDIR}/converted.osm"
 else
   update_status "IMPORTING" "Downloading OSM data"
   # Download OSM data
   OSM_API_URL="http://www.overpass-api.de/api/xapi?*[bbox=${BBOX_SW_LNG},${BBOX_SW_LAT},${BBOX_NE_LNG},${BBOX_NE_LAT}]"
-  OSM_TEMPDIR=`mktemp -d`
   OSM_DATA_FILE="${OSM_TEMPDIR}/overpass.osm"
   wget -nv -O "${OSM_DATA_FILE}" "${OSM_API_URL}"
 fi

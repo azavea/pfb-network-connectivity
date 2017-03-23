@@ -27,7 +27,7 @@ The analysis can also gets its input data from local files.  To run the analysis
 same Boulder boundary and a pre-downloaded OSM file, download
 [the zipped shapefile](https://s3.amazonaws.com/test-pfb-inputs/boulder/boulder.zip)
 and extract it to `./data/`.
-Also download [the OSM file](https://s3.amazonaws.com/test-pfb-inputs/boulder/boulder-osm.zip)
+Also download [the OSM file](https://s3.amazonaws.com/test-pfb-inputs/boulder/boulder.osm.zip)
 and extract it into `./data/`.
 
 Then run:
@@ -59,21 +59,21 @@ The following input files are also available at https://s3.amazonaws.com/test-pf
 
 - Cambridge, MA
     - Shapefile: https://s3.amazonaws.com/test-pfb-inputs/cambridge/neighborhood_boundary_02138.zip
-    - OSM files: https://s3.amazonaws.com/test-pfb-inputs/cambridge/cambridge-osm.zip
+    - OSM files: https://s3.amazonaws.com/test-pfb-inputs/cambridge/cambridge.osm.zip
     - FIPS code: 25
     - set `NB_INPUT_SRID=2249`
 - Lower Manhattan, NY
     - Shapefile: https://s3.amazonaws.com/test-pfb-inputs/lowermanhattan/lowermanhattan.zip
-    - OSM file: https://s3.amazonaws.com/test-pfb-inputs/lowermanhattan/lowermanhattan-osm.zip
+    - OSM file: https://s3.amazonaws.com/test-pfb-inputs/lowermanhattan/lowermanhattan.osm.zip
     - FIPS code: 36
     - A large network.  Analysis is lengthy and resource-intensive.
 - Center City Philadelphia, PA
     - Shapefile: https://s3.amazonaws.com/test-pfb-inputs/philly/philly.zip
-    - OSM file: https://s3.amazonaws.com/test-pfb-inputs/philly/philly-osm.zip
+    - OSM file: https://s3.amazonaws.com/test-pfb-inputs/philly/philly.osm.zip
     - FIPS code: 42
 - Germantown, PA
     - Shapefile: https://s3.amazonaws.com/test-pfb-inputs/germantown/gtown_westside.zip
-    - OSM file: https://s3.amazonaws.com/test-pfb-inputs/germantown/gtown_westside-osm.zip
+    - OSM file: https://s3.amazonaws.com/test-pfb-inputs/germantown/gtown_westside.osm.zip
     - FIPS code: 42
     - A small area for quick tests
 

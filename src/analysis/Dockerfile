@@ -63,6 +63,10 @@ RUN set -xe && \
     ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
     rm -r ./awscli-bundle*
 
+RUN set -xe && \
+    wget -q -O /usr/local/bin/osmconvert "https://s3.amazonaws.com/pfb-binaries-us-east-1/osmconvert64" && \
+    chmod +x /usr/local/bin/osmconvert
+
 COPY ./django /opt/pfb/django
 
 COPY ./analysis/scripts/setup_database.sh /docker-entrypoint-initdb.d/setup_database.sh

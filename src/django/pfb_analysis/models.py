@@ -95,6 +95,13 @@ class AnalysisJob(PFBModel):
     neighborhood = models.ForeignKey(Neighborhood,
                                      related_name='analysis_jobs',
                                      on_delete=models.CASCADE)
+    osm_extract_url = models.URLField(max_length=2048, null=True, blank=True,
+                                      help_text='Load OSM data for this neighborhood from ' +
+                                                'a URL rather than pulling from Overpass API. ' +
+                                                'The url must have a .osm file extension and ' +
+                                                'may optionally be compressed via zip/bzip/gz, ' +
+                                                'e.g. http://a.com/foo.osm or ' +
+                                                'http://a.com/foo.osm.bz2')
 
     @property
     def status(self):
@@ -178,29 +185,34 @@ class AnalysisJob(PFBModel):
             return
 
         client = boto3.client('batch')
-        environment = create_environment(
-            PGDATA=os.path.join('/pgdata', str(self.uuid)),
-            PFB_SHPFILE_URL=self.neighborhood.boundary_file.url,
-            PFB_STATE=self.neighborhood.state_abbrev,
-            PFB_STATE_FIPS=self.neighborhood.state.fips,
-            PFB_JOB_ID=str(self.uuid),
-            AWS_STORAGE_BUCKET_NAME=settings.AWS_STORAGE_BUCKET_NAME,
 
-            # Since we run django manage commands in the analysis container, it needs a copy of
-            # all the environment variables that this app needs, most of which are conveniently
-            # prefixed with 'PFB_'
-            # For the ones that aren't, send the settings rather than the original environment
-            # variables because the environment variables might be None, which is not acceptable
-            # as a container override environment value, but the settings values will be set
-            # to whatever they default to in settings.
-            DJANGO_ENV=settings.DJANGO_ENV,
-            DJANGO_LOG_LEVEL=settings.DJANGO_LOG_LEVEL,
-            AWS_DEFAULT_REGION=settings.AWS_REGION,
-            **{key: val for (key, val) in os.environ.items()
-                if key.startswith('PFB_') and val is not None}
-        )
+        # Since we run django manage commands in the analysis container, it needs a copy of
+        # all the environment variables that this app needs, most of which are conveniently
+        # prefixed with 'PFB_'
+        # Set these first so they can be overridden by job specific settings below
+        environment = {key: val for (key, val) in os.environ.items()
+                       if key.startswith('PFB_') and val is not None}
+        environment.update({
+            'PGDATA': os.path.join('/pgdata', str(self.uuid)),
+            'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
+            'PFB_STATE': self.neighborhood.state_abbrev,
+            'PFB_STATE_FIPS': self.neighborhood.state.fips,
+            'PFB_JOB_ID': str(self.uuid),
+            'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
+
+            # For ENV variables that aren't prefixed with 'PFB_', send the settings rather
+            # than the original environment variables because the environment variables
+            # might be None, which is not acceptable as a container override environment
+            # value, but the settings values will be set to whatever they default to in settings.
+            'DJANGO_ENV': settings.DJANGO_ENV,
+            'DJANGO_LOG_LEVEL': settings.DJANGO_LOG_LEVEL,
+            'AWS_DEFAULT_REGION': settings.AWS_REGION,
+        })
+        if self.osm_extract_url:
+            environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
+
         container_overrides = {
-            'environment': environment,
+            'environment': create_environment(**environment),
         }
         response = client.submit_job(jobName=self.batch_job_name,
                                      jobDefinition=settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION, # NOQA
