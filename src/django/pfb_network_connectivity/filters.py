@@ -64,4 +64,4 @@ class AnalysisJobStatusFilterSet(filters.FilterSet):
 
     class Meta:
         model = AnalysisJob
-        fields = ['neighborhood', 'status']
+        fields = ['neighborhood', 'batch', 'status']
