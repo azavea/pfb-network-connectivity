@@ -14,9 +14,8 @@
         var ctl = this;
 
         function initialize() {
-            ctl.neighborhoods = Neighborhood.all();
-            ctl.neighborhoods.$promise.then(function(data) {
-                ctl.neighborhoods = data;
+            ctl.neighborhoods = Neighborhood.all().$promise.then(function(data) {
+                ctl.neighborhoods = data.results;
             });
         }
 

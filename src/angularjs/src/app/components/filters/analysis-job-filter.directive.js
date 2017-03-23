@@ -8,7 +8,7 @@
      * Controller for the analysis job filtering table header
      */
     /** @ngInject */
-    function AnalysisJobFilterController($scope, $http, AuthService, AnalysisJobStatuses) {
+    function AnalysisJobFilterController($scope, Neighborhood, AuthService, AnalysisJobStatuses) {
         var ctl = this;
         initialize();
 
@@ -20,7 +20,7 @@
         }
 
         function loadOptions() {
-            $http.get('/api/neighborhoods/').success(function(data) {
+            Neighborhood.all().$promise.then(function(data) {
                 ctl.neighborhoods = data.results;
             });
 

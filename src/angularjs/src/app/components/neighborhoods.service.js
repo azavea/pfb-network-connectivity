@@ -14,6 +14,13 @@
             'query': {
                 method: 'GET',
                 isArray: false
+            },
+            'all': {
+                method: 'GET',
+                isArray: false,
+                params: {
+                    limit: 10000
+                }
             }
         });
     }
