@@ -31,6 +31,10 @@
             short: 'Exporting',
             long: 'Exporting Results'
         },
+        CANCELLED: {
+            short: 'Cancelled',
+            long: 'Cancelled'
+        },
         COMPLETE: {
             short: 'Complete',
             long: 'Complete'
