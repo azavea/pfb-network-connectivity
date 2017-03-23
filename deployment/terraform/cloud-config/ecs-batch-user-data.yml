@@ -22,6 +22,9 @@ write_files:
     owner: root:root
     content: |
       ECS_CLUSTER=${ecs_cluster_name}
+      ECS_ENGINE_TASK_CLEANUP_WAIT_DURATION=${ecs_engine_task_cleanup_wait_duration}
+      ECS_IMAGE_CLEANUP_INTERVAL=${ecs_image_cleanup_interval}
+      ECS_IMAGE_MINIMUM_CLEANUP_AGE=${ecs_image_minimum_cleanup_age}
   - path: /etc/awslogs/awslogs.conf
     permissions: 0644
     owner: root:root

@@ -109,6 +109,15 @@ variable "batch_container_instance_type" {
 variable "batch_container_instance_asg_desired_capacity" {}
 variable "batch_container_instance_asg_min_size" {}
 variable "batch_container_instance_asg_max_size" {}
+variable "batch_ecs_engine_task_cleanup_wait_duration" {
+  default = "5m"
+}
+variable "batch_ecs_image_cleanup_interval" {
+  default = "10m"
+}
+variable "batch_ecs_image_minimum_cleanup_age" {
+  default = "30m"
+}
 
 # Django
 variable "django_env" {}

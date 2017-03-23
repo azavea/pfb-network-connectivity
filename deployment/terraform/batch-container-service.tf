@@ -18,8 +18,11 @@ data "template_file" "batch_container_instance_cloud_config" {
   template = "${file("cloud-config/ecs-batch-user-data.yml")}"
 
   vars {
-    ecs_cluster_name = "${var.batch_ecs_cluster_name}"
-    environment      = "${var.environment}"
+    ecs_cluster_name                        = "${var.batch_ecs_cluster_name}"
+    environment                             = "${var.environment}"
+    ecs_engine_task_cleanup_wait_duration   = "${var.batch_ecs_engine_task_cleanup_wait_duration}"
+    ecs_image_cleanup_interval              = "${var.batch_ecs_image_cleanup_interval}"
+    ecs_image_minimum_cleanup_age           = "${var.batch_ecs_image_minimum_cleanup_age}"
   }
 }
 
