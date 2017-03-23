@@ -89,6 +89,12 @@
                 controllerAs: 'analysisJobList',
                 templateUrl: 'app/analysis-jobs/list/analysis-jobs-list.html'
             })
+            .state('analysis-jobs.create', {
+                url: 'create/',
+                controller: 'AnalysisJobCreateController',
+                controllerAs: 'analysisJobCreate',
+                templateUrl: 'app/analysis-jobs/create/analysis-jobs-create.html'
+            })
             .state('neighborhoods', {
                 abstract: true,
                 url: '/neighborhoods/?limit&offset',
