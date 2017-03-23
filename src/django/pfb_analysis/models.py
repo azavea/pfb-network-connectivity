@@ -141,7 +141,12 @@ class AnalysisBatch(PFBModel):
         if not reason:
             reason = 'AnalysisBatch terminated by user at {}'.format(datetime.utcnow())
         for job in self.jobs.all():
-            job.cancel(reason=reason)
+            try:
+                job.cancel(reason=reason)
+            except Exception as e:
+                if job.batch_job_id:
+                    logger.warning('Cancelling {} failed'.format(job.batch_job_id))
+                logger.exception('Cancelling job {} failed: {}'.format(job, e))
 
 
 class AnalysisJob(PFBModel):
@@ -164,6 +169,7 @@ class AnalysisJob(PFBModel):
 
         ACTIVE_STATUSES = (CREATED, QUEUED, IMPORTING, BUILDING, CONNECTIVITY,
                            METRICS, EXPORTING,)
+        DONE_STATUSES = (CANCELLED, COMPLETE, ERROR,)
 
         CHOICES = (
             (CREATED, 'Created',),
@@ -272,17 +278,18 @@ class AnalysisJob(PFBModel):
         if not reason:
             reason = 'AnalysisJob terminated by user at {}'.format(datetime.utcnow())
 
-        if self.status in self.Status.ACTIVE_STATUSES:
+        logger.info('Cancelling job: {}'.format(self))
+        if self.status in self.Status.ACTIVE_STATUSES and self.batch_job_id is not None:
             client = boto3.client('batch')
             client.terminate_job(jobId=self.batch_job_id, reason=reason)
-            AnalysisJobStatusUpdate.objects.create(job=self, status=self.Status.CANCELLED, step='')
+        AnalysisJobStatusUpdate.objects.create(job=self, status=self.Status.CANCELLED, step='')
 
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
         def create_environment(**kwargs):
             return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
 
-        if self.batch_job_id is not None:
+        if self.status is not self.Status.CREATED:
             logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
 
