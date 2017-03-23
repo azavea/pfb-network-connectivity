@@ -293,14 +293,23 @@ class AnalysisJob(PFBModel):
             logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
 
-        client = boto3.client('batch')
-
         # Since we run django manage commands in the analysis container, it needs a copy of
         # all the environment variables that this app needs, most of which are conveniently
         # prefixed with 'PFB_'
         # Set these first so they can be overridden by job specific settings below
         environment = {key: val for (key, val) in os.environ.items()
                        if key.startswith('PFB_') and val is not None}
+        # For the ones without the 'PFB_' prefix, send the settings rather than the original
+        # environment variables because the environment variables might be None, which is not
+        # acceptable as a container override environment value, but the settings values will be set
+        # to whatever they default to in settings.
+        environment.update({
+            'DJANGO_ENV': settings.DJANGO_ENV,
+            'DJANGO_LOG_LEVEL': settings.DJANGO_LOG_LEVEL,
+            'AWS_DEFAULT_REGION': settings.AWS_REGION,
+        })
+
+        # Job-specific settings
         environment.update({
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
@@ -308,18 +317,20 @@ class AnalysisJob(PFBModel):
             'PFB_STATE_FIPS': self.neighborhood.state.fips,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
-
-            # For ENV variables that aren't prefixed with 'PFB_', send the settings rather
-            # than the original environment variables because the environment variables
-            # might be None, which is not acceptable as a container override environment
-            # value, but the settings values will be set to whatever they default to in settings.
-            'DJANGO_ENV': settings.DJANGO_ENV,
-            'DJANGO_LOG_LEVEL': settings.DJANGO_LOG_LEVEL,
-            'AWS_DEFAULT_REGION': settings.AWS_REGION,
         })
         if self.osm_extract_url:
             environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
 
+        # Workaround for not being able to run development jobs on the actual batch cluster:
+        # bail out with a helpful message
+        if settings.DJANGO_ENV == 'development':
+            logger.warn("Can't actually run development jobs on AWS. Try this:"
+                        "\nPFB_JOB_ID='{PFB_JOB_ID}' "
+                        "./scripts/run-local-analysis "
+                        "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
+            return
+
+        client = boto3.client('batch')
         container_overrides = {
             'environment': create_environment(**environment),
         }
