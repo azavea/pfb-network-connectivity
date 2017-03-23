@@ -88,6 +88,23 @@
                 controller: 'AnalysisJobListController',
                 controllerAs: 'analysisJobList',
                 templateUrl: 'app/analysis-jobs/list/analysis-jobs-list.html'
+            })
+            .state('neighborhoods', {
+                abstract: true,
+                url: '/neighborhoods/?limit&offset',
+                template: '<ui-view/>'
+            })
+            .state('neighborhoods.create', {
+                url: 'create/',
+                controller: 'NeighborhoodCreateController',
+                controllerAs: 'neighborhoodCreate',
+                templateUrl: 'app/neighborhoods/create/neighborhoods-create.html'
+            })
+            .state('neighborhoods.list', {
+                url: '',
+                controller: 'NeighborhoodListController',
+                controllerAs: 'neighborhoodList',
+                templateUrl: 'app/neighborhoods/list/neighborhoods-list.html'
             });
         $urlRouterProvider.otherwise('/login/');
     }

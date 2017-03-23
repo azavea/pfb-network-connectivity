@@ -36,6 +36,9 @@ urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    # US States View
+    url(r'^api/states/', analysis_views.USStateView.as_view()),
+
     # User Views
     url(r'^api/login/', user_views.PFBUserLoginView.as_view()),
     url(r'^api/logout/', user_views.PFBUserLogoutView.as_view()),
