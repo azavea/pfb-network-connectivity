@@ -7,6 +7,23 @@ from botocore.exceptions import BotoCoreError
 logger = logging.getLogger(__name__)
 
 
+class JobState(object):
+    """ AWS Batch Job States
+
+    See: http://docs.aws.amazon.com/batch/latest/userguide/jobs.html
+
+    """
+    SUBMITTED = 'SUBMITTED'
+    PENDING = 'PENDING'
+    RUNNABLE = 'RUNNABLE'
+    STARTING = 'STARTING'
+    RUNNING = 'RUNNING'
+    SUCCEEDED = 'SUCCEEDED'
+    FAILED = 'FAILED'
+
+    ACTIVE_STATUSES = (SUBMITTED, PENDING, RUNNABLE, STARTING, RUNNING,)
+
+
 class NoActiveJobDefinitionRevision(BotoCoreError):
     """ Raised when an AWS Batch Job Definition has no active revision
 

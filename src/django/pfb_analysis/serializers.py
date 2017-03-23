@@ -21,9 +21,9 @@ class AnalysisJobSerializer(PFBModelSerializer):
 
     class Meta:
         model = AnalysisJob
-        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by')
+        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                            'batch_job_id',)
+                            'batch_job_id', 'batch',)
 
 
 class NeighborhoodSerializer(PFBModelSerializer):

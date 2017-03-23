@@ -1,18 +1,28 @@
 from __future__ import unicode_literals
 
-import os
+from datetime import datetime
 import logging
+import json
+import os
+import shutil
+import tempfile
 import uuid
+import zipfile
 
 from django.conf import settings
+from django.contrib.gis.geos import MultiPolygon
+from django.core.files import File
 from django.db import models
 from django.utils.text import slugify
 
 import botocore
 import boto3
+import fiona
+from fiona.crs import from_epsg
 from localflavor.us.models import USStateField
 import us
 
+from pfb_analysis.aws_batch import JobState
 from pfb_network_connectivity.models import PFBModel
 from users.models import Organization
 
@@ -45,9 +55,49 @@ class Neighborhood(PFBModel):
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
         if not self.name:
-            self.name = slugify(self.label)
+            self.name = self.name_for_label(self.label)
         self.full_clean()
         super(Neighborhood, self).save(*args, **kwargs)
+
+    def set_boundary_file(self, geom):
+        """ Create a new boundary shapefile that mirrors geom, upload and save
+
+        geom must be either a Polygon or MultiPolygon
+
+        """
+        boundary_file = None
+        try:
+            tmpdir = tempfile.mkdtemp()
+            file_name = self.name
+            local_shpfile = os.path.join(tmpdir, '{}.shp'.format(file_name))
+            schema = {'geometry': 'MultiPolygon', 'properties': {}}
+            with fiona.open(local_shpfile, 'w',
+                            driver='ESRI Shapefile',
+                            crs=from_epsg(4326),
+                            schema=schema) as source:
+                if geom.geom_type == 'Polygon':
+                    geom = MultiPolygon([geom])
+                feature = {
+                    'geometry': json.loads(geom.json),
+                    'properties': {}
+                }
+                source.write(feature)
+
+            zip_filename = os.path.join(tmpdir, '{}.zip'.format(file_name))
+            shpfiles = os.listdir(tmpdir)
+            with zipfile.ZipFile(zip_filename, 'w') as zip_handle:
+                for shpfile in shpfiles:
+                    if shpfile.startswith(file_name):
+                        zip_handle.write(os.path.join(tmpdir, shpfile), shpfile)
+            boundary_file = File(open(zip_filename))
+            self.boundary_file = boundary_file
+            self.save()
+        except:
+            raise
+        finally:
+            if boundary_file:
+                boundary_file.close()
+            shutil.rmtree(tmpdir, ignore_errors=True)
 
     @property
     def state(self):
@@ -58,8 +108,45 @@ class Neighborhood(PFBModel):
         """
         return us.states.lookup(self.state_abbrev)
 
+    @classmethod
+    def name_for_label(cls, label):
+        return slugify(label)
+
     class Meta:
         unique_together = ('name', 'organization',)
+
+
+class AnalysisBatch(PFBModel):
+    """ Container for a grouping of AnalysisJobs that are run together
+
+    Allows us to track whether each job in a batch succeeded
+
+    An AnalysisJob does not need to belong to an AnalysisBatch
+
+    """
+    def __str__(self):
+        return '<AnalysisBatch: {} -- {}>'.format(str(self.uuid), self.created_at)
+
+    def submit(self):
+        """ Start all jobs in the batch """
+        for job in self.jobs.all():
+            job.run()
+
+    def cancel(self, reason=None):
+        """ Cancel all still-running jobs in the batch """
+        def chunks(l, n):
+            for i in range(0, len(l), n):
+                yield l[i:i + n]
+
+        if not reason:
+            reason = 'AnalysisBatch terminated by user at {}'.format(datetime.utcnow())
+        for job in self.jobs.all():
+            try:
+                job.cancel(reason=reason)
+            except Exception as e:
+                if job.batch_job_id:
+                    logger.warning('Cancelling {} failed'.format(job.batch_job_id))
+                logger.exception('Cancelling job {} failed: {}'.format(job, e))
 
 
 class AnalysisJob(PFBModel):
@@ -76,8 +163,13 @@ class AnalysisJob(PFBModel):
         CONNECTIVITY = 'CONNECTIVITY'
         METRICS = 'METRICS'
         EXPORTING = 'EXPORTING'
+        CANCELLED = 'CANCELLED'
         COMPLETE = 'COMPLETE'
         ERROR = 'ERROR'
+
+        ACTIVE_STATUSES = (CREATED, QUEUED, IMPORTING, BUILDING, CONNECTIVITY,
+                           METRICS, EXPORTING,)
+        DONE_STATUSES = (CANCELLED, COMPLETE, ERROR,)
 
         CHOICES = (
             (CREATED, 'Created',),
@@ -87,6 +179,7 @@ class AnalysisJob(PFBModel):
             (CONNECTIVITY, 'Calculating Connectivity',),
             (METRICS, 'Calculating Graph Metrics',),
             (EXPORTING, 'Exporting Results',),
+            (CANCELLED, 'Cancelled',),
             (COMPLETE, 'Complete',),
             (ERROR, 'Error',),
         )
@@ -114,7 +207,7 @@ class AnalysisJob(PFBModel):
         if self.batch_job_id is None:
             return self.Status.CREATED
 
-        if self.batch_job_status == 'FAILED':
+        if self.batch_job_status == JobState.FAILED:
             return self.Status.ERROR
         try:
             # If the job hasn't failed and has sent any status updates, use the latest
@@ -139,6 +232,11 @@ class AnalysisJob(PFBModel):
         except (KeyError, IndexError):
             logger.exception('Error retrieving AWS Batch job status for job'.format(self.uuid))
             return None
+
+    batch = models.ForeignKey(AnalysisBatch,
+                              related_name='jobs',
+                              on_delete=models.CASCADE,
+                              null=True, blank=True)
 
     @property
     def batch_job_name(self):
@@ -175,12 +273,23 @@ class AnalysisJob(PFBModel):
         first_update = self.status_updates.first()
         return first_update.timestamp if first_update else None
 
+    def cancel(self, reason=None):
+        """ Cancel the analysis job, if its running """
+        if not reason:
+            reason = 'AnalysisJob terminated by user at {}'.format(datetime.utcnow())
+
+        logger.info('Cancelling job: {}'.format(self))
+        if self.status in self.Status.ACTIVE_STATUSES and self.batch_job_id is not None:
+            client = boto3.client('batch')
+            client.terminate_job(jobId=self.batch_job_id, reason=reason)
+        AnalysisJobStatusUpdate.objects.create(job=self, status=self.Status.CANCELLED, step='')
+
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
         def create_environment(**kwargs):
             return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
 
-        if self.batch_job_id is not None:
+        if self.status is not self.Status.CREATED:
             logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
 
