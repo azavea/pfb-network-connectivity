@@ -37,6 +37,7 @@ RUN set -xe && \
         postgresql-plpython-$PG_MAJOR \
         postgresql-$PG_MAJOR-pgrouting \
         python-gdal \
+        gdal-bin \
         unzip \
         zip \
         postgis \
