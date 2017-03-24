@@ -23,7 +23,8 @@ class AnalysisJobViewSet(ModelViewSet):
     permission_classes = (RestrictedCreate,)
     filter_class = AnalysisJobStatusFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
-    ordering_fields = ('created_at',)
+    ordering_fields = ('created_at', 'modified_at')
+    ordering = ('-created_at',)
 
     def perform_create(self, serializer):
         """ Start analysis jobs as soon as created """
