@@ -6,3 +6,10 @@ function update_status() {
 
     /opt/pfb/django/manage.py update_status "${PFB_JOB_ID}" "$@"
 }
+
+function update_overall_scores() {
+    # Usage:
+    #    update_overall_scores OVERALL_SCORES_CSV
+
+    /opt/pfb/django/manage.py load_overall_scores "${PFB_JOB_ID}" "$@"
+}

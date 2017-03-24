@@ -21,7 +21,7 @@ SELECT  'Population',
         quantile(pop_low_stress,0.5),
         regexp_replace('Total population accessible by low stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -38,7 +38,7 @@ SELECT  'Population',
         quantile(pop_high_stress,0.5),
         regexp_replace('Total population accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -56,7 +56,7 @@ SELECT  'Population',
         regexp_replace('Ratio of population accessible by low stress
             to population accessible overall, expressed as
             the median of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -74,7 +74,7 @@ SELECT  'Population',
         regexp_replace('Ratio of population accessible by low stress
             to population accessible overall, expressed as
             the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -92,7 +92,7 @@ SELECT  'Population',
         regexp_replace('Ratio of population accessible by low stress
             to population accessible overall, expressed as
             the average of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -109,7 +109,7 @@ SELECT  'Employment',
         quantile(emp_low_stress,0.5),
         regexp_replace('Total jobs accessible by low stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -126,7 +126,7 @@ SELECT  'Employment',
         quantile(emp_high_stress,0.5),
         regexp_replace('Total jobs accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -144,7 +144,7 @@ SELECT  'Employment',
         regexp_replace('Ratio of employment accessible by low stress
             to employment accessible overall, expressed as
             the median of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -162,7 +162,7 @@ SELECT  'Employment',
         regexp_replace('Ratio of employment accessible by low stress
             to employment accessible overall, expressed as
             the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -180,7 +180,7 @@ SELECT  'Employment',
         regexp_replace('Ratio of employment accessible by low stress
             to employment accessible overall, expressed as
             the average of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -197,7 +197,7 @@ SELECT  'Schools',
         AVG(schools_low_stress),
         regexp_replace('Number of schools accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -214,7 +214,7 @@ SELECT  'Schools',
         AVG(schools_high_stress),
         regexp_replace('Number of schools accessible by high stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' ')
+            neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -231,7 +231,7 @@ SELECT  'Schools',
         AVG(pop_low_stress),
         regexp_replace('Population with low stress access to schools
             in the neighborhood expressed as an average of all
-            schools in the neighborhood','\n\s+',' ')
+            schools in the neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
@@ -248,7 +248,7 @@ SELECT  'Schools',
         AVG(pop_high_stress),
         regexp_replace('Population with high stress access to schools
             in the neighborhood expressed as an average of all
-            schools in the neighborhood','\n\s+',' ')
+            schools in the neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
@@ -266,7 +266,7 @@ SELECT  'Schools',
         regexp_replace('Ratio of population with low stress
             access to schools to population with high stress access
             in the neighborhood expressed as an average of all
-            schools in the neighborhood','\n\s+',' ')
+            schools in the neighborhood','\n\s+',' ', 'g')
 FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
