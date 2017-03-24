@@ -7,7 +7,6 @@ set -e
 cd $(dirname "$0")
 source ./utils.sh
 
-
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
@@ -75,6 +74,34 @@ function ec_export_table_csv() {
          -c "\COPY ${EXPORT_TABLENAME} TO '${FILENAME}' WITH (FORMAT CSV, HEADER)"
 }
 
+function ec_export_table_geojson() {
+  OUTPUT_DIR="${1}"
+  EXPORT_TABLENAME="${2}"
+
+  FILENAME="${OUTPUT_DIR}/${EXPORT_TABLENAME}.geojson"
+  ogr2ogr -f GeoJSON "${FILENAME}" \
+          -t_srs EPSG:4326 \
+          "PG:host=${NB_POSTGRESQL_HOST} dbname=${NB_POSTGRESQL_DB} user=${NB_POSTGRESQL_USER}" \
+          -sql "select * from ${EXPORT_TABLENAME}"
+}
+
+function ec_export_destination_geojson() {
+  OUTPUT_DIR="${1}"
+  EXPORT_TABLENAME="${2}"
+
+  echo "EXPORTING: ${EXPORT_TABLENAME}"
+  FILENAME="${OUTPUT_DIR}/${EXPORT_TABLENAME}.geojson"
+  # Our version of ogr2ogr isn't new enough to specify the geom column :(
+  #   Instead, ogr2ogr states it takes the "last" geom column, so we manually specify
+  #   it here to ensure we always take the one we want
+  # Use geom_poly because its the source field in all dest tables -- geom_pt is only
+  #   derived field in some tables
+  ogr2ogr -f GeoJSON "${FILENAME}" \
+          -t_srs EPSG:4326 \
+          "PG:host=${NB_POSTGRESQL_HOST} dbname=${NB_POSTGRESQL_DB} user=${NB_POSTGRESQL_USER}" \
+          -sql "select *, geom_poly from ${EXPORT_TABLENAME}"
+}
+
 if [ "${BASH_SOURCE[0]}" = "${0}" ]
 then
     if [ "${1}" = "--help" ]
@@ -95,8 +122,28 @@ then
         # Export neighborhood_ways as SHP
         ec_export_table_shp "${OUTPUT_DIR}" "neighborhood_ways"
 
+        # Export census blocks
+        ec_export_table_shp "${OUTPUT_DIR}" "neighborhood_census_blocks"
+        ec_export_table_geojson "${OUTPUT_DIR}" "neighborhood_census_blocks"
+
+        # Export destinations tables as GeoJSON
+        DESTINATION_TABLES='
+          neighborhood_colleges
+          neighborhood_community_centers
+          neighborhood_medical
+          neighborhood_parks
+          neighborhood_retail
+          neighborhood_schools
+          neighborhood_social_services
+          neighborhood_supermarkets
+          neighborhood_universities
+        '
+        for DESTINATION in ${DESTINATION_TABLES}; do
+          ec_export_destination_geojson "${OUTPUT_DIR}" "${DESTINATION}"
+        done
+
         # Export neighborhood ways as GeoJSON
-        # TODO: Add ogr2ogr and try again
+        # TODO: Export this once we know we need it
 
         # Export neighborhood_connected_census_blocks as SHP
         # NOTE: disabled for now, because large and not that useful
