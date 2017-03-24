@@ -11,6 +11,7 @@ import zipfile
 
 from django.conf import settings
 from django.contrib.gis.geos import MultiPolygon
+from django.contrib.postgres.fields import JSONField
 from django.core.files import File
 from django.db import models
 from django.utils.text import slugify
@@ -195,6 +196,7 @@ class AnalysisJob(PFBModel):
                                                 'may optionally be compressed via zip/bzip/gz, ' +
                                                 'e.g. http://a.com/foo.osm or ' +
                                                 'http://a.com/foo.osm.bz2')
+    overall_scores = JSONField(db_index=True, default=dict)
 
     @property
     def status(self):
