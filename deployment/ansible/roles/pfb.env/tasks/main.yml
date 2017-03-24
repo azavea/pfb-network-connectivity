@@ -1,5 +1,11 @@
 ---
 
+- name: Set AWS_PROFILE environment variable
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^AWS_PROFILE
+    line: "AWS_PROFILE={{ aws_profile }}"
+
 - name: Set DEV_USER environment variable
   lineinfile:
     dest: /etc/environment
