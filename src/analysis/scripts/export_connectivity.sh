@@ -7,7 +7,6 @@ set -e
 cd $(dirname "$0")
 source ./utils.sh
 
-NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
@@ -98,7 +97,6 @@ function ec_export_destination_geojson() {
   # Use geom_poly because its the source field in all dest tables -- geom_pt is only
   #   derived field in some tables
   ogr2ogr -f GeoJSON "${FILENAME}" \
-          -s_srs "EPSG:${NB_OUTPUT_SRID}" \
           -t_srs EPSG:4326 \
           "PG:host=${NB_POSTGRESQL_HOST} dbname=${NB_POSTGRESQL_DB} user=${NB_POSTGRESQL_USER}" \
           -sql "select *, geom_poly from ${EXPORT_TABLENAME}"
