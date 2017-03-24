@@ -270,7 +270,8 @@ class AnalysisJob(PFBModel):
         if self.status in self.Status.ACTIVE_STATUSES and self.batch_job_id is not None:
             client = boto3.client('batch')
             client.terminate_job(jobId=self.batch_job_id, reason=reason)
-        AnalysisJobStatusUpdate.objects.create(job=self, status=self.Status.CANCELLED, step='')
+        if self.status != self.Status.CANCELLED:
+            AnalysisJobStatusUpdate.objects.create(job=self, status=self.Status.CANCELLED, step='')
 
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
