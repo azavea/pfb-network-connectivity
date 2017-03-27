@@ -343,10 +343,7 @@ class AnalysisJob(PFBModel):
 
     def update_status(self, status, step='', message=''):
         if self.status != self.Status.CANCELLED:
-            AnalysisJobStatusUpdate.objects.create(job=self,
-                                                   status=status,
-                                                   step=step,
-                                                   message=message)
+            self.status_updates.create(job=self, status=status, step=step, message=message)
 
 
 class AnalysisJobStatusUpdate(models.Model):
