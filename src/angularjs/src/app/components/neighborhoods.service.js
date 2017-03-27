@@ -19,7 +19,7 @@
                 method: 'GET',
                 isArray: false,
                 params: {
-                    limit: 10000
+                    limit: 'all'
                 }
             }
         });
