@@ -292,3 +292,19 @@ elif PFB_AWS_BATCH_JOB_DEFINITION_NAME:
 else:
     raise ImproperlyConfigured('env.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION or ' +
                                'env.PFB_AWS_BATCH_JOB_DEFINITION_NAME is required.')
+
+# Analysis results settings
+# A list of destinations types, created by the analysis, to be made available for download
+PFB_ANALYSIS_DESTINATIONS = [
+    'colleges',
+    'community_centers',
+    'medical',
+    'parks',
+    'retail',
+    'schools',
+    'social_services',
+    'supermarkets',
+    'universities',
+]
+# Length of time in seconds that S3 pre-signed urls are valid for
+PFB_ANALYSIS_PRESIGNED_URL_EXPIRES = 3600

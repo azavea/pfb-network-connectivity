@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 
 import us
@@ -43,6 +44,23 @@ class AnalysisJobViewSet(ModelViewSet):
                           .format(request.user.email, datetime.utcnow()))
         serializer = AnalysisJobSerializer(job)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @detail_route(methods=['GET'])
+    def results(self, request, pk=None):
+        job = self.get_object()
+
+        if job.status == AnalysisJob.Status.COMPLETE:
+            results = OrderedDict([
+                # TODO: Add once #183 is merged
+                # ('census_blocks_count', None),
+                ('census_blocks_url', job.census_blocks_url),
+                ('destinations_urls', job.destinations_urls),
+                ('overall_scores', job.overall_scores),
+                ('ways_url', job.ways_url),
+            ])
+            return Response(results, status=status.HTTP_200_OK)
+        else:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
 
 
 class NeighborhoodViewSet(ModelViewSet):
