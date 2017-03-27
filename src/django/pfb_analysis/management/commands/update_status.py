@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from pfb_analysis.models import AnalysisJobStatusUpdate, AnalysisJob
+from pfb_analysis.models import AnalysisJob
 
 
 class Command(BaseCommand):
@@ -17,10 +17,7 @@ class Command(BaseCommand):
         try:
             job = AnalysisJob.objects.get(pk=options['job_id'])
         except (AnalysisJob.DoesNotExist, ValueError, KeyError):
-            print ('WARNING: Tried to update status for invalid job {job_id} '
-                   '(to {status} {step})'.format(**options))
+            print('WARNING: Tried to update status for invalid job {job_id} '
+                  '(to {status} {step})'.format(**options))
         else:
-            AnalysisJobStatusUpdate.objects.create(job=job,
-                                                   status=options['status'],
-                                                   step=options['step'],
-                                                   message=options['message'])
+            job.update_status(options['status'], step=options['step'], message=options['message'])

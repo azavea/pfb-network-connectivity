@@ -1,7 +1,11 @@
+from datetime import datetime
+
 import us
 
 from django.utils.text import slugify
 
+from rest_framework import status
+from rest_framework.decorators import detail_route
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -31,6 +35,14 @@ class AnalysisJobViewSet(ModelViewSet):
         """ Start analysis jobs as soon as created """
         instance = serializer.save()
         instance.run()
+
+    @detail_route(methods=['post'])
+    def cancel(self, request, pk=None):
+        job = self.get_object()
+        job.cancel(reason='AnalysisJob terminated via API by {} at {}'
+                          .format(request.user.email, datetime.utcnow()))
+        serializer = AnalysisJobSerializer(job)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class NeighborhoodViewSet(ModelViewSet):
