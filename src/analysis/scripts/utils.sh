@@ -13,3 +13,10 @@ function update_overall_scores() {
 
     /opt/pfb/django/manage.py load_overall_scores "${PFB_JOB_ID}" "$@"
 }
+
+function set_job_attr() {
+    # Usage:
+    #    update_job_attr ATTRIBUTE VALUE
+
+    /opt/pfb/django/manage.py set_job_attr "${PFB_JOB_ID}" "$@"
+}
