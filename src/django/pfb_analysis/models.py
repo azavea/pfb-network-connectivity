@@ -266,12 +266,19 @@ class AnalysisJob(PFBModel):
         if not reason:
             reason = 'AnalysisJob terminated by user at {}'.format(datetime.utcnow())
 
-        logger.info('Cancelling job: {}'.format(self))
-        if self.status in self.Status.ACTIVE_STATUSES and self.batch_job_id is not None:
-            client = boto3.client('batch')
-            client.terminate_job(jobId=self.batch_job_id, reason=reason)
-        if self.status != self.Status.CANCELLED:
-            AnalysisJobStatusUpdate.objects.create(job=self, status=self.Status.CANCELLED, step='')
+        if self.status in self.Status.ACTIVE_STATUSES:
+            logger.info('Cancelling job: {}'.format(self))
+            old_status = self.status
+            self.update_status(self.Status.CANCELLED)
+            if self.batch_job_id is not None:
+                try:
+                    client = boto3.client('batch')
+                    client.terminate_job(jobId=self.batch_job_id, reason=reason)
+                except:
+                    self.update_status(old_status,
+                                       'REVERTED',
+                                       'Reverted due to failure cancelling job in AWS Batch')
+                    raise
 
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
@@ -330,14 +337,25 @@ class AnalysisJob(PFBModel):
         try:
             self.batch_job_id = response['jobId']
             self.save()
-            AnalysisJobStatusUpdate.objects.create(job=self,
-                                                   status=self.Status.QUEUED,
-                                                   step=self.Status.QUEUED)
+            self.update_status(self.status.QUEUED)
         except (botocore.exceptions.BotoCoreError, KeyError):
             logger.exception('Error starting AnalysisJob {}'.format(self.uuid))
 
+    def update_status(self, status, step='', message=''):
+        if self.status != self.Status.CANCELLED:
+            AnalysisJobStatusUpdate.objects.create(job=self,
+                                                   status=status,
+                                                   step=step,
+                                                   message=message)
+
 
 class AnalysisJobStatusUpdate(models.Model):
+    """ Related model for AnalysisJob, to provide record of status updates as job progresses
+
+    Rather than creating these objects directly, they should be created using:
+        AnalysisJob.update_status()
+
+    """
     job = models.ForeignKey(AnalysisJob, related_name='status_updates', on_delete=models.CASCADE)
     status = models.CharField(choices=AnalysisJob.Status.CHOICES, max_length=12)
     step = models.CharField(max_length=50)
