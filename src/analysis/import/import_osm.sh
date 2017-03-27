@@ -66,6 +66,7 @@ OSM_TEMPDIR=`mktemp -d`
 if [[ -f ${1} ]]; then
   update_status "IMPORTING" "Clipping provided OSM file"
   osmconvert "${1}" \
+    --drop-broken-refs \
     -b="${BBOX_SW_LNG}","${BBOX_SW_LAT}","${BBOX_NE_LNG}","${BBOX_NE_LAT}" \
     -o="${OSM_TEMPDIR}/converted.osm"
   OSM_DATA_FILE="${OSM_TEMPDIR}/converted.osm"
