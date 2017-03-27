@@ -105,7 +105,7 @@ docker-compose run verifier boulder.csv
 
 Any output in the `verified_output` directory may be used for comparison.
 
-To compare to analysis output that has a non-default filename (`analysis_neighborhood_overall_scores.csv`), run the verification tool with the name of the file in `data/output` as the second argument:
+To compare to analysis output that has a non-default filename (`analysis_neighborhood_score_inputs.csv`), run the verification tool with the name of the file in `data/output` as the second argument:
 ```
 docker-compose run verifier boulder.csv my_output_to_verify.csv
 ```

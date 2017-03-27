@@ -28,7 +28,7 @@ This script exports the following tables:
  - neighborhood_ways as SHP
  - neighborhood_ways as GeoJSON (TODO)
  - neighborhood_connected_census_blocks as SHP (currently disabled)
- - neighborhood_overall_scores as CSV
+ - neighborhood_score_inputs as CSV
 
 Optional ENV vars:
 
@@ -149,10 +149,10 @@ then
         # NOTE: disabled for now, because large and not that useful
         # ec_export_table_shp "${OUTPUT_DIR}" "neighborhood_connected_census_blocks"
 
-        # Export neighborhood_overall_scores as CSV
-        ec_export_table_csv "${OUTPUT_DIR}" "neighborhood_overall_scores"
+        # Export neighborhood_score_inputs as CSV
+        ec_export_table_csv "${OUTPUT_DIR}" "neighborhood_score_inputs"
         # Send overall_scores to Django app
-        update_overall_scores "${OUTPUT_DIR}/neighborhood_overall_scores.csv"
+        update_overall_scores "${OUTPUT_DIR}/neighborhood_score_inputs.csv"
 
         if [ -v AWS_STORAGE_BUCKET_NAME ]
         then
