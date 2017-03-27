@@ -51,8 +51,7 @@ class AnalysisJobViewSet(ModelViewSet):
 
         if job.status == AnalysisJob.Status.COMPLETE:
             results = OrderedDict([
-                # TODO: Add once #183 is merged
-                # ('census_blocks_count', None),
+                ('census_block_count', job.census_block_count),
                 ('census_blocks_url', job.census_blocks_url),
                 ('destinations_urls', job.destinations_urls),
                 ('overall_scores', job.overall_scores),
