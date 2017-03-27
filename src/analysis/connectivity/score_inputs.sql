@@ -2,9 +2,9 @@
 -- INPUTS
 -- location: neighborhood
 ----------------------------------------
-DROP TABLE IF EXISTS generated.neighborhood_overall_scores;
+DROP TABLE IF EXISTS generated.neighborhood_score_inputs;
 
-CREATE TABLE generated.neighborhood_overall_scores (
+CREATE TABLE generated.neighborhood_score_inputs (
     id SERIAL PRIMARY KEY,
     category TEXT,
     score_name TEXT,
@@ -18,7 +18,7 @@ CREATE TABLE generated.neighborhood_overall_scores (
 -- population
 -------------------------------------
 -- median pop access low stress
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Population',
@@ -38,7 +38,7 @@ WHERE   EXISTS (
         );
 
 -- median pop access high stress
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Population',
@@ -58,7 +58,7 @@ WHERE   EXISTS (
         );
 
 -- median pop access ratio
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Population',
@@ -79,7 +79,7 @@ WHERE   EXISTS (
         );
 
 -- 70th percentile pop access ratio
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Population',
@@ -100,7 +100,7 @@ WHERE   EXISTS (
         );
 
 -- avg pop access ratio
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Population',
@@ -124,7 +124,7 @@ WHERE   EXISTS (
 -- employment
 -------------------------------------
 -- median jobs access low stress
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Employment',
@@ -144,7 +144,7 @@ WHERE   EXISTS (
         );
 
 -- median jobs access high stress
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Employment',
@@ -164,7 +164,7 @@ WHERE   EXISTS (
         );
 
 -- median jobs access ratio
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Employment',
@@ -185,7 +185,7 @@ WHERE   EXISTS (
         );
 
 -- 70th percentile jobs access ratio
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Employment',
@@ -206,7 +206,7 @@ WHERE   EXISTS (
         );
 
 -- avg jobs access ratio
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Employment',
@@ -230,7 +230,7 @@ WHERE   EXISTS (
 -- schools
 -------------------------------------
 -- median schools access low stress
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Schools',
@@ -249,7 +249,7 @@ WHERE   EXISTS (
         );
 
 -- median schools access high stress
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Schools',
@@ -268,7 +268,7 @@ WHERE   EXISTS (
         );
 
 -- school low stress pop shed access
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Schools',
@@ -287,7 +287,7 @@ WHERE   EXISTS (
         );
 
 -- school high stress pop shed access
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Schools',
@@ -306,7 +306,7 @@ WHERE   EXISTS (
         );
 
 -- school pop shed access ratio
-INSERT INTO generated.neighborhood_overall_scores (
+INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Schools',
