@@ -197,6 +197,7 @@ class AnalysisJob(PFBModel):
                                                 'e.g. http://a.com/foo.osm or ' +
                                                 'http://a.com/foo.osm.bz2')
     overall_scores = JSONField(db_index=True, default=dict)
+    census_block_count = models.PositiveIntegerField(blank=True, null=True)
 
     @property
     def status(self):
