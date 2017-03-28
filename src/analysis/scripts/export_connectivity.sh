@@ -130,7 +130,10 @@ then
         DESTINATION_TABLES='
           neighborhood_colleges
           neighborhood_community_centers
-          neighborhood_medical
+          neighborhood_doctors
+          neighborhood_dentists
+          neighborhood_hospitals
+          neighborhood_pharmacies
           neighborhood_parks
           neighborhood_retail
           neighborhood_schools

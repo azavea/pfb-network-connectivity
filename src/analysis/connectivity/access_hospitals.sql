@@ -4,25 +4,25 @@
 ----------------------------------------
 -- set block-based raw numbers
 UPDATE  neighborhood_census_blocks
-SET     medical_low_stress = (
+SET     hospitals_low_stress = (
             SELECT  COUNT(id)
-            FROM    neighborhood_medical
+            FROM    neighborhood_hospitals
             WHERE   EXISTS (
                         SELECT  1
                         FROM    neighborhood_connected_census_blocks
                         WHERE   neighborhood_connected_census_blocks.source_blockid10 = neighborhood_census_blocks.blockid10
-                        AND     neighborhood_connected_census_blocks.target_blockid10 = ANY(neighborhood_medical.blockid10)
+                        AND     neighborhood_connected_census_blocks.target_blockid10 = ANY(neighborhood_hospitals.blockid10)
                         AND     neighborhood_connected_census_blocks.low_stress
                     )
         ),
-        medical_high_stress = (
+        hospitals_high_stress = (
             SELECT  COUNT(id)
-            FROM    neighborhood_medical
+            FROM    neighborhood_hospitals
             WHERE   EXISTS (
                         SELECT  1
                         FROM    neighborhood_connected_census_blocks
                         WHERE   neighborhood_connected_census_blocks.source_blockid10 = neighborhood_census_blocks.blockid10
-                        AND     neighborhood_connected_census_blocks.target_blockid10 = ANY(neighborhood_medical.blockid10)
+                        AND     neighborhood_connected_census_blocks.target_blockid10 = ANY(neighborhood_hospitals.blockid10)
                     )
         )
 WHERE   EXISTS (
@@ -33,35 +33,35 @@ WHERE   EXISTS (
 
 -- set block-based ratio
 UPDATE  neighborhood_census_blocks
-SET     medical_ratio = CASE  WHEN medical_high_stress IS NULL THEN NULL
-                            WHEN medical_high_stress = 0 THEN 0
-                            ELSE medical_low_stress::FLOAT / medical_high_stress
+SET     hospitals_ratio = CASE  WHEN hospitals_high_stress IS NULL THEN NULL
+                            WHEN hospitals_high_stress = 0 THEN 0
+                            ELSE hospitals_low_stress::FLOAT / hospitals_high_stress
                             END;
 
--- set population shed for each medical destination in the neighborhood
-UPDATE  neighborhood_medical
+-- set population shed for each hospitals destination in the neighborhood
+UPDATE  neighborhood_hospitals
 SET     pop_high_stress = (
             SELECT  SUM(cb.pop10)
             FROM    neighborhood_census_blocks cb,
                     neighborhood_connected_census_blocks cbs
             WHERE   cbs.source_blockid10 = cb.blockid10
-            AND     cbs.target_blockid10 = ANY(neighborhood_medical.blockid10)
+            AND     cbs.target_blockid10 = ANY(neighborhood_hospitals.blockid10)
         ),
         pop_low_stress = (
             SELECT  SUM(cb.pop10)
             FROM    neighborhood_census_blocks cb,
                     neighborhood_connected_census_blocks cbs
             WHERE   cbs.source_blockid10 = cb.blockid10
-            AND     cbs.target_blockid10 = ANY(neighborhood_medical.blockid10)
+            AND     cbs.target_blockid10 = ANY(neighborhood_hospitals.blockid10)
             AND     cbs.low_stress
         )
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary as b
-            WHERE   ST_Intersects(neighborhood_medical.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
         );
 
-UPDATE  neighborhood_medical
+UPDATE  neighborhood_hospitals
 SET     pop_ratio = CASE    WHEN pop_high_stress IS NULL THEN NULL
                             WHEN pop_high_stress = 0 THEN 0
                             ELSE pop_low_stress::FLOAT / pop_high_stress
