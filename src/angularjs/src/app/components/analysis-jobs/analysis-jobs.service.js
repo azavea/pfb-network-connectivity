@@ -15,6 +15,16 @@
             'query': {
                 method: 'GET',
                 isArray: false
+            },
+            'results': {
+                method: 'GET',
+                isArray: false,
+                url: '/api/analysis_jobs/:uuid/results/'
+            },
+            'cancel': {
+                method: 'POST',
+                isArray: false,
+                url: '/api/analysis_jobs/:uuid/cancel/'
             }
         });
     }
