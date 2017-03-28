@@ -43,10 +43,10 @@ SELECT  'People',
         regexp_replace('Ratio of population accessible by low stress
             to population accessible overall, expressed as
             the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            half have a lower ratio.','\n\s+',' '),
+            half have a lower ratio.','\n\s+',' ','g'),
         True
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
@@ -65,10 +65,10 @@ SELECT  'People',
         regexp_replace('Ratio of population accessible by low stress
             to population accessible overall, expressed as
             the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            70% have a lower ratio.','\n\s+',' ')
+            70% have a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -86,10 +86,10 @@ SELECT  'People',
         regexp_replace('Ratio of population accessible by low stress
             to population accessible overall, expressed as
             the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            30% have a lower ratio.','\n\s+',' ')
+            30% have a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -109,9 +109,9 @@ SELECT  'People',
         regexp_replace('Ratio of population accessible by low stress
             to population accessible overall, expressed as
             the average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            this ratio of low stress to high stress access.','\n\s+',' ')
+            this ratio of low stress to high stress access.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -133,10 +133,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of employment accessible by low stress
             to employment accessible overall, expressed as
             the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            half have a lower ratio.','\n\s+',' '),
+            half have a lower ratio.','\n\s+',' ','g'),
         True
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
@@ -155,10 +155,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of employment accessible by low stress
             to employment accessible overall, expressed as
             the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            70% have a lower ratio.','\n\s+',' ')
+            70% have a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -176,10 +176,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of employment accessible by low stress
             to employment accessible overall, expressed as
             the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            30% have a lower ratio.','\n\s+',' ')
+            30% have a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -199,9 +199,9 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of employment accessible by low stress
             to employment accessible overall, expressed as
             the average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            this ratio of low stress to high stress access.','\n\s+',' ')
+            this ratio of low stress to high stress access.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -224,9 +224,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of schools accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many schools.','\n\s+',' ')
+            low stress access to this many schools.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -244,10 +244,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of schools within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -265,10 +265,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of schools within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -286,10 +286,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of schools within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -309,10 +309,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of schools in the neighborhood expressed as an average of
-            all schools in the neighborhood','\n\s+',' '),
+            all schools in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, schools in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
@@ -330,10 +330,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as a median of all
-            schools in the neighborhood','\n\s+',' '),
+            schools in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of schools in the neighborhood have low stress
             connections to a higher percentage of people within biking
-            distance, half are connected to a lower percentage.','\n\s+',' ')
+            distance, half are connected to a lower percentage.','\n\s+',' ','g')
 FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
@@ -351,10 +351,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as the 70th percentile of all
-            schools in the neighborhood','\n\s+',' '),
+            schools in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of schools in the neighborhood have low stress
             connections to a higher percentage of people within biking
-            distance, 70% are connected to a lower percentage.','\n\s+',' ')
+            distance, 70% are connected to a lower percentage.','\n\s+',' ','g')
 FROM    neighborhood_schools
 WHERE   EXISTS (
             SELECT  1
@@ -372,10 +372,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as the 30th percentile of all
-            schools in the neighborhood','\n\s+',' '),
+            schools in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of schools in the neighborhood have low stress
             connections to a higher percentage of people within biking
-            distance, 30% are connected to a lower percentage.','\n\s+',' '),
+            distance, 30% are connected to a lower percentage.','\n\s+',' ','g'),
         True
 FROM    neighborhood_schools
 WHERE   EXISTS (
@@ -399,9 +399,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of tech/vocational colleges accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many tech/vocational colleges.','\n\s+',' ')
+            low stress access to this many tech/vocational colleges.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -419,10 +419,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of tech/vocational colleges within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -440,10 +440,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of tech/vocational colleges within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -461,10 +461,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of tech/vocational colleges within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -484,10 +484,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of tech/vocational colleges in the neighborhood expressed as an average of
-            all colleges in the neighborhood','\n\s+',' '),
+            all colleges in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, colleges in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_colleges
 WHERE   EXISTS (
             SELECT  1
@@ -505,12 +505,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as a median of all
-            colleges in the neighborhood','\n\s+',' '),
+            colleges in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of tech/vocational colleges in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one tech/vocational college exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_colleges
 WHERE   EXISTS (
@@ -529,12 +529,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as the 70th percentile of all
-            colleges in the neighborhood','\n\s+',' '),
+            colleges in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of tech/vocational colleges in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one tech/vocational college exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_colleges
 WHERE   EXISTS (
             SELECT  1
@@ -552,12 +552,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as the 30th percentile of all
-            colleges in the neighborhood','\n\s+',' '),
+            colleges in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of tech/vocational colleges in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one tech/vocational college exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_colleges
 WHERE   EXISTS (
             SELECT  1
@@ -580,9 +580,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of universities accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many universities.','\n\s+',' ')
+            low stress access to this many universities.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -600,10 +600,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of universities within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -621,10 +621,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of universities within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -642,10 +642,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of universities within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -665,10 +665,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of universities in the neighborhood expressed as an average of
-            all universities in the neighborhood','\n\s+',' '),
+            all universities in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, universities in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_universities
 WHERE   EXISTS (
             SELECT  1
@@ -686,12 +686,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as a median of all
-            universities in the neighborhood','\n\s+',' '),
+            universities in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of universities in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one university exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_universities
 WHERE   EXISTS (
@@ -710,12 +710,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as the 70th percentile of all
-            universities in the neighborhood','\n\s+',' '),
+            universities in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of universities in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one university exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_universities
 WHERE   EXISTS (
             SELECT  1
@@ -733,12 +733,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as the 30th percentile of all
-            universities in the neighborhood','\n\s+',' '),
+            universities in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of universities in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one university exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_universities
 WHERE   EXISTS (
             SELECT  1
@@ -761,9 +761,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of doctors accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many doctors.','\n\s+',' ')
+            low stress access to this many doctors.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -781,10 +781,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of doctors within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -802,10 +802,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of doctors within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -823,10 +823,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of doctors within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -846,10 +846,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of doctors in the neighborhood expressed as an average of
-            all doctors in the neighborhood','\n\s+',' '),
+            all doctors in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, doctors in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_doctors
 WHERE   EXISTS (
             SELECT  1
@@ -867,12 +867,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as a median of all
-            doctors in the neighborhood','\n\s+',' '),
+            doctors in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of doctors in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one doctors office exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_doctors
 WHERE   EXISTS (
@@ -891,12 +891,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as the 70th percentile of all
-            doctors in the neighborhood','\n\s+',' '),
+            doctors in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of doctors in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one doctors exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_doctors
 WHERE   EXISTS (
             SELECT  1
@@ -914,12 +914,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as the 30th percentile of all
-            doctors in the neighborhood','\n\s+',' '),
+            doctors in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of doctors in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one doctors exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_doctors
 WHERE   EXISTS (
             SELECT  1
@@ -941,9 +941,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of dentists accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many dentists.','\n\s+',' ')
+            low stress access to this many dentists.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -961,10 +961,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of dentists within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -982,10 +982,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of dentists within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1003,10 +1003,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of dentists within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1026,10 +1026,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of dentists in the neighborhood expressed as an average of
-            all dentists in the neighborhood','\n\s+',' '),
+            all dentists in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, dentists in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_dentists
 WHERE   EXISTS (
             SELECT  1
@@ -1047,12 +1047,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as a median of all
-            dentists in the neighborhood','\n\s+',' '),
+            dentists in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of dentists in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one dentists office exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_dentists
 WHERE   EXISTS (
@@ -1071,12 +1071,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as the 70th percentile of all
-            dentists in the neighborhood','\n\s+',' '),
+            dentists in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of dentists in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one dentists office exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_dentists
 WHERE   EXISTS (
             SELECT  1
@@ -1094,12 +1094,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as the 30th percentile of all
-            dentists in the neighborhood','\n\s+',' '),
+            dentists in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of dentists in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one dentists office exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_dentists
 WHERE   EXISTS (
             SELECT  1
@@ -1121,9 +1121,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of hospitals accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many hospitals.','\n\s+',' ')
+            low stress access to this many hospitals.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1141,10 +1141,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of hospitals within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1162,10 +1162,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of hospitals within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1183,10 +1183,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of hospitals within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1206,10 +1206,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of hospitals in the neighborhood expressed as an average of
-            all hospitals in the neighborhood','\n\s+',' '),
+            all hospitals in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, hospitals in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_hospitals
 WHERE   EXISTS (
             SELECT  1
@@ -1227,12 +1227,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as a median of all
-            hospitals in the neighborhood','\n\s+',' '),
+            hospitals in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of hospitals in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one hospital exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_hospitals
 WHERE   EXISTS (
@@ -1251,12 +1251,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as the 70th percentile of all
-            hospitals in the neighborhood','\n\s+',' '),
+            hospitals in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of hospitals in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one hospital exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_hospitals
 WHERE   EXISTS (
             SELECT  1
@@ -1274,12 +1274,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as the 30th percentile of all
-            hospitals in the neighborhood','\n\s+',' '),
+            hospitals in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of hospitals in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one hospital exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_hospitals
 WHERE   EXISTS (
             SELECT  1
@@ -1301,9 +1301,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of pharmacies accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many pharmacies.','\n\s+',' ')
+            low stress access to this many pharmacies.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1321,10 +1321,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of pharmacies within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1342,10 +1342,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of pharmacies within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1363,10 +1363,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of pharmacies within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1386,10 +1386,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of pharmacies in the neighborhood expressed as an average of
-            all pharmacies in the neighborhood','\n\s+',' '),
+            all pharmacies in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, pharmacies in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_pharmacies
 WHERE   EXISTS (
             SELECT  1
@@ -1407,12 +1407,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as a median of all
-            pharmacies in the neighborhood','\n\s+',' '),
+            pharmacies in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of pharmacies in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one pharmacy exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_pharmacies
 WHERE   EXISTS (
@@ -1431,12 +1431,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as the 70th percentile of all
-            pharmacies in the neighborhood','\n\s+',' '),
+            pharmacies in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of pharmacies in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one pharmacy exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_pharmacies
 WHERE   EXISTS (
             SELECT  1
@@ -1454,12 +1454,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as the 30th percentile of all
-            pharmacies in the neighborhood','\n\s+',' '),
+            pharmacies in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of pharmacies in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one pharmacy exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_pharmacies
 WHERE   EXISTS (
             SELECT  1
@@ -1481,9 +1481,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of retail accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many retail.','\n\s+',' ')
+            low stress access to this many retail.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1501,10 +1501,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of retail within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1522,10 +1522,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of retail within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1543,10 +1543,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of retail within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1566,10 +1566,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of retail clusters in the neighborhood expressed as an average of
-            all retail clusters in the neighborhood','\n\s+',' '),
+            all retail clusters in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, retail clusters in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_retail
 WHERE   EXISTS (
             SELECT  1
@@ -1587,12 +1587,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as a median of all
-            retail clusters in the neighborhood','\n\s+',' '),
+            retail clusters in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of retail clusters in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one retail exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_retail
 WHERE   EXISTS (
@@ -1611,12 +1611,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as the 70th percentile of all
-            retail clusters in the neighborhood','\n\s+',' '),
+            retail clusters in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of retail clusters in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one retail exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_retail
 WHERE   EXISTS (
             SELECT  1
@@ -1634,12 +1634,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as the 30th percentile of all
-            retail clusters in the neighborhood','\n\s+',' '),
+            retail clusters in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of retail clusters in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one retail exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_retail
 WHERE   EXISTS (
             SELECT  1
@@ -1661,9 +1661,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of supermarkets accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many supermarkets.','\n\s+',' ')
+            low stress access to this many supermarkets.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1681,10 +1681,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of supermarkets within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1702,10 +1702,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of supermarkets within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1723,10 +1723,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of supermarkets within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1746,10 +1746,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of supermarkets in the neighborhood expressed as an average of
-            all supermarkets in the neighborhood','\n\s+',' '),
+            all supermarkets in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, supermarkets in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_supermarkets
 WHERE   EXISTS (
             SELECT  1
@@ -1767,12 +1767,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as a median of all
-            supermarkets in the neighborhood','\n\s+',' '),
+            supermarkets in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of supermarkets in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one supermarkets exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_supermarkets
 WHERE   EXISTS (
@@ -1791,12 +1791,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as the 70th percentile of all
-            supermarkets in the neighborhood','\n\s+',' '),
+            supermarkets in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of supermarkets in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one supermarkets exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_supermarkets
 WHERE   EXISTS (
             SELECT  1
@@ -1814,12 +1814,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as the 30th percentile of all
-            supermarkets in the neighborhood','\n\s+',' '),
+            supermarkets in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of supermarkets in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one supermarkets exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_supermarkets
 WHERE   EXISTS (
             SELECT  1
@@ -1841,9 +1841,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of social services accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many social services.','\n\s+',' ')
+            low stress access to this many social services.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1861,10 +1861,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of social services within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1882,10 +1882,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of social services within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1903,10 +1903,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of social services within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1926,10 +1926,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of social services in the neighborhood expressed as an average of
-            all social services in the neighborhood','\n\s+',' '),
+            all social services in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, social_services in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_social_services
 WHERE   EXISTS (
             SELECT  1
@@ -1947,12 +1947,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as a median of all
-            social services in the neighborhood','\n\s+',' '),
+            social services in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of social services in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_social_services
 WHERE   EXISTS (
@@ -1971,12 +1971,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as the 70th percentile of all
-            social services in the neighborhood','\n\s+',' '),
+            social services in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of social services in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_social_services
 WHERE   EXISTS (
             SELECT  1
@@ -1994,12 +1994,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as the 30th percentile of all
-            social services in the neighborhood','\n\s+',' '),
+            social services in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of social services in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_social_services
 WHERE   EXISTS (
             SELECT  1
@@ -2021,9 +2021,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of parks accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many parks.','\n\s+',' ')
+            low stress access to this many parks.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2041,10 +2041,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of parks within
-            biking distance, half have access to a lower ratio.','\n\s+',' '),
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g'),
         True
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
@@ -2063,10 +2063,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of parks within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2084,10 +2084,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of parks within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2107,10 +2107,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of parks in the neighborhood expressed as an average of
-            all parks in the neighborhood','\n\s+',' '),
+            all parks in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, parks in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_parks
 WHERE   EXISTS (
             SELECT  1
@@ -2128,12 +2128,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as a median of all
-            parks in the neighborhood','\n\s+',' '),
+            parks in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of parks in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one parks exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_parks
 WHERE   EXISTS (
             SELECT  1
@@ -2151,12 +2151,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as the 70th percentile of all
-            parks in the neighborhood','\n\s+',' '),
+            parks in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of parks in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one parks exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_parks
 WHERE   EXISTS (
             SELECT  1
@@ -2174,12 +2174,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as the 30th percentile of all
-            parks in the neighborhood','\n\s+',' '),
+            parks in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of parks in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one parks exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_parks
 WHERE   EXISTS (
             SELECT  1
@@ -2201,9 +2201,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of trails accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many trails.','\n\s+',' ')
+            low stress access to this many trails.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2221,10 +2221,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of trails within
-            biking distance, half have access to a lower ratio.','\n\s+',' '),
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g'),
         True
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
@@ -2243,10 +2243,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of trails within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2264,10 +2264,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of trails within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2289,9 +2289,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of community centers accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many community centers.','\n\s+',' ')
+            low stress access to this many community centers.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2309,10 +2309,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of community centers within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2330,10 +2330,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of community centers within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2351,10 +2351,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of community centers within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2374,10 +2374,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of community centers in the neighborhood expressed as an average of
-            all community centers in the neighborhood','\n\s+',' '),
+            all community centers in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, community centers in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_community_centers
 WHERE   EXISTS (
             SELECT  1
@@ -2395,12 +2395,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as a median of all
-            community centers in the neighborhood','\n\s+',' '),
+            community centers in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of community centers in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one community centers exists this is the score for that one
-            location)','\n\s+',' '),
+            location)','\n\s+',' ','g'),
         True
 FROM    neighborhood_community_centers
 WHERE   EXISTS (
@@ -2419,12 +2419,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as the 70th percentile of all
-            community centers in the neighborhood','\n\s+',' '),
+            community centers in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of community centers in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one community centers exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_community_centers
 WHERE   EXISTS (
             SELECT  1
@@ -2442,12 +2442,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as the 30th percentile of all
-            community centers in the neighborhood','\n\s+',' '),
+            community centers in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of community centers in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one community centers exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_community_centers
 WHERE   EXISTS (
             SELECT  1
@@ -2469,9 +2469,9 @@ SELECT  'Opportunity',
                 END,
         regexp_replace('Number of transit stations accessible by low stress
             expressed as an average of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many transit stations.','\n\s+',' ')
+            low stress access to this many transit stations.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2489,10 +2489,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the median of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of transit stations within
-            biking distance, half have access to a lower ratio.','\n\s+',' '),
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g'),
         True
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
@@ -2511,10 +2511,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the 70th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of transit stations within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2532,10 +2532,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the 30th percentile of all census blocks in the
-            neighborhood','\n\s+',' '),
+            neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of transit stations within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ')
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2555,10 +2555,10 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access
             compared to total population within the bike shed distance
             of transit stations in the neighborhood expressed as an average of
-            all transit stations in the neighborhood','\n\s+',' '),
+            all transit stations in the neighborhood','\n\s+',' ','g'),
         regexp_replace('On average, transit stations in the neighborhood are
             connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
+            within biking distance.','\n\s+',' ','g')
 FROM    neighborhood_transit
 WHERE   EXISTS (
             SELECT  1
@@ -2576,12 +2576,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as a median of all
-            transit stations in the neighborhood','\n\s+',' '),
+            transit stations in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of transit stations in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one transit station exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_transit
 WHERE   EXISTS (
             SELECT  1
@@ -2599,12 +2599,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as the 70th percentile of all
-            transit stations in the neighborhood','\n\s+',' '),
+            transit stations in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of transit stations in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one transit station exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_transit
 WHERE   EXISTS (
             SELECT  1
@@ -2622,12 +2622,12 @@ SELECT  'Opportunity',
         regexp_replace('Ratio of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as the 30th percentile of all
-            transit stations in the neighborhood','\n\s+',' '),
+            transit stations in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of transit stations in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one transit station exists this is the score for that one
-            location)','\n\s+',' ')
+            location)','\n\s+',' ','g')
 FROM    neighborhood_transit
 WHERE   EXISTS (
             SELECT  1
