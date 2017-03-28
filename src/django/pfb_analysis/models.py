@@ -236,6 +236,19 @@ class AnalysisJob(PFBModel):
         return '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
 
     @property
+    def census_blocks_url(self):
+        return self._s3_url_for_result_resource('neighborhood_census_blocks.zip')
+
+    @property
+    def destinations_urls(self):
+        """ Return a dict of the available destinations files for this job """
+        return {
+            destination: self._s3_url_for_result_resource('neighborhood_{}.geojson'
+                                                          .format(destination))
+            for destination in settings.PFB_ANALYSIS_DESTINATIONS
+        }
+
+    @property
     def logs_url(self):
         url = ('https://console.aws.amazon.com/cloudwatch/home?region={aws_region}' +
                '#logStream:group=/aws/batch/job;prefix={batch_job_name}/{batch_job_id}' +
@@ -261,6 +274,10 @@ class AnalysisJob(PFBModel):
         """ Return start time of the job as a datetime object """
         first_update = self.status_updates.first()
         return first_update.timestamp if first_update else None
+
+    @property
+    def ways_url(self):
+        return self._s3_url_for_result_resource('neighborhood_ways.zip')
 
     def cancel(self, reason=None):
         """ Cancel the analysis job, if its running """
@@ -345,6 +362,18 @@ class AnalysisJob(PFBModel):
     def update_status(self, status, step='', message=''):
         if self.status != self.Status.CANCELLED:
             self.status_updates.create(job=self, status=status, step=step, message=message)
+
+    def _s3_url_for_result_resource(self, filename):
+        key = 'results/{jobId}/{filename}'.format(jobId=str(self.uuid), filename=filename)
+        s3 = boto3.client('s3')
+        return s3.generate_presigned_url(
+            ClientMethod='get_object',
+            ExpiresIn=settings.PFB_ANALYSIS_PRESIGNED_URL_EXPIRES,
+            Params={
+                'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+                'Key': key
+            }
+        )
 
 
 class AnalysisJobStatusUpdate(models.Model):
