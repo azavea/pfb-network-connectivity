@@ -307,7 +307,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of schools in the neighborhood expressed as an average of
             all schools in the neighborhood','\n\s+',' '),
         regexp_replace('On average, schools in the neighborhood are
@@ -482,7 +482,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of tech/vocational colleges in the neighborhood expressed as an average of
             all colleges in the neighborhood','\n\s+',' '),
         regexp_replace('On average, colleges in the neighborhood are
@@ -663,7 +663,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of universities in the neighborhood expressed as an average of
             all universities in the neighborhood','\n\s+',' '),
         regexp_replace('On average, universities in the neighborhood are
@@ -844,7 +844,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of doctors in the neighborhood expressed as an average of
             all doctors in the neighborhood','\n\s+',' '),
         regexp_replace('On average, doctors in the neighborhood are
@@ -859,19 +859,19 @@ WHERE   EXISTS (
 
 -- doctors pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation, use_doctor
 )
 SELECT  'Opportunity',
         'Median doctors population shed ratio',
         quantile(pop_ratio,0.5),
         regexp_replace('Ratio of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
-            of each doctors expressed as a median of all
+            of each doctors office expressed as a median of all
             doctors in the neighborhood','\n\s+',' '),
         regexp_replace('Half of doctors in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
-            (if only one doctors exists this is the score for that one
+            (if only one doctors office exists this is the score for that one
             location)','\n\s+',' '),
         True
 FROM    neighborhood_doctors
@@ -890,7 +890,7 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.7),
         regexp_replace('Ratio of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
-            of each doctors expressed as the 70th percentile of all
+            of each doctors office expressed as the 70th percentile of all
             doctors in the neighborhood','\n\s+',' '),
         regexp_replace('30% of doctors in the neighborhood have low stress
             connections to a higher percentage of people within biking
@@ -913,7 +913,7 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.3),
         regexp_replace('Ratio of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
-            of each doctors expressed as the 30th percentile of all
+            of each doctors office expressed as the 30th percentile of all
             doctors in the neighborhood','\n\s+',' '),
         regexp_replace('70% of doctors in the neighborhood have low stress
             connections to a higher percentage of people within biking
@@ -1024,7 +1024,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of dentists in the neighborhood expressed as an average of
             all dentists in the neighborhood','\n\s+',' '),
         regexp_replace('On average, dentists in the neighborhood are
@@ -1039,19 +1039,19 @@ WHERE   EXISTS (
 
 -- dentists pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation, use_dentist
 )
 SELECT  'Opportunity',
         'Median dentists population shed ratio',
         quantile(pop_ratio,0.5),
         regexp_replace('Ratio of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
-            of each dentists expressed as a median of all
+            of each dentists office expressed as a median of all
             dentists in the neighborhood','\n\s+',' '),
         regexp_replace('Half of dentists in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
-            (if only one dentists exists this is the score for that one
+            (if only one dentists office exists this is the score for that one
             location)','\n\s+',' '),
         True
 FROM    neighborhood_dentists
@@ -1070,12 +1070,12 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.7),
         regexp_replace('Ratio of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
-            of each dentists expressed as the 70th percentile of all
+            of each dentists office expressed as the 70th percentile of all
             dentists in the neighborhood','\n\s+',' '),
         regexp_replace('30% of dentists in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
-            (if only one dentists exists this is the score for that one
+            (if only one dentists office exists this is the score for that one
             location)','\n\s+',' ')
 FROM    neighborhood_dentists
 WHERE   EXISTS (
@@ -1093,12 +1093,12 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.3),
         regexp_replace('Ratio of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
-            of each dentists expressed as the 30th percentile of all
+            of each dentists office expressed as the 30th percentile of all
             dentists in the neighborhood','\n\s+',' '),
         regexp_replace('70% of dentists in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
-            (if only one dentists exists this is the score for that one
+            (if only one dentists office exists this is the score for that one
             location)','\n\s+',' ')
 FROM    neighborhood_dentists
 WHERE   EXISTS (
@@ -1204,7 +1204,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of hospitals in the neighborhood expressed as an average of
             all hospitals in the neighborhood','\n\s+',' '),
         regexp_replace('On average, hospitals in the neighborhood are
@@ -1219,19 +1219,19 @@ WHERE   EXISTS (
 
 -- hospitals pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation, use_hospital
 )
 SELECT  'Opportunity',
         'Median hospitals population shed ratio',
         quantile(pop_ratio,0.5),
         regexp_replace('Ratio of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
-            of each hospitals expressed as a median of all
+            of each hospital expressed as a median of all
             hospitals in the neighborhood','\n\s+',' '),
         regexp_replace('Half of hospitals in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
-            (if only one hospitals exists this is the score for that one
+            (if only one hospital exists this is the score for that one
             location)','\n\s+',' '),
         True
 FROM    neighborhood_hospitals
@@ -1250,12 +1250,12 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.7),
         regexp_replace('Ratio of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
-            of each hospitals expressed as the 70th percentile of all
+            of each hospital expressed as the 70th percentile of all
             hospitals in the neighborhood','\n\s+',' '),
         regexp_replace('30% of hospitals in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
-            (if only one hospitals exists this is the score for that one
+            (if only one hospital exists this is the score for that one
             location)','\n\s+',' ')
 FROM    neighborhood_hospitals
 WHERE   EXISTS (
@@ -1273,12 +1273,12 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.3),
         regexp_replace('Ratio of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
-            of each hospitals expressed as the 30th percentile of all
+            of each hospital expressed as the 30th percentile of all
             hospitals in the neighborhood','\n\s+',' '),
         regexp_replace('70% of hospitals in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
-            (if only one hospitals exists this is the score for that one
+            (if only one hospital exists this is the score for that one
             location)','\n\s+',' ')
 FROM    neighborhood_hospitals
 WHERE   EXISTS (
@@ -1384,7 +1384,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of pharmacies in the neighborhood expressed as an average of
             all pharmacies in the neighborhood','\n\s+',' '),
         regexp_replace('On average, pharmacies in the neighborhood are
@@ -1399,19 +1399,19 @@ WHERE   EXISTS (
 
 -- pharmacies pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation, use_pharmacy
 )
 SELECT  'Opportunity',
         'Median pharmacies population shed ratio',
         quantile(pop_ratio,0.5),
         regexp_replace('Ratio of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
-            of each pharmacies expressed as a median of all
+            of each pharmacy expressed as a median of all
             pharmacies in the neighborhood','\n\s+',' '),
         regexp_replace('Half of pharmacies in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
-            (if only one pharmacies exists this is the score for that one
+            (if only one pharmacy exists this is the score for that one
             location)','\n\s+',' '),
         True
 FROM    neighborhood_pharmacies
@@ -1430,12 +1430,12 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.7),
         regexp_replace('Ratio of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
-            of each pharmacies expressed as the 70th percentile of all
+            of each pharmacy expressed as the 70th percentile of all
             pharmacies in the neighborhood','\n\s+',' '),
         regexp_replace('30% of pharmacies in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
-            (if only one pharmacies exists this is the score for that one
+            (if only one pharmacy exists this is the score for that one
             location)','\n\s+',' ')
 FROM    neighborhood_pharmacies
 WHERE   EXISTS (
@@ -1453,12 +1453,12 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.3),
         regexp_replace('Ratio of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
-            of each pharmacies expressed as the 30th percentile of all
+            of each pharmacy expressed as the 30th percentile of all
             pharmacies in the neighborhood','\n\s+',' '),
         regexp_replace('70% of pharmacies in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
-            (if only one pharmacies exists this is the score for that one
+            (if only one pharmacy exists this is the score for that one
             location)','\n\s+',' ')
 FROM    neighborhood_pharmacies
 WHERE   EXISTS (
@@ -1564,10 +1564,10 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
-            of retail in the neighborhood expressed as an average of
-            all retail in the neighborhood','\n\s+',' '),
-        regexp_replace('On average, retail in the neighborhood are
+            compared to total population within the bike shed distance
+            of retail clusters in the neighborhood expressed as an average of
+            all retail clusters in the neighborhood','\n\s+',' '),
+        regexp_replace('On average, retail clusters in the neighborhood are
             connected by the low stress access to this percentage people
             within biking distance.','\n\s+',' ')
 FROM    neighborhood_retail
@@ -1579,16 +1579,16 @@ WHERE   EXISTS (
 
 -- retail pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation, use_retail
 )
 SELECT  'Opportunity',
         'Median retail population shed ratio',
         quantile(pop_ratio,0.5),
         regexp_replace('Ratio of population with low stress access to retail
             in the neighborhood to total population within the bike shed
-            of each retail expressed as a median of all
-            retail in the neighborhood','\n\s+',' '),
-        regexp_replace('Half of retail in the neighborhood have low stress
+            of each retail cluster expressed as a median of all
+            retail clusters in the neighborhood','\n\s+',' '),
+        regexp_replace('Half of retail clusters in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one retail exists this is the score for that one
@@ -1610,9 +1610,9 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.7),
         regexp_replace('Ratio of population with low stress access to retail
             in the neighborhood to total population within the bike shed
-            of each retail expressed as the 70th percentile of all
-            retail in the neighborhood','\n\s+',' '),
-        regexp_replace('30% of retail in the neighborhood have low stress
+            of each retail cluster expressed as the 70th percentile of all
+            retail clusters in the neighborhood','\n\s+',' '),
+        regexp_replace('30% of retail clusters in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one retail exists this is the score for that one
@@ -1633,9 +1633,9 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.3),
         regexp_replace('Ratio of population with low stress access to retail
             in the neighborhood to total population within the bike shed
-            of each retail expressed as the 30th percentile of all
-            retail in the neighborhood','\n\s+',' '),
-        regexp_replace('70% of retail in the neighborhood have low stress
+            of each retail cluster expressed as the 30th percentile of all
+            retail clusters in the neighborhood','\n\s+',' '),
+        regexp_replace('70% of retail clusters in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one retail exists this is the score for that one
@@ -1744,7 +1744,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of supermarkets in the neighborhood expressed as an average of
             all supermarkets in the neighborhood','\n\s+',' '),
         regexp_replace('On average, supermarkets in the neighborhood are
@@ -1759,14 +1759,14 @@ WHERE   EXISTS (
 
 -- supermarkets pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation, use_grocery
 )
 SELECT  'Opportunity',
         'Median supermarkets population shed ratio',
         quantile(pop_ratio,0.5),
         regexp_replace('Ratio of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
-            of each supermarkets expressed as a median of all
+            of each supermarket expressed as a median of all
             supermarkets in the neighborhood','\n\s+',' '),
         regexp_replace('Half of supermarkets in the neighborhood have low stress
             connections to a higher percentage of people within biking
@@ -1790,7 +1790,7 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.7),
         regexp_replace('Ratio of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
-            of each supermarkets expressed as the 70th percentile of all
+            of each supermarket expressed as the 70th percentile of all
             supermarkets in the neighborhood','\n\s+',' '),
         regexp_replace('30% of supermarkets in the neighborhood have low stress
             connections to a higher percentage of people within biking
@@ -1813,7 +1813,7 @@ SELECT  'Opportunity',
         quantile(pop_ratio,0.3),
         regexp_replace('Ratio of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
-            of each supermarkets expressed as the 30th percentile of all
+            of each supermarket expressed as the 30th percentile of all
             supermarkets in the neighborhood','\n\s+',' '),
         regexp_replace('70% of supermarkets in the neighborhood have low stress
             connections to a higher percentage of people within biking
@@ -1835,15 +1835,15 @@ INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to social_services',
+        'Average ratio of low stress access to social services',
         CASE    WHEN SUM(social_services_high_stress) = 0 THEN 0
                 ELSE SUM(social_services_low_stress) / SUM(social_services_high_stress)
                 END,
-        regexp_replace('Number of social_services accessible by low stress
+        regexp_replace('Number of social services accessible by low stress
             expressed as an average of all census blocks in the
             neighborhood','\n\s+',' '),
         regexp_replace('On average, census blocks in the neighborhood have
-            low stress access to this many social_services.','\n\s+',' ')
+            low stress access to this many social services.','\n\s+',' ')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -1856,14 +1856,14 @@ INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of social_services access',
+        'Median ratio of social services access',
         quantile(social_services_ratio,0.5),
-        regexp_replace('Ratio of social_services accessible by low stress
-            compared to social_services accessible by high stress
+        regexp_replace('Ratio of social services accessible by low stress
+            compared to social services accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' '),
         regexp_replace('Half of census blocks in this neighborhood
-            have low stress access to a higher ratio of social_services within
+            have low stress access to a higher ratio of social services within
             biking distance, half have access to a lower ratio.','\n\s+',' ')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
@@ -1877,14 +1877,14 @@ INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of social_services access',
+        '70th percentile ratio of social services access',
         quantile(social_services_ratio,0.7),
-        regexp_replace('Ratio of social_services accessible by low stress
-            compared to social_services accessible by high stress
+        regexp_replace('Ratio of social services accessible by low stress
+            compared to social services accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' '),
         regexp_replace('30% of census blocks in this neighborhood
-            have low stress access to a higher ratio of social_services within
+            have low stress access to a higher ratio of social services within
             biking distance, 70% have access to a lower ratio.','\n\s+',' ')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
@@ -1898,14 +1898,14 @@ INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of social_services access',
+        '30th percentile ratio of social services access',
         quantile(social_services_ratio,0.3),
-        regexp_replace('Ratio of social_services accessible by low stress
-            compared to social_services accessible by high stress
+        regexp_replace('Ratio of social services accessible by low stress
+            compared to social services accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' '),
         regexp_replace('70% of census blocks in this neighborhood
-            have low stress access to a higher ratio of social_services within
+            have low stress access to a higher ratio of social services within
             biking distance, 30% have access to a lower ratio.','\n\s+',' ')
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
@@ -1924,9 +1924,9 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
-            of social_services in the neighborhood expressed as an average of
-            all social_services in the neighborhood','\n\s+',' '),
+            compared to total population within the bike shed distance
+            of social services in the neighborhood expressed as an average of
+            all social services in the neighborhood','\n\s+',' '),
         regexp_replace('On average, social_services in the neighborhood are
             connected by the low stress access to this percentage people
             within biking distance.','\n\s+',' ')
@@ -1939,16 +1939,16 @@ WHERE   EXISTS (
 
 -- social_services pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation, use_social_svcs
 )
 SELECT  'Opportunity',
         'Median social_services population shed ratio',
         quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to social_services
+        regexp_replace('Ratio of population with low stress access to social services
             in the neighborhood to total population within the bike shed
-            of each social_services expressed as a median of all
-            social_services in the neighborhood','\n\s+',' '),
-        regexp_replace('Half of social_services in the neighborhood have low stress
+            of each social service location expressed as a median of all
+            social services in the neighborhood','\n\s+',' '),
+        regexp_replace('Half of social services in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
@@ -1968,11 +1968,11 @@ INSERT INTO generated.neighborhood_score_inputs (
 SELECT  'Opportunity',
         '70th percentile social_services population shed ratio',
         quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to social_services
+        regexp_replace('Ratio of population with low stress access to social services
             in the neighborhood to total population within the bike shed
-            of each social_services expressed as the 70th percentile of all
-            social_services in the neighborhood','\n\s+',' '),
-        regexp_replace('30% of social_services in the neighborhood have low stress
+            of each social service location expressed as the 70th percentile of all
+            social services in the neighborhood','\n\s+',' '),
+        regexp_replace('30% of social services in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
@@ -1991,11 +1991,11 @@ INSERT INTO generated.neighborhood_score_inputs (
 SELECT  'Opportunity',
         '30th percentile social_services population shed ratio',
         quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to social_services
+        regexp_replace('Ratio of population with low stress access to social services
             in the neighborhood to total population within the bike shed
-            of each social_services expressed as the 30th percentile of all
-            social_services in the neighborhood','\n\s+',' '),
-        regexp_replace('70% of social_services in the neighborhood have low stress
+            of each social service location expressed as the 30th percentile of all
+            social services in the neighborhood','\n\s+',' '),
+        regexp_replace('70% of social services in the neighborhood have low stress
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
@@ -2033,7 +2033,7 @@ WHERE   EXISTS (
 
 -- median parks access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation
+    category, score_name, score, notes, human_explanation, use_parks
 )
 SELECT  'Opportunity',
         'Median ratio of parks access',
@@ -2044,7 +2044,8 @@ SELECT  'Opportunity',
             neighborhood','\n\s+',' '),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of parks within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' '),
+        True
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2104,7 +2105,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of parks in the neighborhood expressed as an average of
             all parks in the neighborhood','\n\s+',' '),
         regexp_replace('On average, parks in the neighborhood are
@@ -2119,7 +2120,7 @@ WHERE   EXISTS (
 
 -- parks pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
         'Median parks population shed ratio',
@@ -2132,8 +2133,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one parks exists this is the score for that one
-            location)','\n\s+',' '),
-        True
+            location)','\n\s+',' ')
 FROM    neighborhood_parks
 WHERE   EXISTS (
             SELECT  1
@@ -2213,7 +2213,7 @@ WHERE   EXISTS (
 
 -- median trails access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation
+    category, score_name, score, notes, human_explanation, use_trails
 )
 SELECT  'Opportunity',
         'Median ratio of trails access',
@@ -2224,7 +2224,8 @@ SELECT  'Opportunity',
             neighborhood','\n\s+',' '),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of trails within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' '),
+        True
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2284,7 +2285,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of trails in the neighborhood expressed as an average of
             all trails in the neighborhood','\n\s+',' '),
         regexp_replace('On average, trails in the neighborhood are
@@ -2299,7 +2300,7 @@ WHERE   EXISTS (
 
 -- trails pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
         'Median trails population shed ratio',
@@ -2312,8 +2313,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one trails exists this is the score for that one
-            location)','\n\s+',' '),
-        True
+            location)','\n\s+',' ')
 FROM    neighborhood_trails
 WHERE   EXISTS (
             SELECT  1
@@ -2464,7 +2464,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of community centers in the neighborhood expressed as an average of
             all community centers in the neighborhood','\n\s+',' '),
         regexp_replace('On average, community centers in the neighborhood are
@@ -2479,7 +2479,7 @@ WHERE   EXISTS (
 
 -- community centers pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation, use_comm_ctrs
 )
 SELECT  'Opportunity',
         'Median community centers population shed ratio',
@@ -2573,7 +2573,7 @@ WHERE   EXISTS (
 
 -- median transit access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation
+    category, score_name, score, notes, human_explanation, use_transit
 )
 SELECT  'Opportunity',
         'Median ratio of transit access',
@@ -2584,7 +2584,8 @@ SELECT  'Opportunity',
             neighborhood','\n\s+',' '),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of transit stations within
-            biking distance, half have access to a lower ratio.','\n\s+',' ')
+            biking distance, half have access to a lower ratio.','\n\s+',' '),
+        True
 FROM    neighborhood_census_blocks
 WHERE   EXISTS (
             SELECT  1
@@ -2644,7 +2645,7 @@ SELECT  'Opportunity',
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
         regexp_replace('Ratio of population with low stress access
-            compared to total population with the bike shed distance
+            compared to total population within the bike shed distance
             of transit stations in the neighborhood expressed as an average of
             all transit stations in the neighborhood','\n\s+',' '),
         regexp_replace('On average, transit stations in the neighborhood are
@@ -2659,7 +2660,7 @@ WHERE   EXISTS (
 
 -- transit pop shed median low stress access ratio
 INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation, use_univ
+    category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
         'Median transit population shed ratio',
@@ -2672,8 +2673,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one transit station exists this is the score for that one
-            location)','\n\s+',' '),
-        True
+            location)','\n\s+',' ')
 FROM    neighborhood_transit
 WHERE   EXISTS (
             SELECT  1
