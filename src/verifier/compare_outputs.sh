@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEFAULT_OUPUT='analysis_neighborhood_score_inputs.csv'
+DEFAULT_OUPUT='analysis_neighborhood_overall_scores.csv'
 
 USAGE="usage: $(basename {$0}) VERIFIED_FILE [FILE_TO_VERIFY]
 
