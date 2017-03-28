@@ -9,9 +9,9 @@
 --   a single master score for the entire
 --   neighborhood.
 ----------------------------------------
-DROP TABLE IF EXISTS generated.neighborhood_final_scores;
+DROP TABLE IF EXISTS generated.neighborhood_overall_scores;
 
-CREATE TABLE IF EXISTS generated.neighborhood_final_scores (
+CREATE TABLE generated.neighborhood_overall_scores (
     id SERIAL PRIMARY KEY,
     total_score INTEGER,                -- overall neighborhood connectivity score
     people INTEGER,                     -- category score for people
@@ -36,7 +36,7 @@ CREATE TABLE IF EXISTS generated.neighborhood_final_scores (
 );
 
 -- calculate sub-category scores
-INSERT INTO generated.neighborhood_final_scores (
+INSERT INTO generated.neighborhood_overall_scores (
     opportunity_employment, opportunity_k12_ed, opportunity_tech_school, opportunity_higher_ed,
     core_svcs_doctor, core_svcs_dentist, core_svcs_hospital, core_svcs_pharmacy,
     core_svcs_retail, core_svcs_grocery, core_svcs_social_svcs,
@@ -58,7 +58,7 @@ SELECT  NULL,       -- to be completed
         NULL;
 
 -- calculate main category scores
-UPDATE  generated.neighborhood_final_scores
+UPDATE  generated.neighborhood_overall_scores
 SET     people = NULL,      -- to be completed
         opportunity = NULL,
         core_services = NULL,
@@ -66,5 +66,5 @@ SET     people = NULL,      -- to be completed
         transit = NULL;
 
 -- calculate overall neighborhood score
-UPDATE  generated.neighborhood_final_scores
+UPDATE  generated.neighborhood_overall_scores
 SET     total_score = NULL; -- to be completed

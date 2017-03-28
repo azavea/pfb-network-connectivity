@@ -1574,7 +1574,7 @@ FROM    neighborhood_retail
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_retail.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
         );
 
 -- retail pop shed median low stress access ratio
@@ -1598,7 +1598,7 @@ FROM    neighborhood_retail
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_retail.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
         );
 
 -- retail pop shed 70th percentile low stress access ratio
@@ -1621,7 +1621,7 @@ FROM    neighborhood_retail
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_retail.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
         );
 
 -- retail pop shed 30th percentile low stress access ratio
@@ -1644,7 +1644,7 @@ FROM    neighborhood_retail
 WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_retail.geom_pt,b.geom)
+            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
         );
 
 -------------------------------------
@@ -2273,98 +2273,6 @@ WHERE   EXISTS (
             SELECT  1
             FROM    neighborhood_boundary AS b
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
-
--- trails pop shed average low stress access ratio
-INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation
-)
-SELECT  'Opportunity',
-        'Average trails bike shed access ratio',
-        CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
-                ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
-                END,
-        regexp_replace('Ratio of population with low stress access
-            compared to total population within the bike shed distance
-            of trails in the neighborhood expressed as an average of
-            all trails in the neighborhood','\n\s+',' '),
-        regexp_replace('On average, trails in the neighborhood are
-            connected by the low stress access to this percentage people
-            within biking distance.','\n\s+',' ')
-FROM    neighborhood_trails
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_trails.geom_pt,b.geom)
-        );
-
--- trails pop shed median low stress access ratio
-INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation
-)
-SELECT  'Opportunity',
-        'Median trails population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to trails
-            in the neighborhood to total population within the bike shed
-            of each trails expressed as a median of all
-            trails in the neighborhood','\n\s+',' '),
-        regexp_replace('Half of trails in the neighborhood have low stress
-            connections to a higher percentage of people within biking
-            distance, half are connected to a lower percentage.
-            (if only one trails exists this is the score for that one
-            location)','\n\s+',' ')
-FROM    neighborhood_trails
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_trails.geom_pt,b.geom)
-        );
-
--- trails pop shed 70th percentile low stress access ratio
-INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation
-)
-SELECT  'Opportunity',
-        '70th percentile trails population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to trails
-            in the neighborhood to total population within the bike shed
-            of each trails expressed as the 70th percentile of all
-            trails in the neighborhood','\n\s+',' '),
-        regexp_replace('30% of trails in the neighborhood have low stress
-            connections to a higher percentage of people within biking
-            distance, 70% are connected to a lower percentage.
-            (if only one trails exists this is the score for that one
-            location)','\n\s+',' ')
-FROM    neighborhood_trails
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_trails.geom_pt,b.geom)
-        );
-
--- trails pop shed 30th percentile low stress access ratio
-INSERT INTO generated.neighborhood_score_inputs (
-    category, score_name, score, notes, human_explanation
-)
-SELECT  'Opportunity',
-        '30th percentile trails population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to trails
-            in the neighborhood to total population within the bike shed
-            of each trails expressed as the 30th percentile of all
-            trails in the neighborhood','\n\s+',' '),
-        regexp_replace('70% of trails in the neighborhood have low stress
-            connections to a higher percentage of people within biking
-            distance, 30% are connected to a lower percentage.
-            (if only one trails exists this is the score for that one
-            location)','\n\s+',' ')
-FROM    neighborhood_trails
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_trails.geom_pt,b.geom)
         );
 
 -------------------------------------
