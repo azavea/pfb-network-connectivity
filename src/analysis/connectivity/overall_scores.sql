@@ -42,29 +42,49 @@ INSERT INTO generated.neighborhood_overall_scores (
     core_svcs_retail, core_svcs_grocery, core_svcs_social_svcs,
     recreation_park, recreation_trail, recreation_comm_ctrs
 )
-SELECT  NULL,       -- to be completed
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL;
+SELECT  100 * (SELECT score FROM neighborhood_score_inputs WHERE use_emp LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_k12 LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_tech LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_univ LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_doctor LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_dentist LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_hospital LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_pharmacy LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_retail LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_grocery LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_social_svcs LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_parks LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_trails LIMIT 1),
+        100 * (SELECT score FROM neighborhood_score_inputs WHERE use_comm_ctrs LIMIT 1);
+
 
 -- calculate main category scores
 UPDATE  generated.neighborhood_overall_scores
-SET     people = NULL,      -- to be completed
-        opportunity = NULL,
-        core_services = NULL,
-        recreation = NULL,
-        transit = NULL;
+SET     people = 100 * (SELECT score FROM neighborhood_score_inputs WHERE use_pop LIMIT 1),
+        opportunity =   40 * COALESCE(opportunity_employment,0) / 100
+                        + 40 * COALESCE(opportunity_k12_ed,0) / 100
+                        + 10 * COALESCE(opportunity_tech_school,0) / 100
+                        + 10 * COALESCE(opportunity_higher_ed,0) / 100,
+        core_services = 20 * COALESCE(core_svcs_doctor,0) / 100
+                        + 10 * COALESCE(core_svcs_dentist,0) / 100
+                        + 20 * COALESCE(core_svcs_hospital,0) / 100
+                        + 10 * COALESCE(core_svcs_pharmacy,0) / 100
+                        + 10 * COALESCE(core_svcs_retail,0) / 100
+                        + 20 * COALESCE(core_svcs_grocery,0) / 100
+                        + 10 * COALESCE(core_svcs_social_svcs,0) / 100,
+        recreation =    70 * COALESCE(recreation_park,0) / 100
+                        + 30 * COALESCE(recreation_trail,0) / 100,
+        transit = 100 * (SELECT score FROM neighborhood_score_inputs WHERE use_transit LIMIT 1);
 
 -- calculate overall neighborhood score
 UPDATE  generated.neighborhood_overall_scores
-SET     total_score = NULL; -- to be completed
+SET     total_score =   (
+                            COALESCE(people,0)
+                            + COALESCE(opportunity,0)
+                            + COALESCE(core_services,0)
+                            + COALESCE(recreation,0)
+                            + COALESCE(transit,0)
+                        )
+                        / CASE  WHEN transit IS NULL THEN 4
+                                ELSE 5
+                                END;
