@@ -69,14 +69,14 @@ then
     else
         pushd ..
 
-        docker-compose build database django angularjs analysis
+        docker-compose build database django angularjs analysis tilemaker
 
         run_database_migrations
         run_data_fixtures
 
         echo "Copying angular site to nginx"
         pushd "src/nginx"
-        docker run -i -v "${PWD}/srv/dist:/static-export/dist" pfb-angularjs \
+        docker run --rm -i -v "${PWD}/srv/dist:/static-export/dist" pfb-angularjs \
                rsync -rlptDv --delete --exclude .gitkeep \
                  /opt/pfb/angularjs/dist /static-export/
         popd

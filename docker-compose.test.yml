@@ -17,3 +17,9 @@ services:
     build:
       context: ./src
       dockerfile: analysis/Dockerfile
+
+  tilemaker:
+    image: pfb-tilemaker:${GIT_COMMIT}
+    build:
+      context: ./src
+      dockerfile: tilemaker/Dockerfile

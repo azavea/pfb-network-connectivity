@@ -63,3 +63,14 @@ services:
       - ./data:/data
       - /home/vagrant/.aws:/root/.aws
       - ./src/django:/opt/pfb/django
+
+  tilemaker:
+    image: pfb-tilemaker
+    build:
+      context: ./src/tilemaker
+      dockerfile: Dockerfile
+    volumes:
+      - /home/vagrant/.aws:/root/.aws
+    environment:
+      - AWS_STORAGE_BUCKET_NAME
+      - AWS_PROFILE
