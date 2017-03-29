@@ -36,6 +36,15 @@ def get_neighborhood_file_upload_path(instance, filename):
     return 'neighborhood_boundaries/{0}/{1}'.format(instance.name, os.path.basename(filename))
 
 
+def create_environment(**kwargs):
+    """ Format args for AWS environment
+
+    Writes argument pairs to an array {name, value} objects, which is what AWS wants for
+    environment overrides.
+    """
+    return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
+
+
 class Neighborhood(PFBModel):
     """Neighborhood boundary used for an AnalysisJob """
 
@@ -235,6 +244,13 @@ class AnalysisJob(PFBModel):
         definition_name, revision = job_definition.split(':')
         return '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
 
+    def tilemaker_job_name(self):
+        job_definition = settings.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION
+        # Due to CloudWatch logs limits, job name must be no more than 50 chars
+        # so force truncate to that to keep jobs from failing
+        definition_name, revision = job_definition.split(':')
+        return '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
+
     @property
     def census_blocks_url(self):
         return self._s3_url_for_result_resource('neighborhood_census_blocks.zip')
@@ -312,9 +328,6 @@ class AnalysisJob(PFBModel):
 
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
-        def create_environment(**kwargs):
-            return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
-
         if self.status is not self.Status.CREATED:
             logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
@@ -371,6 +384,41 @@ class AnalysisJob(PFBModel):
             self.update_status(self.status.QUEUED)
         except (botocore.exceptions.BotoCoreError, KeyError):
             logger.exception('Error starting AnalysisJob {}'.format(self.uuid))
+
+    def generate_tiles(self):
+        if self.status != self.Status.COMPLETE:
+            logger.warn("Can't generate tiles for jobs that aren't finished ({})."
+                        "Skipping.".format(self.uuid))
+            return
+
+        client = boto3.client('batch')
+        environment = {
+            'PFB_JOB_ID': str(self.uuid),
+            'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME
+        }
+
+        # Workaround for not being able to run development jobs on the actual batch cluster:
+        # bail out with a helpful message
+        if settings.DJANGO_ENV == 'development':
+            logger.warn("Can't actually run development jobs on AWS. Try this:"
+                        "\nAWS_STORAGE_BUCKET_NAME='{AWS_STORAGE_BUCKET_NAME}' "
+                        "docker-compose run tilemaker '{PFB_JOB_ID}'".format(**environment))
+            return
+
+        container_overrides = {
+            'environment': create_environment(**environment),
+        }
+        response = client.submit_job(
+            jobName=self.tilemaker_job_name,
+            jobDefinition=settings.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION,
+            jobQueue=settings.PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME,
+            containerOverrides=container_overrides)
+        try:
+            logger.info('Exporting tiles for AnalysisJob {}, job {}'.format(self.uuid,
+                                                                            response['jobId']))
+        except Exception:
+            logger.exception('Error starting tile export for AnalysisJob {}'.format(self.uuid))
+            raise
 
     def update_status(self, status, step='', message=''):
         if self.status != self.Status.CANCELLED:
