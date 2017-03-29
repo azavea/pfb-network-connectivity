@@ -228,8 +228,8 @@ class AnalysisJob(PFBModel):
                               null=True, blank=True)
 
     @property
-    def batch_job_name(self):
-        job_definition = settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION
+    def analysis_job_name(self):
+        job_definition = settings.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION
         # Due to CloudWatch logs limits, job name must be no more than 50 chars
         # so force truncate to that to keep jobs from failing
         definition_name, revision = job_definition.split(':')
@@ -266,7 +266,7 @@ class AnalysisJob(PFBModel):
                '#logStream:group=/aws/batch/job;prefix={batch_job_name}/{batch_job_id}' +
                ';streamFilter=typeLogStreamPrefix')
         return url.format(aws_region=settings.AWS_REGION,
-                          batch_job_name=self.batch_job_name,
+                          batch_job_name=self.analysis_job_name,
                           batch_job_id=self.batch_job_id)
 
     @property
@@ -360,10 +360,11 @@ class AnalysisJob(PFBModel):
         container_overrides = {
             'environment': create_environment(**environment),
         }
-        response = client.submit_job(jobName=self.batch_job_name,
-                                     jobDefinition=settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION, # NOQA
-                                     jobQueue=settings.PFB_AWS_BATCH_JOB_QUEUE_NAME,
-                                     containerOverrides=container_overrides)
+        response = client.submit_job(
+            jobName=self.analysis_job_name,
+            jobDefinition=settings.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION,
+            jobQueue=settings.PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME,
+            containerOverrides=container_overrides)
         try:
             self.batch_job_id = response['jobId']
             self.save()
