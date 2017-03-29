@@ -72,6 +72,14 @@
       {
         "name": "PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION",
         "value": "${batch_analysis_job_definition_name_revision}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME",
+        "value": "${batch_tilemaker_job_queue_name}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION",
+        "value": "${batch_tilemaker_job_definition_name_revision}"
       }
     ],
     "logConfiguration": {

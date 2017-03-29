@@ -18,7 +18,7 @@ import requests
 
 from django.core.exceptions import ImproperlyConfigured
 
-from pfb_analysis.aws_batch import get_latest_job_definition
+from pfb_analysis.aws_batch import get_latest_job_definition, NoActiveJobDefinitionRevision
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -292,6 +292,19 @@ elif PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME:
 else:
     raise ImproperlyConfigured('env.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION or ' +
                                'env.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME is required.')
+
+
+# Same setup for tilemaker jobs, but without the exception-throwing
+PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME')
+PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION')
+PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME')
+if PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME and not PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION:
+    try:
+        revision = get_latest_job_definition(PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME)['revision']
+    except NoActiveJobDefinitionRevision:
+        pass
+    PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION = '{}:{}'.format(PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME,
+                                                                          revision)
 
 
 # Analysis results settings
