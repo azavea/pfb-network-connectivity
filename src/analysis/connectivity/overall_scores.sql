@@ -23,7 +23,7 @@ CREATE TABLE generated.neighborhood_overall_scores (
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'People',
+SELECT  'people',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -34,7 +34,7 @@ WHERE   use_pop;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Opportunity:Employment',
+SELECT  'opportunity_employment',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -45,7 +45,7 @@ WHERE   use_emp;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Opportunity:K12 Education',
+SELECT  'opportunity_k12_education',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -56,7 +56,7 @@ WHERE   use_k12;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Opportunity:Technical/Vocational College',
+SELECT  'opportunity_technical_vocational_college',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -67,7 +67,7 @@ WHERE   use_tech;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Opportunity:Higher Education',
+SELECT  'opportunity_higher_education',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -78,19 +78,19 @@ WHERE   use_univ;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Opportunity',
+SELECT  'opportunity',
         NULL,
-        40 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Opportunity:Employment')
-        + 40 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Opportunity:K12 Education')
-        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Opportunity:Technical/Vocational College')
-        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Opportunity:Higher Education'),
+        40 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'opportunity_employment')
+        + 40 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'opportunity_k12_education')
+        + 10 * (select score_original from neighborhood_overall_scores where category = 'opportunity_technical_vocational_college')
+        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'opportunity_higher_education'),
         NULL;
 
 -- doctors
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Core Services:Doctors',
+SELECT  'core_services_doctors',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -101,7 +101,7 @@ WHERE   use_doctor;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Core Services:Dentists',
+SELECT  'core_services_dentists',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -112,7 +112,7 @@ WHERE   use_dentist;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Core Services:Hospitals',
+SELECT  'core_services_hospitals',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -123,7 +123,7 @@ WHERE   use_hospital;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Core Services:Pharmacies',
+SELECT  'core_services_pharmacies',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -134,7 +134,7 @@ WHERE   use_pharmacy;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Core Services:Retail',
+SELECT  'core_services_retail',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -145,7 +145,7 @@ WHERE   use_retail;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Core Services:Grocery',
+SELECT  'core_services_grocery',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -156,7 +156,7 @@ WHERE   use_grocery;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Core Services:Social Services',
+SELECT  'core_services_social_services',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -167,22 +167,22 @@ WHERE   use_social_svcs;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'core_services',
         NULL,
-        20 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Core Services:Doctors')
-        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Core Services:Dentists')
-        + 20 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Core Services:Hospitals')
-        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Core Services:Pharmacies')
-        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Core Services:Retail')
-        + 20 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Core Services:Grocery')
-        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Core Services:Social Services'),
+        20 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'core_services_doctors')
+        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'core_services_dentists')
+        + 20 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'core_services_hospitals')
+        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'core_services_pharmacies')
+        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'core_services_retail')
+        + 20 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'core_services_grocery')
+        + 10 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'core_services_social_services'),
         NULL;
 
 -- parks
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Recreation:Parks',
+SELECT  'recreation_parks',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -193,7 +193,7 @@ WHERE   use_parks;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Recreation:Trails',
+SELECT  'recreation_trails',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -204,7 +204,7 @@ WHERE   use_trails;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Recreation:Community Centers',
+SELECT  'recreation_community_centers',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -215,18 +215,18 @@ WHERE   use_comm_ctrs;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Recreation',
+SELECT  'recreation',
         NULL,
-        50 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Recreation:Parks')
-        + 30 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Recreation:Trails')
-        + 20 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'Recreation:Community Centers'),
+        50 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'recreation_parks')
+        + 30 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'recreation_trails')
+        + 20 * (SELECT score_original FROM neighborhood_overall_scores WHERE category = 'recreation_community_centers'),
         NULL;
 
 -- transit
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Transit',
+SELECT  'transit',
         COALESCE(neighborhood_score_inputs.score,0),
         100 * COALESCE(neighborhood_score_inputs.score,0),
         neighborhood_score_inputs.human_explanation
@@ -237,15 +237,15 @@ WHERE   use_transit;
 INSERT INTO generated.neighborhood_overall_scores (
     category, score_original, score_normalized, human_explanation
 )
-SELECT  'Overall Score',
+SELECT  'overall_score',
         NULL,
         (
-            (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'People')
-            + (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'Opportunity')
-            + (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'Core Services')
-            + (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'Recreation')
-            + COALESCE((SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'Transit'),0)
-        ) / CASE    WHEN (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'Transit') IS NULL
+            (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'people')
+            + (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'opportunity')
+            + (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'core_services')
+            + (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'recreation')
+            + COALESCE((SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'transit'),0)
+        ) / CASE    WHEN (SELECT score_normalized FROM neighborhood_overall_scores WHERE category = 'transit') IS NULL
                         THEN 4
                     ELSE 3
                     END,
