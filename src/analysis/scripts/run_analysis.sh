@@ -52,9 +52,9 @@ export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
 ./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS $PFB_OSM_FILE
 ./scripts/run_connectivity.sh
 
-# print scores (TODO: replace with export script)
+# print scores
 psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
-SELECT * FROM neighborhood_score_inputs;
+SELECT * FROM neighborhood_overall_scores;
 EOF
 
 NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR}"

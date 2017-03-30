@@ -30,13 +30,18 @@ class Command(BaseCommand):
         parser.add_argument('job_uuid', type=str)
         parser.add_argument('csv_file', type=str,
                             help='Absolute path to overall scores csv to load')
-        parser.add_argument('--key-column', type=str, default='score_name',
+        parser.add_argument('--key-column', type=str, default='score_id',
                             help='Column name to use for score key in results dict')
+        parser.add_argument('-s', '--skip-columns', type=str, default=None,
+                            help='Skip these columns loading data, provide as a CSV list')
 
     def handle(self, *args, **options):
         job_uuid = options['job_uuid']
         csv_filename = options['csv_file']
         key_column = options['key_column']
+        skip_columns = options['skip_columns']
+        skip_columns = skip_columns.split(',') if skip_columns is not None else []
+        skip_columns.append('id')
 
         try:
             job = AnalysisJob.objects.get(pk=job_uuid)
@@ -50,15 +55,19 @@ class Command(BaseCommand):
             results = {}
             for row in reader:
                 key_column_value = row.pop(key_column)
-                metric = self.clean_metric_dict(row.copy())
+                metric = self.clean_metric_dict(row.copy(), skip_columns=skip_columns)
                 results[key_column_value] = metric
         job.overall_scores = results
         job.save()
         self.stdout.write('{}: Loaded overall_scores from {}'.format(job, csv_filename))
 
-    def clean_metric_dict(self, metric):
+    def clean_metric_dict(self, metric, skip_columns=None):
         """ Do some cleanup of the input row """
-        del metric['id']
+        if skip_columns is None:
+            skip_columns = []
+        # Delete columns we don't want in output
+        for col in skip_columns:
+            metric.pop(col, None)
         # Attempt to convert numeric values in row to float type
         for k, v in metric.iteritems():
             try:
