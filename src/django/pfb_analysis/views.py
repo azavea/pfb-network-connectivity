@@ -56,6 +56,7 @@ class AnalysisJobViewSet(ModelViewSet):
                 ('destinations_urls', job.destinations_urls),
                 ('overall_scores', job.overall_scores),
                 ('overall_scores_url', job.overall_scores_url),
+                ('score_inputs_url', job.score_inputs_url),
                 ('ways_url', job.ways_url),
             ])
             return Response(results, status=status.HTTP_200_OK)
