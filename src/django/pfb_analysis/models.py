@@ -240,6 +240,10 @@ class AnalysisJob(PFBModel):
         return self._s3_url_for_result_resource('neighborhood_census_blocks.zip')
 
     @property
+    def connected_census_blocks_url(self):
+        return self._s3_url_for_result_resource('neighborhood_connected_census_blocks.csv.zip')
+
+    @property
     def destinations_urls(self):
         """ Return a dict of the available destinations files for this job """
         return {

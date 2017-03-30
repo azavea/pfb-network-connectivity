@@ -53,6 +53,7 @@ class AnalysisJobViewSet(ModelViewSet):
             results = OrderedDict([
                 ('census_block_count', job.census_block_count),
                 ('census_blocks_url', job.census_blocks_url),
+                ('connected_census_blocks_url', job.connected_census_blocks_url),
                 ('destinations_urls', job.destinations_urls),
                 ('overall_scores', job.overall_scores),
                 ('overall_scores_url', job.overall_scores_url),
