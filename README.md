@@ -5,7 +5,7 @@ PFB Bicycle Network Connectivity
 ## Getting Started
 
 Requirements:
-- Vagrant 1.8+
+- Vagrant 1.8.3+
 - VirtualBox 4.3+
 - [AWS CLI](https://aws.amazon.com/cli/)
 
