@@ -64,18 +64,19 @@ RUN set -xe && \
     ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
     rm -r ./awscli-bundle*
 
+RUN apt-get install -y gdal-bin
+
 # Install tl and other utilities
-RUN npm install -g --save \
-    tl mbtiles mapnik \
-    tilelive tilelive-file tilelive-http tilelive-mapbox tilelive-mapnik \
-    tilelive-s3 tilelive-modules \
-    tilelive-tmsource tilelive-tmstyle tilelive-utfgrid tilelive-vector tilelive-carto \
-    tilejson geojson-extent
+RUN npm install -g \
+    tl@0.9.0 \
+    tilelive@5.12.3 \
+    mapnik@3.5.14 \
+    tilelive-mapnik@0.6.18 \
+    tilelive-file@0.0.3 \
+    tilelive-s3@6.5.0
 
 # Customized version of gejson-extent until upstream gets changed
-RUN npm install -g git+https://github.com/KlaasH/geojson-extent.git#4f405faca
-
-RUN apt-get install -y gdal-bin
+RUN npm install -g git+https://github.com/KlaasH/geojson-extent.git
 
 COPY . /opt/tl-export
 
