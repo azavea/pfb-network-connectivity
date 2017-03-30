@@ -249,6 +249,10 @@ class AnalysisJob(PFBModel):
         }
 
     @property
+    def overall_scores_url(self):
+        return self._s3_url_for_result_resource('neighborhood_overall_scores.csv')
+
+    @property
     def logs_url(self):
         url = ('https://console.aws.amazon.com/cloudwatch/home?region={aws_region}' +
                '#logStream:group=/aws/batch/job;prefix={batch_job_name}/{batch_job_id}' +
