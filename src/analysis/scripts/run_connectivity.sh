@@ -15,7 +15,10 @@ NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
 NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-3300}"
 TOLERANCE_COLLEGES="${TOLERANCE_COLLEGES:-100}"         # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_COMM_CTR="${TOLERANCE_COMM_CTR:-50}"          # cluster tolerance given in units of $NB_OUTPUT_SRID
-TOLERANCE_MEDICAL="${TOLERANCE_MEDICAL:-50}"            # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_DOCTORS="${TOLERANCE_DOCTORS:-50}"            # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_DENTISTS="${TOLERANCE_DENTISTS:-50}"          # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_HOSPITALS="${TOLERANCE_HOSPITALS:-50}"        # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_PHARMACIES="${TOLERANCE_PHARMACIES:-50}"      # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_PARKS="${TOLERANCE_PARKS:-50}"                # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_RETAIL="${TOLERANCE_RETAIL:-50}"              # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_UNIVERSITIES="${TOLERANCE_UNIVERSITIES:-150}" # cluster tolerance given in units of $NB_OUTPUT_SRID
@@ -102,8 +105,23 @@ update_status "METRICS" "Destinations"
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
-  -v cluster_tolerance="${TOLERANCE_MEDICAL}" \
-  -f ../connectivity/destinations/medical.sql
+  -v cluster_tolerance="${TOLERANCE_DOCTORS}" \
+  -f ../connectivity/destinations/doctors.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_DENTISTS}" \
+  -f ../connectivity/destinations/dentists.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_HOSPITALS}" \
+  -f ../connectivity/destinations/hospitals.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_PHARMACIES}" \
+  -f ../connectivity/destinations/pharmacies.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
@@ -140,7 +158,16 @@ update_status "METRICS" "Access: colleges"
   -f ../connectivity/access_community_centers.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -f ../connectivity/access_medical.sql
+  -f ../connectivity/access_doctors.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_dentists.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_hospitals.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/access_pharmacies.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/access_parks.sql
@@ -164,6 +191,9 @@ update_status "METRICS" "Access: colleges"
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/access_universities.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -f ../connectivity/score_inputs.sql
 
 update_status "METRICS" "Overall scores"
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \

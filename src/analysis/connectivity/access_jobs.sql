@@ -33,7 +33,7 @@ WHERE   EXISTS (
 
 -- set ratio
 UPDATE  neighborhood_census_blocks
-SET     jobs_ratio = CASE  WHEN jobs_high_stress IS NULL THEN NULL
-                            WHEN jobs_high_stress = 0 THEN 0
-                            ELSE jobs_low_stress::FLOAT / jobs_high_stress
+SET     emp_ratio = CASE  WHEN emp_high_stress IS NULL THEN NULL
+                            WHEN emp_high_stress = 0 THEN 0
+                            ELSE emp_low_stress::FLOAT / emp_high_stress
                             END;
