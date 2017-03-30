@@ -73,10 +73,8 @@ RUN npm install -g \
     mapnik@3.5.14 \
     tilelive-mapnik@0.6.18 \
     tilelive-file@0.0.3 \
-    tilelive-s3@6.5.0
-
-# Customized version of gejson-extent until upstream gets changed
-RUN npm install -g git+https://github.com/KlaasH/geojson-extent.git
+    tilelive-s3@6.5.0 \
+    @turf/bbox@3.14.0
 
 COPY . /opt/tl-export
 
