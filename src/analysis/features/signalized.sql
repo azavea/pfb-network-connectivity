@@ -1,6 +1,8 @@
 ----------------------------------------
 -- INPUTS
 -- location: neighborhood
+-- vars:
+--      :sigctl_search_dist=25     Search distance for traffic signals at adjacent intersection
 ----------------------------------------
 UPDATE neighborhood_ways_intersections SET signalized = 'f';
 
@@ -25,3 +27,13 @@ FROM    neighborhood_ways,
 WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     int_id = neighborhood_ways.intersection_from
 AND     osm."traffic_signals:direction" = 'backward';
+
+UPDATE  neighborhood_ways_intersections
+SET     signalized = 't'
+WHERE   legs > 2
+AND     EXISTS (
+            SELECT  1
+            FROM    neighborhood_ways_intersections i
+            WHERE   i.signalized
+            AND     ST_DWithin(neighborhood_ways_intersections.geom, i.geom, :sigctl_search_dist)
+        );
