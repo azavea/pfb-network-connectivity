@@ -18,7 +18,9 @@ class Command(BaseCommand):
         Invalid job ID warns, any other error raises """
         try:
             qs = AnalysisJob.objects.filter(pk=options['job_id'])
-        except (AnalysisJob.DoesNotExist):
+            # Force qs evaluation to catch invalid job_id errors
+            qs.exists()
+        except (ValueError, AnalysisJob.DoesNotExist):
             print ("WARNING: Tried to update attribute '{attr}' "
                    "for invalid job {job_id}.".format(**options))
         else:

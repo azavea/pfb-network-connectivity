@@ -159,8 +159,7 @@ then
         # Export neighborhood_overall_scores as CSV
         ec_export_table_csv "${OUTPUT_DIR}" "neighborhood_overall_scores"
         # Send overall_scores to Django app
-        # TODO: Fixup after merging #222
-        # update_overall_scores "${OUTPUT_DIR}/neighborhood_score_inputs.csv"
+        update_overall_scores "${OUTPUT_DIR}/neighborhood_overall_scores.csv"
 
         if [ -v AWS_STORAGE_BUCKET_NAME ]
         then

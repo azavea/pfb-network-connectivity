@@ -298,7 +298,10 @@ else:
 PFB_ANALYSIS_DESTINATIONS = [
     'colleges',
     'community_centers',
-    'medical',
+    'doctors',
+    'dentists',
+    'hospitals',
+    'pharmacies',
     'parks',
     'retail',
     'schools',
