@@ -95,6 +95,12 @@
                 controllerAs: 'analysisJobCreate',
                 templateUrl: 'app/analysis-jobs/create/analysis-jobs-create.html'
             })
+            .state('analysis-jobs.detail', {
+                url: ':uuid/',
+                controller: 'AnalysisJobDetailController',
+                controllerAs: 'analysisJobDetail',
+                templateUrl: 'app/analysis-jobs/detail/analysis-jobs-detail.html'
+            })
             .state('neighborhoods', {
                 abstract: true,
                 url: '/neighborhoods/?limit&offset',

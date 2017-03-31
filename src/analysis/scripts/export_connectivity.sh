@@ -149,9 +149,11 @@ then
         # Export neighborhood ways as GeoJSON
         # TODO: Export this once we know we need it
 
-        # Export neighborhood_connected_census_blocks as SHP
-        # NOTE: disabled for now, because large and not that useful
-        # ec_export_table_shp "${OUTPUT_DIR}" "neighborhood_connected_census_blocks"
+        # Export neighborhood_connected_census_blocks as CSV
+        # -9 max compression, -m move file, -j junk paths in zipped archive, -q quiet
+        ec_export_table_csv "${OUTPUT_DIR}" "neighborhood_connected_census_blocks"
+        zip -jmq9 "${OUTPUT_DIR}/neighborhood_connected_census_blocks.csv.zip" \
+                  "${OUTPUT_DIR}/neighborhood_connected_census_blocks.csv"
 
         # Export neighborhood_score_inputs as CSV
         ec_export_table_csv "${OUTPUT_DIR}" "neighborhood_score_inputs"
