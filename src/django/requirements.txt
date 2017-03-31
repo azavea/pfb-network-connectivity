@@ -8,6 +8,7 @@ djangorestframework==3.5.3
 django-filter==1.0.1
 boto3==1.4.4
 fiona==1.7.4
+django-amazon-ses==0.3.0
 django-extensions==1.7.6
 django-localflavor==1.4.1
 django-storages==1.5.2
