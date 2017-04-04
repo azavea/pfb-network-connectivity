@@ -17,17 +17,12 @@ AND     osm.highway IN (
             'secondary_link',
             'primary_link',
             'trunk_link',
+            'unclassified',
             'residential',
             'secondary',
             'primary',
             'living_street'
-);                          -- note that we're leaving out "road"
-
-UPDATE  neighborhood_ways
-SET     functional_class = 'tertiary'
-FROM    neighborhood_osm_full_line osm
-WHERE   neighborhood_ways.osm_id = osm.osm_id
-AND     osm.highway = 'unclassified';
+);
 
 UPDATE  neighborhood_ways
 SET     functional_class = 'track'
