@@ -9,7 +9,7 @@
     function routerConfig($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state('login', {
-                url: '/admin/login/',
+                url: '/login/',
                 controller: 'LoginController',
                 controllerAs: 'login',
                 templateUrl: 'app/login/login.html'
@@ -118,7 +118,7 @@
                 controllerAs: 'neighborhoodList',
                 templateUrl: 'app/neighborhoods/list/neighborhoods-list.html'
             });
-        $urlRouterProvider.otherwise('/admin/login/');
+        $urlRouterProvider.otherwise('/login/');
     }
 
 })();
