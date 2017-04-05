@@ -6,6 +6,9 @@
 ----------------------------------------
 UPDATE neighborhood_ways_intersections SET signalized = 'f';
 
+-----------------------------------
+-- traffic signals
+-----------------------------------
 UPDATE  neighborhood_ways_intersections
 SET     signalized = 't'
 FROM    neighborhood_osm_full_point osm
@@ -28,6 +31,26 @@ WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     int_id = neighborhood_ways.intersection_from
 AND     osm."traffic_signals:direction" = 'backward';
 
+
+-----------------------------------
+-- HAWKs and other variants
+-----------------------------------
+UPDATE  neighborhood_ways_intersections
+SET     signalized = 't'
+WHERE   legs > 2
+AND     EXISTS (
+            SELECT  1
+            FROM    neighborhood_osm_full_point osm
+            WHERE   osm.highway = 'crossing'
+            AND     osm.crossing IN ('traffic_signals','pelican','toucan')
+            AND     ST_DWithin(neighborhood_ways_intersections.geom, osm.way, :sigctl_search_dist)
+        );
+
+
+-----------------------------------
+-- Capture signals from other points
+-- on the intersection
+-----------------------------------
 UPDATE  neighborhood_ways_intersections
 SET     signalized = 't'
 WHERE   legs > 2
