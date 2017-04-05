@@ -31,12 +31,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- set block-based ratio
+-- set block-based score
 UPDATE  neighborhood_census_blocks
-SET     social_services_ratio = CASE  WHEN social_services_high_stress IS NULL THEN NULL
-                            WHEN social_services_high_stress = 0 THEN 0
-                            ELSE social_services_low_stress::FLOAT / social_services_high_stress
-                            END;
+SET     social_services_score = CASE    WHEN social_services_high_stress IS NULL THEN NULL
+                                        WHEN social_services_high_stress = 0 THEN NULL
+                                        WHEN social_services_low_stress = 0 THEN 0
+                                        WHEN social_services_high_stress = 1 AND social_services_low_stress = 1 THEN 1
+                                        ELSE 0.5 + (0.5 * (social_services_low_stress::FLOAT - 1)) / (social_services_high_stress - 1)
+                                        END;
 
 -- set population shed for each social service destination in the neighborhood
 UPDATE  neighborhood_social_services
@@ -62,7 +64,7 @@ WHERE   EXISTS (
         );
 
 UPDATE  neighborhood_social_services
-SET     pop_ratio = CASE    WHEN pop_high_stress IS NULL THEN NULL
+SET     pop_score = CASE    WHEN pop_high_stress IS NULL THEN NULL
                             WHEN pop_high_stress = 0 THEN 0
                             ELSE pop_low_stress::FLOAT / pop_high_stress
                             END;

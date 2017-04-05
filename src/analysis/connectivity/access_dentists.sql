@@ -31,12 +31,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- set block-based ratio
+-- set block-based score
 UPDATE  neighborhood_census_blocks
-SET     dentists_ratio = CASE  WHEN dentists_high_stress IS NULL THEN NULL
-                            WHEN dentists_high_stress = 0 THEN 0
-                            ELSE dentists_low_stress::FLOAT / dentists_high_stress
-                            END;
+SET     dentists_score = CASE   WHEN dentists_high_stress IS NULL THEN NULL
+                                WHEN dentists_high_stress = 0 THEN NULL
+                                WHEN dentists_low_stress = 0 THEN 0
+                                WHEN dentists_high_stress = 1 AND dentists_low_stress = 1 THEN 1
+                                ELSE 0.5 + (0.5 * (dentists_low_stress::FLOAT - 1)) / (dentists_high_stress - 1)
+                                END;
 
 -- set population shed for each dentists destination in the neighborhood
 UPDATE  neighborhood_dentists
@@ -62,7 +64,7 @@ WHERE   EXISTS (
         );
 
 UPDATE  neighborhood_dentists
-SET     pop_ratio = CASE    WHEN pop_high_stress IS NULL THEN NULL
+SET     pop_score = CASE    WHEN pop_high_stress IS NULL THEN NULL
                             WHEN pop_high_stress = 0 THEN 0
                             ELSE pop_low_stress::FLOAT / pop_high_stress
                             END;

@@ -33,14 +33,14 @@ CREATE TABLE generated.neighborhood_score_inputs (
 -------------------------------------
 -- population
 -------------------------------------
--- median pop access ratio
+-- median pop access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_pop
 )
 SELECT  'People',
-        'Median ratio of access to population',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population accessible by low stress
+        'Median score of access to population',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population accessible by low stress
             to population accessible overall, expressed as
             the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -55,14 +55,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile pop access ratio
+-- 70th percentile pop access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'People',
-        '70th percentile ratio of access to population',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population accessible by low stress
+        '70th percentile score of access to population',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population accessible by low stress
             to population accessible overall, expressed as
             the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -76,14 +76,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile pop access ratio
+-- 30th percentile pop access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'People',
-        '30th percentile ratio of access to population',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population accessible by low stress
+        '30th percentile score of access to population',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population accessible by low stress
             to population accessible overall, expressed as
             the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -97,16 +97,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- avg pop access ratio
+-- avg pop access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'People',
-        'Average ratio of access to population',
+        'Average score of access to population',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population accessible by low stress
+        regexp_replace('Score of population accessible by low stress
             to population accessible overall, expressed as
             the average of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -123,14 +123,14 @@ WHERE   EXISTS (
 -------------------------------------
 -- employment
 -------------------------------------
--- median jobs access ratio
+-- median jobs access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_emp
 )
 SELECT  'Opportunity',
-        'Median ratio of access to employment',
-        quantile(emp_ratio,0.5),
-        regexp_replace('Ratio of employment accessible by low stress
+        'Median score of access to employment',
+        quantile(emp_score,0.5),
+        regexp_replace('Score of employment accessible by low stress
             to employment accessible overall, expressed as
             the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -145,14 +145,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile jobs access ratio
+-- 70th percentile jobs access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of access to employment',
-        quantile(emp_ratio,0.7),
-        regexp_replace('Ratio of employment accessible by low stress
+        '70th percentile score of access to employment',
+        quantile(emp_score,0.7),
+        regexp_replace('Score of employment accessible by low stress
             to employment accessible overall, expressed as
             the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -166,14 +166,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile jobs access ratio
+-- 30th percentile jobs access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of access to employment',
-        quantile(emp_ratio,0.3),
-        regexp_replace('Ratio of employment accessible by low stress
+        '30th percentile score of access to employment',
+        quantile(emp_score,0.3),
+        regexp_replace('Score of employment accessible by low stress
             to employment accessible overall, expressed as
             the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -187,16 +187,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- avg jobs access ratio
+-- avg jobs access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of access to employment',
+        'Average score of access to employment',
         CASE    WHEN SUM(emp_high_stress) = 0 THEN 0
                 ELSE SUM(emp_low_stress)::FLOAT / SUM(emp_high_stress)
                 END,
-        regexp_replace('Ratio of employment accessible by low stress
+        regexp_replace('Score of employment accessible by low stress
             to employment accessible overall, expressed as
             the average of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -213,12 +213,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- schools
 -------------------------------------
--- average school access ratio
+-- average school access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to schools',
+        'Average score of low stress access to schools',
         CASE    WHEN SUM(schools_high_stress) = 0 THEN 0
                 ELSE SUM(schools_low_stress) / SUM(schools_high_stress)
                 END,
@@ -234,14 +234,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median schools access ratio
+-- median schools access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of school access',
-        quantile(schools_ratio,0.5),
-        regexp_replace('Ratio of schools accessible by low stress
+        'Median score of school access',
+        quantile(schools_score,0.5),
+        regexp_replace('Score of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -255,14 +255,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile schools access ratio
+-- 70th percentile schools access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of school access',
-        quantile(schools_ratio,0.7),
-        regexp_replace('Ratio of schools accessible by low stress
+        '70th percentile score of school access',
+        quantile(schools_score,0.7),
+        regexp_replace('Score of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -276,14 +276,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile schools access ratio
+-- 30th percentile schools access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of school access',
-        quantile(schools_ratio,0.3),
-        regexp_replace('Ratio of schools accessible by low stress
+        '30th percentile score of school access',
+        quantile(schools_score,0.3),
+        regexp_replace('Score of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -297,16 +297,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- school pop shed average low stress access ratio
+-- school pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average school bike shed access ratio',
+        'Average school bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of schools in the neighborhood expressed as an average of
             all schools in the neighborhood','\n\s+',' ','g'),
@@ -320,14 +320,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
         );
 
--- school pop shed median low stress access ratio
+-- school pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median school population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to schools
+        'Median school population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as a median of all
             schools in the neighborhood','\n\s+',' ','g'),
@@ -341,14 +341,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
         );
 
--- school pop shed 70th percentile low stress access ratio
+-- school pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile school population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to schools
+        '70th percentile school population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as the 70th percentile of all
             schools in the neighborhood','\n\s+',' ','g'),
@@ -362,14 +362,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
         );
 
--- school pop shed 30th percentile low stress access ratio
+-- school pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_k12
 )
 SELECT  'Opportunity',
-        '30th percentile school population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to schools
+        '30th percentile school population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as the 30th percentile of all
             schools in the neighborhood','\n\s+',' ','g'),
@@ -388,12 +388,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- technical/vocational colleges
 -------------------------------------
--- average technical/vocational college access ratio
+-- average technical/vocational college access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to tech/vocational colleges',
+        'Average score of low stress access to tech/vocational colleges',
         CASE    WHEN SUM(colleges_high_stress) = 0 THEN 0
                 ELSE SUM(colleges_low_stress) / SUM(colleges_high_stress)
                 END,
@@ -409,14 +409,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median colleges access ratio
+-- median colleges access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of tech/vocational college access',
-        quantile(colleges_ratio,0.5),
-        regexp_replace('Ratio of tech/vocational colleges accessible by low stress
+        'Median score of tech/vocational college access',
+        quantile(colleges_score,0.5),
+        regexp_replace('Score of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -430,14 +430,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile colleges access ratio
+-- 70th percentile colleges access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of tech/vocational college access',
-        quantile(colleges_ratio,0.7),
-        regexp_replace('Ratio of tech/vocational colleges accessible by low stress
+        '70th percentile score of tech/vocational college access',
+        quantile(colleges_score,0.7),
+        regexp_replace('Score of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -451,14 +451,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile colleges access ratio
+-- 30th percentile colleges access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of tech/vocational college access',
-        quantile(colleges_ratio,0.3),
-        regexp_replace('Ratio of tech/vocational colleges accessible by low stress
+        '30th percentile score of tech/vocational college access',
+        quantile(colleges_score,0.3),
+        regexp_replace('Score of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -472,16 +472,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- college pop shed average low stress access ratio
+-- college pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average college bike shed access ratio',
+        'Average college bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of tech/vocational colleges in the neighborhood expressed as an average of
             all colleges in the neighborhood','\n\s+',' ','g'),
@@ -495,14 +495,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
         );
 
--- college pop shed median low stress access ratio
+-- college pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_tech
 )
 SELECT  'Opportunity',
-        'Median tech/vocational college population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to tech/vocational colleges
+        'Median tech/vocational college population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as a median of all
             colleges in the neighborhood','\n\s+',' ','g'),
@@ -519,14 +519,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
         );
 
--- college pop shed 70th percentile low stress access ratio
+-- college pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile tech/vocational college population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to tech/vocational colleges
+        '70th percentile tech/vocational college population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as the 70th percentile of all
             colleges in the neighborhood','\n\s+',' ','g'),
@@ -542,14 +542,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
         );
 
--- college pop shed 30th percentile low stress access ratio
+-- college pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile tech/vocational college population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to tech/vocational colleges
+        '30th percentile tech/vocational college population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as the 30th percentile of all
             colleges in the neighborhood','\n\s+',' ','g'),
@@ -569,12 +569,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- universities
 -------------------------------------
--- average university access ratio
+-- average university access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to universities',
+        'Average score of low stress access to universities',
         CASE    WHEN SUM(universities_high_stress) = 0 THEN 0
                 ELSE SUM(universities_low_stress) / SUM(universities_high_stress)
                 END,
@@ -590,14 +590,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median universities access ratio
+-- median universities access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of university access',
-        quantile(universities_ratio,0.5),
-        regexp_replace('Ratio of universities accessible by low stress
+        'Median score of university access',
+        quantile(universities_score,0.5),
+        regexp_replace('Score of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -611,14 +611,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile universities access ratio
+-- 70th percentile universities access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of university access',
-        quantile(universities_ratio,0.7),
-        regexp_replace('Ratio of universities accessible by low stress
+        '70th percentile score of university access',
+        quantile(universities_score,0.7),
+        regexp_replace('Score of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -632,14 +632,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile universities access ratio
+-- 30th percentile universities access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of university access',
-        quantile(universities_ratio,0.3),
-        regexp_replace('Ratio of universities accessible by low stress
+        '30th percentile score of university access',
+        quantile(universities_score,0.3),
+        regexp_replace('Score of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -653,16 +653,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- university pop shed average low stress access ratio
+-- university pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average university bike shed access ratio',
+        'Average university bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of universities in the neighborhood expressed as an average of
             all universities in the neighborhood','\n\s+',' ','g'),
@@ -676,14 +676,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
         );
 
--- university pop shed median low stress access ratio
+-- university pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_univ
 )
 SELECT  'Opportunity',
-        'Median university population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to universities
+        'Median university population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as a median of all
             universities in the neighborhood','\n\s+',' ','g'),
@@ -700,14 +700,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
         );
 
--- university pop shed 70th percentile low stress access ratio
+-- university pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile university population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to universities
+        '70th percentile university population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as the 70th percentile of all
             universities in the neighborhood','\n\s+',' ','g'),
@@ -723,14 +723,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
         );
 
--- university pop shed 30th percentile low stress access ratio
+-- university pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile university population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to universities
+        '30th percentile university population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as the 30th percentile of all
             universities in the neighborhood','\n\s+',' ','g'),
@@ -750,12 +750,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- doctors
 -------------------------------------
--- average doctors access ratio
+-- average doctors access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to doctors',
+        'Average score of low stress access to doctors',
         CASE    WHEN SUM(doctors_high_stress) = 0 THEN 0
                 ELSE SUM(doctors_low_stress) / SUM(doctors_high_stress)
                 END,
@@ -771,14 +771,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median doctors access ratio
+-- median doctors access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of doctors access',
-        quantile(doctors_ratio,0.5),
-        regexp_replace('Ratio of doctors accessible by low stress
+        'Median score of doctors access',
+        quantile(doctors_score,0.5),
+        regexp_replace('Score of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -792,14 +792,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile doctors access ratio
+-- 70th percentile doctors access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of doctors access',
-        quantile(doctors_ratio,0.7),
-        regexp_replace('Ratio of doctors accessible by low stress
+        '70th percentile score of doctors access',
+        quantile(doctors_score,0.7),
+        regexp_replace('Score of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -813,14 +813,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile doctors access ratio
+-- 30th percentile doctors access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of doctors access',
-        quantile(doctors_ratio,0.3),
-        regexp_replace('Ratio of doctors accessible by low stress
+        '30th percentile score of doctors access',
+        quantile(doctors_score,0.3),
+        regexp_replace('Score of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -834,16 +834,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- doctors pop shed average low stress access ratio
+-- doctors pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average doctors bike shed access ratio',
+        'Average doctors bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of doctors in the neighborhood expressed as an average of
             all doctors in the neighborhood','\n\s+',' ','g'),
@@ -857,14 +857,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
         );
 
--- doctors pop shed median low stress access ratio
+-- doctors pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_doctor
 )
 SELECT  'Opportunity',
-        'Median doctors population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to doctors
+        'Median doctors population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as a median of all
             doctors in the neighborhood','\n\s+',' ','g'),
@@ -881,14 +881,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
         );
 
--- doctors pop shed 70th percentile low stress access ratio
+-- doctors pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile doctors population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to doctors
+        '70th percentile doctors population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as the 70th percentile of all
             doctors in the neighborhood','\n\s+',' ','g'),
@@ -904,14 +904,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
         );
 
--- doctors pop shed 30th percentile low stress access ratio
+-- doctors pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile doctors population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to doctors
+        '30th percentile doctors population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as the 30th percentile of all
             doctors in the neighborhood','\n\s+',' ','g'),
@@ -930,12 +930,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- dentists
 -------------------------------------
--- average dentists access ratio
+-- average dentists access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to dentists',
+        'Average score of low stress access to dentists',
         CASE    WHEN SUM(dentists_high_stress) = 0 THEN 0
                 ELSE SUM(dentists_low_stress) / SUM(dentists_high_stress)
                 END,
@@ -951,14 +951,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median dentists access ratio
+-- median dentists access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of dentists access',
-        quantile(dentists_ratio,0.5),
-        regexp_replace('Ratio of dentists accessible by low stress
+        'Median score of dentists access',
+        quantile(dentists_score,0.5),
+        regexp_replace('Score of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -972,14 +972,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile dentists access ratio
+-- 70th percentile dentists access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of dentists access',
-        quantile(dentists_ratio,0.7),
-        regexp_replace('Ratio of dentists accessible by low stress
+        '70th percentile score of dentists access',
+        quantile(dentists_score,0.7),
+        regexp_replace('Score of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -993,14 +993,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile dentists access ratio
+-- 30th percentile dentists access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of dentists access',
-        quantile(dentists_ratio,0.3),
-        regexp_replace('Ratio of dentists accessible by low stress
+        '30th percentile score of dentists access',
+        quantile(dentists_score,0.3),
+        regexp_replace('Score of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1014,16 +1014,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- dentists pop shed average low stress access ratio
+-- dentists pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average dentists bike shed access ratio',
+        'Average dentists bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of dentists in the neighborhood expressed as an average of
             all dentists in the neighborhood','\n\s+',' ','g'),
@@ -1037,14 +1037,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
         );
 
--- dentists pop shed median low stress access ratio
+-- dentists pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_dentist
 )
 SELECT  'Opportunity',
-        'Median dentists population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to dentists
+        'Median dentists population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as a median of all
             dentists in the neighborhood','\n\s+',' ','g'),
@@ -1061,14 +1061,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
         );
 
--- dentists pop shed 70th percentile low stress access ratio
+-- dentists pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile dentists population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to dentists
+        '70th percentile dentists population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as the 70th percentile of all
             dentists in the neighborhood','\n\s+',' ','g'),
@@ -1084,14 +1084,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
         );
 
--- dentists pop shed 30th percentile low stress access ratio
+-- dentists pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile dentists population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to dentists
+        '30th percentile dentists population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as the 30th percentile of all
             dentists in the neighborhood','\n\s+',' ','g'),
@@ -1110,12 +1110,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- hospitals
 -------------------------------------
--- average hospitals access ratio
+-- average hospitals access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to hospitals',
+        'Average score of low stress access to hospitals',
         CASE    WHEN SUM(hospitals_high_stress) = 0 THEN 0
                 ELSE SUM(hospitals_low_stress) / SUM(hospitals_high_stress)
                 END,
@@ -1131,14 +1131,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median hospitals access ratio
+-- median hospitals access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of hospitals access',
-        quantile(hospitals_ratio,0.5),
-        regexp_replace('Ratio of hospitals accessible by low stress
+        'Median score of hospitals access',
+        quantile(hospitals_score,0.5),
+        regexp_replace('Score of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1152,14 +1152,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile hospitals access ratio
+-- 70th percentile hospitals access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of hospitals access',
-        quantile(hospitals_ratio,0.7),
-        regexp_replace('Ratio of hospitals accessible by low stress
+        '70th percentile score of hospitals access',
+        quantile(hospitals_score,0.7),
+        regexp_replace('Score of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1173,14 +1173,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile hospitals access ratio
+-- 30th percentile hospitals access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of hospitals access',
-        quantile(hospitals_ratio,0.3),
-        regexp_replace('Ratio of hospitals accessible by low stress
+        '30th percentile score of hospitals access',
+        quantile(hospitals_score,0.3),
+        regexp_replace('Score of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1194,16 +1194,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- hospitals pop shed average low stress access ratio
+-- hospitals pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average hospitals bike shed access ratio',
+        'Average hospitals bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of hospitals in the neighborhood expressed as an average of
             all hospitals in the neighborhood','\n\s+',' ','g'),
@@ -1217,14 +1217,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
         );
 
--- hospitals pop shed median low stress access ratio
+-- hospitals pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_hospital
 )
 SELECT  'Opportunity',
-        'Median hospitals population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to hospitals
+        'Median hospitals population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as a median of all
             hospitals in the neighborhood','\n\s+',' ','g'),
@@ -1241,14 +1241,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
         );
 
--- hospitals pop shed 70th percentile low stress access ratio
+-- hospitals pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile hospitals population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to hospitals
+        '70th percentile hospitals population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as the 70th percentile of all
             hospitals in the neighborhood','\n\s+',' ','g'),
@@ -1264,14 +1264,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
         );
 
--- hospitals pop shed 30th percentile low stress access ratio
+-- hospitals pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile hospitals population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to hospitals
+        '30th percentile hospitals population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as the 30th percentile of all
             hospitals in the neighborhood','\n\s+',' ','g'),
@@ -1290,12 +1290,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- pharmacies
 -------------------------------------
--- average pharmacies access ratio
+-- average pharmacies access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to pharmacies',
+        'Average score of low stress access to pharmacies',
         CASE    WHEN SUM(pharmacies_high_stress) = 0 THEN 0
                 ELSE SUM(pharmacies_low_stress) / SUM(pharmacies_high_stress)
                 END,
@@ -1311,14 +1311,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median pharmacies access ratio
+-- median pharmacies access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of pharmacies access',
-        quantile(pharmacies_ratio,0.5),
-        regexp_replace('Ratio of pharmacies accessible by low stress
+        'Median score of pharmacies access',
+        quantile(pharmacies_score,0.5),
+        regexp_replace('Score of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1332,14 +1332,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile pharmacies access ratio
+-- 70th percentile pharmacies access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of pharmacies access',
-        quantile(pharmacies_ratio,0.7),
-        regexp_replace('Ratio of pharmacies accessible by low stress
+        '70th percentile score of pharmacies access',
+        quantile(pharmacies_score,0.7),
+        regexp_replace('Score of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1353,14 +1353,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile pharmacies access ratio
+-- 30th percentile pharmacies access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of pharmacies access',
-        quantile(pharmacies_ratio,0.3),
-        regexp_replace('Ratio of pharmacies accessible by low stress
+        '30th percentile score of pharmacies access',
+        quantile(pharmacies_score,0.3),
+        regexp_replace('Score of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1374,16 +1374,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- pharmacies pop shed average low stress access ratio
+-- pharmacies pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average pharmacies bike shed access ratio',
+        'Average pharmacies bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of pharmacies in the neighborhood expressed as an average of
             all pharmacies in the neighborhood','\n\s+',' ','g'),
@@ -1397,14 +1397,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
         );
 
--- pharmacies pop shed median low stress access ratio
+-- pharmacies pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_pharmacy
 )
 SELECT  'Opportunity',
-        'Median pharmacies population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to pharmacies
+        'Median pharmacies population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as a median of all
             pharmacies in the neighborhood','\n\s+',' ','g'),
@@ -1421,14 +1421,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
         );
 
--- pharmacies pop shed 70th percentile low stress access ratio
+-- pharmacies pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile pharmacies population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to pharmacies
+        '70th percentile pharmacies population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as the 70th percentile of all
             pharmacies in the neighborhood','\n\s+',' ','g'),
@@ -1444,14 +1444,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
         );
 
--- pharmacies pop shed 30th percentile low stress access ratio
+-- pharmacies pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile pharmacies population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to pharmacies
+        '30th percentile pharmacies population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as the 30th percentile of all
             pharmacies in the neighborhood','\n\s+',' ','g'),
@@ -1470,12 +1470,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- retail
 -------------------------------------
--- average retail access ratio
+-- average retail access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to retail',
+        'Average score of low stress access to retail',
         CASE    WHEN SUM(retail_high_stress) = 0 THEN 0
                 ELSE SUM(retail_low_stress) / SUM(retail_high_stress)
                 END,
@@ -1491,14 +1491,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median retail access ratio
+-- median retail access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of retail access',
-        quantile(retail_ratio,0.5),
-        regexp_replace('Ratio of retail accessible by low stress
+        'Median score of retail access',
+        quantile(retail_score,0.5),
+        regexp_replace('Score of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1512,14 +1512,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile retail access ratio
+-- 70th percentile retail access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of retail access',
-        quantile(retail_ratio,0.7),
-        regexp_replace('Ratio of retail accessible by low stress
+        '70th percentile score of retail access',
+        quantile(retail_score,0.7),
+        regexp_replace('Score of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1533,14 +1533,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile retail access ratio
+-- 30th percentile retail access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of retail access',
-        quantile(retail_ratio,0.3),
-        regexp_replace('Ratio of retail accessible by low stress
+        '30th percentile score of retail access',
+        quantile(retail_score,0.3),
+        regexp_replace('Score of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1554,16 +1554,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- retail pop shed average low stress access ratio
+-- retail pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average retail bike shed access ratio',
+        'Average retail bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of retail clusters in the neighborhood expressed as an average of
             all retail clusters in the neighborhood','\n\s+',' ','g'),
@@ -1577,14 +1577,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
         );
 
--- retail pop shed median low stress access ratio
+-- retail pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_retail
 )
 SELECT  'Opportunity',
-        'Median retail population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to retail
+        'Median retail population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as a median of all
             retail clusters in the neighborhood','\n\s+',' ','g'),
@@ -1601,14 +1601,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
         );
 
--- retail pop shed 70th percentile low stress access ratio
+-- retail pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile retail population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to retail
+        '70th percentile retail population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as the 70th percentile of all
             retail clusters in the neighborhood','\n\s+',' ','g'),
@@ -1624,14 +1624,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
         );
 
--- retail pop shed 30th percentile low stress access ratio
+-- retail pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile retail population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to retail
+        '30th percentile retail population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as the 30th percentile of all
             retail clusters in the neighborhood','\n\s+',' ','g'),
@@ -1650,12 +1650,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- supermarkets
 -------------------------------------
--- average supermarkets access ratio
+-- average supermarkets access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to supermarkets',
+        'Average score of low stress access to supermarkets',
         CASE    WHEN SUM(supermarkets_high_stress) = 0 THEN 0
                 ELSE SUM(supermarkets_low_stress) / SUM(supermarkets_high_stress)
                 END,
@@ -1671,14 +1671,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median supermarkets access ratio
+-- median supermarkets access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of supermarkets access',
-        quantile(supermarkets_ratio,0.5),
-        regexp_replace('Ratio of supermarkets accessible by low stress
+        'Median score of supermarkets access',
+        quantile(supermarkets_score,0.5),
+        regexp_replace('Score of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1692,14 +1692,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile supermarkets access ratio
+-- 70th percentile supermarkets access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of supermarkets access',
-        quantile(supermarkets_ratio,0.7),
-        regexp_replace('Ratio of supermarkets accessible by low stress
+        '70th percentile score of supermarkets access',
+        quantile(supermarkets_score,0.7),
+        regexp_replace('Score of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1713,14 +1713,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile supermarkets access ratio
+-- 30th percentile supermarkets access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of supermarkets access',
-        quantile(supermarkets_ratio,0.3),
-        regexp_replace('Ratio of supermarkets accessible by low stress
+        '30th percentile score of supermarkets access',
+        quantile(supermarkets_score,0.3),
+        regexp_replace('Score of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1734,16 +1734,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- supermarkets pop shed average low stress access ratio
+-- supermarkets pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average supermarkets bike shed access ratio',
+        'Average supermarkets bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of supermarkets in the neighborhood expressed as an average of
             all supermarkets in the neighborhood','\n\s+',' ','g'),
@@ -1757,14 +1757,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
         );
 
--- supermarkets pop shed median low stress access ratio
+-- supermarkets pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_grocery
 )
 SELECT  'Opportunity',
-        'Median supermarkets population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to supermarkets
+        'Median supermarkets population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as a median of all
             supermarkets in the neighborhood','\n\s+',' ','g'),
@@ -1781,14 +1781,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
         );
 
--- supermarkets pop shed 70th percentile low stress access ratio
+-- supermarkets pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile supermarkets population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to supermarkets
+        '70th percentile supermarkets population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as the 70th percentile of all
             supermarkets in the neighborhood','\n\s+',' ','g'),
@@ -1804,14 +1804,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
         );
 
--- supermarkets pop shed 30th percentile low stress access ratio
+-- supermarkets pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile supermarkets population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to supermarkets
+        '30th percentile supermarkets population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as the 30th percentile of all
             supermarkets in the neighborhood','\n\s+',' ','g'),
@@ -1830,12 +1830,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- social_services
 -------------------------------------
--- average social_services access ratio
+-- average social_services access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to social services',
+        'Average score of low stress access to social services',
         CASE    WHEN SUM(social_services_high_stress) = 0 THEN 0
                 ELSE SUM(social_services_low_stress) / SUM(social_services_high_stress)
                 END,
@@ -1851,14 +1851,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median social_services access ratio
+-- median social_services access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of social services access',
-        quantile(social_services_ratio,0.5),
-        regexp_replace('Ratio of social services accessible by low stress
+        'Median score of social services access',
+        quantile(social_services_score,0.5),
+        regexp_replace('Score of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1872,14 +1872,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile social_services access ratio
+-- 70th percentile social_services access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of social services access',
-        quantile(social_services_ratio,0.7),
-        regexp_replace('Ratio of social services accessible by low stress
+        '70th percentile score of social services access',
+        quantile(social_services_score,0.7),
+        regexp_replace('Score of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1893,14 +1893,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile social_services access ratio
+-- 30th percentile social_services access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of social services access',
-        quantile(social_services_ratio,0.3),
-        regexp_replace('Ratio of social services accessible by low stress
+        '30th percentile score of social services access',
+        quantile(social_services_score,0.3),
+        regexp_replace('Score of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -1914,16 +1914,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- social_services pop shed average low stress access ratio
+-- social_services pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average social_services bike shed access ratio',
+        'Average social_services bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of social services in the neighborhood expressed as an average of
             all social services in the neighborhood','\n\s+',' ','g'),
@@ -1937,14 +1937,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
         );
 
--- social_services pop shed median low stress access ratio
+-- social_services pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_social_svcs
 )
 SELECT  'Opportunity',
-        'Median social_services population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to social services
+        'Median social_services population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as a median of all
             social services in the neighborhood','\n\s+',' ','g'),
@@ -1961,14 +1961,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
         );
 
--- social_services pop shed 70th percentile low stress access ratio
+-- social_services pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile social_services population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to social services
+        '70th percentile social_services population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as the 70th percentile of all
             social services in the neighborhood','\n\s+',' ','g'),
@@ -1984,14 +1984,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
         );
 
--- social_services pop shed 30th percentile low stress access ratio
+-- social_services pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile social_services population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to social services
+        '30th percentile social_services population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as the 30th percentile of all
             social services in the neighborhood','\n\s+',' ','g'),
@@ -2010,12 +2010,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- parks
 -------------------------------------
--- average parks access ratio
+-- average parks access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to parks',
+        'Average score of low stress access to parks',
         CASE    WHEN SUM(parks_high_stress) = 0 THEN 0
                 ELSE SUM(parks_low_stress) / SUM(parks_high_stress)
                 END,
@@ -2031,14 +2031,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median parks access ratio
+-- median parks access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_parks
 )
 SELECT  'Opportunity',
-        'Median ratio of parks access',
-        quantile(parks_ratio,0.5),
-        regexp_replace('Ratio of parks accessible by low stress
+        'Median score of parks access',
+        quantile(parks_score,0.5),
+        regexp_replace('Score of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2053,14 +2053,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile parks access ratio
+-- 70th percentile parks access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of parks access',
-        quantile(parks_ratio,0.7),
-        regexp_replace('Ratio of parks accessible by low stress
+        '70th percentile score of parks access',
+        quantile(parks_score,0.7),
+        regexp_replace('Score of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2074,14 +2074,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile parks access ratio
+-- 30th percentile parks access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of parks access',
-        quantile(parks_ratio,0.3),
-        regexp_replace('Ratio of parks accessible by low stress
+        '30th percentile score of parks access',
+        quantile(parks_score,0.3),
+        regexp_replace('Score of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2095,16 +2095,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- parks pop shed average low stress access ratio
+-- parks pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average parks bike shed access ratio',
+        'Average parks bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of parks in the neighborhood expressed as an average of
             all parks in the neighborhood','\n\s+',' ','g'),
@@ -2118,14 +2118,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
         );
 
--- parks pop shed median low stress access ratio
+-- parks pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median parks population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to parks
+        'Median parks population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as a median of all
             parks in the neighborhood','\n\s+',' ','g'),
@@ -2141,14 +2141,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
         );
 
--- parks pop shed 70th percentile low stress access ratio
+-- parks pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile parks population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to parks
+        '70th percentile parks population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as the 70th percentile of all
             parks in the neighborhood','\n\s+',' ','g'),
@@ -2164,14 +2164,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
         );
 
--- parks pop shed 30th percentile low stress access ratio
+-- parks pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile parks population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to parks
+        '30th percentile parks population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as the 30th percentile of all
             parks in the neighborhood','\n\s+',' ','g'),
@@ -2190,12 +2190,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- trails
 -------------------------------------
--- average trails access ratio
+-- average trails access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to trails',
+        'Average score of low stress access to trails',
         CASE    WHEN SUM(trails_high_stress) = 0 THEN 0
                 ELSE SUM(trails_low_stress) / SUM(trails_high_stress)
                 END,
@@ -2211,14 +2211,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median trails access ratio
+-- median trails access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_trails
 )
 SELECT  'Opportunity',
-        'Median ratio of trails access',
-        quantile(trails_ratio,0.5),
-        regexp_replace('Ratio of trails accessible by low stress
+        'Median score of trails access',
+        quantile(trails_score,0.5),
+        regexp_replace('Score of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2233,14 +2233,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile trails access ratio
+-- 70th percentile trails access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of trails access',
-        quantile(trails_ratio,0.7),
-        regexp_replace('Ratio of trails accessible by low stress
+        '70th percentile score of trails access',
+        quantile(trails_score,0.7),
+        regexp_replace('Score of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2254,14 +2254,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile trails access ratio
+-- 30th percentile trails access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of trails access',
-        quantile(trails_ratio,0.3),
-        regexp_replace('Ratio of trails accessible by low stress
+        '30th percentile score of trails access',
+        quantile(trails_score,0.3),
+        regexp_replace('Score of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2278,12 +2278,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- community_centers
 -------------------------------------
--- average community_centers access ratio
+-- average community_centers access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to community centers',
+        'Average score of low stress access to community centers',
         CASE    WHEN SUM(community_centers_high_stress) = 0 THEN 0
                 ELSE SUM(community_centers_low_stress) / SUM(community_centers_high_stress)
                 END,
@@ -2299,14 +2299,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median community centers access ratio
+-- median community centers access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median ratio of community centers access',
-        quantile(community_centers_ratio,0.5),
-        regexp_replace('Ratio of community centers accessible by low stress
+        'Median score of community centers access',
+        quantile(community_centers_score,0.5),
+        regexp_replace('Score of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2320,14 +2320,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile community centers access ratio
+-- 70th percentile community centers access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of community centers access',
-        quantile(community_centers_ratio,0.7),
-        regexp_replace('Ratio of community centers accessible by low stress
+        '70th percentile score of community centers access',
+        quantile(community_centers_score,0.7),
+        regexp_replace('Score of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2341,14 +2341,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile community centers access ratio
+-- 30th percentile community centers access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of community centers access',
-        quantile(community_centers_ratio,0.3),
-        regexp_replace('Ratio of community centers accessible by low stress
+        '30th percentile score of community centers access',
+        quantile(community_centers_score,0.3),
+        regexp_replace('Score of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2362,16 +2362,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- community centers pop shed average low stress access ratio
+-- community centers pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average community centers bike shed access ratio',
+        'Average community centers bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of community centers in the neighborhood expressed as an average of
             all community centers in the neighborhood','\n\s+',' ','g'),
@@ -2385,14 +2385,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
         );
 
--- community centers pop shed median low stress access ratio
+-- community centers pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_comm_ctrs
 )
 SELECT  'Opportunity',
-        'Median community centers population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to community centers
+        'Median community centers population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as a median of all
             community centers in the neighborhood','\n\s+',' ','g'),
@@ -2409,14 +2409,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
         );
 
--- community centers pop shed 70th percentile low stress access ratio
+-- community centers pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile community centers population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to community centers
+        '70th percentile community centers population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as the 70th percentile of all
             community centers in the neighborhood','\n\s+',' ','g'),
@@ -2432,14 +2432,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
         );
 
--- community centers pop shed 30th percentile low stress access ratio
+-- community centers pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile community centers population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to community centers
+        '30th percentile community centers population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as the 30th percentile of all
             community centers in the neighborhood','\n\s+',' ','g'),
@@ -2458,12 +2458,12 @@ WHERE   EXISTS (
 -------------------------------------
 -- transit
 -------------------------------------
--- average transit access ratio
+-- average transit access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average ratio of low stress access to transit',
+        'Average score of low stress access to transit',
         CASE    WHEN SUM(transit_high_stress) = 0 THEN 0
                 ELSE SUM(transit_low_stress) / SUM(transit_high_stress)
                 END,
@@ -2479,14 +2479,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- median transit access ratio
+-- median transit access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_transit
 )
 SELECT  'Opportunity',
-        'Median ratio of transit access',
-        quantile(transit_ratio,0.5),
-        regexp_replace('Ratio of transit stations accessible by low stress
+        'Median score of transit access',
+        quantile(transit_score,0.5),
+        regexp_replace('Score of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2501,14 +2501,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 70th percentile transit access ratio
+-- 70th percentile transit access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile ratio of transit access',
-        quantile(transit_ratio,0.7),
-        regexp_replace('Ratio of transit stations accessible by low stress
+        '70th percentile score of transit access',
+        quantile(transit_score,0.7),
+        regexp_replace('Score of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2522,14 +2522,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- 30th percentile transit access ratio
+-- 30th percentile transit access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile ratio of transit access',
-        quantile(transit_ratio,0.3),
-        regexp_replace('Ratio of transit stations accessible by low stress
+        '30th percentile score of transit access',
+        quantile(transit_score,0.3),
+        regexp_replace('Score of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
@@ -2543,16 +2543,16 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- transit pop shed average low stress access ratio
+-- transit pop shed average low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Average transit bike shed access ratio',
+        'Average transit bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
                 END,
-        regexp_replace('Ratio of population with low stress access
+        regexp_replace('Score of population with low stress access
             compared to total population within the bike shed distance
             of transit stations in the neighborhood expressed as an average of
             all transit stations in the neighborhood','\n\s+',' ','g'),
@@ -2566,14 +2566,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
         );
 
--- transit pop shed median low stress access ratio
+-- transit pop shed median low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        'Median transit population shed ratio',
-        quantile(pop_ratio,0.5),
-        regexp_replace('Ratio of population with low stress access to transit stations
+        'Median transit population shed score',
+        quantile(pop_score,0.5),
+        regexp_replace('Score of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as a median of all
             transit stations in the neighborhood','\n\s+',' ','g'),
@@ -2589,14 +2589,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
         );
 
--- transit pop shed 70th percentile low stress access ratio
+-- transit pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '70th percentile transit population shed ratio',
-        quantile(pop_ratio,0.7),
-        regexp_replace('Ratio of population with low stress access to transit stations
+        '70th percentile transit population shed score',
+        quantile(pop_score,0.7),
+        regexp_replace('Score of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as the 70th percentile of all
             transit stations in the neighborhood','\n\s+',' ','g'),
@@ -2612,14 +2612,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
         );
 
--- transit pop shed 30th percentile low stress access ratio
+-- transit pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
 SELECT  'Opportunity',
-        '30th percentile transit population shed ratio',
-        quantile(pop_ratio,0.3),
-        regexp_replace('Ratio of population with low stress access to transit stations
+        '30th percentile transit population shed score',
+        quantile(pop_score,0.3),
+        regexp_replace('Score of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as the 30th percentile of all
             transit stations in the neighborhood','\n\s+',' ','g'),
