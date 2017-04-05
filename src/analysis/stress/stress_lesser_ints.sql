@@ -3,12 +3,12 @@
 -- location: neighborhood
 ----------------------------------------
 UPDATE  neighborhood_ways SET ft_int_stress = 1, tf_int_stress = 1
-WHERE   functional_class IN ('residential','living_street','track','path');
+WHERE   functional_class IN ('residential','unclassified','living_street','track','path');
 
 -- ft
 UPDATE  neighborhood_ways
 SET     ft_int_stress = 3
-WHERE   functional_class IN ('residential','living_street','track','path')
+WHERE   functional_class IN ('residential','unclassified','living_street','track','path')
 AND     EXISTS (
             SELECT  1
             FROM    neighborhood_ways w
@@ -64,7 +64,7 @@ AND     EXISTS (
 -- tf
 UPDATE  neighborhood_ways
 SET     tf_int_stress = 3
-WHERE   functional_class IN ('residential','living_street','track','path')
+WHERE   functional_class IN ('residential','unclassified','living_street','track','path')
 AND     EXISTS (
             SELECT  1
             FROM    neighborhood_ways w
