@@ -37,9 +37,11 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- set block-based ratio
+-- set block-based score
 UPDATE  neighborhood_census_blocks
-SET     trails_ratio = CASE WHEN trails_high_stress IS NULL THEN NULL
-                            WHEN trails_high_stress = 0 THEN 0
-                            ELSE trails_low_stress::FLOAT / trails_high_stress
+SET     trails_score = CASE WHEN trails_high_stress IS NULL THEN NULL
+                            WHEN trails_high_stress = 0 THEN NULL
+                            WHEN trails_low_stress = 0 THEN 0
+                            WHEN trails_high_stress = 1 AND trails_low_stress = 1 THEN 1
+                            ELSE 0.5 + (0.5 * (trails_low_stress::FLOAT - 1)) / (trails_high_stress - 1)
                             END;

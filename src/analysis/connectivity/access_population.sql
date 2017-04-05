@@ -31,9 +31,9 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- set ratio
+-- set score
 UPDATE  neighborhood_census_blocks
-SET     pop_ratio = CASE  WHEN pop_high_stress IS NULL THEN NULL
+SET     pop_score = CASE  WHEN pop_high_stress IS NULL THEN NULL
                             WHEN pop_high_stress = 0 THEN 0
                             ELSE pop_low_stress::FLOAT / pop_high_stress
                             END;

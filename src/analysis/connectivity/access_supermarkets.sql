@@ -31,12 +31,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- set block-based ratio
+-- set block-based score
 UPDATE  neighborhood_census_blocks
-SET     supermarkets_ratio = CASE  WHEN supermarkets_high_stress IS NULL THEN NULL
-                            WHEN supermarkets_high_stress = 0 THEN 0
-                            ELSE supermarkets_low_stress::FLOAT / supermarkets_high_stress
-                            END;
+SET     supermarkets_score = CASE   WHEN supermarkets_high_stress IS NULL THEN NULL
+                                    WHEN supermarkets_high_stress = 0 THEN NULL
+                                    WHEN supermarkets_low_stress = 0 THEN 0
+                                    WHEN supermarkets_high_stress = 1 AND supermarkets_low_stress = 1 THEN 1
+                                    ELSE 0.5 + (0.5 * (supermarkets_low_stress::FLOAT - 1)) / (supermarkets_high_stress - 1)
+                                    END;
 
 -- set population shed for each supermarket in the neighborhood
 UPDATE  neighborhood_supermarkets
@@ -62,7 +64,7 @@ WHERE   EXISTS (
         );
 
 UPDATE  neighborhood_supermarkets
-SET     pop_ratio = CASE    WHEN pop_high_stress IS NULL THEN NULL
+SET     pop_score = CASE    WHEN pop_high_stress IS NULL THEN NULL
                             WHEN pop_high_stress = 0 THEN 0
                             ELSE pop_low_stress::FLOAT / pop_high_stress
                             END;

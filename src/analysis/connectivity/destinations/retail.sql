@@ -12,7 +12,7 @@ CREATE TABLE generated.neighborhood_retail (
     blockid10 CHARACTER VARYING(15)[],
     pop_low_stress INT,
     pop_high_stress INT,
-    pop_ratio FLOAT,
+    pop_score FLOAT,
     geom_poly geometry(multipolygon, :nb_output_srid)
 );
 

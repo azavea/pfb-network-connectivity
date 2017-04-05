@@ -13,7 +13,7 @@ CREATE TABLE generated.neighborhood_schools (
     school_name TEXT,
     pop_low_stress INT,
     pop_high_stress INT,
-    pop_ratio FLOAT,
+    pop_score FLOAT,
     geom_pt geometry(point, :nb_output_srid),
     geom_poly geometry(polygon, :nb_output_srid)
 );

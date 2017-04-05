@@ -31,12 +31,14 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- set block-based ratio
+-- set block-based score
 UPDATE  neighborhood_census_blocks
-SET     universities_ratio = CASE  WHEN universities_high_stress IS NULL THEN NULL
-                            WHEN universities_high_stress = 0 THEN 0
-                            ELSE universities_low_stress::FLOAT / universities_high_stress
-                            END;
+SET     universities_score = CASE   WHEN universities_high_stress IS NULL THEN NULL
+                                    WHEN universities_high_stress = 0 THEN NULL
+                                    WHEN universities_low_stress = 0 THEN 0
+                                    WHEN universities_high_stress = 1 AND universities_low_stress = 1 THEN 1
+                                    ELSE 0.5 + (0.5 * (universities_low_stress::FLOAT - 1)) / (universities_high_stress - 1)
+                                    END;
 
 -- set population shed for each university in the neighborhood
 UPDATE  neighborhood_universities
@@ -62,7 +64,7 @@ WHERE   EXISTS (
         );
 
 UPDATE  neighborhood_universities
-SET     pop_ratio = CASE    WHEN pop_high_stress IS NULL THEN NULL
+SET     pop_score = CASE    WHEN pop_high_stress IS NULL THEN NULL
                             WHEN pop_high_stress = 0 THEN 0
                             ELSE pop_low_stress::FLOAT / pop_high_stress
                             END;
