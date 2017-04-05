@@ -35,10 +35,10 @@
 <Layer name="neighborhood_ways" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
     <StyleName>neighborhood_ways</StyleName>
     <Datasource>
-       <Parameter name="file"><![CDATA[/data/neighborhood_ways.json]]></Parameter>
-       <Parameter name="layer"><![CDATA[OGRGeoJSON]]></Parameter>
+       <Parameter name="file"><![CDATA[/data/neighborhood_ways.shp]]></Parameter>
+       <Parameter name="layer"><![CDATA[neighborhood_ways]]></Parameter>
        <Parameter name="id"><![CDATA[neighborhood_ways]]></Parameter>
-       <Parameter name="project"><![CDATA[pfb_export_json]]></Parameter>
+       <Parameter name="project"><![CDATA[pfb_export]]></Parameter>
        <Parameter name="srs"><![CDATA[]]></Parameter>
        <Parameter name="type"><![CDATA[ogr]]></Parameter>
     </Datasource>

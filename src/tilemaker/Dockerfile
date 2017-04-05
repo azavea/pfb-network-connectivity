@@ -64,7 +64,7 @@ RUN set -xe && \
     ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
     rm -r ./awscli-bundle*
 
-RUN apt-get install -y gdal-bin
+RUN apt-get install -y gdal-bin time
 
 # Install tl and other utilities
 RUN npm install -g \
@@ -73,8 +73,7 @@ RUN npm install -g \
     mapnik@3.5.14 \
     tilelive-mapnik@0.6.18 \
     tilelive-file@0.0.3 \
-    tilelive-s3@6.5.0 \
-    @turf/bbox@3.14.0
+    tilelive-s3@6.5.0
 
 COPY . /opt/tl-export
 
