@@ -15,26 +15,26 @@
                 templateUrl: 'app/login/login.html'
             })
             .state('help', {
-                url: '/help/',
+                url: '/admin/help/',
                 controller: 'HelpController',
                 controllerAs: 'help',
                 templateUrl: 'app/help/help.html'
             })
             .state('request-password-reset', {
-                url: '/password-reset-request/',
+                url: '/admin/password-reset-request/',
                 controller: 'PasswordResetRequestController',
                 controllerAs: 'pw',
                 templateUrl: 'app/password-reset/request/password-reset-request.html'
             })
             .state('password-reset', {
-                url: '/password-reset/?token',
+                url: '/admin/password-reset/?token',
                 controller: 'PasswordResetController',
                 controllerAs: 'pw',
                 templateUrl: 'app/password-reset/reset/password-reset.html'
             })
             .state('organizations', {
                 abstract: true,
-                url: '/organizations/',
+                url: '/admin/organizations/',
                 template: '<ui-view/>'
             })
             .state('organizations.list', {
@@ -57,7 +57,7 @@
             })
             .state('users', {
                 abstract: true,
-                url: '/users/',
+                url: '/admin/users/',
                 template: '<ui-view/>'
             })
             .state('users.list', {
@@ -80,7 +80,7 @@
             })
             .state('analysis-jobs', {
                 abstract: true,
-                url: '/analysis-jobs/?limit&offset',
+                url: '/admin/analysis-jobs/?limit&offset',
                 template: '<ui-view/>'
             })
             .state('analysis-jobs.list', {
@@ -103,7 +103,7 @@
             })
             .state('neighborhoods', {
                 abstract: true,
-                url: '/neighborhoods/?limit&offset',
+                url: '/admin/neighborhoods/?limit&offset',
                 template: '<ui-view/>'
             })
             .state('neighborhoods.create', {
