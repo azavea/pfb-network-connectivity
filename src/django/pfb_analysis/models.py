@@ -368,6 +368,7 @@ class AnalysisJob(PFBModel):
             'PFB_STATE_FIPS': self.neighborhood.state.fips,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
+            'PFB_S3_RESULTS_PATH': self.s3_results_path
         })
         if self.osm_extract_url:
             environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
@@ -375,8 +376,8 @@ class AnalysisJob(PFBModel):
         # Workaround for not being able to run development jobs on the actual batch cluster:
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':
-            logger.warn("Can't actually run development jobs on AWS. Try this:"
-                        "\nPFB_JOB_ID='{PFB_JOB_ID}' "
+            logger.warn("Can't actually run development analysis jobs on AWS. Try this:"
+                        "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
                         "./scripts/run-local-analysis "
                         "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
             self.generate_tiles()
@@ -404,15 +405,20 @@ class AnalysisJob(PFBModel):
         environment = self.base_environment()
         environment.update({
             'PFB_JOB_ID': str(self.uuid),
-            'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME
-        }
+            'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
+            'PFB_S3_RESULTS_PATH': self.s3_results_path,
+            'PFB_S3_TILES_PATH': self.s3_tiles_path
+        })
 
         # Workaround for not being able to run development jobs on the actual batch cluster:
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':
             logger.warn("Can't actually run development tiling jobs on AWS. Try this:"
                         "\nAWS_STORAGE_BUCKET_NAME='{AWS_STORAGE_BUCKET_NAME}' "
-                        "docker-compose run tilemaker '{PFB_JOB_ID}'".format(**environment))
+                        "PFB_JOB_ID='{PFB_JOB_ID}' "
+                        "PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
+                        "PFB_S3_TILES_PATH='{PFB_S3_TILES_PATH}' "
+                        "docker-compose run tilemaker".format(**environment))
             return
 
         job_params = {
@@ -437,8 +443,16 @@ class AnalysisJob(PFBModel):
         if self.status != self.Status.CANCELLED:
             self.status_updates.create(job=self, status=status, step=step, message=message)
 
+    @property
+    def s3_results_path(self):
+        return 'results/{jobId}'.format(jobId=str(self.uuid))
+
+    @property
+    def s3_tiles_path(self):
+        return '{}/tiles'.format(self.s3_results_path)
+
     def _s3_url_for_result_resource(self, filename):
-        key = 'results/{jobId}/{filename}'.format(jobId=str(self.uuid), filename=filename)
+        key = '/'.join(self.s3_results_path, filename)
         s3 = boto3.client('s3')
         return s3.generate_presigned_url(
             ClientMethod='get_object',

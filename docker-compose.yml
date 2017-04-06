@@ -79,3 +79,6 @@ services:
     environment:
       - AWS_STORAGE_BUCKET_NAME
       - AWS_PROFILE
+      - PFB_JOB_ID
+      - PFB_S3_RESULTS_PATH
+      - PFB_S3_TILES_PATH
