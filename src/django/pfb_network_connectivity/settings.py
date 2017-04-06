@@ -293,18 +293,21 @@ else:
     raise ImproperlyConfigured('env.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION or ' +
                                'env.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME is required.')
 
-
-# Same setup for tilemaker jobs, but without the exception-throwing
+# Same setup for tilemaker jobs as for analysis jobs
 PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME')
+if not PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME:
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME is required')
 PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION')
 PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME')
-if PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME and not PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION:
-    try:
-        revision = get_latest_job_definition(PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME)['revision']
-    except NoActiveJobDefinitionRevision:
-        pass
-    PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION = '{}:{}'.format(PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME,
-                                                                          revision)
+if PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION:
+    pass
+elif PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME:
+    revision = get_latest_job_definition(PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME)['revision']
+    PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION = (
+        '{}:{}'.format(PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME, revision))
+else:
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION or ' +
+                               'env.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME is required.')
 
 
 # Analysis results settings
