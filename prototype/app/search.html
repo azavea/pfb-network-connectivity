@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>People for bikes</title>
+
+		<link href="https://fonts.googleapis.com/css?family=Cabin+Condensed:400,500,600,700" rel="stylesheet">
+		<link rel="stylesheet" href="./assets/fonts/fontello/css/fontello.css">
+		<link rel="stylesheet" href="./assets/css/main.css">
+	</head>
+	<body>
+		<!-- Navigation -->
+		<div class="navbar">
+			<div class="container">
+				<div class="navbar-left">
+					<a href="/" class="brand">
+						<img src="assets/images/placesforbikes-logo-white.png" alt="Places for bikes">
+					</a>
+				</div>
+				<div class="navbar-right">
+					<nav>
+						<a href="search.html">All locations</a>
+						<a href="#">About</a>
+						<a href="#">Methodology</a>
+						<a href="http://www.peopleforbikes.org/" target="_blank">People for bikes</a>
+					</nav>
+				</div>
+			</div>
+		</div>
+		<!-- Navigation -->
+
+		<!-- Sidebar -->
+		<div class="sidebar">
+
+			<!-- Everything in .sidebar-header will not scroll.  -->
+			<div class="sidebar-header">
+				<h2 class="sidebar-title">City/Town Search</h2>
+				<div class="row">
+					<div class="column">
+						<div class="form-group">
+							<label for="1">Filter by city or town name</label>
+							<input type="text" class="form-control">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="column-7">
+						<div class="form-group">
+							<label for="2">Sort by</label>
+							<select name="2" id="" class="form-control">
+								<option value="">Alphabetical</option>
+								<option value="">Highest Rated</option>
+								<option value="">Lowest Rated</option>
+								<option value="">Last Updated</option>
+							</select>
+						</div>
+					</div>
+					<div class="column">
+
+						<!-- Compare dropdown -->
+						<div class="form-group">
+							<label for="3">Compare</label>
+							<div class="dropdown">
+							  <button class="btn btn-default dropdown-toggle btn-block" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							    3 Selected
+							    <span class="caret"></span>
+							  </button>
+
+							  <!-- Were using bootstraps dropdown js -->
+							  <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdownMenu1">
+
+							  	<!-- Only up to 3 to compare. Duplicate li and children for each item -->
+							  	<li>
+							    	<div class="compare-title">Los Angeles, California</div>
+							    	<div class="network-score small">90</div>
+							    	<a href="#" class="compare-remove">Remove</a>
+							    </li>
+							    <li>
+							    	<div class="compare-title">Los Angeles, California</div>
+							    	<div class="network-score small">90</div>
+							    	<a href="#" class="compare-remove">Remove</a>
+							    </li>
+							    <li><a href="/compare.html" class="compare-btn">Compare Neighborhoods</a></li>
+							  </ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Everythign in sidebar-scrollable will scroll. 
+					#scrollHeaders makes the jquery for sticky headers work.
+
+					The stick headers are probably only needed when sorting alphabetically. -->
+			<div class="sidebar-scrollable" id="scrollHeaders">
+
+				<!-- Each section is a new grouping of results alphabetically.
+						 Each section contains only one .section-title -->
+				<section>
+					<div class="section-title" title="A">A</div>
+
+					<!-- Duplicate .result div for each result. -->
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+
+							<!-- .result-preview should display the shapefile preview -->
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Phoenix, Arizona
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle active">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section>
+					<div class="section-title">C</div>
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Los Angeles, California
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Los Angeles, California
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Los Angeles, California
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Los Angeles, California
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Los Angeles, California
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Los Angeles, California
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Los Angeles, California
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+					<div class="result">
+						<a href="/town.html" class="result-link"></a>
+						<div class="result-left">
+							<div class="result-preview">
+								<img src="http://placehold.it/75" alt="Shape Preview">
+							</div>
+							<div class="result-title">Los Angeles, California
+								<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+							</div>
+						</div>
+						<div class="result-right">
+							<div class="network-score">90</div>
+							<div class="compare">
+								<button class="btn btn-toggle">Compare <span></span></button>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Pagintation -->
+				<section class="paginate">
+					<button class="btn btn-default paginate-previous">Previous</button>
+					<button class="btn btn-default paginate-previous">Next</button>
+				</section>
+				<!-- Pagintation -->
+			</div>
+		</div>
+		<!-- Sidebar -->
+
+		<!-- Map -->
+		<div class="preview-map">
+			<div class="map"></div>
+		</div>
+		<!-- Map -->
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		<script src="./assets/js/bootstrap.min.js"></script>
+		<script src="./assets/js/main.js"></script>
+	</body>
+</html>

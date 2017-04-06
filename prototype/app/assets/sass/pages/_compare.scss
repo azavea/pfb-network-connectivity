@@ -1,0 +1,21 @@
+.comparisons {
+  background-color: $shade-light;
+
+  .card {
+    margin-top: 2rem;
+  }
+
+  .compare-remove {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 22px;
+    color: #000;
+    opacity: .5;
+    transition: .2s ease-in-out opacity;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
