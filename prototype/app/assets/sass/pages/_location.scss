@@ -1,0 +1,14 @@
+.location-overview {
+
+  .metric-details {
+    padding: 1rem 2rem;
+    background-color: $shade-light;
+    border-bottom: 1px solid darken($shade-light, 5%);
+    position: relative;
+    z-index: 1;
+
+    .column {
+      padding: 0;
+    }
+  }
+}

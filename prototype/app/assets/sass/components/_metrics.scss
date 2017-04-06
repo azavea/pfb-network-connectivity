@@ -1,0 +1,36 @@
+.metric-list {
+  margin: 0;
+  list-style-type: none;
+  padding: 0;
+  position: relative;
+  z-index: 10;
+
+  li {
+    padding: 2rem;
+    margin: 0;
+    border-top: 1px solid #ddd;
+    font-size: 1.8rem;
+  }
+
+  .network-score {
+    float: right;
+    margin-top: -5px !important;
+  }
+
+  .list-button {
+    text-align: center;
+  }
+}
+
+.metric-details {
+  flex: 1;
+  padding: 2rem;
+
+  h1, h2, h3, h4 {
+    margin: 0;
+  }
+
+  p:last-of-type {
+    margin-bottom: 0;
+  }
+}
