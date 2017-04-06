@@ -173,13 +173,16 @@ class AnalysisJob(PFBModel):
         CONNECTIVITY = 'CONNECTIVITY'
         METRICS = 'METRICS'
         EXPORTING = 'EXPORTING'
-        CANCELLED = 'CANCELLED'
+        EXPORTED = 'EXPORTED'
+        TILING = 'TILING'
         COMPLETE = 'COMPLETE'
+        CANCELLED = 'CANCELLED'
         ERROR = 'ERROR'
 
         ACTIVE_STATUSES = (CREATED, QUEUED, IMPORTING, BUILDING, CONNECTIVITY,
-                           METRICS, EXPORTING,)
-        DONE_STATUSES = (CANCELLED, COMPLETE, ERROR,)
+                           METRICS, EXPORTING, EXPORTED, TILING,)
+        SUCCESS_STATUS = COMPLETE
+        DONE_STATUSES = (SUCCESS_STATUS, CANCELLED, ERROR,)
 
         CHOICES = (
             (CREATED, 'Created',),
@@ -189,8 +192,10 @@ class AnalysisJob(PFBModel):
             (CONNECTIVITY, 'Calculating Connectivity',),
             (METRICS, 'Calculating Graph Metrics',),
             (EXPORTING, 'Exporting Results',),
-            (CANCELLED, 'Cancelled',),
+            (EXPORTED, 'Analysis Finished',),
+            (TILING, 'Generating Map Tiles',),
             (COMPLETE, 'Complete',),
+            (CANCELLED, 'Cancelled',),
             (ERROR, 'Error',),
         )
 

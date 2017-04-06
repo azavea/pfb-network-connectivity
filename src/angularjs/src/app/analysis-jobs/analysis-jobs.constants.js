@@ -31,13 +31,21 @@
             short: 'Exporting',
             long: 'Exporting Results'
         },
-        CANCELLED: {
-            short: 'Cancelled',
-            long: 'Cancelled'
+        EXPORTED: {
+            short: 'Exported',
+            long: 'Analysis Finished'
+        },
+        TILING: {
+            short: 'Tiling',
+            long: 'Generating Map Tiles'
         },
         COMPLETE: {
             short: 'Complete',
             long: 'Complete'
+        },
+        CANCELLED: {
+            short: 'Cancelled',
+            long: 'Cancelled'
         },
         ERROR: {
             short: 'Error',

@@ -15,6 +15,11 @@ fi
 TL_SHAPEFILE_NAME="${TL_SHAPEFILE_NAME:-neighborhood_ways}"
 TL_MIN_ZOOM="${TL_MIN_ZOOM:-8}"
 TL_MAX_ZOOM="${TL_MAX_ZOOM:-17}"
+function update_status() {
+    /opt/pfb/django/manage.py update_status "${PFB_JOB_ID}" "$@"
+}
+
+update_status "TILING" "Exporting tiles"
 
 PFB_TEMPDIR=`mktemp -d`
 cd $PFB_TEMPDIR
@@ -41,6 +46,9 @@ TL_BOUNDS=$(ogrinfo -so -al "/data/${TL_SHAPEFILE_NAME}.shp" \
 tl copy -z "${TL_MIN_ZOOM}" -Z "${TL_MAX_ZOOM}" -b "${TL_BOUNDS}" \
     "mapnik:///opt/tl-export/styles/${TL_SHAPEFILE_NAME}_style.xml" \
     "${TL_AWS_RESULTS_PATH}/tiles/{z}/{x}/{y}.png"
+
+update_status "COMPLETE" "Finished exporting tiles"
+
 
 # Drop to a shell if run interactively
 bash

@@ -66,9 +66,14 @@ services:
 
   tilemaker:
     image: pfb-tilemaker
+    extends:
+      service: django
+      file: common.yml
     build:
-      context: ./src/tilemaker
-      dockerfile: Dockerfile
+      context: ./src
+      dockerfile: tilemaker/Dockerfile
+    links:
+      - database:database.service.pfb.internal
     volumes:
       - /home/vagrant/.aws:/root/.aws
     environment:

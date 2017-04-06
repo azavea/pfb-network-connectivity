@@ -41,7 +41,7 @@ do
 done
 
 if /opt/pfb/analysis/scripts/run_analysis.sh; then
-    update_status "COMPLETE" "Finished"
+    update_status "EXPORTED" "Finished analysis"
 else
     update_status "ERROR" "Failed" "See job logs for more details."
 fi

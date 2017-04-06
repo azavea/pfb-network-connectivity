@@ -1,4 +1,6 @@
 FROM buildpack-deps:xenial
+MAINTAINER Azavea
+LABEL type=pfb-tilemaker
 
 ##### Install Node
 # Copied from https://github.com/nodejs/docker-node/blob/master/6.10/Dockerfile because we
@@ -75,7 +77,18 @@ RUN npm install -g \
     tilelive-file@0.0.3 \
     tilelive-s3@6.5.0
 
-COPY . /opt/tl-export
+##### Include the django container so we can send status updates
+RUN apt-get install -y \
+    python-dev \
+    python-pip
 
-ENTRYPOINT ["/opt/tl-export/entrypoint.sh"]
-CMD []
+# Copy django requirements first, so that the `pip install` command goes in its own layer that
+# doesn't get invalidated when the code changes
+COPY ./django/requirements.txt /opt/pfb/django/requirements.txt
+RUN pip install -r /opt/pfb/django/requirements.txt
+
+COPY ./django /opt/pfb/django
+
+##### Done with django container bits, copy this container's code and set entrypoint
+COPY ./tilemaker /opt/pfb/tilemaker
+ENTRYPOINT ["/opt/pfb/tilemaker/entrypoint.sh"]
