@@ -1,9 +1,11 @@
 ----------------------------------------
--- INPUTS
--- location: neighborhood
--- :min_path_length and :min_bbox_length must
--- be set before running this script
---       e.g. psql -v nb_output_srid=2163 -v min_path_length=4800 -v min_bbox_length=3300 -f access_trails.sql
+-- Input variables:
+--      :max_score - Maximum score value
+--      :first - Value of first available destination (if 0 then ignore--a basic ratio is used for the score)
+--      :second - Value of second available destination (if 0 then ignore--a basic ratio is used after 1)
+--      :third - Value of third available destination (if 0 then ignore--a basic ratio is used after 2)
+--      :min_path_length - Minimum distance of continuous path in order to be considered a recreational trail
+--      :min_bbox_length - Minimum bounding box size in order to be considered a recrational trail
 ----------------------------------------
 -- low stress access
 UPDATE  neighborhood_census_blocks
@@ -39,9 +41,30 @@ WHERE   EXISTS (
 
 -- set block-based score
 UPDATE  neighborhood_census_blocks
-SET     trails_score = CASE WHEN trails_high_stress IS NULL THEN NULL
-                            WHEN trails_high_stress = 0 THEN NULL
-                            WHEN trails_low_stress = 0 THEN 0
-                            WHEN trails_high_stress = 1 AND trails_low_stress = 1 THEN 1
-                            ELSE 0.5 + (0.5 * (trails_low_stress::FLOAT - 1)) / (trails_high_stress - 1)
-                            END;
+SET     trails_score =  CASE
+                        WHEN trails_high_stress IS NULL THEN NULL
+                        WHEN trails_high_stress = 0 THEN NULL
+                        WHEN trails_low_stress = 0 THEN 0
+                        WHEN trails_high_stress = trails_low_stress THEN :max_score
+                        WHEN :first = 0 THEN trails_low_stress::FLOAT / trails_high_stress
+                        WHEN :second = 0
+                            THEN    :first
+                                    + ((:max_score - :first) * (trails_low_stress::FLOAT - 1))
+                                    / (trails_high_stress - 1)
+                        WHEN :third = 0
+                            THEN    CASE
+                                    WHEN trails_low_stress = 1 THEN :first
+                                    WHEN trails_low_stress = 2 THEN :first + :second
+                                    ELSE :first + :second
+                                            + ((:max_score - :first - :second) * (trails_low_stress::FLOAT - 2))
+                                            / (trails_high_stress - 2)
+                                    END
+                        ELSE        CASE
+                                    WHEN trails_low_stress = 1 THEN :first
+                                    WHEN trails_low_stress = 2 THEN :first + :second
+                                    WHEN trails_low_stress = 3 THEN :first + :second + :third
+                                    ELSE :first + :second + :third
+                                            + ((:max_score - :first - :second - :third) * (trails_low_stress::FLOAT - 3))
+                                            / (trails_high_stress - 3)
+                                    END
+                        END;
