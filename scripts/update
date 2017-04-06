@@ -54,6 +54,13 @@ function run_database_migrations() {
     docker-compose stop database
 }
 
+function run_data_fixtures() {
+    docker-compose up -d database
+    check_database
+    docker-compose run --rm --entrypoint python django manage.py loaddata analysis-score-metadata
+    docker-compose stop database
+}
+
 if [ "${BASH_SOURCE[0]}" = "${0}" ]
 then
     if [ "${1:-}" = "--help" ]
@@ -65,6 +72,7 @@ then
         docker-compose build database django angularjs analysis
 
         run_database_migrations
+        run_data_fixtures
 
         echo "Copying angular site to nginx"
         pushd "src/nginx"

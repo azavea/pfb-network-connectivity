@@ -405,3 +405,22 @@ class AnalysisJobStatusUpdate(models.Model):
         # NOTE: Changing ordering=timestamp would invalidate assumptions about the ordering of
         #       these objects elsewhere in the model. Proceed with caution.
         ordering = ('timestamp',)
+
+
+class AnalysisScoreMetadata(models.Model):
+    """ Used to hold metadata for each of the scores saved in AnalysisJob.overall_scores
+
+    The unique name field here is matched against the top-level keys in the
+    AnalysisJob.overall_scores field so that we only have to store score metadata in one place
+
+    """
+    name = models.CharField(max_length=128, primary_key=True)
+    label = models.CharField(max_length=256, blank=True, null=True,
+                             help_text='Short descriptive name')
+    category = models.CharField(max_length=128, blank=True, null=True,
+                                help_text='Used to group scores with the same category together')
+    description = models.CharField(max_length=1024, blank=True, null=True,
+                                   help_text='Long description of the metric')
+
+    class Meta:
+        ordering = ('name',)

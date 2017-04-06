@@ -1,0 +1,182 @@
+[
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "people",
+    "fields": {
+      "label": "People",
+      "category": "",
+      "description": "Half of all census blocks in the neighborhood have a ratio of low stress to high stress access above this number, half have a lower ratio."
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "opportunity_employment",
+    "fields": {
+      "label": "Employment",
+      "category": "Opportunity",
+      "description": "Half of all census blocks in the neighborhood have a ratio of low stress to high stress access above this number, half have a lower ratio."
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "opportunity_k12_education",
+    "fields": {
+      "label": "K12 Education",
+      "category": "Opportunity",
+      "description": "70% of schools in the neighborhood have low stress connections to a higher percentage of people within biking distance, 30% are connected to a lower percentage."
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "opportunity_technical_vocational_college",
+    "fields": {
+      "label": "Tech/Vocational College",
+      "category": "Opportunity",
+      "description": "Half of tech/vocational colleges in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one tech/vocational college exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "opportunity_higher_education",
+    "fields": {
+      "label": "Higher Education",
+      "category": "Opportunity",
+      "description": "Half of universities in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one university exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "opportunity",
+    "fields": {
+      "label": "Opportunity Total",
+      "category": "Opportunity",
+      "description": ""
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services_doctors",
+    "fields": {
+      "label": "Doctors",
+      "category": "Core Services",
+      "description": "Half of doctors in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one doctors office exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services_dentists",
+    "fields": {
+      "label": "Dentists",
+      "category": "Core Services",
+      "description": "Half of dentists in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one dentists office exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services_hospitals",
+    "fields": {
+      "label": "Hospitals",
+      "category": "Core Services",
+      "description": "Half of hospitals in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one hospital exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services_pharmacies",
+    "fields": {
+      "label": "Pharmacies",
+      "category": "Core Services",
+      "description": "Half of pharmacies in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one pharmacy exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services_retail",
+    "fields": {
+      "label": "Retail",
+      "category": "Core Services",
+      "description": "Half of retail clusters in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one retail exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services_grocery",
+    "fields": {
+      "label": "Grocery",
+      "category": "Core Services",
+      "description": "Half of supermarkets in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one supermarkets exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services_social_services",
+    "fields": {
+      "label": "Social Services",
+      "category": "Core Services",
+      "description": "Half of social services in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one social_services exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services",
+    "fields": {
+      "label": "Services Total",
+      "category": "Core Services",
+      "description": ""
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "recreation_parks",
+    "fields": {
+      "label": "Parks",
+      "category": "Recreation",
+      "description": "Half of census blocks in this neighborhood have low stress access to a higher ratio of parks within biking distance, half have access to a lower ratio."
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "recreation_trails",
+    "fields": {
+      "label": "Trails",
+      "category": "Recreation",
+      "description": "Half of census blocks in this neighborhood have low stress access to a higher ratio of trails within biking distance, half have access to a lower ratio."
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "recreation_community_centers",
+    "fields": {
+      "label": "Community Centers",
+      "category": "Recreation",
+      "description": "Half of community centers in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one community centers exists this is the score for that one location)"
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "recreation",
+    "fields": {
+      "label": "Recreation Total",
+      "category": "Recreation",
+      "description": ""
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "transit",
+    "fields": {
+      "label": "Transit",
+      "category": "Transit",
+      "description": "Half of census blocks in this neighborhood have low stress access to a higher ratio of transit stations within biking distance, half have access to a lower ratio."
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "overall_score",
+    "fields": {
+      "label": "Overall Score",
+      "category": "",
+      "description": ""
+    }
+  }
+]
