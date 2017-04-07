@@ -23,7 +23,6 @@
 
         module.orgTypes = {
             ADMIN: 'Administrator Organization',
-            LOCAL: 'Local Agency',
             SUBSCRIBER: 'Subscription'
         };
 
