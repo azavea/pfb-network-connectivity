@@ -18,7 +18,7 @@ import requests
 
 from django.core.exceptions import ImproperlyConfigured
 
-from pfb_analysis.aws_batch import get_latest_job_definition
+from pfb_analysis.aws_batch import get_latest_job_definition, NoActiveJobDefinitionRevision
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -271,27 +271,44 @@ PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN = os.getenv('PFB_AWS_BATCH_COMPUTE_ENVIRON
 if not PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN:
     raise ImproperlyConfigured('env.PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN is required')
 
-PFB_AWS_BATCH_JOB_QUEUE_NAME = os.getenv('PFB_AWS_BATCH_JOB_QUEUE_NAME')
-if not PFB_AWS_BATCH_JOB_QUEUE_NAME:
-    raise ImproperlyConfigured('env.PFB_AWS_BATCH_JOB_QUEUE_NAME is required')
+PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME = os.getenv('PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME')
+if not PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME:
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME is required')
 
 # Configure with either:
-# 1. PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION = '<name>:<revision>'
+# 1. PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION = '<name>:<revision>'
 #  -- or --
-# 2. PFB_AWS_BATCH_JOB_DEFINITION_NAME = '<name>'
+# 2. PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME = '<name>'
 #   In this case, revision will be autodetected by querying the AWS API
 # Case 1 takes precedence and is the value set for use in the app
-PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION = os.getenv('PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION')
-PFB_AWS_BATCH_JOB_DEFINITION_NAME = os.getenv('PFB_AWS_BATCH_JOB_DEFINITION_NAME')
-if PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION:
+PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION = os.getenv('PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION')
+PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME = os.getenv('PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME')
+if PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION:
     pass
-elif PFB_AWS_BATCH_JOB_DEFINITION_NAME:
-    revision = get_latest_job_definition(PFB_AWS_BATCH_JOB_DEFINITION_NAME)['revision']
-    PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION = '{}:{}'.format(PFB_AWS_BATCH_JOB_DEFINITION_NAME,
-                                                                revision)
+elif PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME:
+    revision = get_latest_job_definition(PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME)['revision']
+    PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION = '{}:{}'.format(PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME,
+                                                                         revision)
 else:
-    raise ImproperlyConfigured('env.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION or ' +
-                               'env.PFB_AWS_BATCH_JOB_DEFINITION_NAME is required.')
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION or ' +
+                               'env.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME is required.')
+
+# Same setup for tilemaker jobs as for analysis jobs
+PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME')
+if not PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME:
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME is required')
+PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION')
+PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME = os.getenv('PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME')
+if PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION:
+    pass
+elif PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME:
+    revision = get_latest_job_definition(PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME)['revision']
+    PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION = (
+        '{}:{}'.format(PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME, revision))
+else:
+    raise ImproperlyConfigured('env.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION or ' +
+                               'env.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME is required.')
+
 
 # Analysis results settings
 # A list of destinations types, created by the analysis, to be made available for download

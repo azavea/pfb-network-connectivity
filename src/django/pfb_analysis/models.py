@@ -36,6 +36,15 @@ def get_neighborhood_file_upload_path(instance, filename):
     return 'neighborhood_boundaries/{0}/{1}'.format(instance.name, os.path.basename(filename))
 
 
+def create_environment(**kwargs):
+    """ Format args for AWS environment
+
+    Writes argument pairs to an array {name, value} objects, which is what AWS wants for
+    environment overrides.
+    """
+    return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
+
+
 class Neighborhood(PFBModel):
     """Neighborhood boundary used for an AnalysisJob """
 
@@ -164,13 +173,16 @@ class AnalysisJob(PFBModel):
         CONNECTIVITY = 'CONNECTIVITY'
         METRICS = 'METRICS'
         EXPORTING = 'EXPORTING'
-        CANCELLED = 'CANCELLED'
+        EXPORTED = 'EXPORTED'
+        TILING = 'TILING'
         COMPLETE = 'COMPLETE'
+        CANCELLED = 'CANCELLED'
         ERROR = 'ERROR'
 
         ACTIVE_STATUSES = (CREATED, QUEUED, IMPORTING, BUILDING, CONNECTIVITY,
-                           METRICS, EXPORTING,)
-        DONE_STATUSES = (CANCELLED, COMPLETE, ERROR,)
+                           METRICS, EXPORTING, EXPORTED, TILING,)
+        SUCCESS_STATUS = COMPLETE
+        DONE_STATUSES = (SUCCESS_STATUS, CANCELLED, ERROR,)
 
         CHOICES = (
             (CREATED, 'Created',),
@@ -180,8 +192,10 @@ class AnalysisJob(PFBModel):
             (CONNECTIVITY, 'Calculating Connectivity',),
             (METRICS, 'Calculating Graph Metrics',),
             (EXPORTING, 'Exporting Results',),
-            (CANCELLED, 'Cancelled',),
+            (EXPORTED, 'Analysis Finished',),
+            (TILING, 'Generating Map Tiles',),
             (COMPLETE, 'Complete',),
+            (CANCELLED, 'Cancelled',),
             (ERROR, 'Error',),
         )
 
@@ -228,8 +242,16 @@ class AnalysisJob(PFBModel):
                               null=True, blank=True)
 
     @property
-    def batch_job_name(self):
-        job_definition = settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION
+    def analysis_job_name(self):
+        job_definition = settings.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION
+        # Due to CloudWatch logs limits, job name must be no more than 50 chars
+        # so force truncate to that to keep jobs from failing
+        definition_name, revision = job_definition.split(':')
+        return '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
+
+    @property
+    def tilemaker_job_name(self):
+        job_definition = settings.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION
         # Due to CloudWatch logs limits, job name must be no more than 50 chars
         # so force truncate to that to keep jobs from failing
         definition_name, revision = job_definition.split(':')
@@ -266,7 +288,7 @@ class AnalysisJob(PFBModel):
                '#logStream:group=/aws/batch/job;prefix={batch_job_name}/{batch_job_id}' +
                ';streamFilter=typeLogStreamPrefix')
         return url.format(aws_region=settings.AWS_REGION,
-                          batch_job_name=self.batch_job_name,
+                          batch_job_name=self.analysis_job_name,
                           batch_job_id=self.batch_job_id)
 
     @property
@@ -310,14 +332,8 @@ class AnalysisJob(PFBModel):
                                        'Reverted due to failure cancelling job in AWS Batch')
                     raise
 
-    def run(self):
-        """ Run the analysis job, configuring ENV appropriately """
-        def create_environment(**kwargs):
-            return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
-
-        if self.status is not self.Status.CREATED:
-            logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
-            return
+    def base_environment(self):
+        """ Convenience method for copying the environment to hand to batch jobs """
 
         # Since we run django manage commands in the analysis container, it needs a copy of
         # all the environment variables that this app needs, most of which are conveniently
@@ -334,7 +350,16 @@ class AnalysisJob(PFBModel):
             'DJANGO_LOG_LEVEL': settings.DJANGO_LOG_LEVEL,
             'AWS_DEFAULT_REGION': settings.AWS_REGION,
         })
+        return environment
 
+    def run(self):
+        """ Run the analysis job, configuring ENV appropriately """
+        if self.status != self.Status.CREATED:
+            logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
+            return
+
+        # Provide the base environment to enable runnin Django commands in the container
+        environment = self.base_environment()
         # Job-specific settings
         environment.update({
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
@@ -343,6 +368,7 @@ class AnalysisJob(PFBModel):
             'PFB_STATE_FIPS': self.neighborhood.state.fips,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
+            'PFB_S3_RESULTS_PATH': self.s3_results_path
         })
         if self.osm_extract_url:
             environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
@@ -350,33 +376,83 @@ class AnalysisJob(PFBModel):
         # Workaround for not being able to run development jobs on the actual batch cluster:
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':
-            logger.warn("Can't actually run development jobs on AWS. Try this:"
-                        "\nPFB_JOB_ID='{PFB_JOB_ID}' "
+            logger.warn("Can't actually run development analysis jobs on AWS. Try this:"
+                        "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
                         "./scripts/run-local-analysis "
                         "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
+            self.generate_tiles()
             return
 
         client = boto3.client('batch')
         container_overrides = {
             'environment': create_environment(**environment),
         }
-        response = client.submit_job(jobName=self.batch_job_name,
-                                     jobDefinition=settings.PFB_AWS_BATCH_JOB_DEFINITION_NAME_REVISION, # NOQA
-                                     jobQueue=settings.PFB_AWS_BATCH_JOB_QUEUE_NAME,
-                                     containerOverrides=container_overrides)
         try:
+            response = client.submit_job(
+                jobName=self.analysis_job_name,
+                jobDefinition=settings.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION,
+                jobQueue=settings.PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME,
+                containerOverrides=container_overrides)
             self.batch_job_id = response['jobId']
             self.save()
-            self.update_status(self.status.QUEUED)
+            self.update_status(self.Status.QUEUED)
         except (botocore.exceptions.BotoCoreError, KeyError):
             logger.exception('Error starting AnalysisJob {}'.format(self.uuid))
+        else:
+            self.generate_tiles()
+
+    def generate_tiles(self):
+        environment = self.base_environment()
+        environment.update({
+            'PFB_JOB_ID': str(self.uuid),
+            'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
+            'PFB_S3_RESULTS_PATH': self.s3_results_path,
+            'PFB_S3_TILES_PATH': self.s3_tiles_path
+        })
+
+        # Workaround for not being able to run development jobs on the actual batch cluster:
+        # bail out with a helpful message
+        if settings.DJANGO_ENV == 'development':
+            logger.warn("Can't actually run development tiling jobs on AWS. Try this:"
+                        "\nAWS_STORAGE_BUCKET_NAME='{AWS_STORAGE_BUCKET_NAME}' "
+                        "PFB_JOB_ID='{PFB_JOB_ID}' "
+                        "PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
+                        "PFB_S3_TILES_PATH='{PFB_S3_TILES_PATH}' "
+                        "docker-compose run tilemaker".format(**environment))
+            return
+
+        job_params = {
+            'jobName': self.tilemaker_job_name,
+            'jobDefinition': settings.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION,
+            'jobQueue': settings.PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME,
+            'dependsOn': [{'jobId': self.batch_job_id}],
+            'containerOverrides': {
+                'environment': create_environment(**environment),
+            }
+        }
+        client = boto3.client('batch')
+        try:
+            response = client.submit_job(**job_params)
+            logger.info('Exporting tiles for AnalysisJob {}, job {}'.format(self.uuid,
+                                                                            response['jobId']))
+        except Exception:
+            logger.exception('Error starting tile export for AnalysisJob {}'.format(self.uuid))
+            raise
 
     def update_status(self, status, step='', message=''):
         if self.status != self.Status.CANCELLED:
             self.status_updates.create(job=self, status=status, step=step, message=message)
 
+    @property
+    def s3_results_path(self):
+        return 'results/{jobId}'.format(jobId=str(self.uuid))
+
+    @property
+    def s3_tiles_path(self):
+        return '{}/tiles'.format(self.s3_results_path)
+
     def _s3_url_for_result_resource(self, filename):
-        key = 'results/{jobId}/{filename}'.format(jobId=str(self.uuid), filename=filename)
+        key = '/'.join(self.s3_results_path, filename)
         s3 = boto3.client('s3')
         return s3.generate_presigned_url(
             ClientMethod='get_object',

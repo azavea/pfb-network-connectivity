@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Map>
+<Map srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
+
+<Parameters>
+  <Parameter name="bounds">-180,-85.05112877980659,180,85.05112877980659</Parameter>
+  <Parameter name="center">0,0,2</Parameter>
+  <Parameter name="format">png8</Parameter>
+  <Parameter name="minzoom">0</Parameter>
+  <Parameter name="maxzoom">22</Parameter>
+  <Parameter name="scale">1</Parameter>
+  <Parameter name="metatile">2</Parameter>
+  <Parameter name="id"><![CDATA[pfb_export_json]]></Parameter>
+  <Parameter name="_updated">1490794336000</Parameter>
+  <Parameter name="name"><![CDATA[Neighborhood ways from GeoJSON]]></Parameter>
+  <Parameter name="tilejson"><![CDATA[2.0.0]]></Parameter>
+  <Parameter name="scheme"><![CDATA[xyz]]></Parameter>
+</Parameters>
+
+
+<Style name="neighborhood_ways" filter-mode="first">
+  <Rule>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_INT_STR] = 1)</Filter>
+    <LineSymbolizer stroke="#008000"/>
+  </Rule>
+  <Rule>
+    <Filter>([FT_SEG_STR] &gt; 1)</Filter>
+    <LineSymbolizer stroke="#ff0000"/>
+  </Rule>
+  <Rule>
+    <Filter>([FT_INT_STR] &gt; 1)</Filter>
+    <LineSymbolizer stroke="#ff0000"/>
+  </Rule>
+</Style>
+<Layer name="neighborhood_ways" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
+    <StyleName>neighborhood_ways</StyleName>
+    <Datasource>
+       <Parameter name="file"><![CDATA[/data/neighborhood_ways.shp]]></Parameter>
+       <Parameter name="layer"><![CDATA[neighborhood_ways]]></Parameter>
+       <Parameter name="id"><![CDATA[neighborhood_ways]]></Parameter>
+       <Parameter name="project"><![CDATA[pfb_export]]></Parameter>
+       <Parameter name="srs"><![CDATA[]]></Parameter>
+       <Parameter name="type"><![CDATA[ogr]]></Parameter>
+    </Datasource>
+  </Layer>
+
+</Map>

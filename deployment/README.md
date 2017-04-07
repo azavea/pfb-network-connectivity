@@ -61,8 +61,8 @@ Once these are created, the automated deployment handles creation of the latest 
 Login to the AWS Console and navigate to [AWS Batch: Compute Environments](https://console.aws.amazon.com/batch/home?region=us-east-1#/compute-environments)
 
 Click the 'Create Environment' button, then edit the new form with the inputs below:
-- Compute environment type: 'unmanaged'
-- Compute environment name: '<environment>-pfb-analysis-unmanaged-compute-environment'
+- Compute environment type: `unmanaged`
+- Compute environment name: `<environment>-pfb-analysis-unmanaged-compute-environment`
 - Service role: AWSBatchServiceRole
 - Instance role: StagingContainerInstanceRole
 - EC2 key pair: your choice
@@ -70,11 +70,13 @@ Click the 'Create Environment' button, then edit the new form with the inputs be
 Click 'Create' and wait for the compute environment to provision.
 
 Next, go to 'Job queues' -> 'Create queue' then edit the form with the inputs below:
-- Queue name: '<environment>-pfb-analysis-job-queue'
-- Priority: leave blank
+- Queue name: `<environment>-pfb-analysis-job-queue`
+- Priority: 1
 - Enable job queue: [x]
 - Select a compute environment: Choose the name of the environment you just created
 Click create. The job queue should be ready pretty much immediately.
+
+Click 'Create queue' again and follow the same steps to create a second queue named `<environment>-pfb-tilemaker-job-queue`.
 
 Once the unmanaged compute environment has a 'VALID' status, navigate to [EC2 Container Service](https://console.aws.amazon.com/ecs/home?region=us-east-1) and copy the full name of the newly created ECS Cluster into the `batch_ecs_cluster_name` tfvar for the appropriate environment.
 
