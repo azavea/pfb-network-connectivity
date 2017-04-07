@@ -11,6 +11,7 @@ NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
+NB_SIGCTL_SEARCH_DIST="${NB_SIGCTL_SEARCH_DIST:-25}"    # max search distance for intersection controls
 
 # drop old tables
 echo 'Dropping old tables'
@@ -101,46 +102,34 @@ osm2pgrouting \
   --conf ./mapconfig_cycleway.xml \
   --clean
 
-# rename a few tables
+# rename a few tables (or drop if not needed)
 echo 'Renaming tables'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "ALTER TABLE received.neighborhood_ways_vertices_pgr RENAME TO neighborhood_ways_intersections;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "ALTER TABLE received.neighborhood_ways_intersections RENAME CONSTRAINT vertex_id TO neighborhood_vertex_id;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_nodes RENAME TO neighborhood_osm_nodes;"
+  -c "DROP TABLE IF EXISTS received.osm_nodes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.neighborhood_osm_nodes RENAME CONSTRAINT node_id TO neighborhood_node_id;"
+  -c "DROP TABLE IF EXISTS received.osm_relations CASCADE;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_relations RENAME TO neighborhood_osm_relations;"
+  -c "DROP TABLE IF EXISTS received.osm_way_classes CASCADE;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_way_classes RENAME TO neighborhood_osm_way_classes;"
+  -c "DROP TABLE IF EXISTS received.osm_way_tags CASCADE;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.neighborhood_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO neighborhood_osm_way_classes_pkey;"
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_way_tags RENAME TO neighborhood_osm_way_tags;"
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.osm_way_types RENAME TO neighborhood_osm_way_types;"
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.neighborhood_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO neighborhood_osm_way_types_pkey;"
+  -c "DROP TABLE IF EXISTS received.osm_way_types CASCADE;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "ALTER TABLE scratch.neighborhood_cycwys_ways_vertices_pgr RENAME CONSTRAINT vertex_id TO neighborhood_vertex_id;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_nodes RENAME TO neighborhood_cycwys_osm_nodes;"
+  -c "DROP TABLE IF EXISTS scratch.osm_nodes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.neighborhood_cycwys_osm_nodes RENAME CONSTRAINT node_id TO neighborhood_node_id;"
+  -c "DROP TABLE IF EXISTS scratch.osm_relations CASCADE;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_relations RENAME TO neighborhood_cycwys_osm_relations;"
+  -c "DROP TABLE IF EXISTS scratch.osm_way_classes CASCADE;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_way_classes RENAME TO neighborhood_cycwys_osm_way_classes;"
+  -c "DROP TABLE IF EXISTS scratch.osm_way_tags CASCADE;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.neighborhood_cycwys_osm_way_classes RENAME CONSTRAINT osm_way_classes_pkey TO neighborhood_osm_way_classes_pkey;"
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_way_tags RENAME TO neighborhood_cycwys_osm_way_tags;"
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.osm_way_types RENAME TO neighborhood_cycwys_osm_way_types;"
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.neighborhood_cycwys_osm_way_types RENAME CONSTRAINT osm_way_types_pkey TO neighborhood_osm_way_types_pkey;"
+  -c "DROP TABLE IF EXISTS scratch.osm_way_types CASCADE;"
 
 # import full osm to fill out additional data needs
 # not met by osm2pgrouting
@@ -196,16 +185,44 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f .
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/lanes.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/park.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/bike_infra.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/class_adjustments.sql
 echo 'Setting values on intersections'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/legs.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/signalized.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/stops.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v sigctl_search_dist="${NB_SIGCTL_SEARCH_DIST}" -f ../features/signalized.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v sigctl_search_dist="${NB_SIGCTL_SEARCH_DIST}" -f ../features/stops.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v sigctl_search_dist="${NB_SIGCTL_SEARCH_DIST}" -f ../features/rrfb.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v sigctl_search_dist="${NB_SIGCTL_SEARCH_DIST}" -f ../features/island.sql
 echo 'Calculating stress'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_motorway-trunk.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_primary.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_secondary.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_tertiary.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_residential.sql
+# primary
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v class=primary -v default_speed=40 -v default_lanes=2 \
+    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=4 \
+    -f ../stress/stress_segments_higher_order.sql
+# secondary
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v class=secondary -v default_speed=40 -v default_lanes=2 \
+    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=4 \
+    -f ../stress/stress_segments_higher_order.sql
+# tertiary
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v class=tertiary -v default_speed=30 -v default_lanes=1 \
+    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=4 \
+    -f ../stress/stress_segments_higher_order.sql
+# residential
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v class=residential -v default_speed=25 -v default_lanes=1 \
+    -v default_parking=1 -v default_roadway_width=27 \
+    -f ../stress/stress_segments_lower_order.sql
+# unclassified
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v class=unclassified -v default_speed=25 -v default_lanes=1 \
+    -v default_parking=1 -v default_roadway_width=27 \
+    -f ../stress/stress_segments_lower_order.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_living_street.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_track.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_path.sql
@@ -213,6 +230,19 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f .
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_motorway-trunk_ints.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_primary_ints.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_secondary_ints.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_tertiary_ints.sql
-psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_lesser_ints.sql
+# tertiary intersections
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v primary_speed=40 \
+    -v secondary_speed=40 \
+    -v primary_lanes=2 \
+    -v secondary_lanes=2 \
+    -f ../stress/stress_tertiary_ints.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v primary_speed=40 \
+    -v secondary_speed=40 \
+    -v tertiary_speed=30 \
+    -v primary_lanes=2 \
+    -v secondary_lanes=2 \
+    -v tertiary_lanes=1 \
+    -f ../stress/stress_lesser_ints.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_link_ints.sql

@@ -114,4 +114,9 @@ WHERE   NOT EXISTS (
 ALTER TABLE neighborhood_ways_intersections ADD COLUMN legs INT;
 ALTER TABLE neighborhood_ways_intersections ADD COLUMN signalized BOOLEAN;
 ALTER TABLE neighborhood_ways_intersections ADD COLUMN stops BOOLEAN;
+ALTER TABLE neighborhood_ways_intersections ADD COLUMN rrfb BOOLEAN;
+ALTER TABLE neighborhood_ways_intersections ADD COLUMN island BOOLEAN;
+
 CREATE INDEX idx_neighborhood_ints_stop ON neighborhood_ways_intersections (signalized,stops);
+CREATE INDEX idx_neighborhood_rrfb ON neighborhood_ways_intersections (rrfb);
+CREATE INDEX idx_neighborhood_island ON neighborhood_ways_intersections (island);
