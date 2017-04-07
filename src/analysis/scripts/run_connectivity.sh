@@ -161,21 +161,21 @@ update_status "METRICS" "Access: colleges"
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v first=4 \
   -v second=2 \
-  -v third=2 \
+  -v third=1 \
   -v max_score=10 \
   -f ../connectivity/access_community_centers.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v first=4 \
   -v second=2 \
-  -v third=2 \
+  -v third=1 \
   -v max_score=10 \
   -f ../connectivity/access_doctors.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v first=4 \
   -v second=2 \
-  -v third=2 \
+  -v third=1 \
   -v max_score=10 \
   -f ../connectivity/access_dentists.sql
 
@@ -189,7 +189,7 @@ update_status "METRICS" "Access: colleges"
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v first=4 \
   -v second=2 \
-  -v third=2 \
+  -v third=1 \
   -v max_score=10 \
   -f ../connectivity/access_pharmacies.sql
 
@@ -203,7 +203,7 @@ update_status "METRICS" "Access: colleges"
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v first=4 \
   -v second=2 \
-  -v third=2 \
+  -v third=1 \
   -v max_score=10 \
   -f ../connectivity/access_retail.sql
 
