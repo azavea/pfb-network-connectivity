@@ -39,7 +39,8 @@ TL_BOUNDS=$(ogrinfo -so -al "/data/${TL_SHAPEFILE_NAME}.shp" \
 
 # Make tiles and upload them to S3
 /usr/bin/time -f "\nTIMING: %C\nTIMING:\t%E elapsed %Kkb mem\n" \
-tl copy -z "${TL_MIN_ZOOM}" -Z "${TL_MAX_ZOOM}" -b "${TL_BOUNDS}" \
+tl copy --quiet --min-zoom "${TL_MIN_ZOOM}" --max-zoom "${TL_MAX_ZOOM}" \
+    --bounds "${TL_BOUNDS}" \
     "mapnik:///opt/pfb/tilemaker/styles/${TL_SHAPEFILE_NAME}_style.xml" \
     "s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_TILES_PATH}/{z}/{x}/{y}.png"
 

@@ -167,7 +167,8 @@ then
         then
           sync  # Probably superfluous, but the s3 command said "file changed while reading" once
           update_status "EXPORTING" "Uploading results"
-          aws s3 cp --recursive "${OUTPUT_DIR}" "s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_RESULTS_PATH}"
+          aws s3 cp --quiet --recursive "${OUTPUT_DIR}" \
+            "s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_RESULTS_PATH}"
         fi
     fi
 fi
