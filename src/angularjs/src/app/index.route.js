@@ -21,13 +21,13 @@
                 templateUrl: 'app/help/help.html'
             })
             .state('request-password-reset', {
-                url: '/admin/password-reset-request/',
+                url: '/password-reset-request/',
                 controller: 'PasswordResetRequestController',
                 controllerAs: 'pw',
                 templateUrl: 'app/password-reset/request/password-reset-request.html'
             })
             .state('password-reset', {
-                url: '/admin/password-reset/?token',
+                url: '/password-reset/?token',
                 controller: 'PasswordResetController',
                 controllerAs: 'pw',
                 templateUrl: 'app/password-reset/reset/password-reset.html'
