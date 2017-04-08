@@ -1,6 +1,9 @@
 ----------------------------------------
--- INPUTS
--- location: neighborhood
+-- Input variables:
+--      :max_score - Maximum score value
+--      :first - Value of first available destination (if 0 then ignore--a basic ratio is used for the score)
+--      :second - Value of second available destination (if 0 then ignore--a basic ratio is used after 1)
+--      :third - Value of third available destination (if 0 then ignore--a basic ratio is used after 2)
 ----------------------------------------
 -- set block-based raw numbers
 UPDATE  neighborhood_census_blocks
@@ -31,12 +34,35 @@ WHERE   EXISTS (
             WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
         );
 
--- set block-based ratio
+-- set block-based score
 UPDATE  neighborhood_census_blocks
-SET     community_centers_ratio = CASE  WHEN community_centers_high_stress IS NULL THEN NULL
-                            WHEN community_centers_high_stress = 0 THEN 0
-                            ELSE community_centers_low_stress::FLOAT / community_centers_high_stress
-                            END;
+SET     community_centers_score =   CASE
+                                    WHEN community_centers_high_stress IS NULL THEN NULL
+                                    WHEN community_centers_high_stress = 0 THEN NULL
+                                    WHEN community_centers_low_stress = 0 THEN 0
+                                    WHEN community_centers_high_stress = community_centers_low_stress THEN :max_score
+                                    WHEN :first = 0 THEN community_centers_low_stress::FLOAT / community_centers_high_stress
+                                    WHEN :second = 0
+                                        THEN    :first
+                                                + ((:max_score - :first) * (community_centers_low_stress::FLOAT - 1))
+                                                / (community_centers_high_stress - 1)
+                                    WHEN :third = 0
+                                        THEN    CASE
+                                                WHEN community_centers_low_stress = 1 THEN :first
+                                                WHEN community_centers_low_stress = 2 THEN :first + :second
+                                                ELSE :first + :second
+                                                        + ((:max_score - :first - :second) * (community_centers_low_stress::FLOAT - 2))
+                                                        / (community_centers_high_stress - 2)
+                                                END
+                                    ELSE        CASE
+                                                WHEN community_centers_low_stress = 1 THEN :first
+                                                WHEN community_centers_low_stress = 2 THEN :first + :second
+                                                WHEN community_centers_low_stress = 3 THEN :first + :second + :third
+                                                ELSE :first + :second + :third
+                                                        + ((:max_score - :first - :second - :third) * (community_centers_low_stress::FLOAT - 3))
+                                                        / (community_centers_high_stress - 3)
+                                                END
+                                    END;
 
 -- set population shed for each community center in the neighborhood
 UPDATE  neighborhood_community_centers
@@ -62,7 +88,7 @@ WHERE   EXISTS (
         );
 
 UPDATE  neighborhood_community_centers
-SET     pop_ratio = CASE    WHEN pop_high_stress IS NULL THEN NULL
+SET     pop_score = CASE    WHEN pop_high_stress IS NULL THEN NULL
                             WHEN pop_high_stress = 0 THEN 0
                             ELSE pop_low_stress::FLOAT / pop_high_stress
                             END;
