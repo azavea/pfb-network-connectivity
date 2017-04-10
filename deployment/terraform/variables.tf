@@ -11,6 +11,7 @@ variable "aws_account_id" {
 }
 
 variable "aws_region" {}
+
 # Must be one of release, staging, production
 variable "environment" {}
 
@@ -23,6 +24,7 @@ variable "r53_public_hosted_zone" {}
 
 # Scaling
 variable "container_instance_asg_desired_capacity" {}
+
 variable "container_instance_asg_min_size" {}
 variable "container_instance_asg_max_size" {}
 variable "container_instance_type" {}
@@ -32,11 +34,13 @@ variable "ecs_instance_ami_id" {}
 # ECS
 ## HTTP API server
 variable "pfb_app_http_ecs_desired_count" {}
+
 variable "pfb_app_http_ecs_deployment_min_percent" {}
 variable "pfb_app_http_ecs_deployment_max_percent" {}
 
 ## HTTPS API server
 variable "pfb_app_https_ecs_deployment_max_percent" {}
+
 variable "pfb_app_https_ecs_desired_count" {}
 variable "pfb_app_https_ecs_deployment_min_percent" {}
 
@@ -81,6 +85,7 @@ variable "git_commit" {}
 
 # RDS
 variable "rds_storage_size_gb" {}
+
 variable "rds_engine_version" {}
 variable "rds_instance_type" {}
 variable "rds_storage_type" {}
@@ -103,24 +108,30 @@ variable "rds_alarm_free_memory_threshold" {}
 
 # Batch ECS Cluster
 variable "batch_ecs_cluster_name" {}
+
 variable "batch_container_instance_type" {
   description = "Must be one of the instance types in the AWS EC2 'i3' family"
 }
+
 variable "batch_container_instance_asg_desired_capacity" {}
 variable "batch_container_instance_asg_min_size" {}
 variable "batch_container_instance_asg_max_size" {}
+
 variable "batch_ecs_engine_task_cleanup_wait_duration" {
   default = "5m"
 }
+
 variable "batch_ecs_image_cleanup_interval" {
   default = "10m"
 }
+
 variable "batch_ecs_image_minimum_cleanup_age" {
   default = "30m"
 }
 
 # Django
 variable "django_env" {}
+
 variable "django_secret_key" {}
 variable "django_allowed_hosts" {}
 variable "batch_analysis_compute_environment_arn" {}

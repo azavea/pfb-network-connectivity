@@ -31,35 +31,9 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [[ -n "${PFB_SETTINGS_BUCKET}" ]]; then
         pushd "${TERRAFORM_DIR}"
 
-        # Stop Terraform from trying to apply incorrect state across environments
-        if [ -f ".terraform/terraform.tfstate" ] && ! grep -q "${PFB_SETTINGS_BUCKET}" ".terraform/terraform.tfstate"; then
-            echo "ERROR: Incorrect target environment detected in Terraform state! Please run"
-            echo "       the following command before proceeding:"
-            echo
-            echo "  rm -rf terraform/.terraform"
-            echo
-           exit 1
-        fi
-
         aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/terraform/terraform.tfvars" "${PFB_SETTINGS_BUCKET}.tfvars"
 
-        terraform remote config \
-                  -backend="s3" \
-                  -backend-config="region=us-east-1" \
-                  -backend-config="bucket=${PFB_SETTINGS_BUCKET}" \
-                  -backend-config="key=terraform/state" \
-                  -backend-config="encrypt=true"
-
         case "${1}" in
-            fmt)
-                terraform "$@"
-                ;;
-            taint)
-                terraform "$@"
-                ;;
-            remote-push)
-                terraform remote push
-                ;;
             plan)
                 echo "Updating AWS Batch job definitions"
                 pushd "../aws-batch"
@@ -77,7 +51,11 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                     "${PFB_AWS_ECR_ENDPOINT}/pfb-tilemaker:${GIT_COMMIT}")
                 popd
 
-                terraform get -update
+                rm -rf .terraform/ terraform.tfstate*
+                terraform init \
+                    -backend-config="bucket=${PFB_SETTINGS_BUCKET}" \
+                    -backend-config="key=terraform/state"
+
                 terraform plan \
                           -var-file="${PFB_SETTINGS_BUCKET}.tfvars" \
                           -var="git_commit=${GIT_COMMIT}" \
@@ -87,7 +65,6 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 ;;
             apply)
                 terraform apply "${PFB_SETTINGS_BUCKET}.tfplan"
-                terraform remote push
                 ;;
             *)
                 echo "ERROR: I don't have support for that Terraform subcommand!"
