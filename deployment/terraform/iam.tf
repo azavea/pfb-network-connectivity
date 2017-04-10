@@ -41,6 +41,7 @@ data "aws_iam_policy_document" "batch_manage_jobs" {
     effect = "Allow"
 
     resources = ["*"]
+
     actions = [
       "batch:CancelJob",
       "batch:DescribeJobDefinitions",
@@ -48,7 +49,7 @@ data "aws_iam_policy_document" "batch_manage_jobs" {
       "batch:DescribeJobs",
       "batch:ListJobs",
       "batch:SubmitJob",
-      "batch:TerminateJob"
+      "batch:TerminateJob",
     ]
   }
 }
@@ -57,7 +58,7 @@ data "aws_iam_policy_document" "batch_manage_jobs" {
 # Custom policies
 #
 resource "aws_iam_policy" "batch_manage_jobs" {
-  name = "BatchManageJobs"
+  name   = "BatchManageJobs"
   policy = "${data.aws_iam_policy_document.batch_manage_jobs.json}"
 }
 
