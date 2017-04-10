@@ -5,8 +5,7 @@ or role within an organization
 """
 import logging
 
-from rest_framework import filters, exceptions
-import django_filters
+from rest_framework import filters
 
 from pfb_network_connectivity.permissions import is_admin_org, is_admin
 from pfb_analysis.models import AnalysisJob
@@ -48,20 +47,3 @@ class SelfUserAutoFilterBackend(filters.BaseFilterBackend):
             return queryset
         else:
             return queryset.filter(uuid=request.user.uuid)
-
-
-class AnalysisJobStatusFilterSet(filters.FilterSet):
-    """ Filter to handle job status being defined as property and not as database field."""
-
-    status = django_filters.ChoiceFilter(choices=AnalysisJob.Status.CHOICES,
-                                         method='filter_status')
-
-    def filter_status(self, queryset, name, value):
-        if value:
-            matches = [m.pk for m in queryset.all() if m.status == value]
-            queryset = queryset.filter(pk__in=matches)
-        return queryset
-
-    class Meta:
-        model = AnalysisJob
-        fields = ['neighborhood', 'batch', 'status']
