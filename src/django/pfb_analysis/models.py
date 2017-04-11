@@ -482,6 +482,12 @@ class AnalysisJobStatusUpdate(models.Model):
         #       these objects elsewhere in the model. Proceed with caution.
         ordering = ('timestamp',)
 
+    def save(self, *args, **kwargs):
+        """ Override to update `modified_at` on the related AnalysisJob """
+        super(AnalysisJobStatusUpdate, self).save(*args, **kwargs)
+        # The modified_at field is auto_now=True, so just saving updates it
+        self.job.save()
+
 
 class AnalysisScoreMetadata(models.Model):
     """ Used to hold metadata for each of the scores saved in AnalysisJob.overall_scores
