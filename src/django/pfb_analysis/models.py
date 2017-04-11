@@ -11,7 +11,7 @@ import zipfile
 
 from django.conf import settings
 from django.contrib.gis.db.models import MultiPolygonField
-from django.contrib.gis.geos import MultiPolygon
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
 from django.db import models
@@ -68,6 +68,7 @@ class Neighborhood(PFBModel):
         if not self.name:
             self.name = self.name_for_label(self.label)
         self.full_clean()
+        self._set_geom_from_boundary_file()
         super(Neighborhood, self).save(*args, **kwargs)
 
     def set_boundary_file(self, geom):
@@ -102,6 +103,7 @@ class Neighborhood(PFBModel):
                         zip_handle.write(os.path.join(tmpdir, shpfile), shpfile)
             boundary_file = File(open(zip_filename))
             self.boundary_file = boundary_file
+            self.geom = geom
             self.save()
         except:
             raise
@@ -122,6 +124,34 @@ class Neighborhood(PFBModel):
     @classmethod
     def name_for_label(cls, label):
         return slugify(label)
+
+    def _set_geom_from_boundary_file(self, overwrite=False):
+        """ Opens a local copy of the boundary file and sets geom field
+
+        Does not save model
+        Copies the geom of the first feature found in the shapefile into geom, to be consistent
+        with the rest of the app
+        No explicit error handling/logging, will raise original exception if failure
+
+        """
+        if overwrite or (self.boundary_file and not self.geom):
+            try:
+                tmpdir = tempfile.mkdtemp()
+                local_zipfile = os.path.join(tmpdir, '{}.zip'.format(self.name))
+                with open(local_zipfile, 'wb') as zip_handle:
+                    zip_handle.write(self.boundary_file.read())
+                with zipfile.ZipFile(local_zipfile, 'r') as zip_handle:
+                    zip_handle.extractall(tmpdir)
+                shpfiles = [filename for filename in os.listdir(tmpdir) if filename.endswith('shp')]
+                shp_filename = os.path.join(tmpdir, shpfiles[0])
+                with fiona.open(shp_filename, 'r') as shp_handle:
+                    feature = next(shp_handle)
+                    geom = GEOSGeometry(json.dumps(feature['geometry']))
+                    if geom.geom_type == 'Polygon':
+                        geom = MultiPolygon([geom])
+                    self.geom = geom
+            finally:
+                shutil.rmtree(tmpdir, ignore_errors=True)
 
     class Meta:
         unique_together = ('name', 'organization',)
