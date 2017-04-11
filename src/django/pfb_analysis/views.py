@@ -4,7 +4,6 @@ from datetime import datetime
 import us
 
 from django.utils.text import slugify
-from django.db.models import Case, When, Q, Max, Value, BooleanField
 
 from rest_framework import status
 from rest_framework.decorators import detail_route
@@ -20,17 +19,19 @@ from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnl
 from .models import AnalysisJob, Neighborhood
 from .serializers import AnalysisJobSerializer, NeighborhoodSerializer
 from .filters import AnalysisJobFilterSet
+from .functions import ObjectAtPath
 
 
 class AnalysisJobViewSet(ModelViewSet):
     """For listing or retrieving analysis jobs."""
 
-    queryset = AnalysisJob.objects.all()
+    queryset = AnalysisJob.objects.all().annotate(
+        overall_score=ObjectAtPath('overall_scores', ('overall_score', 'score_normalized')))
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate,)
     filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
-    ordering_fields = ('created_at', 'modified_at')
+    ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label')
     ordering = ('-created_at',)
 
     def perform_create(self, serializer):

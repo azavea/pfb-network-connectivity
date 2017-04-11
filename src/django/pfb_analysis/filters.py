@@ -24,6 +24,7 @@ class AnalysisJobFilterSet(filters.FilterSet):
         if value:
             matches = [m.pk for m in queryset.all() if m.status == value]
             queryset = queryset.filter(pk__in=matches)
+
         return queryset
 
     def filter_latest(self, queryset, name, value):
