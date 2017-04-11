@@ -10,6 +10,7 @@ import uuid
 import zipfile
 
 from django.conf import settings
+from django.contrib.gis.db.models import MultiPolygonField
 from django.contrib.gis.geos import MultiPolygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
@@ -23,7 +24,6 @@ from fiona.crs import from_epsg
 from localflavor.us.models import USStateField
 import us
 
-from pfb_analysis.aws_batch import JobState
 from pfb_network_connectivity.models import PFBModel
 from users.models import Organization
 
@@ -54,6 +54,7 @@ class Neighborhood(PFBModel):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
     label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
+    geom = MultiPolygonField(srid=4326, blank=True, null=True)
     organization = models.ForeignKey(Organization,
                                      related_name='neighborhoods',
                                      on_delete=models.CASCADE)
