@@ -2,9 +2,8 @@ import logging
 
 from rest_framework import filters
 import django_filters
-from django.db.models import Case, When, Q, Max, Value, BooleanField
 
-from .models import AnalysisJob
+from .models import AnalysisJob, AnalysisJobStatusUpdate, Neighborhood
 
 
 logger = logging.getLogger(__name__)
@@ -28,12 +27,34 @@ class AnalysisJobFilterSet(filters.FilterSet):
         return queryset
 
     def filter_latest(self, queryset, name, value):
+        """ Filters down to the latest successful analysis for each neighborhood, but falls back
+        to the latest modified if there are no successful analysis jobs for a neighborhood.
+
+        This means that if it's applied on top of a status filter, it follows the fallback
+        path and returns the latest job with the given status.
+
+        Runs tons of queries, but the query expression required to do this would be gnarly.
+        """
         if type(value) is bool:
-            queryset = queryset.annotate(is_latest=Case(
-                When(Q(created_at=Max('neighborhood__analysis_jobs__created_at')),
-                     then=Value(True)),
-                default=Value(False),
-                output_field=BooleanField())).filter(is_latest=value)
+            matches = set()
+            initial_job_set = queryset.all()
+            neighborhood_ids = set(job.neighborhood_id for job in initial_job_set)
+            for neighborhood in Neighborhood.objects.filter(pk__in=neighborhood_ids):
+                status_set = AnalysisJobStatusUpdate.objects.filter(
+                    job__neighborhood=neighborhood,
+                    job__in=initial_job_set)
+                success_set = status_set.filter(status=AnalysisJob.Status.SUCCESS_STATUS)
+                if success_set.exists():
+                    status_set = success_set
+                if status_set.exists():
+                    matches.add(status_set.latest('timestamp').job.pk)
+                else:
+                    matches.add(neighborhood.analysis_jobs.latest('modified_at').pk)
+            if value is True:
+                queryset = queryset.filter(pk__in=matches)
+            else:
+                queryset = queryset.exclude(pk__in=matches)
+
         return queryset
 
     class Meta:
