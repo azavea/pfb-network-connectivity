@@ -27,12 +27,15 @@ data "aws_iam_policy_document" "container_instance_ecs_assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "container_instance_ses_send_email" {
+data "aws_iam_policy_document" "ses_send_email" {
   statement {
     effect = "Allow"
 
     resources = ["*"]
-    actions   = ["ses:SendRawEmail"]
+    actions   = [
+      "ses:SendEmail",
+      "ses:SendRawEmail"
+    ]
   }
 }
 
@@ -80,12 +83,6 @@ resource "aws_iam_role_policy_attachment" "ecs_policy" {
   policy_arn = "${var.aws_ecs_service_role_policy_arn}"
 }
 
-resource "aws_iam_role_policy" "ses_send_email" {
-  name   = "SESSendEmail"
-  role   = "${aws_iam_role.container_instance_ecs.id}"
-  policy = "${data.aws_iam_policy_document.container_instance_ses_send_email.json}"
-}
-
 resource "aws_iam_role_policy_attachment" "sqs_read_write" {
   role       = "${aws_iam_role.container_instance_ecs.name}"
   policy_arn = "${var.aws_sqs_read_write_policy_arn}"
@@ -97,6 +94,12 @@ resource "aws_iam_role_policy_attachment" "sqs_read_write" {
 resource "aws_iam_role" "container_instance_ec2" {
   name               = "${var.environment}ContainerInstanceProfile"
   assume_role_policy = "${data.aws_iam_policy_document.container_instance_ec2_assume_role.json}"
+}
+
+resource "aws_iam_role_policy" "ec2_ses_send_email" {
+  name = "${var.environment}EC2SESSendEmail"
+  role = "${aws_iam_role.container_instance_ec2.id}"
+  policy = "${data.aws_iam_policy_document.ses_send_email.json}"
 }
 
 resource "aws_iam_role_policy_attachment" "batch_manage_jobs_policy_container_instance_role" {
