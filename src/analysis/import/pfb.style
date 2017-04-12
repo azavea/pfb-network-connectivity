@@ -126,6 +126,8 @@ way        parking:lane:width        text  linear
 way        parking:lane:right:width  text  linear
 way        parking:lane:left:width   text  linear
 way        parking:lane:both:width   text  linear
+node,way   public_transport    text  linear,polygon
+node,way   railway      text         linear,polygon
 node,way   segregated   text         linear
 way        service      text         linear
 node,way   shop         text         linear,polygon
