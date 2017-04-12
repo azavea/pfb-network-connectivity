@@ -21,6 +21,7 @@ TOLERANCE_HOSPITALS="${TOLERANCE_HOSPITALS:-50}"        # cluster tolerance give
 TOLERANCE_PHARMACIES="${TOLERANCE_PHARMACIES:-50}"      # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_PARKS="${TOLERANCE_PARKS:-50}"                # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_RETAIL="${TOLERANCE_RETAIL:-50}"              # cluster tolerance given in units of $NB_OUTPUT_SRID
+TOLERANCE_TRANSIT="${TOLERANCE_TRANSIT:-75}"            # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_UNIVERSITIES="${TOLERANCE_UNIVERSITIES:-150}" # cluster tolerance given in units of $NB_OUTPUT_SRID
 MIN_PATH_LENGTH="${MIN_PATH_LENGTH:-4800}"              # minimum path length to be considered for recreation access
 MIN_PATH_BBOX="${MIN_PATH_BBOX:-3300}"                  # minimum corner-to-corner span of path bounding box to be considered for recreation access
@@ -147,6 +148,11 @@ update_status "METRICS" "Destinations"
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v nb_output_srid="${NB_OUTPUT_SRID}" \
+  -v cluster_tolerance="${TOLERANCE_TRANSIT}" \
+  -f ../connectivity/destinations/transit.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v nb_output_srid="${NB_OUTPUT_SRID}" \
   -v cluster_tolerance="${TOLERANCE_UNIVERSITIES}" \
   -f ../connectivity/destinations/universities.sql
 
@@ -236,6 +242,13 @@ update_status "METRICS" "Access: colleges"
   -v min_path_length="${MIN_PATH_LENGTH}" \
   -v min_bbox_length="${MIN_PATH_BBOX}" \
   -f ../connectivity/access_trails.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v first=6 \
+  -v second=0 \
+  -v third=0 \
+  -v max_score=10 \
+  -f ../connectivity/access_transit.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -v first=7 \
