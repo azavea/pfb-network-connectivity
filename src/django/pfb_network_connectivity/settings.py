@@ -324,6 +324,7 @@ PFB_ANALYSIS_DESTINATIONS = [
     'schools',
     'social_services',
     'supermarkets',
+    'transit',
     'universities',
 ]
 # Length of time in seconds that S3 pre-signed urls are valid for

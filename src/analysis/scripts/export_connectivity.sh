@@ -138,6 +138,7 @@ then
           neighborhood_schools
           neighborhood_social_services
           neighborhood_supermarkets
+          neighborhood_transit
           neighborhood_universities
         '
         for DESTINATION in ${DESTINATION_TABLES}; do
