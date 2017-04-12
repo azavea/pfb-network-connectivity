@@ -19,14 +19,12 @@ from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnl
 from .models import AnalysisJob, Neighborhood
 from .serializers import AnalysisJobSerializer, NeighborhoodSerializer
 from .filters import AnalysisJobFilterSet
-from .functions import ObjectAtPath
 
 
 class AnalysisJobViewSet(ModelViewSet):
     """For listing or retrieving analysis jobs."""
 
-    queryset = AnalysisJob.objects.all().annotate(
-        overall_score=ObjectAtPath('overall_scores', ('overall_score', 'score_normalized')))
+    queryset = AnalysisJob.objects.all()
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate,)
     filter_class = AnalysisJobFilterSet
