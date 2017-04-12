@@ -19,13 +19,31 @@ CREATE TABLE generated.neighborhood_overall_scores (
     human_explanation TEXT
 );
 
+-- set category weights
+DROP TABLE IF EXISTS tmp_cat_weights;
+CREATE TEMP TABLE tmp_cat_weights (
+    people INTEGER,
+    opportunity INTEGER,
+    core_services INTEGER,
+    recreation INTEGER,
+    transit INTEGER
+);
+INSERT INTO tmp_cat_weights
+VALUES (
+    20, -- people
+    25, -- opportunity
+    30, -- core_services
+    10, -- recreation
+    15  -- transit
+);
+
 -- population
 INSERT INTO generated.neighborhood_overall_scores (
     score_id, score_original, score_normalized, human_explanation
 )
 SELECT  'people',
         COALESCE(neighborhood_score_inputs.score,0),
-        COALESCE(neighborhood_score_inputs.score,0),
+        w.people * COALESCE(neighborhood_score_inputs.score,0) / 10,
         neighborhood_score_inputs.human_explanation
 FROM    neighborhood_score_inputs
 WHERE   use_pop;
