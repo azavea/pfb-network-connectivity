@@ -27,7 +27,9 @@ class AnalysisJobSerializer(PFBModelSerializer):
 
     class Meta:
         model = AnalysisJob
-        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'overall_scores',)
+        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'overall_scores',
+                   'analysis_job_definition', 'tilemaker_job_definition',
+                   '_analysis_job_name', '_tilemaker_job_name',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'batch_job_id', 'batch', 'census_block_count',)
 
