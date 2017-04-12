@@ -62,6 +62,7 @@ else
     NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-3300}"
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
     PFB_JOB_ID="${PFB_JOB_ID:-local-job-`date +%F-%H%M`}"
+    PFB_S3_RESULTS_PATH="${PFB_S3_RESULTS_PATH:-results/${PFB_JOB_ID}}"
 
     docker-compose run $EXTRA_ARGS \
         -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
@@ -74,6 +75,7 @@ else
         -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
         -e NB_OUTPUT_DIR=$NB_OUTPUT_DIR \
         -e PFB_JOB_ID=$PFB_JOB_ID \
+        -e PFB_S3_RESULTS_PATH=$PFB_S3_RESULTS_PATH \
         -e AWS_PROFILE=pfb \
         -e AWS_STORAGE_BUCKET_NAME="${DEV_USER}-pfb-storage-us-east-1" \
         analysis
