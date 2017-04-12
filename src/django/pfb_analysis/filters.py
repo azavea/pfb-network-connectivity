@@ -59,4 +59,9 @@ class AnalysisJobFilterSet(filters.FilterSet):
 
     class Meta:
         model = AnalysisJob
-        fields = ['neighborhood', 'batch', 'status', 'latest']
+        fields = {'neighborhood': ['exact', 'in'],
+                  'neighborhood__name': ['exact', 'contains'],
+                  'neighborhood__label': ['exact', 'contains'],
+                  'batch': ['exact', 'in'],
+                  'status': ['exact', 'in'],
+                  'latest': ['exact', 'in']}
