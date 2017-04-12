@@ -5,7 +5,7 @@ Models related to analysis results.
 from __future__ import unicode_literals
 import uuid
 
-from django.db import models
+from django.contrib.gis.db import models
 
 
 class PFBModel(models.Model):
