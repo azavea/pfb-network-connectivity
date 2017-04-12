@@ -1,0 +1,23 @@
+---
+
+# PFB env settings
+aws_profile: pfb
+
+# AWS Batch development settings
+pfb_aws_batch_compute_environment_arn: "ARN_of_batch_compute_environment"
+pfb_aws_batch_analysis_job_queue_name: "name_of_batch_analysis_job_queue"
+pfb_aws_batch_analysis_job_definition_name: "staging-pfb-analysis-run-job"
+pfb_aws_batch_tilemaker_job_queue_name: "name_of_batch_tilemaker_job_queue"
+pfb_aws_batch_tilemaker_job_definition_name: "staging-pfb-tilemaker-run-job"
+
+
+# application settings
+docker_compose_version: 1.8.0
+
+# azavea.docker
+# 1.12.* to match AWS ECS
+docker_version: 1.12.*
+docker_options: "--storage-opt dm.basesize=20G"
+
+# azavea.terraform
+terraform_version: 0.9.1

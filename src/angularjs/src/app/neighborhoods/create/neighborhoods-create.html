@@ -1,0 +1,45 @@
+<pfb-navbar></pfb-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+      <h1>Create Neighborhood</h1>
+      <form name="neighborhoodCreateForm" novalidate ng-submit="neighborhoodCreate.create()">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="file">File</label>
+              <input ngf-select ng-model="neighborhoodCreate.file"
+                     ngf-pattern="'.zip'" ngf-accept="'.zip'"
+                     type="file" name="file" required>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="label">Label</label>
+              <input ng-model="neighborhoodCreate.label"
+                     class="form-control" id="label"
+                     type="text">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="role">State</label>
+              <select ng-model="neighborhoodCreate.state"
+                      ng-options="state as state.name for state in neighborhoodCreate.states
+                      track by state.abbr"
+                      class="form-control" id="role" type="text" required>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <button type="submit" ng-disabled="neighborhoodCreateForm.$invalid"
+                    class="btn-primary btn">Create Neighborhood</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

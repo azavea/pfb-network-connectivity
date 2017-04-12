@@ -1,0 +1,8 @@
+(function () {
+    'use strict';
+
+    angular.module('pfb.components',
+                   ['pfb.components.analysis-jobs',
+                    'pfb.components.auth',
+                    'pfb.components.filters']);
+})();

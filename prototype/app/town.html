@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>People for bikes</title>
+
+		<link href="https://fonts.googleapis.com/css?family=Cabin+Condensed:400,500,600,700" rel="stylesheet">
+		<link rel="stylesheet" href="./assets/fonts/fontello/css/fontello.css">
+		<link rel="stylesheet" href="./assets/css/main.css">
+	</head>
+	<body>
+		<!-- Navigation -->
+		<div class="navbar">
+			<div class="container">
+				<div class="navbar-left">
+					<a href="/" class="brand">
+						<img src="assets/images/placesforbikes-logo-white.png" alt="Places for bikes">
+					</a>
+				</div>
+				<div class="navbar-right">
+					<nav>
+						<a href="search.html">All locations</a>
+						<a href="#">About</a>
+						<a href="#">Methodology</a>
+						<a href="http://www.peopleforbikes.org/" target="_blank">People for bikes</a>
+					</nav>
+				</div>
+			</div>
+		</div>
+		<!-- Navigation -->
+
+		<!-- Sidebar -->
+		<!-- ATTENTION: note the use of location-overview class -->
+		<div class="sidebar location-overview">
+
+			<!-- Everything in .sidebar-header will not scroll.  -->
+			<div class="sidebar-header">
+				<div class="row">
+					<div class="column-8">
+						<h2 class="sidebar-title">City/Town Name with a lonnngggggg name</h2>
+						<h4 class="sidebar-title">State</h4>
+						<div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+					</div>
+					<div class="column text-right">
+						<a class="btn btn-primary" href="/search.html">Back to search</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Everythign in sidebar-scrollable will scroll. -->
+			<div class="sidebar-scrollable">
+				<section>
+					<div class="metric-details">
+						<div class="row">
+							<div class="column">
+								<label class="network-score large flex-row columns-center">
+									90
+									<span class="h3">Network Score</span>
+
+									<!-- Tooltips how it works: If you have a div with class .tooltip add a title. The content of the title will display in the toolip using css. -->
+									<div class="tooltip" title="This is a tooltip that keeps sdfjhskdjfh dfskjhas kjhdfsa kjdfsah sdfakjh kjfdsah "><i class="icon-info-circled"></i></div>
+								</label>
+							</div>
+							<div class="column text-right">
+								<div class="dropdown">
+								  <button class="btn btn-default dropdown-toggle btn-s" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								    Download
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								  	<li>
+								    	<a href="#" class="compare-remove">Shapefile</a>
+								    </li>
+								    <li>
+								    	<a href="#" class="compare-remove">CSV</a>
+								    </li>
+								  </ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<ul class="metric-list">
+					<li>Metric Name 
+						<div class="tooltip" title="This is a tooltip "><i class="icon-info-circled"></i></div> 
+						<span class="network-score small">90</span>
+					</li>
+					<li>Metric Name 
+						<div class="tooltip" title="This is a tooltip "><i class="icon-info-circled"></i></div> 
+						<span class="network-score small">90</span>
+					</li>
+					<li>Metric Name 
+						<div class="tooltip" title="This is a tooltip "><i class="icon-info-circled"></i></div> 
+						<span class="network-score small">90</span>
+					</li>
+					<li>Metric Name 
+						<div class="tooltip" title="This is a tooltip "><i class="icon-info-circled"></i></div> 
+						<span class="network-score small">90</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-- Sidebar -->
+
+		<!-- Map -->
+		<div class="preview-map">
+			<div class="map"></div>
+		</div>
+		<!-- Map -->
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		<script src="./assets/js/bootstrap.min.js"></script>
+		<script src="./assets/js/main.js"></script>
+	</body>
+</html>

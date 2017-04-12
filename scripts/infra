@@ -1,0 +1,80 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${PFB_DEBUG}" ]]; then
+    set -x
+fi
+
+set -u
+
+DIR="$(dirname "$0")"
+
+function usage() {
+    echo -n \
+"Usage: $(basename "$0") COMMAND OPTION[S]
+Execute Terraform subcommands with remote state management.
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        TERRAFORM_DIR="${DIR}/../deployment/terraform"
+        echo
+        echo "Attempting to deploy application version [${GIT_COMMIT}]..."
+        echo "-----------------------------------------------------"
+        echo
+    fi
+
+    if [[ -n "${PFB_SETTINGS_BUCKET}" ]]; then
+        pushd "${TERRAFORM_DIR}"
+
+        aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/terraform/terraform.tfvars" "${PFB_SETTINGS_BUCKET}.tfvars"
+
+        case "${1}" in
+            plan)
+                echo "Updating AWS Batch job definitions"
+                pushd "../aws-batch"
+                # TODO: Only trigger this if the pfb-analysis container has changed, otherwise skip
+                #       and reuse old version
+                # TODO: This is a bit awkward. If we `plan` but never `apply`, we'll have created
+                #       an orphaned job definition that never gets used.
+                docker-compose build
+
+                BATCH_ANALYSIS_JOB_NAME_REVISION=$(docker-compose run --rm \
+                    update-job-defs pfb-analysis-run-job.json \
+                    "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}")
+                BATCH_TILEMAKER_JOB_NAME_REVISION=$(docker-compose run --rm \
+                    update-job-defs pfb-tilemaker-run-job.json \
+                    "${PFB_AWS_ECR_ENDPOINT}/pfb-tilemaker:${GIT_COMMIT}")
+                popd
+
+                rm -rf .terraform/ terraform.tfstate*
+                terraform init \
+                    -backend-config="bucket=${PFB_SETTINGS_BUCKET}" \
+                    -backend-config="key=terraform/state"
+
+                terraform plan \
+                          -var-file="${PFB_SETTINGS_BUCKET}.tfvars" \
+                          -var="git_commit=${GIT_COMMIT}" \
+                          -var="batch_analysis_job_definition_name_revision=${BATCH_ANALYSIS_JOB_NAME_REVISION}" \
+                          -var="batch_tilemaker_job_definition_name_revision=${BATCH_TILEMAKER_JOB_NAME_REVISION}" \
+                          -out="${PFB_SETTINGS_BUCKET}.tfplan"
+                ;;
+            apply)
+                terraform apply "${PFB_SETTINGS_BUCKET}.tfplan"
+                ;;
+            *)
+                echo "ERROR: I don't have support for that Terraform subcommand!"
+                exit 1
+                ;;
+        esac
+
+        popd
+    else
+        echo "ERROR: No PFB_SETTINGS_BUCKET variable defined."
+        exit 1
+    fi
+fi

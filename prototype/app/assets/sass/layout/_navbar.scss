@@ -1,0 +1,54 @@
+.navbar {
+  @extend %clearfix;
+  position: relative;
+  padding: 1rem;
+  background-color: #000;
+  z-index: 11;
+
+  .container {
+    max-width: 100%;
+    display: flex;
+
+    @include respond-to('sm-down') {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  nav {
+    display: inline-block;
+    vertical-align: middle;
+
+    a {
+      padding: 18px 20px;
+      color: #fff;
+      text-transform: uppercase;
+
+      &:hover {
+        color: $link-color;
+      }
+    }
+  }
+}
+
+.navbar-left {
+  flex: 1;
+}
+
+.navbar-right {
+
+  @include respond-to('sm-down') {
+    justify-content: flex-end;
+  }
+}
+
+.brand {
+  display: inline-block;
+  vertical-align: middle;
+
+  > img {
+    max-height: 5rem;
+    top: 4px;
+    position: relative;
+  }
+}

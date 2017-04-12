@@ -1,0 +1,38 @@
+id,category,score_name,score,notes
+1,Population,Median population accessible by low stress,5342.0000,"Total population accessible by low stress expressed as the median of all census blocks in the
+            neighborhood"
+2,Population,Median population accessible by high stress,48921.0000,"Total population accessible by high stress expressed as the median of all census blocks in the
+            neighborhood"
+3,Population,Median ratio of access to population,0.1030,"Ratio of population accessible by low stress to population accessible overall, expressed as
+            the median of all census blocks in the
+            neighborhood"
+4,Population,70th percentile ratio of access to population,0.1961,"Ratio of population accessible by low stress to population accessible overall, expressed as
+            the 70th percentile of all census blocks in the
+            neighborhood"
+5,Population,Average ratio of access to population,0.1372,"Ratio of population accessible by low stress to population accessible overall, expressed as
+            the average of all census blocks in the
+            neighborhood"
+6,Employment,Median employment accessible by low stress,3603.0000,"Total jobs accessible by low stress expressed as the median of all census blocks in the
+            neighborhood"
+7,Employment,Median employment accessible by high stress,49604.0000,"Total jobs accessible by high stress expressed as the median of all census blocks in the
+            neighborhood"
+8,Employment,Median ratio of access to employment,0.0730,"Ratio of employment accessible by low stress to employment accessible overall, expressed as
+            the median of all census blocks in the
+            neighborhood"
+9,Employment,70th percentile ratio of access to employment,0.1371,"Ratio of employment accessible by low stress to employment accessible overall, expressed as
+            the 70th percentile of all census blocks in the
+            neighborhood"
+10,Employment,Average ratio of access to employment,0.1144,"Ratio of employment accessible by low stress to employment accessible overall, expressed as
+            the average of all census blocks in the
+            neighborhood"
+11,Schools,Average low stress school access,2.2588,"Number of schools accessible by low stress expressed as an average of all census blocks in the
+            neighborhood"
+12,Schools,Average high stress school access,17.9608,"Number of schools accessible by high stress expressed as an average of all census blocks in the
+            neighborhood"
+13,Schools,Average school low stress population shed,5332.8276,"Population with low stress access to schools in the neighborhood expressed as an average of all
+            schools in the neighborhood"
+14,Schools,Average school high stress population shed,39677.5517,"Population with high stress access to schools in the neighborhood expressed as an average of all
+            schools in the neighborhood"
+15,Schools,Average school population shed ratio,0.1301,"Ratio of population with low stress access to schools to population with high stress access
+            in the neighborhood expressed as an average of all
+            schools in the neighborhood"

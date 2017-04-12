@@ -1,0 +1,90 @@
+#!/bin/bash
+
+set -e
+
+cd `dirname "${0}"`
+
+if [[ -n "${PFB_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0")
+
+Build and pull container images using docker-compose
+
+Runs django migrations
+
+"
+}
+
+function check_database() {
+    # Check if database is set up to continue
+
+    max=21 # 1 minute
+    counter=1
+    while true
+    do
+        echo "Checking if database is up yet (try ${counter})..."
+        set +e
+        docker-compose exec -T database gosu postgres psql -d pfb -c 'select 1' >/dev/null 2>/dev/null
+        status_check=$?
+        if [ $status_check == 0 ]
+        then
+            echo "Connected to database successfully"
+            break
+        fi
+        set -e
+        if [[ ${counter} == "${max}" ]]
+        then
+            echo "Could not connect to database after some time"
+            exit 1
+        fi
+        sleep 3
+        (( counter++ ))
+    done
+}
+
+function run_database_migrations() {
+    docker-compose up -d database
+    check_database
+    docker-compose run --rm --entrypoint python django manage.py migrate --noinput
+    docker-compose run --rm --entrypoint python django manage.py collectstatic --noinput
+    docker-compose stop database
+}
+
+function run_data_fixtures() {
+    docker-compose up -d database
+    check_database
+    docker-compose run --rm --entrypoint python django manage.py loaddata analysis-score-metadata
+    docker-compose stop database
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]
+then
+    if [ "${1:-}" = "--help" ]
+    then
+        usage
+    else
+        pushd ..
+
+        docker-compose build database django angularjs analysis tilemaker
+
+        run_database_migrations
+        run_data_fixtures
+
+        echo "Copying angular site to nginx"
+        pushd "src/nginx"
+        docker run --rm -i -v "${PWD}/srv/dist:/static-export/dist" pfb-angularjs \
+               rsync -rlptDv --delete --exclude .gitkeep \
+                 /opt/pfb/angularjs/dist /static-export/
+        popd
+
+        # Build the nginx container after building angularjs and copying the files, so
+        # it includes them
+        docker-compose build nginx
+
+        popd
+    fi
+fi

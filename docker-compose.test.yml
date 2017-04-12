@@ -1,0 +1,25 @@
+version: '2'
+services:
+  nginx:
+    image: pfb-nginx:${GIT_COMMIT}
+    build:
+      context: ./src/nginx
+      dockerfile: Dockerfile
+
+  django:
+    image: pfb-app:${GIT_COMMIT}
+    build:
+      context: ./src/django
+      dockerfile: Dockerfile
+
+  analysis:
+    image: pfb-analysis:${GIT_COMMIT}
+    build:
+      context: ./src
+      dockerfile: analysis/Dockerfile
+
+  tilemaker:
+    image: pfb-tilemaker:${GIT_COMMIT}
+    build:
+      context: ./src
+      dockerfile: tilemaker/Dockerfile

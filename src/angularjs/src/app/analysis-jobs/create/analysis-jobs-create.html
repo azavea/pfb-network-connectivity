@@ -1,0 +1,36 @@
+<pfb-navbar></pfb-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+      <h1>Run Analysis</h1>
+      <form name="analysisJobCreateForm" novalidate ng-submit="analysisJobCreate.create()">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="role">Neighborhood</label>
+              <select ng-model="analysisJobCreate.neighborhood"
+                      ng-options="neighborhood as neighborhood.label for neighborhood
+                      in analysisJobCreate.neighborhoods track by neighborhood.uuid"
+                      class="form-control" id="neighborhood" type="text" required>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="label">OSM extract URL (optional)</label>
+              <input ng-model="analysisJobCreate.osmUrl"
+                     class="form-control" id="osmUrl" type="url">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <button type="submit" ng-disabled="analysisJobCreateForm.$invalid"
+                    class="btn-primary btn">Submit Analysis Job</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

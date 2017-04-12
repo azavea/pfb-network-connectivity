@@ -1,0 +1,112 @@
+[
+  {
+    "cpu": 10,
+    "essential": true,
+    "memory": 512,
+    "name": "nginx",
+    "image": "${app_server_nginx_url}",
+    "links": [
+      "django"
+    ],
+    "portMappings": [
+        {
+            "containerPort": 443,
+            "hostPort": 0
+        }
+    ],
+    "logConfiguration": {
+        "logDriver": "syslog",
+        "options": {
+            "syslog-address": "${pfb_app_papertrail_endpoint}",
+            "syslog-tls-ca-cert": "/etc/papertrail-bundle.pem",
+            "tag": "nginx"
+        }
+    }
+  },
+  {
+    "cpu": 10,
+    "essential": true,
+    "memory": 1024,
+    "name": "django",
+    "image": "${app_server_django_url}",
+    "portMappings": [],
+    "environment": [
+      {
+        "name": "DJANGO_ENV",
+        "value": "${django_env}"
+      },
+      {
+        "name": "PFB_SECRET_KEY",
+        "value": "${django_secret_key}"
+      },
+      {
+        "name": "PFB_DB_HOST",
+        "value": "${rds_host}"
+      },
+      {
+        "name": "PFB_DB_PORT",
+        "value": "5432"
+      },
+      {
+        "name": "PFB_DB_PASSWORD",
+        "value": "${rds_password}"
+      },
+      {
+        "name": "PFB_DB_USER",
+        "value": "${rds_username}"
+      },
+      {
+        "name": "PFB_DB_DATABASE",
+        "value": "${rds_database_name}"
+      },
+      {
+        "name": "AWS_DEFAULT_REGION",
+        "value": "${aws_region}"
+      },
+      {
+        "name": "PFB_S3_STATIC_BUCKET",
+        "value": "${s3_static_bucket}"
+      },
+      {
+        "name": "PFB_S3_STORAGE_BUCKET",
+        "value": "${s3_storage_bucket}"
+      },
+      {
+        "name": "PFB_ALLOWED_HOSTS",
+        "value": "${django_allowed_hosts}"
+      },
+      {
+        "name": "COMMIT",
+        "value": "${git_commit}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN",
+        "value": "${batch_analysis_compute_environment_arn}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME",
+        "value": "${batch_analysis_job_queue_name}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION",
+        "value": "${batch_analysis_job_definition_name_revision}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME",
+        "value": "${batch_tilemaker_job_queue_name}"
+      },
+      {
+        "name": "PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION",
+        "value": "${batch_tilemaker_job_definition_name_revision}"
+      }
+    ],
+    "logConfiguration": {
+          "logDriver": "syslog",
+          "options": {
+              "syslog-address": "${pfb_app_papertrail_endpoint}",
+              "syslog-tls-ca-cert": "/etc/papertrail-bundle.pem",
+              "tag": "django"
+          }
+      }
+  }
+]

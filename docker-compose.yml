@@ -1,0 +1,84 @@
+version: '2'
+services:
+  database:
+    image: quay.io/azavea/postgis:postgres9.6-postgis2.3
+    environment:
+      - POSTGRES_USER=pfb
+      - POSTGRES_PASSWORD=pfb
+      - POSTGRES_DB=pfb
+
+  nginx:
+    image: pfb-nginx
+    build:
+      context: ./src/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "9200:443"
+    links:
+      - django
+
+  django:
+    image: pfb-app
+    extends:
+      service: django
+      file: common.yml
+    ports:
+      - "9202:9202"
+      - "9203:9203"
+    links:
+      - database:database.service.pfb.internal
+    environment:
+      - DEV_USER
+
+  angularjs:
+    image: pfb-angularjs
+    working_dir: /opt/pfb/angularjs
+    build:
+      context: ./src/angularjs
+      dockerfile: Dockerfile
+    links:
+      - nginx:pfb.internal
+    ports:
+      - "9301:9301"
+      - "9302:9302"
+    volumes:
+      - ./src/angularjs/.eslintrc:/opt/pfb/angularjs/.eslintrc
+      - ./src/angularjs/gulp:/opt/pfb/angularjs/gulp
+      - ./src/angularjs/gulpfile.js:/opt/pfb/angularjs/gulpfile.js
+      - ./src/angularjs/src:/opt/pfb/angularjs/src
+      - ./src/angularjs/docs:/opt/pfb/angularjs/docs
+    command: gulp serve
+
+  analysis:
+    image: pfb-analysis
+    extends:
+      service: django
+      file: common.yml
+    build:
+      context: ./src
+      dockerfile: analysis/Dockerfile
+    links:
+      - database:database.service.pfb.internal
+    volumes:
+      - ./data:/data
+      - /home/vagrant/.aws:/root/.aws
+      - ./src/django:/opt/pfb/django
+
+  tilemaker:
+    image: pfb-tilemaker
+    extends:
+      service: django
+      file: common.yml
+    build:
+      context: ./src
+      dockerfile: tilemaker/Dockerfile
+    links:
+      - database:database.service.pfb.internal
+    volumes:
+      - /home/vagrant/.aws:/root/.aws
+    environment:
+      - AWS_STORAGE_BUCKET_NAME
+      - AWS_PROFILE
+      - PFB_JOB_ID
+      - PFB_S3_RESULTS_PATH
+      - PFB_S3_TILES_PATH

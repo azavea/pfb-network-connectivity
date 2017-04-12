@@ -1,0 +1,51 @@
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  &:first-child {
+    margin-top: 0;
+  }
+
+}
+
+h1, h2, h3,
+.h1, .h2, .h3 {
+  margin-top: 29px;
+  margin-bottom: 18px;
+}
+
+.heading-label {
+    font-size: $font-size-h5;
+    text-transform: uppercase;
+    font-weight: normal;
+    margin-bottom: -10px;
+}
+
+.brand-primary {
+    color: $brand-primary;
+}
+
+.brand-secondary {
+    color: $brand-secondary;
+}
+
+.brand-tertiary {
+    color: $brand-tertiary;
+}
+
+body {
+    font-size: #{$font-size-base/10px}em;
+    line-height: $line-height-base;
+    margin: 0;
+    font-weight: 600;
+}
+
+table {
+  th, td {
+    &:last-child {
+      text-align: right;
+    }
+  }
+}
+
+.text-center {
+  text-align: center;
+}

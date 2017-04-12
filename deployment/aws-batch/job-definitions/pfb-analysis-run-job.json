@@ -1,0 +1,45 @@
+{
+    "jobDefinitionName": "{environment}-pfb-analysis-run-job",
+    "type": "container",
+    "parameters": {},
+    "containerProperties": {
+        "image": "{image}",
+        "vcpus": 2,
+        "memory": 12288,
+        "command": [
+            "/pfb/scripts/entrypoint.sh"
+        ],
+        "jobRoleArn": "",
+        "volumes": [{
+            "name": "pgdata",
+            "host": {
+                "sourcePath": "/media/nvme0n1/pgdata"
+            }
+        }],
+        "environment": [{
+            "name": "PFB_MAINTENANCE_WORK_MEM",
+            "value": "2048MB"
+        }, {
+            "name": "PFB_MAX_WAL_SIZE",
+            "value": "4096MB"
+        }, {
+            "name": "PFB_SHARED_BUFFERS",
+            "value": "3072MB"
+        }, {
+            "name": "PFB_TEMP_FILE_LIMIT",
+            "value": "104857600"
+        }, {
+            "name": "PFB_WORK_MEM",
+            "value": "1536MB"
+        }],
+        "mountPoints": [{
+            "sourceVolume": "pgdata",
+            "containerPath": "/pgdata",
+            "readOnly": false
+        }],
+        "readonlyRootFilesystem": false,
+        "privileged": true,
+        "ulimits": [],
+        "user": ""
+    }
+}

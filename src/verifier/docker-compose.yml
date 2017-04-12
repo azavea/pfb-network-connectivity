@@ -1,0 +1,10 @@
+version: '2'
+services:
+  verifier:
+      image: pfb-verifier
+      build:
+        context: .
+        dockerfile: Dockerfile
+      volumes:
+        - ../../data/output:/opt/verifier/output
+        - ../../verified_output:/opt/verifier/verified_output
