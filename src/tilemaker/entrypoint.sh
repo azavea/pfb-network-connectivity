@@ -37,12 +37,15 @@ ogr2ogr -overwrite -t_srs EPSG:4326 -f "ESRI Shapefile" "/data/" \
 TL_BOUNDS=$(ogrinfo -so -al "/data/${TL_SHAPEFILE_NAME}.shp" \
     | grep Extent | sed -E 's/.*\((.*), (.*)\) - \((.*), (.*)\).*/\1 \2 \3 \4/')
 
-# Make tiles and upload them to S3
+# Make tiles and upload them to S3.
+# 'tl' only has totally-quiet or very-verbose (every tile) output options, so this filters
+# the output to show the first line then every 1000th line thereafter.
 /usr/bin/time -f "\nTIMING: %C\nTIMING:\t%E elapsed %Kkb mem\n" \
-tl copy --quiet --min-zoom "${TL_MIN_ZOOM}" --max-zoom "${TL_MAX_ZOOM}" \
+tl copy --min-zoom "${TL_MIN_ZOOM}" --max-zoom "${TL_MAX_ZOOM}" \
     --bounds "${TL_BOUNDS}" \
     "mapnik:///opt/pfb/tilemaker/styles/${TL_SHAPEFILE_NAME}_style.xml" \
-    "s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_TILES_PATH}/{z}/{x}/{y}.png"
+    "s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_TILES_PATH}/{z}/{x}/{y}.png" \
+    | awk 'NR == 1 || NR % 1000 == 0'
 
 update_status "COMPLETE" "Finished exporting tiles"
 
