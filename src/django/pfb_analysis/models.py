@@ -198,6 +198,14 @@ class AnalysisJobManager(models.Manager):
                                                       ('overall_score', 'score_normalized')))
 
 
+def generate_analysis_job_def():
+    return settings.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION
+
+
+def generate_tilemaker_job_def():
+    return settings.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION
+
+
 class AnalysisJob(PFBModel):
 
     def __str__(self):
@@ -252,6 +260,11 @@ class AnalysisJob(PFBModel):
     overall_scores = JSONField(db_index=True, default=dict)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
 
+    analysis_job_definition = models.CharField(max_length=50, default=generate_analysis_job_def)
+    _analysis_job_name = models.CharField(max_length=50, default='')
+    tilemaker_job_definition = models.CharField(max_length=50, default=generate_tilemaker_job_def)
+    _tilemaker_job_name = models.CharField(max_length=50, default='')
+
     objects = AnalysisJobManager()
 
     @property
@@ -284,19 +297,27 @@ class AnalysisJob(PFBModel):
 
     @property
     def analysis_job_name(self):
-        job_definition = settings.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION
-        # Due to CloudWatch logs limits, job name must be no more than 50 chars
-        # so force truncate to that to keep jobs from failing
-        definition_name, revision = job_definition.split(':')
-        return '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
+        if not self._analysis_job_name:
+            job_definition = self.analysis_job_definition
+            # Due to CloudWatch logs limits, job name must be no more than 50 chars
+            # so force truncate to that to keep jobs from failing
+            definition_name, revision = job_definition.split(':')
+            job_name = '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
+            self._analysis_job_name = job_name
+            self.save()
+        return self._analysis_job_name
 
     @property
     def tilemaker_job_name(self):
-        job_definition = settings.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION
-        # Due to CloudWatch logs limits, job name must be no more than 50 chars
-        # so force truncate to that to keep jobs from failing
-        definition_name, revision = job_definition.split(':')
-        return '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
+        if not self._tilemaker_job_name:
+            job_definition = self.tilemaker_job_definition
+            # Due to CloudWatch logs limits, job name must be no more than 50 chars
+            # so force truncate to that to keep jobs from failing
+            definition_name, revision = job_definition.split(':')
+            job_name = '{}--{}--{}'.format(definition_name[:30], revision, str(self.uuid)[:8])
+            self._tilemaker_job_name = job_name
+            self.save()
+        return self._tilemaker_job_name
 
     @property
     def census_blocks_url(self):
@@ -431,7 +452,7 @@ class AnalysisJob(PFBModel):
         try:
             response = client.submit_job(
                 jobName=self.analysis_job_name,
-                jobDefinition=settings.PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION,
+                jobDefinition=self.analysis_job_definition,
                 jobQueue=settings.PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME,
                 containerOverrides=container_overrides)
             self.batch_job_id = response['jobId']
@@ -464,7 +485,7 @@ class AnalysisJob(PFBModel):
 
         job_params = {
             'jobName': self.tilemaker_job_name,
-            'jobDefinition': settings.PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION,
+            'jobDefinition': self.tilemaker_job_definition,
             'jobQueue': settings.PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME,
             'dependsOn': [{'jobId': self.batch_job_id}],
             'containerOverrides': {
