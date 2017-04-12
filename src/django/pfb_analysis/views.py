@@ -12,13 +12,13 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
-from pfb_analysis.models import AnalysisJob, Neighborhood
-from pfb_analysis.serializers import AnalysisJobSerializer, NeighborhoodSerializer
 from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
-from pfb_network_connectivity.filters import (OrgAutoFilterBackend,
-                                              SelfUserAutoFilterBackend,
-                                              AnalysisJobStatusFilterSet)
+from pfb_network_connectivity.filters import OrgAutoFilterBackend
 from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
+
+from .models import AnalysisJob, Neighborhood
+from .serializers import AnalysisJobSerializer, NeighborhoodSerializer
+from .filters import AnalysisJobFilterSet
 
 
 class AnalysisJobViewSet(ModelViewSet):
@@ -27,9 +27,9 @@ class AnalysisJobViewSet(ModelViewSet):
     queryset = AnalysisJob.objects.all()
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate,)
-    filter_class = AnalysisJobStatusFilterSet
+    filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
-    ordering_fields = ('created_at', 'modified_at')
+    ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label')
     ordering = ('-created_at',)
 
     def perform_create(self, serializer):

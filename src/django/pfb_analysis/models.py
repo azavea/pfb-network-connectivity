@@ -26,6 +26,7 @@ import us
 from pfb_analysis.aws_batch import JobState
 from pfb_network_connectivity.models import PFBModel
 from users.models import Organization
+from .functions import ObjectAtPath
 
 
 logger = logging.getLogger(__name__)
@@ -159,6 +160,13 @@ class AnalysisBatch(PFBModel):
                 logger.exception('Cancelling job {} failed: {}'.format(job, e))
 
 
+class AnalysisJobManager(models.Manager):
+    def get_queryset(self):
+        qs = super(AnalysisJobManager, self).get_queryset()
+        return qs.annotate(overall_score=ObjectAtPath('overall_scores',
+                                                      ('overall_score', 'score_normalized')))
+
+
 class AnalysisJob(PFBModel):
 
     def __str__(self):
@@ -212,6 +220,8 @@ class AnalysisJob(PFBModel):
                                                 'http://a.com/foo.osm.bz2')
     overall_scores = JSONField(db_index=True, default=dict)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
+
+    objects = AnalysisJobManager()
 
     @property
     def status(self):
@@ -481,6 +491,12 @@ class AnalysisJobStatusUpdate(models.Model):
         # NOTE: Changing ordering=timestamp would invalidate assumptions about the ordering of
         #       these objects elsewhere in the model. Proceed with caution.
         ordering = ('timestamp',)
+
+    def save(self, *args, **kwargs):
+        """ Override to update `modified_at` on the related AnalysisJob """
+        super(AnalysisJobStatusUpdate, self).save(*args, **kwargs)
+        # The modified_at field is auto_now=True, so just saving updates it
+        self.job.save()
 
 
 class AnalysisScoreMetadata(models.Model):

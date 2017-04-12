@@ -11,6 +11,7 @@ class AnalysisJobSerializer(PFBModelSerializer):
     status = serializers.SerializerMethodField()
     neighborhood_label = serializers.SerializerMethodField()
     neighborhood = serializers.PrimaryKeyRelatedField(queryset=Neighborhood.objects.all())
+    overall_score = serializers.FloatField(read_only=True)
 
     def get_running_time(self, obj):
         return obj.running_time
