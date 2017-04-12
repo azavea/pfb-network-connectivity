@@ -95,12 +95,10 @@ function ec_export_destination_geojson() {
   # Our version of ogr2ogr isn't new enough to specify the geom column :(
   #   Instead, ogr2ogr states it takes the "last" geom column, so we manually specify
   #   it here to ensure we always take the one we want
-  # Use geom_poly because its the source field in all dest tables -- geom_pt is only
-  #   derived field in some tables
   ogr2ogr -f GeoJSON "${FILENAME}" \
           -t_srs EPSG:4326 \
           "PG:host=${NB_POSTGRESQL_HOST} dbname=${NB_POSTGRESQL_DB} user=${NB_POSTGRESQL_USER}" \
-          -sql "select *, geom_poly from ${EXPORT_TABLENAME}"
+          -sql "select *, geom_pt from ${EXPORT_TABLENAME}"
 }
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]

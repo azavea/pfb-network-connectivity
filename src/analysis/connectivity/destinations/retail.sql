@@ -13,6 +13,7 @@ CREATE TABLE generated.neighborhood_retail (
     pop_low_stress INT,
     pop_high_stress INT,
     pop_score FLOAT,
+    geom_pt geometry(point, :nb_output_srid),
     geom_poly geometry(multipolygon, :nb_output_srid)
 );
 
@@ -23,6 +24,10 @@ INSERT INTO generated.neighborhood_retail (
 SELECT  ST_Multi(ST_Buffer(ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3),0))
 FROM    neighborhood_osm_full_polygon
 WHERE   landuse = 'retail';
+
+-- set points on polygons
+UPDATE  generated.neighborhood_retail
+SET     geom_pt = ST_Centroid(geom_poly);
 
 -- index
 CREATE INDEX sidx_neighborhood_retail_geomply ON neighborhood_retail USING GIST (geom_poly);
