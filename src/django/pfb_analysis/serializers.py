@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from pfb_analysis.models import AnalysisJob, Neighborhood
 from pfb_network_connectivity.serializers import PFBModelSerializer
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 
 class AnalysisJobSerializer(PFBModelSerializer):
@@ -41,3 +42,17 @@ class NeighborhoodSerializer(PFBModelSerializer):
         exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'geom', 'geom_pt',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'name',)
+
+
+class NeighborhoodGeoJsonSerializer(GeoFeatureModelSerializer):
+
+    class Meta:
+        model = Neighborhood
+        id_field = 'uuid'
+        geo_field = 'geom_pt'
+        exclude = ('created_at',
+                   'modified_at',
+                   'created_by',
+                   'modified_by',
+                   'geom',
+                   'boundary_file',)
