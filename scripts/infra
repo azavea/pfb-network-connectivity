@@ -43,11 +43,16 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 #       an orphaned job definition that never gets used.
                 docker-compose build
 
+                ENVIRONMENT="${ENVIRONMENT:-staging}"
                 BATCH_ANALYSIS_JOB_NAME_REVISION=$(docker-compose run --rm \
-                    update-job-defs pfb-analysis-run-job.json \
+                    update-job-defs \
+                    --environment "${ENVIRONMENT}" \
+                    pfb-analysis-run-job.json \
                     "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}")
                 BATCH_TILEMAKER_JOB_NAME_REVISION=$(docker-compose run --rm \
-                    update-job-defs pfb-tilemaker-run-job.json \
+                    update-job-defs \
+                    --environment "${ENVIRONMENT}" \
+                    pfb-tilemaker-run-job.json \
                     "${PFB_AWS_ECR_ENDPOINT}/pfb-tilemaker:${GIT_COMMIT}")
                 popd
 
