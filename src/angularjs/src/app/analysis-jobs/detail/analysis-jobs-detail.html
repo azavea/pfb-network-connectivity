@@ -24,7 +24,8 @@
         <tbody>
           <tr ng-repeat="(k, v) in analysisJobDetail.job">
             <td>{{ k }}</td>
-            <td>{{ v }}</td>
+            <td ng-if="k === 'neighborhood'">{{ v.label }}</td>
+            <td ng-if="k !== 'neighborhood'">{{ v }}</td>
           </tr>
         </tbody>
       </table>

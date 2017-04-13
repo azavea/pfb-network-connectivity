@@ -70,6 +70,7 @@ class AnalysisJobViewSet(ModelViewSet):
 class NeighborhoodMixin(APIView):
     """Shared properties of the neighborhood viewsets."""
 
+    queryset = Neighborhood.objects.all()
     permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
     filter_fields = ('organization', 'name', 'label', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
@@ -78,7 +79,6 @@ class NeighborhoodMixin(APIView):
 class NeighborhoodViewSet(NeighborhoodMixin, ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
-    queryset = Neighborhood.objects.all()
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
     ordering_fields = ('created_at',)
@@ -92,7 +92,6 @@ class NeighborhoodViewSet(NeighborhoodMixin, ModelViewSet):
 class NeighborhoodGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
     """For retrieving neighborhood centroids as GeoJSON feature collection."""
 
-    queryset = Neighborhood.objects.all()
     serializer_class = NeighborhoodGeoJsonSerializer
     pagination_class = None
 
