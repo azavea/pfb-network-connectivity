@@ -38,7 +38,7 @@ vagrant@vagrant-ubuntu-trusty-64:~$ ./scripts/cibuild && ./scripts/cipublish
 Next, use the `infra` wrapper script to lookup the remote state of the infrastructure and assemble a plan for work to be done:
 
 ```bash
-vagrant@vagrant-ubuntu-trusty-64:~$ export PFB_SETTINGS_BUCKET="staging-pfb-config-us-east-1"
+vagrant@vagrant-ubuntu-trusty-64:~$ export PFB_SETTINGS_BUCKET="${ENVIRONMENT}-pfb-config-us-east-1"
 vagrant@vagrant-ubuntu-trusty-64:~$ ./scripts/infra plan
 ```
 
