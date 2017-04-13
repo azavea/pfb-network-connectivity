@@ -67,15 +67,20 @@ class AnalysisJobViewSet(ModelViewSet):
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
 
-class NeighborhoodViewSet(ModelViewSet):
+class NeighborhoodMixin(APIView):
+    """Shared properties of the neighborhood viewsets."""
+
+    permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
+    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
+    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
+
+
+class NeighborhoodViewSet(NeighborhoodMixin, ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
     queryset = Neighborhood.objects.all()
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
-    permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
-    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
-    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at',)
 
     def perform_create(self, serializer):
@@ -84,15 +89,12 @@ class NeighborhoodViewSet(ModelViewSet):
                             name=slugify(serializer.validated_data['label']))
 
 
-class NeighborhoodGeoJsonViewSet(ReadOnlyModelViewSet):
+class NeighborhoodGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
     """For retrieving neighborhood centroids as GeoJSON feature collection."""
 
     queryset = Neighborhood.objects.all()
     serializer_class = NeighborhoodGeoJsonSerializer
-    permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
     pagination_class = None
-    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
-    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
 
 
 class USStateView(APIView):
