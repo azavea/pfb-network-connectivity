@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "batch_manage_jobs" {
 # Custom policies
 #
 resource "aws_iam_policy" "batch_manage_jobs" {
-  name   = "BatchManageJobs"
+  name   = "${var.environment}BatchManageJobs"
   policy = "${data.aws_iam_policy_document.batch_manage_jobs.json}"
 }
 
