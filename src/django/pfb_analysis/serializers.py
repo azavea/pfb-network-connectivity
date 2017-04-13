@@ -38,6 +38,6 @@ class NeighborhoodSerializer(PFBModelSerializer):
 
     class Meta:
         model = Neighborhood
-        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'geom',)
+        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'geom', 'geom_pt',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'name',)

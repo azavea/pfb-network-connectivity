@@ -10,7 +10,7 @@ import uuid
 import zipfile
 
 from django.conf import settings
-from django.contrib.gis.db.models import MultiPolygonField
+from django.contrib.gis.db.models import MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
@@ -56,6 +56,7 @@ class Neighborhood(PFBModel):
     name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
     label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    geom_pt = PointField(srid=4326, blank=True, null=True)
     organization = models.ForeignKey(Organization,
                                      related_name='neighborhoods',
                                      on_delete=models.CASCADE)
@@ -105,6 +106,7 @@ class Neighborhood(PFBModel):
             boundary_file = File(open(zip_filename))
             self.boundary_file = boundary_file
             self.geom = geom
+            self.geom_pt = geom.centroid
             self.save()
         except:
             raise
@@ -151,6 +153,7 @@ class Neighborhood(PFBModel):
                     if geom.geom_type == 'Polygon':
                         geom = MultiPolygon([geom])
                     self.geom = geom
+                    self.geom_pt = geom.centroid
             finally:
                 shutil.rmtree(tmpdir, ignore_errors=True)
 
