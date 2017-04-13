@@ -63,5 +63,5 @@ class AnalysisJobFilterSet(filters.FilterSet):
                   'neighborhood__name': ['exact', 'contains'],
                   'neighborhood__label': ['exact', 'contains'],
                   'batch': ['exact', 'in'],
-                  'status': ['exact', 'in'],
-                  'latest': ['exact', 'in']}
+                  'status': ['exact'],
+                  'latest': ['exact']}
