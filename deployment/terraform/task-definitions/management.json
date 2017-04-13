@@ -62,10 +62,6 @@
         "value": "INFO"
       },
       {
-        "name": "PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN",
-        "value": "${batch_analysis_compute_environment_arn}"
-      },
-      {
         "name": "PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME",
         "value": "${batch_analysis_job_queue_name}"
       },
