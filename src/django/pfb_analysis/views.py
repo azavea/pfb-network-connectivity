@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.decorators import detail_route
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 
 from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
@@ -17,7 +17,9 @@ from pfb_network_connectivity.filters import OrgAutoFilterBackend
 from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
 
 from .models import AnalysisJob, Neighborhood
-from .serializers import AnalysisJobSerializer, NeighborhoodSerializer
+from .serializers import (AnalysisJobSerializer,
+                          NeighborhoodSerializer,
+                          NeighborhoodGeoJsonSerializer)
 from .filters import AnalysisJobFilterSet
 
 
@@ -65,21 +67,34 @@ class AnalysisJobViewSet(ModelViewSet):
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
 
-class NeighborhoodViewSet(ModelViewSet):
+class NeighborhoodMixin(APIView):
+    """Shared properties of the neighborhood viewsets."""
+
+    permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
+    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
+    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
+
+
+class NeighborhoodViewSet(NeighborhoodMixin, ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
     queryset = Neighborhood.objects.all()
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
-    permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
-    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
-    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at',)
 
     def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save(organization=self.request.user.organization,
                             name=slugify(serializer.validated_data['label']))
+
+
+class NeighborhoodGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
+    """For retrieving neighborhood centroids as GeoJSON feature collection."""
+
+    queryset = Neighborhood.objects.all()
+    serializer_class = NeighborhoodGeoJsonSerializer
+    pagination_class = None
 
 
 class USStateView(APIView):
