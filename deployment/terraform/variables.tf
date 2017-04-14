@@ -23,11 +23,11 @@ variable "r53_private_hosted_zone" {}
 variable "r53_public_hosted_zone" {}
 
 # Scaling
-variable "container_instance_asg_desired_capacity" {}
+variable "app_container_instance_asg_desired_capacity" {}
 
-variable "container_instance_asg_min_size" {}
-variable "container_instance_asg_max_size" {}
-variable "container_instance_type" {}
+variable "app_container_instance_asg_min_size" {}
+variable "app_container_instance_asg_max_size" {}
+variable "app_container_instance_type" {}
 variable "aws_key_name" {}
 variable "ecs_instance_ami_id" {}
 
