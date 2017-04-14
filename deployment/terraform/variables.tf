@@ -134,7 +134,6 @@ variable "django_env" {}
 
 variable "django_secret_key" {}
 variable "django_allowed_hosts" {}
-variable "batch_analysis_compute_environment_arn" {}
 variable "batch_analysis_job_queue_name" {}
 variable "batch_analysis_job_definition_name_revision" {} # format: 'name:revision'
 variable "batch_tilemaker_job_queue_name" {}

@@ -12,12 +12,6 @@
     regexp: ^DEV_USER
     line: "DEV_USER={{ dev_user }}"
 
-- name: Set PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN environment variable
-  lineinfile:
-    dest: /etc/environment
-    regexp: ^PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN
-    line: "PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN={{ pfb_aws_batch_compute_environment_arn }}"
-
 - name: Set PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME environment variable
   lineinfile:
     dest: /etc/environment
