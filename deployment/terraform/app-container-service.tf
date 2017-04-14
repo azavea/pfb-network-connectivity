@@ -1,11 +1,11 @@
 #
 # Security group resources
 #
-resource "aws_security_group" "container_instance" {
+resource "aws_security_group" "app_container_instance" {
   vpc_id = "${module.vpc.id}"
 
   tags {
-    Name        = "sgContainerInstance"
+    Name        = "sgAppContainerInstance"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -14,38 +14,38 @@ resource "aws_security_group" "container_instance" {
 #
 # Autoscaling Resources
 #
-data "template_file" "container_instance_cloud_config" {
+data "template_file" "app_container_instance_cloud_config" {
   template = "${file("cloud-config/ecs-user-data.yml")}"
 
   vars {
-    ecs_cluster_name = "${aws_ecs_cluster.container_instance.name}"
+    ecs_cluster_name = "${aws_ecs_cluster.app_container_instance.name}"
     environment      = "${var.environment}"
   }
 }
 
-resource "aws_launch_configuration" "container_instance" {
+resource "aws_launch_configuration" "app_container_instance" {
   lifecycle {
     create_before_destroy = true
   }
 
-  iam_instance_profile = "${aws_iam_instance_profile.container_instance.name}"
+  iam_instance_profile = "${aws_iam_instance_profile.app_container_instance.name}"
   image_id             = "${var.ecs_instance_ami_id}"
-  instance_type        = "${var.container_instance_type}"
+  instance_type        = "${var.app_container_instance_type}"
   key_name             = "${var.aws_key_name}"
-  security_groups      = ["${aws_security_group.container_instance.id}"]
+  security_groups      = ["${aws_security_group.app_container_instance.id}"]
 
-  user_data = "${data.template_file.container_instance_cloud_config.rendered}"
+  user_data = "${data.template_file.app_container_instance_cloud_config.rendered}"
 }
 
-resource "aws_autoscaling_group" "container_instance" {
-  name = "asg${var.environment}ContainerInstance"
+resource "aws_autoscaling_group" "app_container_instance" {
+  name = "asg${var.environment}AppContainerInstance"
 
-  launch_configuration      = "${aws_launch_configuration.container_instance.name}"
+  launch_configuration      = "${aws_launch_configuration.app_container_instance.name}"
   health_check_grace_period = 600
   health_check_type         = "EC2"
-  desired_capacity          = "${var.container_instance_asg_desired_capacity}"
-  min_size                  = "${var.container_instance_asg_min_size}"
-  max_size                  = "${var.container_instance_asg_max_size}"
+  desired_capacity          = "${var.app_container_instance_asg_desired_capacity}"
+  min_size                  = "${var.app_container_instance_asg_min_size}"
+  max_size                  = "${var.app_container_instance_asg_max_size}"
 
   enabled_metrics = [
     "GroupMinSize",
@@ -62,7 +62,7 @@ resource "aws_autoscaling_group" "container_instance" {
 
   tag {
     key                 = "Name"
-    value               = "ContainerInstance"
+    value               = "AppContainerInstance"
     propagate_at_launch = true
   }
 
@@ -82,6 +82,6 @@ resource "aws_autoscaling_group" "container_instance" {
 #
 # ECS Resources
 #
-resource "aws_ecs_cluster" "container_instance" {
-  name = "ecs${var.environment}Cluster"
+resource "aws_ecs_cluster" "app_container_instance" {
+  name = "ecs${var.environment}AppCluster"
 }
