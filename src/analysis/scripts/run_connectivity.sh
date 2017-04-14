@@ -27,6 +27,12 @@ MIN_PATH_LENGTH="${MIN_PATH_LENGTH:-4800}"              # minimum path length to
 MIN_PATH_BBOX="${MIN_PATH_BBOX:-3300}"                  # minimum corner-to-corner span of path bounding box to be considered for recreation access
 BLOCK_ROAD_BUFFER="${BLOCK_ROAD_BUFFER:-15}"            # buffer distance to find roads associated with a block
 BLOCK_ROAD_MIN_LENGTH="${BLOCK_ROAD_MIN_LENGTH:-30}"    # minimum length road must overlap with block buffer to be associated
+SCORE_TOTAL="${SCORE_TOTAL:-100}"
+SCORE_PEOPLE="${SCORE_PEOPLE:-20}"
+SCORE_OPPORTUNITY="${SCORE_OPPORTUNITY:-25}"
+SCORE_CORESVCS="${SCORE_CORESVCS:-30}"
+SCORE_RECREATION="${SCORE_RECREATION:-10}"
+SCORE_TRANSIT="${SCORE_TRANSIT:-15}"
 
 # Limit custom output formatting for `time` command
 export TIME="\nTIMING: %C\nTIMING:\t%E elapsed %Kkb mem\n"
@@ -272,14 +278,23 @@ update_status "METRICS" "Access: colleges"
   -f ../connectivity/access_universities.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v total=${SCORE_TOTAL} \
+  -v people=${SCORE_PEOPLE} \
+  -v opportunity=${SCORE_OPPORTUNITY} \
+  -v core_services=${SCORE_CORESVCS} \
+  -v recreation=${SCORE_RECREATION} \
+  -v transit=${SCORE_TRANSIT} \
+  -f ../connectivity/access_overall.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/score_inputs.sql
 
 update_status "METRICS" "Overall scores"
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v total=100 \
-  -v people=20 \
-  -v opportunity=25 \
-  -v core_services=30 \
-  -v recreation=10 \
-  -v transit=15 \
+  -v total=${SCORE_TOTAL} \
+  -v people=${SCORE_PEOPLE} \
+  -v opportunity=${SCORE_OPPORTUNITY} \
+  -v core_services=${SCORE_CORESVCS} \
+  -v recreation=${SCORE_RECREATION} \
+  -v transit=${SCORE_TRANSIT} \
   -f ../connectivity/overall_scores.sql
