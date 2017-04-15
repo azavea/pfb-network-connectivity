@@ -5,7 +5,7 @@
     "fields": {
       "label": "People",
       "category": "",
-      "description": "Half of all census blocks in the neighborhood have a ratio of low stress to high stress access above this number, half have a lower ratio."
+      "description": "On average, this is how residents score for access to other people."
     }
   },
   {
@@ -14,7 +14,7 @@
     "fields": {
       "label": "Employment",
       "category": "Opportunity",
-      "description": "Half of all census blocks in the neighborhood have a ratio of low stress to high stress access above this number, half have a lower ratio."
+      "description": "On average, this is how residents score for access to jobs."
     }
   },
   {
@@ -23,7 +23,7 @@
     "fields": {
       "label": "K12 Education",
       "category": "Opportunity",
-      "description": "70% of schools in the neighborhood have low stress connections to a higher percentage of people within biking distance, 30% are connected to a lower percentage."
+      "description": "On average, this is how people score for access to K-12 schools."
     }
   },
   {
@@ -32,7 +32,7 @@
     "fields": {
       "label": "Tech/Vocational College",
       "category": "Opportunity",
-      "description": "Half of tech/vocational colleges in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one tech/vocational college exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to a technical or vocational college."
     }
   },
   {
@@ -41,7 +41,7 @@
     "fields": {
       "label": "Higher Education",
       "category": "Opportunity",
-      "description": "Half of universities in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one university exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to a university."
     }
   },
   {
@@ -50,7 +50,7 @@
     "fields": {
       "label": "Opportunity Total",
       "category": "Opportunity",
-      "description": ""
+      "description": "On average, this is how people score for access to employment and educational opportunities."
     }
   },
   {
@@ -59,7 +59,7 @@
     "fields": {
       "label": "Doctors",
       "category": "Core Services",
-      "description": "Half of doctors in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one doctors office exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to doctors."
     }
   },
   {
@@ -68,7 +68,7 @@
     "fields": {
       "label": "Dentists",
       "category": "Core Services",
-      "description": "Half of dentists in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one dentists office exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to dentists."
     }
   },
   {
@@ -77,7 +77,7 @@
     "fields": {
       "label": "Hospitals",
       "category": "Core Services",
-      "description": "Half of hospitals in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one hospital exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to a hospital."
     }
   },
   {
@@ -86,16 +86,7 @@
     "fields": {
       "label": "Pharmacies",
       "category": "Core Services",
-      "description": "Half of pharmacies in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one pharmacy exists this is the score for that one location)"
-    }
-  },
-  {
-    "model": "pfb_analysis.AnalysisScoreMetadata",
-    "pk": "core_services_retail",
-    "fields": {
-      "label": "Retail",
-      "category": "Core Services",
-      "description": "Half of retail clusters in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one retail exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to pharmacies."
     }
   },
   {
@@ -104,7 +95,7 @@
     "fields": {
       "label": "Grocery",
       "category": "Core Services",
-      "description": "Half of supermarkets in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one supermarkets exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to groceries."
     }
   },
   {
@@ -113,16 +104,25 @@
     "fields": {
       "label": "Social Services",
       "category": "Core Services",
-      "description": "Half of social services in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one social_services exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to social services."
     }
   },
   {
     "model": "pfb_analysis.AnalysisScoreMetadata",
     "pk": "core_services",
     "fields": {
-      "label": "Services Total",
+      "label": "Core Services Total",
       "category": "Core Services",
-      "description": ""
+      "description": "On average, this is how people score for access to Core Services."
+    }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "core_services_retail",
+    "fields": {
+      "label": "Retail",
+      "category": "Retail",
+      "description": "On average, this is how people score for access to retail shopping opportunities."
     }
   },
   {
@@ -131,7 +131,7 @@
     "fields": {
       "label": "Parks",
       "category": "Recreation",
-      "description": "Half of census blocks in this neighborhood have low stress access to a higher ratio of parks within biking distance, half have access to a lower ratio."
+      "description": "On average, this is how people score for access to parks."
     }
   },
   {
@@ -140,7 +140,7 @@
     "fields": {
       "label": "Trails",
       "category": "Recreation",
-      "description": "Half of census blocks in this neighborhood have low stress access to a higher ratio of trails within biking distance, half have access to a lower ratio."
+      "description": "On average, this is how people score for access to off-street trails and paths for recreational riding."
     }
   },
   {
@@ -149,7 +149,7 @@
     "fields": {
       "label": "Community Centers",
       "category": "Recreation",
-      "description": "Half of community centers in the neighborhood have low stress connections to a higher percentage of people within biking distance, half are connected to a lower percentage. (if only one community centers exists this is the score for that one location)"
+      "description": "On average, this is how people score for access to community centers."
     }
   },
   {
@@ -158,7 +158,7 @@
     "fields": {
       "label": "Recreation Total",
       "category": "Recreation",
-      "description": ""
+      "description": "On average, this is how people score for access to recreation opportunities."
     }
   },
   {
@@ -167,7 +167,7 @@
     "fields": {
       "label": "Transit",
       "category": "Transit",
-      "description": "Half of census blocks in this neighborhood have low stress access to a higher ratio of transit stations within biking distance, half have access to a lower ratio."
+      "description": "On average, this is how people score for access to major transit hubs."
     }
   },
   {
@@ -176,7 +176,7 @@
     "fields": {
       "label": "Overall Score",
       "category": "",
-      "description": ""
+      "description": "On average, this is how people score for overall access."
     }
   }
 ]
