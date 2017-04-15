@@ -8,6 +8,14 @@
     /** @ngInject */
     function routerConfig($stateProvider, $urlRouterProvider) {
         $stateProvider
+            .state('home', {
+                url: '/',
+                templateUrl: 'app/home/home.html'
+            })
+            .state('places', {
+                url: '/places/',
+                templateUrl: 'app/places/places.html'
+            })
             .state('login', {
                 url: '/login/',
                 controller: 'LoginController',
@@ -118,7 +126,7 @@
                 controllerAs: 'neighborhoodList',
                 templateUrl: 'app/neighborhoods/list/neighborhoods-list.html'
             });
-        $urlRouterProvider.otherwise('/login/');
+        $urlRouterProvider.otherwise('/');
     }
 
 })();
