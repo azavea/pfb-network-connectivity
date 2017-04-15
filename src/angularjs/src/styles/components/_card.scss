@@ -1,0 +1,114 @@
+.card {
+  background-color: #fff;
+  box-shadow: 0 0 10px 0 rgba(black, .1);
+  position: relative;
+  height: 100%;
+  display: flex;
+  
+  @include respond-to(sm-down) {
+    flex-direction: column;
+  }
+
+  &.alternate {
+    box-shadow: none;
+    background-color: $shade-light;
+  }
+
+  &.stack {
+    flex-direction: column;
+  }
+}
+
+.card-link {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.card-image {
+  flex-basis: none;
+  width: 100px;
+  position: relative;
+
+  @include respond-to(sm-down) {
+    min-height: 150px;
+    width: 100%;
+  }
+}
+
+.card-map {
+  flex-basis: none;
+  width: 200px;
+  position: relative;
+
+  @include respond-to(sm-down) {
+    min-height: 160px;
+    width: 100%;
+  }
+
+  .stack & {
+    min-height: 160px;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    margin-top: -1rem;
+  }
+}
+
+.card-details {
+  flex: 1;
+  padding: 2rem;
+
+  h1, h2, h3, h4 {
+    margin: 0;
+  }
+
+  p:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.card-title {
+  margin-top: 0;
+}
+
+.metric-list {
+  margin: 0;
+  list-style-type: none;
+  padding: 0;
+
+  li {
+    padding: 2rem;
+    margin: 0;
+    border-top: 1px solid #ddd;
+    font-size: 1.8rem;
+  }
+
+  .network-score {
+    float: right;
+    margin-top: -5px !important;
+  }
+
+  .list-button {
+    text-align: center;
+  }
+}
+
+.card.compare-placeholder {
+  box-shadow: none;
+  border: 4px dashed $shade-dark;
+  text-align: center;
+  padding-top: 4rem;
+
+  i {
+    font-size: 60px;
+    opacity: .25;
+
+    &:before {
+      width: auto;
+      margin: 0;
+    }
+  }
+}

@@ -1,51 +1,85 @@
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
-  &:first-child {
-    margin-top: 0;
+@mixin heading-tags {
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    @content;
   }
+}
 
+@include heading-tags {
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  color: #000;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 h1, h2, h3,
 .h1, .h2, .h3 {
-  margin-top: 29px;
-  margin-bottom: 18px;
+  margin-top: 2rem;
+  margin-bottom: 3.5rem;
 }
 
-.heading-label {
-    font-size: $font-size-h5;
-    text-transform: uppercase;
-    font-weight: normal;
-    margin-bottom: -10px;
+h4, h5, h6,
+.h4, .h5, .h6 {
+  margin-top: 1.3rem;
 }
 
-.brand-primary {
-    color: $brand-primary;
+h1, .h1 {
+  font-size: 4rem;
 }
 
-.brand-secondary {
-    color: $brand-secondary;
+h2, .h2 {
+  font-size: 2.8rem;
 }
 
-.brand-tertiary {
-    color: $brand-tertiary;
+h3, .h3 {
+  font-size: 2.2rem;
 }
 
-body {
-    font-size: #{$font-size-base/10px}em;
-    line-height: $line-height-base;
-    margin: 0;
-    font-weight: 600;
+h4, .h4 {
+  font-size: 1.8rem;
 }
 
-table {
-  th, td {
-    &:last-child {
-      text-align: right;
-    }
-  }
+h5, .h5 {
+  font-size: 1.6rem;
+}
+
+h6, .h6 {
+  font-size: 1.6rem;
+}
+
+p, .p {
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.6;
+  margin-top: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.font-size-small {
+  font-size: 1.4rem;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+.text-lowercase {
+  text-transform: lowercase;
 }
 
 .text-center {
   text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
 }

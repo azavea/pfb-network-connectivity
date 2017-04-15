@@ -1,0 +1,44 @@
+*, *:after, *:before {
+	box-sizing: border-box;
+}
+
+html { 
+	font-size: 62.5%; 
+	font-family: 'Cabin Condensed', sans-serif;
+  height: 100%;
+}
+
+body {
+	font-size: 14px; 
+	font-size: 1.4rem;
+	color: $text-base;
+  height: 100%;
+}
+
+a {
+	text-decoration: none;
+	font-weight: 600;
+	color: $brand-primary;
+
+  &:hover {
+    color: darken($brand-primary, 10%);
+    cursor: pointer;
+  }
+
+  &:disabled, &.disabled, &[disabled] {
+    opacity: .5;
+    cursor: not-allowed;
+
+    &:hover {
+      color: darken($brand-primary, 10%);
+    }
+  }
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid #797979;
+  clear: both;
+}
