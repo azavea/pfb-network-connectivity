@@ -11,7 +11,7 @@
     'use strict';
 
     /** @ngInject */
-    function NavbarController(AuthService, $state) {
+    function NavbarController(AuthService) {
         var ctl = this;
 
         initialize();
@@ -22,10 +22,6 @@
             ctl.logout = AuthService.logout;
             ctl.userUuid = AuthService.getUserId();
             ctl.userName = AuthService.getUserName();
-
-            if (!AuthService.getEmail()) {
-                $state.go('login');
-            }
         }
     }
 
@@ -35,7 +31,11 @@
             templateUrl: 'app/components/navbar/navbar.html',
             controller: 'NavbarController',
             controllerAs: 'navbar',
-            bindToController: true
+            bindToController: true,
+            scope: {
+                admin: '@',
+                hideName: '@'
+            }
         };
 
         return directive;
