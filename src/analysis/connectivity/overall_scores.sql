@@ -148,16 +148,6 @@ SELECT  'core_services_pharmacies',
 FROM    neighborhood_score_inputs
 WHERE   use_pharmacy;
 
--- retail
-INSERT INTO generated.neighborhood_overall_scores (
-    score_id, score_original, human_explanation
-)
-SELECT  'core_services_retail',
-        COALESCE(neighborhood_score_inputs.score,0),
-        neighborhood_score_inputs.human_explanation
-FROM    neighborhood_score_inputs
-WHERE   use_retail;
-
 -- grocery
 INSERT INTO generated.neighborhood_overall_scores (
     score_id, score_original, human_explanation
@@ -188,8 +178,7 @@ SELECT  'core_services',
             + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_dentists')
             + 0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_hospitals')
             + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_pharmacies')
-            + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_retail')
-            + 0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_grocery')
+            + 0.3 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_grocery')
             + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_social_services')
         ) /
         (
@@ -209,23 +198,13 @@ SELECT  'core_services',
                 ELSE 0
                 END
             +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE hospitals_high_stress > 0)
-                    THEN 0.2
-                ELSE 0
-                END
-            +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE pharmacies_high_stress > 0)
                     THEN 0.1
                 ELSE 0
                 END
             +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE retail_high_stress > 0)
-                    THEN 0.1
-                ELSE 0
-                END
-            +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE supermarkets_high_stress > 0)
-                    THEN 0.2
+                    THEN 0.3
                 ELSE 0
                 END
             +   CASE
@@ -235,6 +214,16 @@ SELECT  'core_services',
                 END
         ),
         NULL;
+
+-- retail
+INSERT INTO generated.neighborhood_overall_scores (
+    score_id, score_original, human_explanation
+)
+SELECT  'retail',
+        COALESCE(neighborhood_score_inputs.score,0),
+        neighborhood_score_inputs.human_explanation
+FROM    neighborhood_score_inputs
+WHERE   use_retail;
 
 -- parks
 INSERT INTO generated.neighborhood_overall_scores (
@@ -314,11 +303,41 @@ SELECT  'overall_score',
             :people * COALESCE((SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'people'),0)
             + :opportunity * COALESCE((SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity'),0)
             + :core_services * COALESCE((SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services'),0)
+            + :retail * COALESCE((SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'retail'),0)
             + :recreation * COALESCE((SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation'),0)
             + :transit * COALESCE((SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'transit'),0)
         ) /
         (
-            :people + :opportunity + :core_services + :recreation
+            :people + :opportunity
+            +   CASE
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE doctors_high_stress > 0)
+                    THEN :core_services
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE dentists_high_stress > 0)
+                    THEN :core_services
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE hospitals_high_stress > 0)
+                    THEN :core_services
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE pharmacies_high_stress > 0)
+                    THEN :core_services
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE supermarkets_high_stress > 0)
+                    THEN :core_services
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE social_services_high_stress > 0)
+                    THEN :core_services
+                ELSE 0
+                END
+            +   CASE
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE retail_high_stress > 0)
+                    THEN :retail
+                ELSE 0
+                END
+            +   CASE
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE parks_high_stress > 0)
+                    THEN :recreation
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE trails_high_stress > 0)
+                    THEN :recreation
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE community_centers_high_stress > 0)
+                    THEN :recreation
+                ELSE 0
+                END
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE transit_high_stress > 0)
                     THEN :transit

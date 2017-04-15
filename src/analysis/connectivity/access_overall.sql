@@ -50,7 +50,6 @@ SET     overall_score = :total *
                             + COALESCE(dentists_high_stress,0)
                             + COALESCE(hospitals_high_stress,0)
                             + COALESCE(pharmacies_high_stress,0)
-                            + COALESCE(retail_high_stress,0)
                             + COALESCE(supermarkets_high_stress,0)
                             + COALESCE(social_services_high_stress,0)
                             = 0 THEN 0
@@ -60,8 +59,7 @@ SET     overall_score = :total *
                                     + 0.1 * COALESCE(dentists_score,0)
                                     + 0.2 * COALESCE(hospitals_score,0)
                                     + 0.1 * COALESCE(pharmacies_score,0)
-                                    + 0.1 * COALESCE(retail_score,0)
-                                    + 0.2 * COALESCE(supermarkets_score,0)
+                                    + 0.3 * COALESCE(supermarkets_score,0)
                                     + 0.1 * COALESCE(social_services_score,0)
                                 ) /
                                 (
@@ -81,23 +79,13 @@ SET     overall_score = :total *
                                         ELSE 0
                                         END
                                     +   CASE
-                                        WHEN hospitals_high_stress > 0
-                                            THEN 0.2
-                                        ELSE 0
-                                        END
-                                    +   CASE
                                         WHEN pharmacies_high_stress > 0
                                             THEN 0.1
                                         ELSE 0
                                         END
                                     +   CASE
-                                        WHEN retail_high_stress > 0
-                                            THEN 0.1
-                                        ELSE 0
-                                        END
-                                    +   CASE
                                         WHEN supermarkets_high_stress > 0
-                                            THEN 0.2
+                                            THEN 0.3
                                         ELSE 0
                                         END
                                     +   CASE
@@ -108,6 +96,7 @@ SET     overall_score = :total *
                                 )
                             )
                     END
+                + :retail * COALESCE(retail_score,0)
                 + :recreation *
                     CASE
                     WHEN    COALESCE(parks_high_stress,0)
@@ -155,11 +144,14 @@ SET     overall_score = :total *
                             + COALESCE(dentists_high_stress,0)
                             + COALESCE(hospitals_high_stress,0)
                             + COALESCE(pharmacies_high_stress,0)
-                            + COALESCE(retail_high_stress,0)
                             + COALESCE(supermarkets_high_stress,0)
                             + COALESCE(social_services_high_stress,0)
                             = 0 THEN 0
                     ELSE :core_services
+                    END
+                +   CASE
+                    WHEN COALESCE(retail_high_stress,0) = 0 THEN 0
+                    ELSE :retail
                     END
                 +   CASE
                     WHEN COALESCE(parks_high_stress,0)

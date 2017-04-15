@@ -1692,7 +1692,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         'Average score of low stress access to retail',
         CASE    WHEN SUM(retail_high_stress) = 0 THEN 0
                 ELSE SUM(retail_low_stress) / SUM(retail_high_stress)
@@ -1713,7 +1713,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         'Median score of retail access',
         quantile(CASE WHEN retail_high_stress=0 THEN 0 ELSE retail_low_stress::FLOAT/retail_high_stress END,0.5),
         regexp_replace('Score of retail accessible by low stress
@@ -1734,7 +1734,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         '70th percentile score of retail access',
         quantile(CASE WHEN retail_high_stress=0 THEN 0 ELSE retail_low_stress::FLOAT/retail_high_stress END,0.7),
         regexp_replace('Score of retail accessible by low stress
@@ -1755,7 +1755,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         '30th percentile score of retail access',
         quantile(CASE WHEN retail_high_stress=0 THEN 0 ELSE retail_low_stress::FLOAT/retail_high_stress END,0.3),
         regexp_replace('Score of retail accessible by low stress
@@ -1776,7 +1776,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation, use_retail
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         'Average score of access to retail',
         SUM(pop10 * retail_score / tmp_pop.retail),
         regexp_replace('Average retail score for census blocks
@@ -1796,7 +1796,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         'Average retail bike shed access score',
         CASE    WHEN SUM(pop_high_stress) = 0 THEN 0
                 ELSE SUM(pop_low_stress)::FLOAT / SUM(pop_high_stress)
@@ -1819,7 +1819,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         'Median retail population shed score',
         quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
         regexp_replace('Score of population with low stress access to retail
@@ -1842,7 +1842,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         '70th percentile retail population shed score',
         quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
         regexp_replace('Score of population with low stress access to retail
@@ -1865,7 +1865,7 @@ WHERE   EXISTS (
 INSERT INTO generated.neighborhood_score_inputs (
     category, score_name, score, notes, human_explanation
 )
-SELECT  'Core Services',
+SELECT  'Retail',
         '30th percentile retail population shed score',
         quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
         regexp_replace('Score of population with low stress access to retail

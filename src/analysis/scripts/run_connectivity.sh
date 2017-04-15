@@ -28,9 +28,10 @@ MIN_PATH_BBOX="${MIN_PATH_BBOX:-3300}"                  # minimum corner-to-corn
 BLOCK_ROAD_BUFFER="${BLOCK_ROAD_BUFFER:-15}"            # buffer distance to find roads associated with a block
 BLOCK_ROAD_MIN_LENGTH="${BLOCK_ROAD_MIN_LENGTH:-30}"    # minimum length road must overlap with block buffer to be associated
 SCORE_TOTAL="${SCORE_TOTAL:-100}"
-SCORE_PEOPLE="${SCORE_PEOPLE:-20}"
+SCORE_PEOPLE="${SCORE_PEOPLE:-15}"
 SCORE_OPPORTUNITY="${SCORE_OPPORTUNITY:-25}"
-SCORE_CORESVCS="${SCORE_CORESVCS:-30}"
+SCORE_CORESVCS="${SCORE_CORESVCS:-25}"
+SCORE_RETAIL="${SCORE_CORESVCS:-10}"
 SCORE_RECREATION="${SCORE_RECREATION:-10}"
 SCORE_TRANSIT="${SCORE_TRANSIT:-15}"
 
@@ -282,6 +283,7 @@ update_status "METRICS" "Access: colleges"
   -v people=${SCORE_PEOPLE} \
   -v opportunity=${SCORE_OPPORTUNITY} \
   -v core_services=${SCORE_CORESVCS} \
+  -v retail=${SCORE_RETAIL} \
   -v recreation=${SCORE_RECREATION} \
   -v transit=${SCORE_TRANSIT} \
   -f ../connectivity/access_overall.sql
@@ -295,6 +297,7 @@ update_status "METRICS" "Overall scores"
   -v people=${SCORE_PEOPLE} \
   -v opportunity=${SCORE_OPPORTUNITY} \
   -v core_services=${SCORE_CORESVCS} \
+  -v retail=${SCORE_RETAIL} \
   -v recreation=${SCORE_RECREATION} \
   -v transit=${SCORE_TRANSIT} \
   -f ../connectivity/overall_scores.sql
