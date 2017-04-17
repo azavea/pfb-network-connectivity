@@ -11,10 +11,11 @@
 --
 -- variables:
 --   :total=100
---   :people=20
+--   :people=15
 --   :opportunity=25
---   :core_services=30
+--   :core_services=25
 --   :recreation=10
+--   :retail=10
 --   :transit=15
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_overall_scores;
@@ -349,3 +350,32 @@ SELECT  'overall_score',
 -- normalize
 UPDATE  generated.neighborhood_overall_scores
 SET     score_normalized = score_original * :total;
+
+-- population
+INSERT INTO generated.neighborhood_overall_scores (
+    score_id, score_original, human_explanation
+)
+SELECT  'population_total',
+        (
+            SELECT SUM(pop10) FROM neighborhood_census_blocks
+            WHERE   EXISTS (
+                        SELECT  1
+                        FROM    neighborhood_boundary AS b
+                        WHERE   ST_Intersects(b.geom,neighborhood_census_blocks.geom)
+                    )
+        ),
+        'Total population of boundary';
+
+-- population category
+INSERT INTO generated.neighborhood_overall_scores (
+    score_id, score_original, human_explanation
+)
+SELECT  'population_category',
+        CASE
+        WHEN score_original > 500000 THEN 1
+        WHEN score_original > 100000 THEN 2
+        ELSE 3
+        END,
+        'City category (1=large, 2=medium, 3=small)'
+FROM    neighborhood_overall_scores
+WHERE   score_id = 'population_total'
