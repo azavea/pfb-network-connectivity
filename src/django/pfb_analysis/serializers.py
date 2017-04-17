@@ -86,12 +86,16 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
 
 class AnalysisJobSerializer(PFBModelSerializer):
 
+    logs_url = serializers.SerializerMethodField()
     running_time = serializers.SerializerMethodField()
     start_time = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     neighborhood = PrimaryKeyReferenceRelatedField(queryset=Neighborhood.objects.all(),
                                                    serializer=NeighborhoodSummarySerializer)
     overall_score = serializers.FloatField(read_only=True)
+
+    def get_logs_url(self, obj):
+        return obj.logs_url
 
     def get_running_time(self, obj):
         return obj.running_time
