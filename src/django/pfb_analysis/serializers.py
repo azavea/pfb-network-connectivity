@@ -8,21 +8,19 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 
 class PrimaryKeyReferenceRelatedField(serializers.PrimaryKeyRelatedField):
-    """ A custom relational field for read-only objects
+    """A custom relational field for read-only objects.
 
     This field is for the specific case where:
     1. We want to reference the model on create by its primary key
     2. We want to print the full serialized representation of the object on to_representation,
        using a serializer of our choice
-
     """
 
     def __init__(self, **kwargs):
-        """ Custom init to take an extra 'serializer' argument
+        """Custom init to take an extra 'serializer' argument
 
         @param serializer A custom serializer instance, used to generate the object representation
                           in to_representation()
-
         """
         self.serializer = kwargs.pop('serializer')
         super(PrimaryKeyReferenceRelatedField, self).__init__(**kwargs)
@@ -40,7 +38,7 @@ class PrimaryKeyReferenceRelatedField(serializers.PrimaryKeyRelatedField):
             self.fail('incorrect_type', data_type=type(value).__name__)
 
     def get_choices(self, cutoff=None):
-        """ This is used to get the param value for the POST form in the DRF browsable API.
+        """This is used to get the param value for the POST form in the DRF browsable API.
         It normally uses `to_representation` to get the param value, but we want it to use `pk`.
         """
         queryset = self.get_queryset()
@@ -74,12 +72,12 @@ class NeighborhoodGeoJsonSerializer(GeoFeatureModelSerializer):
 
 
 class NeighborhoodSummarySerializer(PFBModelSerializer):
-    """ Serializer for including neighborhood information in AnalysisJob results
+    """Serializer for including neighborhood information in AnalysisJob results.
 
     All the fields are read-only. Any changes to neighborhoods should happen through the
     neighborhoods endpoint, which uses the regular serializer.
-
     """
+
     class Meta:
         model = Neighborhood
         fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom_pt')
