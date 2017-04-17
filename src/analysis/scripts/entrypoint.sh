@@ -40,7 +40,12 @@ do
     ((counter++))
 done
 
-if /opt/pfb/analysis/scripts/run_analysis.sh; then
+set +e
+/opt/pfb/analysis/scripts/run_analysis.sh
+PFB_EXIT_STATUS=$?
+set -e
+
+if [ $PFB_EXIT_STATUS -eq  0 ]; then
     update_status "EXPORTED" "Finished analysis"
 else
     update_status "ERROR" "Failed" "See job logs for more details."
@@ -50,7 +55,8 @@ fi
 # so it enables keeping a docker container alive after processing by running it with `-t`
 bash
 
-
 # shutdown postgres
 su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl stop"
 wait
+
+exit $PFB_EXIT_STATUS
