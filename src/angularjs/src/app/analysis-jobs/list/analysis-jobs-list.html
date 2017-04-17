@@ -14,7 +14,7 @@
           <tr ng-repeat="analysisJob in analysisJobList.analysisJobs">
             <td><a ui-sref="analysis-jobs.detail({uuid: analysisJob.uuid})">{{analysisJob.uuid | limitTo: 5}}</a></td>
             <td>{{analysisJob.status | displayStatus}}</td>
-            <td>{{analysisJob.neighborhood_label}}</td>
+            <td>{{analysisJob.neighborhood.label}}</td>
             <td>{{analysisJob.batch_job_id}}</td>
             <td>{{analysisJob.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
             <td>
