@@ -178,5 +178,14 @@
       "category": "",
       "description": "On average, this is how people score for overall access."
     }
+  },
+  {
+    "model": "pfb_analysis.AnalysisScoreMetadata",
+    "pk": "population_total",
+    "fields": {
+      "label": "Total Population",
+      "category": "",
+      "description": "Total population of this area."
+    }
   }
 ]

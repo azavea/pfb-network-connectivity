@@ -365,17 +365,3 @@ SELECT  'population_total',
                     )
         ),
         'Total population of boundary';
-
--- population category
-INSERT INTO generated.neighborhood_overall_scores (
-    score_id, score_original, human_explanation
-)
-SELECT  'population_category',
-        CASE
-        WHEN score_original > 500000 THEN 1
-        WHEN score_original > 100000 THEN 2
-        ELSE 3
-        END,
-        'City category (1=large, 2=medium, 3=small)'
-FROM    neighborhood_overall_scores
-WHERE   score_id = 'population_total'
