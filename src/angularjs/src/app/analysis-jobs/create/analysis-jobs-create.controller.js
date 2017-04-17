@@ -32,7 +32,7 @@
             job.$save().then(function() {
                 toastr.clear(submitToast);
                 toastr.success('Successfully submitted analysis job');
-                $state.go('analysis-jobs.list');
+                $state.go('admin.analysis-jobs.list');
             }).catch(function(error) {
                 toastr.clear(submitToast);
                 toastr.error('Error submitting analysis job: ' + error);

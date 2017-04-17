@@ -81,7 +81,7 @@
 
         function getNext() {
             var params = _.merge({}, defaultParams, nextParams);
-            $state.go('users.list', params, {
+            $state.go('admin.users.list', params, {
                 notify: false
             });
             getUsers(params);
@@ -89,7 +89,7 @@
 
         function getPrev() {
             var params = _.merge({}, defaultParams, prevParams);
-            $state.go('users.list', params, {
+            $state.go('admin.users.list', params, {
                 notify: false
             });
             getUsers(params);

@@ -1,9 +1,9 @@
-<pfb-navbar admin="true"></pfb-navbar>
+<pfb-navbar></pfb-navbar>
 
 <div class="container">
   <div class="row">
     <div class="col-md-10 col-md-push-1">
-      <button ui-sref="users.create" class="btn btn-primary pull-right">New User</button>
+      <button ui-sref="admin.users.create" class="btn btn-primary pull-right">New User</button>
       <h1 class="no-margin-top">User Management</h1>
       <table class="table">
         <thead pfb-user-filter filters="userList.filters"></thead>
@@ -14,7 +14,7 @@
             <td>{{user.orgName}}</td>
             <td>{{userList.roleOptions[user.role]}}</td>
             <td>
-              <a ui-sref="users.edit({uuid: user.uuid})"><button class="btn-link">Edit</button></a>
+              <a ui-sref="admin.users.edit({uuid: user.uuid})"><button class="btn-link">Edit</button></a>
             </td>
           </tr>
         </tbody>

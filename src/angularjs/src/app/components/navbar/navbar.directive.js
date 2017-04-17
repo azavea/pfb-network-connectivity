@@ -11,7 +11,7 @@
     'use strict';
 
     /** @ngInject */
-    function NavbarController(AuthService) {
+    function NavbarController(AuthService, $state) {
         var ctl = this;
 
         initialize();
@@ -22,6 +22,9 @@
             ctl.logout = AuthService.logout;
             ctl.userUuid = AuthService.getUserId();
             ctl.userName = AuthService.getUserName();
+
+            ctl.admin = $state.includes('admin');
+            ctl.hideName = $state.is('home');
         }
     }
 

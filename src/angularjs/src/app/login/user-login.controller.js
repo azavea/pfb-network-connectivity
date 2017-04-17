@@ -18,7 +18,7 @@
         function initialize() {
             ctl.login = login;
             if (AuthService.getEmail()) {
-                $state.go('analysis-jobs.list');
+                $state.go('admin.analysis-jobs.list');
             }
         }
 
@@ -26,7 +26,7 @@
             AuthService.user = AuthService.login(
                 {'email': ctl.email, 'password': ctl.password}
             ).then(function() {
-                $state.go('analysis-jobs.list');
+                $state.go('admin.analysis-jobs.list');
             }).catch(function() {
                 toastr.error('Unable to login with credentials', 'Error');
             });

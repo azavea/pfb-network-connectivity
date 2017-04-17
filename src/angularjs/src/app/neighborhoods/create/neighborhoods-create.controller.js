@@ -37,7 +37,7 @@
             }).then(function() {
                 toastr.clear(uploadToast);
                 toastr.success('Successfully created neighborhood');
-                $state.go('neighborhoods.list');
+                $state.go('admin.neighborhoods.list');
             }).catch(function(error) {
                 toastr.clear(uploadToast);
                 toastr.error('Unable to create neighborhood: ' + error);

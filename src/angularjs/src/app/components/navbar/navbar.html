@@ -16,17 +16,17 @@
           <a href="http://www.peopleforbikes.org/" target="_blank">People for bikes</a>
         </span>
         <span ng-if="navbar.admin">
-          <a ui-sref="help">Help</a>
-          <a ui-sref="analysis-jobs.list">Jobs</a>
-          <a ui-sref="neighborhoods.list">Neighborhoods</a>
-          <a ng-if="navbar.isAdminUser" ui-sref="users.list">User Management</a>
-          <a ng-if="navbar.isAdminUser" ui-sref="organizations.list">Org Management</a>
+          <a ui-sref="admin.help">Help</a>
+          <a ui-sref="admin.analysis-jobs.list">Jobs</a>
+          <a ui-sref="admin.neighborhoods.list">Neighborhoods</a>
+          <a ng-if="navbar.isAdminUser" ui-sref="admin.users.list">User Management</a>
+          <a ng-if="navbar.isAdminUser" ui-sref="admin.organizations.list">Org Management</a>
           <span uib-dropdown class="dropdown"
               ng-mouseenter="status.isopen = true" and ng-mouseleave="status.isopen = false"
               is-open="status.isopen">
             <a uib-dropdown-toggle role="button">{{navbar.userName}}<span class="caret"></span></a>
             <ul uib-dropdown-menu class="dropdown-menu">
-              <li><a ui-sref="users.edit({uuid: navbar.userUuid})">Account Settings</a></li>
+              <li><a ui-sref="admin.users.edit({uuid: navbar.userUuid})">Account Settings</a></li>
               <li role="separator" class="divider"></li>
               <li><a ui-sref="login" ng-click="navbar.logout()">Sign Out</a></li>
             </ul>

@@ -22,12 +22,6 @@
                 controllerAs: 'login',
                 templateUrl: 'app/login/login.html'
             })
-            .state('help', {
-                url: '/admin/help/',
-                controller: 'HelpController',
-                controllerAs: 'help',
-                templateUrl: 'app/help/help.html'
-            })
             .state('request-password-reset', {
                 url: '/password-reset-request/',
                 controller: 'PasswordResetRequestController',
@@ -40,87 +34,98 @@
                 controllerAs: 'pw',
                 templateUrl: 'app/password-reset/reset/password-reset.html'
             })
-            .state('organizations', {
+            .state('admin', {
                 abstract: true,
-                url: '/admin/organizations/',
+                url: '/admin/',
                 template: '<ui-view/>'
             })
-            .state('organizations.list', {
+            .state('admin.help', {
+                url: 'help/',
+                controller: 'HelpController',
+                controllerAs: 'help',
+                templateUrl: 'app/help/help.html'
+            })
+            .state('admin.organizations', {
+                abstract: true,
+                url: 'organizations/',
+                template: '<ui-view/>'
+            })
+            .state('admin.organizations.list', {
                 url: '',
                 controller: 'OrganizationListController',
                 controllerAs: 'orgList',
                 templateUrl: 'app/organizations/list/organizations-list.html'
             })
-            .state('organizations.create', {
+            .state('admin.organizations.create', {
                 url: 'create/',
                 controller: 'OrganizationDetailController',
                 controllerAs: 'org',
                 templateUrl: 'app/organizations/detail/organizations-detail.html'
             })
-            .state('organizations.edit', {
+            .state('admin.organizations.edit', {
                 url: 'edit/:uuid',
                 controller: 'OrganizationDetailController',
                 controllerAs: 'org',
                 templateUrl: 'app/organizations/detail/organizations-detail.html'
             })
-            .state('users', {
+            .state('admin.users', {
                 abstract: true,
-                url: '/admin/users/',
+                url: 'users/',
                 template: '<ui-view/>'
             })
-            .state('users.list', {
+            .state('admin.users.list', {
                 url: '',
                 controller: 'UserListController',
                 controllerAs: 'userList',
                 templateUrl: 'app/users/list/users-list.html'
             })
-            .state('users.create', {
+            .state('admin.users.create', {
                 url: 'create/',
                 controller: 'UserDetailController',
                 controllerAs: 'user',
                 templateUrl: 'app/users/detail/users-detail.html'
             })
-            .state('users.edit', {
+            .state('admin.users.edit', {
                 url: 'edit/:uuid',
                 controller: 'UserDetailController',
                 controllerAs: 'user',
                 templateUrl: 'app/users/detail/users-detail.html'
             })
-            .state('analysis-jobs', {
+            .state('admin.analysis-jobs', {
                 abstract: true,
-                url: '/admin/analysis-jobs/?limit&offset',
+                url: 'analysis-jobs/?limit&offset',
                 template: '<ui-view/>'
             })
-            .state('analysis-jobs.list', {
+            .state('admin.analysis-jobs.list', {
                 url: '',
                 controller: 'AnalysisJobListController',
                 controllerAs: 'analysisJobList',
                 templateUrl: 'app/analysis-jobs/list/analysis-jobs-list.html'
             })
-            .state('analysis-jobs.create', {
+            .state('admin.analysis-jobs.create', {
                 url: 'create/',
                 controller: 'AnalysisJobCreateController',
                 controllerAs: 'analysisJobCreate',
                 templateUrl: 'app/analysis-jobs/create/analysis-jobs-create.html'
             })
-            .state('analysis-jobs.detail', {
+            .state('admin.analysis-jobs.detail', {
                 url: ':uuid/',
                 controller: 'AnalysisJobDetailController',
                 controllerAs: 'analysisJobDetail',
                 templateUrl: 'app/analysis-jobs/detail/analysis-jobs-detail.html'
             })
-            .state('neighborhoods', {
+            .state('admin.neighborhoods', {
                 abstract: true,
-                url: '/admin/neighborhoods/?limit&offset',
+                url: 'neighborhoods/?limit&offset',
                 template: '<ui-view/>'
             })
-            .state('neighborhoods.create', {
+            .state('admin.neighborhoods.create', {
                 url: 'create/',
                 controller: 'NeighborhoodCreateController',
                 controllerAs: 'neighborhoodCreate',
                 templateUrl: 'app/neighborhoods/create/neighborhoods-create.html'
             })
-            .state('neighborhoods.list', {
+            .state('admin.neighborhoods.list', {
                 url: '',
                 controller: 'NeighborhoodListController',
                 controllerAs: 'neighborhoodList',

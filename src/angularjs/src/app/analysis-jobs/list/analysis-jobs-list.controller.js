@@ -10,7 +10,8 @@
     'use strict';
 
     /** @ngInject */
-    function AnalysisJobListController($state, $stateParams, $scope, Pagination, AnalysisJob) {
+    function AnalysisJobListController($state, $stateParams, $scope, Pagination, AuthService,
+                                       AnalysisJob) {
         var ctl = this;
 
         var defaultParams = {
@@ -23,6 +24,8 @@
         initialize();
 
         function initialize() {
+            ctl.isAdminUser = AuthService.isAdminUser();
+
             ctl.hasNext = false;
             ctl.getNext = getNext;
 
@@ -77,13 +80,13 @@
 
         function getNext() {
             var params = _.merge({}, defaultParams, nextParams);
-            $state.go('analysis-jobs.list', params, {notify: false});
+            $state.go('admin.analysis-jobs.list', params, {notify: false});
             getAnalysisJobs(params);
         }
 
         function getPrev() {
             var params = _.merge({}, defaultParams, prevParams);
-            $state.go('analysis-jobs.list', params, {notify: false});
+            $state.go('admin.analysis-jobs.list', params, {notify: false});
             getAnalysisJobs(params);
         }
 
