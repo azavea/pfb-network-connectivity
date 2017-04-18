@@ -25,6 +25,12 @@
                 controllerAs: 'placeList',
                 templateUrl: 'app/places/list/place-list.html'
             })
+            .state('places.detail', {
+                url: ':uuid/',
+                controller: 'PlaceDetailController',
+                controllerAs: 'placeDetail',
+                templateUrl: 'app/places/detail/places-detail.html'
+            })
             .state('login', {
                 url: '/login/',
                 controller: 'LoginController',

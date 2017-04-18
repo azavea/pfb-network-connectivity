@@ -69,8 +69,7 @@
         <section>
             <!-- Duplicate .result div for each result. -->
             <div class="result" ng-repeat="neighborhood in placeList.places">
-                <!-- TODO: link to details page here -->
-                <a href="#" class="result-link"></a>
+                <a ui-sref="places.detail({uuid: '{{neighborhood.uuid}}' })" class="result-link"></a>
                 <div class="result-left">
 
                     <!-- .result-preview should display the shapefile preview -->

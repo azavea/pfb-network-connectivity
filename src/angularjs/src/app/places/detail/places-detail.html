@@ -1,0 +1,76 @@
+<pfb-navbar></pfb-navbar>
+
+<!-- Sidebar -->
+<!-- ATTENTION: note the use of location-overview class -->
+<div class="sidebar location-overview">
+
+    <!-- Everything in .sidebar-header will not scroll.  -->
+    <div class="sidebar-header">
+        <div class="row">
+            <div class="column-8">
+                <h2 class="sidebar-title">{{placeDetail.place.label}}</h2>
+                <h4 class="sidebar-title">{{placeDetail.place.state_abbrev}}</h4>
+                <div class="location-timestamp"><span>Last updated:</span>
+                    {{placeDetail.place.modifiedAt | date:'MMMM dd, yyyy'}}</div>
+            </div>
+            <div class="column text-right">
+                <a class="btn btn-primary" ui-sref="places.list">Back to search</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Everythign in sidebar-scrollable will scroll. -->
+    <div class="sidebar-scrollable">
+        <section>
+            <div class="metric-details">
+                <div class="row" ng-if="placeDetail.lastJobScore">
+                    <div class="column">
+                        <label class="network-score large flex-row columns-center">
+                            {{placeDetail.lastJobScore | number:0}}
+                            <span class="h3">Network Score</span>
+
+                            <!-- Tooltips how it works: If you have a div with class .tooltip add a title. The content of the title will display in the toolip using css. -->
+                            <div class="tooltip" title="This is a tooltip that keeps sdfjhskdjfh dfskjhas kjhdfsa kjdfsah sdfakjh kjfdsah "><i class="icon-info-circled"></i></div>
+                        </label>
+                    </div>
+                    <div class="column text-right">
+                        <div class="dropdown">
+                          <button class="btn btn-default dropdown-toggle btn-s" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Download
+                            <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a href="#" class="compare-remove">Shapefile</a>
+                            </li>
+                            <li>
+                                <a href="#" class="compare-remove">CSV</a>
+                            </li>
+                          </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ng-if="!placeDetail.lastJobScore">
+                    <div class="column">
+                        <label class="network-score large flex-row columns-center">
+                            <span class="h3">No results available</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <ul class="metric-list" ng-repeat="result in placeDetail.jobResults">
+            <li>{{result.metric}}
+                <div class="tooltip" title="This is a tooltip "><i class="icon-info-circled"></i></div>
+                <span class="network-score small">{{result.score | number:0}}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- Sidebar -->
+
+<!-- Map -->
+<div class="preview-map">
+    <div class="map"></div>
+</div>
+<!-- Map -->
