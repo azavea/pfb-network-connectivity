@@ -2,7 +2,7 @@
 -- INPUTS
 -- location: neighborhood
 -- :nb_max_trip_distance psql var must be set before running this script,
---      e.g. psql -v nb_max_trip_distance=3300 -f reachable_roads_high_stress_calc.sql
+--      e.g. psql -v nb_max_trip_distance=2680 -f reachable_roads_high_stress_calc.sql
 ----------------------------------------
 INSERT INTO generated.neighborhood_reachable_roads_high_stress (
     base_road,
@@ -34,4 +34,3 @@ EXISTS (
 )
 AND     r1.road_id = v1.road_id
 AND     v2.vert_id = sheds.node;
-
