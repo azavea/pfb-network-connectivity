@@ -17,11 +17,11 @@
             Leading Cities/Towns
         </h2>
         <div class="row stack-xs">
-            
-            <!-- I imagine no more than 8 in the leaderboard 
+
+            <!-- I imagine no more than 8 in the leaderboard
                      will suffice. Having more will make the page very long. -->
 
-            <!-- If you duplicate the .column-6 divs  
+            <!-- If you duplicate the .column-6 divs
                      and children the layout will adjust. -->
             <div class="column-6">
                 <div class="card">
@@ -87,7 +87,13 @@
             </div>
 
             <!-- keep the .map class. It's important for sizing. -->
-            <div class="map"></div>
+            <div class="map map-below"
+                pfb-map
+                pfb-map-bounds="home.conusBounds"
+                pfb-map-baselayer="home.baselayer"
+                pfb-map-options="home.conusMapOptions"
+                pfb-map-ready="home.onConusMapReady(map)">
+            </pfb-map>
         </div>
     </div>
 </section>
@@ -104,9 +110,9 @@
             <div class="column-6">
                 <div class="card alternate">
 
-                    <!-- This card image div is currently empty 
-                             because I dont know what the metric names 
-                             are. Images or icons might not make sense 
+                    <!-- This card image div is currently empty
+                             because I dont know what the metric names
+                             are. Images or icons might not make sense
                              to even show so we might remove. If we do
                              the layout will auto adjust. -->
                     <div class="card-image"></div>

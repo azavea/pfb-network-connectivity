@@ -10,6 +10,8 @@
         $stateProvider
             .state('home', {
                 url: '/',
+                controller: 'HomeController',
+                controllerAs: 'home',
                 templateUrl: 'app/home/home.html'
             })
             .state('places', {
