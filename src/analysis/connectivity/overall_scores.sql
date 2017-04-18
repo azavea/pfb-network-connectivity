@@ -84,16 +84,16 @@ INSERT INTO generated.neighborhood_overall_scores (
 )
 SELECT  'opportunity',
         (
-            0.4 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_employment')
-            + 0.4 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_k12_education')
+            0.35 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_employment')
+            + 0.35 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_k12_education')
             + 0.1 * (select score_original from neighborhood_overall_scores where score_id = 'opportunity_technical_vocational_college')
-            + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_higher_education')
+            + 0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_higher_education')
         ) /
         (
-            0.4
+            0.35
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE schools_high_stress > 0)
-                    THEN 0.4
+                    THEN 0.35
                 ELSE 0
                 END
             +   CASE
@@ -103,7 +103,7 @@ SELECT  'opportunity',
                 END
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE universities_high_stress > 0)
-                    THEN 0.1
+                    THEN 0.2
                 ELSE 0
                 END
         ),
@@ -179,8 +179,8 @@ SELECT  'core_services',
             + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_dentists')
             + 0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_hospitals')
             + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_pharmacies')
-            + 0.3 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_grocery')
-            + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_social_services')
+            + 0.25 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_grocery')
+            + 0.15 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_social_services')
         ) /
         (
             CASE
@@ -205,12 +205,12 @@ SELECT  'core_services',
                 END
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE supermarkets_high_stress > 0)
-                    THEN 0.3
+                    THEN 0.25
                 ELSE 0
                 END
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE social_services_high_stress > 0)
-                    THEN 0.1
+                    THEN 0.15
                 ELSE 0
                 END
         ),
@@ -262,24 +262,24 @@ INSERT INTO generated.neighborhood_overall_scores (
 )
 SELECT  'recreation',
         (
-            0.5 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_parks')
-            + 0.3 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_trails')
-            + 0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_community_centers')
+            0.4 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_parks')
+            + 0.35 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_trails')
+            + 0.25 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_community_centers')
         ) /
         (
             CASE
             WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE parks_high_stress > 0)
-                THEN 0.5
+                THEN 0.4
             ELSE 0
             END
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE trails_high_stress > 0)
-                    THEN 0.3
+                    THEN 0.35
                 ELSE 0
                 END
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE community_centers_high_stress > 0)
-                    THEN 0.2
+                    THEN 0.25
                 ELSE 0
                 END
         ),
