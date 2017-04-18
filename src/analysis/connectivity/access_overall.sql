@@ -19,16 +19,16 @@ SET     overall_score = :total *
                             = 0 THEN 0
                     ELSE    (
                                 (
-                                    0.4 * COALESCE(emp_score,0)
-                                    + 0.4 * COALESCE(schools_score,0)
+                                    0.35 * COALESCE(emp_score,0)
+                                    + 0.35 * COALESCE(schools_score,0)
                                     + 0.1 * COALESCE(colleges_score,0)
-                                    + 0.1 * COALESCE(universities_score,0)
+                                    + 0.2 * COALESCE(universities_score,0)
                                 ) /
                                 (
-                                    0.4
+                                    0.35
                                     +   CASE
                                         WHEN schools_high_stress > 0
-                                            THEN 0.4
+                                            THEN 0.35
                                         ELSE 0
                                         END
                                     +   CASE
@@ -38,7 +38,7 @@ SET     overall_score = :total *
                                         END
                                     +   CASE
                                         WHEN universities_high_stress > 0
-                                            THEN 0.1
+                                            THEN 0.2
                                         ELSE 0
                                         END
                                 )
@@ -59,8 +59,8 @@ SET     overall_score = :total *
                                     + 0.1 * COALESCE(dentists_score,0)
                                     + 0.2 * COALESCE(hospitals_score,0)
                                     + 0.1 * COALESCE(pharmacies_score,0)
-                                    + 0.3 * COALESCE(supermarkets_score,0)
-                                    + 0.1 * COALESCE(social_services_score,0)
+                                    + 0.25 * COALESCE(supermarkets_score,0)
+                                    + 0.15 * COALESCE(social_services_score,0)
                                 ) /
                                 (
                                     CASE
@@ -85,12 +85,12 @@ SET     overall_score = :total *
                                         END
                                     +   CASE
                                         WHEN supermarkets_high_stress > 0
-                                            THEN 0.3
+                                            THEN 0.25
                                         ELSE 0
                                         END
                                     +   CASE
                                         WHEN social_services_high_stress > 0
-                                            THEN 0.1
+                                            THEN 0.15
                                         ELSE 0
                                         END
                                 )
@@ -105,24 +105,24 @@ SET     overall_score = :total *
                             = 0 THEN 0
                     ELSE    (
                                 (
-                                    0.5 * COALESCE(parks_score,0)
-                                    + 0.3 * COALESCE(trails_score,0)
-                                    + 0.2 * COALESCE(community_centers_score,0)
+                                    0.4 * COALESCE(parks_score,0)
+                                    + 0.35 * COALESCE(trails_score,0)
+                                    + 0.25 * COALESCE(community_centers_score,0)
                                 ) /
                                 (
                                     CASE
                                     WHEN parks_high_stress > 0
-                                        THEN 0.5
+                                        THEN 0.4
                                     ELSE 0
                                     END
                                     +   CASE
                                         WHEN trails_high_stress > 0
-                                            THEN 0.3
+                                            THEN 0.35
                                         ELSE 0
                                         END
                                     +   CASE
                                         WHEN community_centers_high_stress > 0
-                                            THEN 0.2
+                                            THEN 0.25
                                         ELSE 0
                                         END
                                 )
