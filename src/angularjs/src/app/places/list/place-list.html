@@ -1,0 +1,39 @@
+<pfb-navbar></pfb-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+      <h1 class="no-margin-top">Neighborhoods</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>State</th>
+            <th>Created</th>
+            <th ng-if="placeList.isAdminUser"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="neighborhood in placeList.places">
+            <td>{{neighborhood.uuid}}</td>
+            <td>{{neighborhood.label}}</td>
+            <td>{{neighborhood.state_abbrev}}</td>
+            <td>{{neighborhood.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="buttons-pagination">
+        <button class="btn-success btn" ng-click="placeList.getPrev()"
+                ng-disabled="!placeList.hasPrev">
+
+          Newer
+        </button>
+        <button class="btn-success btn" ng-click="placeList.getNext()"
+                ng-disabled="!placeList.hasNext">
+          Older
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

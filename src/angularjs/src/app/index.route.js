@@ -15,8 +15,15 @@
                 templateUrl: 'app/home/home.html'
             })
             .state('places', {
+                abstract: true,
                 url: '/places/',
-                templateUrl: 'app/places/places.html'
+                template: '<ui-view/>'
+            })
+            .state('places.list', {
+                url: '',
+                controller: 'PlaceListController',
+                controllerAs: 'placeList',
+                templateUrl: 'app/places/list/place-list.html'
             })
             .state('login', {
                 url: '/login/',
