@@ -76,7 +76,7 @@
                 });
             } else {
                 User.save(ctl.user).$promise.then(function() {
-                    $state.go('users.list');
+                    $state.go('admin.users.list');
                 }, function(error) {
                     for (var key in error.data) {
                         if (error.data.hasOwnProperty(key)) {

@@ -10,7 +10,8 @@
     'use strict';
 
     /** @ngInject */
-    function NeighborhoodListController($state, $stateParams, $scope, Pagination, Neighborhood) {
+    function NeighborhoodListController($state, $stateParams, $scope, Pagination, AuthService,
+                                        Neighborhood) {
         var ctl = this;
 
         var defaultParams = {
@@ -23,6 +24,8 @@
         initialize();
 
         function initialize() {
+            ctl.isAdminUser = AuthService.isAdminUser();
+
             ctl.hasNext = false;
             ctl.getNext = getNext;
 
@@ -64,13 +67,13 @@
 
         function getNext() {
             var params = _.merge({}, defaultParams, nextParams);
-            $state.go('neighborhoods.list', params, {notify: false});
+            $state.go('admin.neighborhoods.list', params, {notify: false});
             getNeighborhoods(params);
         }
 
         function getPrev() {
             var params = _.merge({}, defaultParams, prevParams);
-            $state.go('neighborhoods.list', params, {notify: false});
+            $state.go('admin.neighborhoods.list', params, {notify: false});
             getNeighborhoods(params);
         }
 

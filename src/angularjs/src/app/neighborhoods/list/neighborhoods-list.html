@@ -3,8 +3,8 @@
 <div class="container">
   <div class="row">
     <div class="col-md-10 col-md-push-1">
-      <button ng-if="navbar.isAdminUser"
-        ui-sref="neighborhoods.create" class="btn btn-primary pull-right">
+      <button ng-if="neighborhoodList.isAdminUser"
+        ui-sref="admin.neighborhoods.create" class="btn btn-primary pull-right">
         Upload Neighborhood
       </button>
       <h1 class="no-margin-top">Neighborhoods</h1>
@@ -15,7 +15,7 @@
             <th>Name</th>
             <th>State</th>
             <th>Created</th>
-            <th ng-if="navbar.isAdminUser"></th>
+            <th ng-if="neighborhoodList.isAdminUser"></th>
           </tr>
         </thead>
         <tbody>
@@ -24,7 +24,7 @@
             <td>{{neighborhood.label}}</td>
             <td>{{neighborhood.state_abbrev}}</td>
             <td>{{neighborhood.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-            <td ng-if="navbar.isAdminUser">
+            <td ng-if="neighborhoodList.isAdminUser">
               <button ng-click="neighborhoodList.deleteUpload(neighborhood)"
                       uib-tooltip="Delete"
                       class="btn-link glyphicon glyphicon-trash"></button>

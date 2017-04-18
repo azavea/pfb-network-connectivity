@@ -23,9 +23,8 @@
             ctl.userUuid = AuthService.getUserId();
             ctl.userName = AuthService.getUserName();
 
-            if (!AuthService.getEmail()) {
-                $state.go('login');
-            }
+            ctl.admin = $state.includes('admin');
+            ctl.hideName = $state.is('home');
         }
     }
 
@@ -35,7 +34,11 @@
             templateUrl: 'app/components/navbar/navbar.html',
             controller: 'NavbarController',
             controllerAs: 'navbar',
-            bindToController: true
+            bindToController: true,
+            scope: {
+                admin: '@',
+                hideName: '@'
+            }
         };
 
         return directive;

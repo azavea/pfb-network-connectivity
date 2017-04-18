@@ -1,0 +1,140 @@
+form {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.form-group {
+  margin-bottom: 2rem;
+}
+
+label {
+  font-weight: 600;
+  max-width: 100%;
+  margin-bottom: 5px;
+  display: inline-block;
+  color: $text-base;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  height: 3.6rem;
+  padding: 6px 12px;
+  font-size: 1.4rem;
+  color: $text-base;
+  font-weight: 600;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid darken($shade-normal, 5%);
+  border-radius: 2px;
+
+  &:focus {
+    border-color: $brand-primary;
+    outline: 0;
+    box-shadow: 0 0 8px rgba($brand-primary, .5);
+  }
+
+  // Placeholders
+  &::-moz-placeholder {
+    color: $shade-light;
+    opacity: 1;
+  }
+  &:-ms-input-placeholder {
+    color: $shade-light;
+  }
+  &::-webkit-input-placeholder {
+    color: $shade-light;
+  }
+
+  // Unstyle the caret on `<select>`s in IE10+.
+  &::-ms-expand {
+    border: 0;
+    background-color: transparent;
+  }
+
+  // Disabled and read-only inputs
+  &[disabled],
+  &[readonly] {
+    background-color: #f3f3f3;
+    opacity: 1;
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+  }
+}
+
+textarea.form-control {
+  height: auto;
+}
+
+input[type=checkbox],
+input[type=radio] {
+  margin-right: 10px;
+}
+
+/**
+ * Special form group with an icon label, .form-control,
+ * and submit button all on one line
+**/
+.form-group.all-in-one {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  border-radius: 2px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+
+  label:not(.sr-only) {
+    position: relative;
+    margin: 0;
+    line-height: 4.8rem;;
+    padding: 0 1rem 0 1.5rem;
+  }
+
+  .form-control {
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+  }
+
+  .btn {
+    border: none;
+    border-left: 1px solid #ddd;
+    border-radius: 0;
+  }
+}
+
+.form-group.all-in-one.stacked {
+  flex-direction: column;
+}
+
+/* Mailchimp styles */
+.response {
+  padding: 10px;
+  border-radius: 2px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #353c58;
+
+  &.success {
+    background: $success;
+  }
+
+  &.error {
+    background: $danger;
+    color: #fff;
+  }
+}
+
+#mc_embed_signup .form-group div.mce_inline_error {
+  position: absolute;
+  background: #f98094 !important;
+  border-radius: 2px;
+  font-weight: 400;
+  padding: 5px;
+  left: -10px;
+  top: -10px;
+  font-size: 1.2rem;
+  line-height: 1;
+}
