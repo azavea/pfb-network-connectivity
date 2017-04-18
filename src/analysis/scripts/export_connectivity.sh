@@ -80,7 +80,7 @@ function ec_export_table_geojson() {
   EXPORT_TABLENAME="${2}"
 
   FILENAME="${OUTPUT_DIR}/${EXPORT_TABLENAME}.geojson"
-  ogr2ogr -f GeoJSON "${FILENAME}" \
+  ogr2ogr -f GeoJSON "${FILENAME}" -skipfailures \
           -t_srs EPSG:4326 \
           "PG:host=${NB_POSTGRESQL_HOST} dbname=${NB_POSTGRESQL_DB} user=${NB_POSTGRESQL_USER}" \
           -sql "select * from ${EXPORT_TABLENAME}"
@@ -95,7 +95,7 @@ function ec_export_destination_geojson() {
   # Our version of ogr2ogr isn't new enough to specify the geom column :(
   #   Instead, ogr2ogr states it takes the "last" geom column, so we manually specify
   #   it here to ensure we always take the one we want
-  ogr2ogr -f GeoJSON "${FILENAME}" \
+  ogr2ogr -f GeoJSON "${FILENAME}" -skipfailures \
           -t_srs EPSG:4326 \
           "PG:host=${NB_POSTGRESQL_HOST} dbname=${NB_POSTGRESQL_DB} user=${NB_POSTGRESQL_USER}" \
           -sql "select *, geom_pt from ${EXPORT_TABLENAME}"
