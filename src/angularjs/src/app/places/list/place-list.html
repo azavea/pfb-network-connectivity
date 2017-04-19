@@ -10,8 +10,21 @@
         <div class="row">
             <div class="column">
                 <div class="form-group">
-                    <label for="1">Filter by city or town name</label>
-                    <input type="text" class="form-control">
+                    <label for="neighborhood-filter">Filter by city or town name</label>
+                    <ui-select
+                        name="neighborhood-filter"
+                        ng-model="placeList.neighborhoodFilter"
+                        title="Filter by Neighborhood">
+
+                        <ui-select-match allow-clear="true" placeholder="Neighborhood" >
+                            {{$select.selected.label}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="neighborhood.uuid as neighborhood in
+                                                   placeList.allNeighborhoods |
+                                                   filter: {label : $select.search}">
+                            <div ng-bind-html="neighborhood.label | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
                 </div>
             </div>
         </div>

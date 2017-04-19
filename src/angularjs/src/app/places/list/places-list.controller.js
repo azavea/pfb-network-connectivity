@@ -41,7 +41,7 @@
             ctl.getPrev = getPrev;
             ctl.places = [];
 
-            ctl.filters = {};
+            ctl.neighborhoodFilter = null;
 
             ctl.sortBy = sortingOptions[0]; // default to alphabetical order
             ctl.sortingOptions = sortingOptions;
@@ -49,11 +49,32 @@
             ctl.getPlaces = getPlaces;
 
             getPlaces();
+            loadOptions();
+            $scope.$watch(function(){return ctl.neighborhoodFilter;}, filterNeighborhood);
+        }
+
+        function filterNeighborhood(newFilter, oldFilter) {
+            if (newFilter === oldFilter) {
+                return;
+            }
+
+            getPlaces();
+        }
+
+        function loadOptions() {
+            // fetch all neighborhoods, to populate the search bar
+            Neighborhood.all().$promise.then(function(data) {
+                ctl.allNeighborhoods = data.results;
+            });
         }
 
         function getPlaces(params) {
             params = params || _.merge({}, $stateParams, defaultParams);
             params.ordering = ctl.sortBy.value;
+            if (ctl.neighborhoodFilter) {
+                params.neighborhood = ctl.neighborhoodFilter;
+            }
+
             AnalysisJob.query(params).$promise.then(function(data) {
 
                 ctl.places = _.map(data.results, function(obj) {
