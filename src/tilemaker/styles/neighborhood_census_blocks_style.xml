@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Map[]>
+<Map srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
+
+<Parameters>
+  <Parameter name="bounds">-180,-85.05112877980659,180,85.05112877980659</Parameter>
+  <Parameter name="center">0,0,2</Parameter>
+  <Parameter name="format">png8</Parameter>
+  <Parameter name="minzoom">0</Parameter>
+  <Parameter name="maxzoom">22</Parameter>
+  <Parameter name="scale">1</Parameter>
+  <Parameter name="metatile">2</Parameter>
+  <Parameter name="tilejson"><![CDATA[2.0.0]]></Parameter>
+  <Parameter name="scheme"><![CDATA[xyz]]></Parameter>
+</Parameters>
+
+
+<Style name="neighborhood_census_blocks" filter-mode="first">
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 90) and ([OVERALL_SC] &lt; 100)</Filter>
+    <PolygonSymbolizer fill="#00aeef" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 80) and ([OVERALL_SC] &lt; 90)</Filter>
+    <PolygonSymbolizer fill="#1993d8" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 70) and ([OVERALL_SC] &lt; 80)</Filter>
+    <PolygonSymbolizer fill="#3378c2" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 60) and ([OVERALL_SC] &lt; 70)</Filter>
+    <PolygonSymbolizer fill="#4c5eac" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 50) and ([OVERALL_SC] &lt; 60)</Filter>
+    <PolygonSymbolizer fill="#664396" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 40) and ([OVERALL_SC] &lt; 50)</Filter>
+    <PolygonSymbolizer fill="#802980" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 30) and ([OVERALL_SC] &lt; 40)</Filter>
+    <PolygonSymbolizer fill="#982766" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 20) and ([OVERALL_SC] &lt; 30)</Filter>
+    <PolygonSymbolizer fill="#b1264d" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 10) and ([OVERALL_SC] &lt; 20)</Filter>
+    <PolygonSymbolizer fill="#c92433" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] &gt;= 0) and ([OVERALL_SC] &lt; 10)</Filter>
+    <PolygonSymbolizer fill="#e2231a" fill-opacity="0.7" />
+  </Rule>
+  <Rule>
+    <Filter>([OVERALL_SC] != null)</Filter>
+    <PolygonSymbolizer fill-opacity="0.7" />
+  </Rule>
+</Style>
+<Layer name="neighborhood_census_blocks"
+  srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
+    <StyleName>neighborhood_census_blocks</StyleName>
+    <Datasource>
+       <Parameter name="file"><![CDATA[/data/neighborhood_census_blocks.shp]]></Parameter>
+       <Parameter name="type"><![CDATA[shape]]></Parameter>
+    </Datasource>
+  </Layer>
+
+</Map>
