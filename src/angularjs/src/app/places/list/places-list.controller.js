@@ -14,6 +14,13 @@
                                  Neighborhood, AnalysisJob) {
         var ctl = this;
 
+        var sortingOptions = [
+            {value: 'neighborhood__label', label: 'Alphabetical'},
+            {value: '-overall_score', label: 'Highest Rated'},
+            {value: 'overall_score', label: 'Lowest Rated'},
+            {value: '-modified_at', label: 'Last Updated'}
+        ];
+
         var defaultParams = {
             limit: null,
             offset: null,
@@ -36,11 +43,17 @@
 
             ctl.filters = {};
 
+            ctl.sortBy = sortingOptions[0]; // default to alphabetical order
+            ctl.sortingOptions = sortingOptions;
+
+            ctl.getPlaces = getPlaces;
+
             getPlaces();
         }
 
         function getPlaces(params) {
             params = params || _.merge({}, $stateParams, defaultParams);
+            params.ordering = ctl.sortBy.value;
             AnalysisJob.query(params).$promise.then(function(data) {
 
                 ctl.places = _.map(data.results, function(obj) {

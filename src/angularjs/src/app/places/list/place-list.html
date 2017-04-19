@@ -18,12 +18,11 @@
         <div class="row">
             <div class="column-7">
                 <div class="form-group">
-                    <label for="2">Sort by</label>
-                    <select name="2" id="" class="form-control">
-                        <option value="">Alphabetical</option>
-                        <option value="">Highest Rated</option>
-                        <option value="">Lowest Rated</option>
-                        <option value="">Last Updated</option>
+                    <label for="sort-options">Sort by</label>
+                    <select name="sort-options" class="form-control"
+                        ng-options="item as item.label for item in placeList.sortingOptions track by item.value"
+                        ng-model="placeList.sortBy"
+                        ng-change="placeList.getPlaces()">
                     </select>
                 </div>
             </div>
