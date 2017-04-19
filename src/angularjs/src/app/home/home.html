@@ -85,15 +85,7 @@
                     <a href="/search.html" class="btn btn-primary">Find your City/Town <i class="icon-arrow-right"></i></a>
                 </div>
             </div>
-
-            <!-- keep the .map class. It's important for sizing. -->
-            <div class="map map-below"
-                pfb-map
-                pfb-map-bounds="home.conusBounds"
-                pfb-map-baselayer="home.baselayer"
-                pfb-map-options="home.conusMapOptions"
-                pfb-map-ready="home.onConusMapReady(map)">
-            </pfb-map>
+            <pfb-neighborhood-map></pfb-neighborhood-map>
         </div>
     </div>
 </section>
