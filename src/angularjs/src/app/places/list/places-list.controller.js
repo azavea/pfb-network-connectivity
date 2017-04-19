@@ -11,12 +11,13 @@
 
     /** @ngInject */
     function PlaceListController($state, $stateParams, $scope, Pagination, AuthService,
-                                 Neighborhood) {
+                                 Neighborhood, AnalysisJob) {
         var ctl = this;
 
         var defaultParams = {
             limit: null,
-            offset: null
+            offset: null,
+            latest: 'True'
         };
         var nextParams = {};
         var prevParams = {};
@@ -40,9 +41,14 @@
 
         function getPlaces(params) {
             params = params || $stateParams;
-            Neighborhood.query(params).$promise.then(function(data) {
+            AnalysisJob.query(params).$promise.then(function(data) {
+
                 ctl.places = _.map(data.results, function(obj) {
-                    return new Neighborhood(obj);
+                    var neighborhood = new Neighborhood(obj.neighborhood);
+                    // get properties from the neighborhood's last run job
+                    neighborhood.modifiedAt = obj.modifiedAt;
+                    neighborhood.overall_score = obj.overall_score;
+                    return neighborhood;
                 });
 
                 if (data.next) {
