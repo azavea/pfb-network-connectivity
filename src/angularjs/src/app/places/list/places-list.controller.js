@@ -40,7 +40,7 @@
         }
 
         function getPlaces(params) {
-            params = params || $stateParams;
+            params = params || _.merge({}, $stateParams, defaultParams);
             AnalysisJob.query(params).$promise.then(function(data) {
 
                 ctl.places = _.map(data.results, function(obj) {
