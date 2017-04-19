@@ -70,6 +70,7 @@ class Command(BaseCommand):
                 for feature in source:
                     city = feature['properties']['city']
                     state = feature['properties']['state']
+                    osm_extract_url = feature['properties'].get('osm_url', None)
                     label = '{}, {}'.format(city, state)
                     name = Neighborhood.name_for_label(label)
 
@@ -95,6 +96,7 @@ class Command(BaseCommand):
                     # Create new job
                     job = AnalysisJob.objects.create(neighborhood=neighborhood,
                                                      batch=batch,
+                                                     osm_extract_url=osm_extract_url,
                                                      created_by=user,
                                                      modified_by=user)
                     self.stdout.write('ID: {} -- {}'.format(str(job.uuid), str(job)))
