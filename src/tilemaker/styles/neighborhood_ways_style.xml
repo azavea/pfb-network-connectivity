@@ -19,46 +19,46 @@
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer offset="1" stroke="#008000"/>
+    <LineSymbolizer offset="1" stroke="#00aeef" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#008000" offset="0.5"/>
+    <LineSymbolizer stroke="#00aeef" offset="0.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#008000" offset="1.5"/>
+    <LineSymbolizer stroke="#00aeef" offset="1.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer offset="1" stroke="#ff0000"/>
+    <LineSymbolizer offset="1" stroke="#e2231a" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#ff0000" offset="0.5"/>
+    <LineSymbolizer stroke="#e2231a" offset="0.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#ff0000" offset="1.5"/>
+    <LineSymbolizer stroke="#e2231a" offset="1.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
-    <LineSymbolizer offset="1" stroke="#ffa500"/>
+    <LineSymbolizer offset="1" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
-    <LineSymbolizer offset="0.5" stroke="#ffa500"/>
+    <LineSymbolizer offset="0.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
-    <LineSymbolizer offset="1.5" stroke="#ffa500"/>
+    <LineSymbolizer offset="1.5" />
   </Rule>
 </Style>
 <Layer name="neighborhood_waysFT" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
@@ -75,62 +75,62 @@
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] &lt; 1)</Filter>
-    <LineSymbolizer offset="-1" stroke-opacity="0"/>
+    <LineSymbolizer offset="-1" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] &lt; 1)</Filter>
-    <LineSymbolizer stroke-opacity="0" offset="-0.5"/>
+    <LineSymbolizer stroke-opacity="0" offset="-0.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([TF_SEG_STR] &lt; 1)</Filter>
-    <LineSymbolizer stroke-opacity="0" offset="-1.5"/>
+    <LineSymbolizer stroke-opacity="0" offset="-1.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer offset="-1" stroke="#008000"/>
+    <LineSymbolizer offset="-1" stroke="#00aeef" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#008000" offset="-0.5"/>
+    <LineSymbolizer stroke="#00aeef" offset="-0.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#008000" offset="-1.5"/>
+    <LineSymbolizer stroke="#00aeef" offset="-1.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer offset="-1" stroke="#ff0000"/>
+    <LineSymbolizer offset="-1" stroke="#e2231a" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#ff0000" offset="-0.5"/>
+    <LineSymbolizer stroke="#e2231a" offset="-0.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#ff0000" offset="-1.5"/>
+    <LineSymbolizer stroke="#e2231a" offset="-1.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
-    <LineSymbolizer offset="-1"/>
+    <LineSymbolizer offset="-1" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
-    <LineSymbolizer offset="-0.5"/>
+    <LineSymbolizer offset="-0.5" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
-    <LineSymbolizer offset="-1.5"/>
+    <LineSymbolizer offset="-1.5" />
   </Rule>
 </Style>
 <Layer name="neighborhood_waysTF" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
