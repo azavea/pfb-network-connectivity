@@ -1,8 +1,21 @@
-<!-- keep the .map class. It's important for sizing. -->
-<div class="map map-below"
-    pfb-map
-    pfb-map-bounds="ctl.boundsConus"
-    pfb-map-baselayer="ctl.baselayer"
-    pfb-map-options="ctl.mapOptions"
-    pfb-map-ready="ctl.onMapReady(map)">
+<h2 class="decor">
+    <i class="icon-map"></i>
+    Is your city/town on the map?
+</h2>
+<div class="overview-map">
+    <div class="card">
+        <div class="card-details">
+            <div class="overview-total">{{ ctl.count || "--" }}</div>
+            <div class="overview-total-label">Cities/Towns Nationwide</div>
+            <a ui-sref="places" class="btn btn-primary">Find your City/Town <i class="icon-arrow-right"></i></a>
+        </div>
+    </div>
+    <!-- keep the .map class. It's important for sizing. -->
+    <div class="map map-below"
+        pfb-map
+        pfb-map-bounds="ctl.boundsConus"
+        pfb-map-baselayer="ctl.baselayer"
+        pfb-map-options="ctl.mapOptions"
+        pfb-map-ready="ctl.onMapReady(map)">
+    </div>
 </div>

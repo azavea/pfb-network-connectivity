@@ -19,6 +19,7 @@
         ctl.onMapReady = function (map) {
             ctl.map = map;
             Neighborhood.geojson().$promise.then(function (data) {
+                ctl.count = data && data.features ? data.features.length : '0';
                 ctl.neighborhoodLayer = L.geoJSON(data, {
                     onEachFeature: onEachFeature
                 });
@@ -30,13 +31,16 @@
                 // TODO: Add link to neighborhood detail in popup
                 layer.on({
                     click: function () {
-                        var popup = L.popup()
-                            .setLatLng([
-                                feature.geometry.coordinates[1],
-                                feature.geometry.coordinates[0]
-                            ])
-                            .setContent(feature.properties.label);
-                        ctl.map.openPopup(popup);
+                        if (feature && feature.geometry &&
+                            feature.geometry.coordinates) {
+                            var popup = L.popup()
+                                .setLatLng([
+                                    feature.geometry.coordinates[1],
+                                    feature.geometry.coordinates[0]
+                                ])
+                                .setContent(feature.properties.label);
+                            ctl.map.openPopup(popup);
+                        }
                     }
                 });
             }
