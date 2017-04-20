@@ -1,0 +1,75 @@
+<pfb-navbar></pfb-navbar>
+
+<!-- Sidebar -->
+<!-- ATTENTION: note the use of location-overview class -->
+<div class="sidebar location-overview">
+
+    <!-- Everything in .sidebar-header will not scroll.  -->
+    <div class="sidebar-header">
+        <div class="row">
+            <div class="column-8">
+                <h2 class="sidebar-title">{{placeDetail.place.label}}</h2>
+                <h4 class="sidebar-title">{{placeDetail.place.state_abbrev}}</h4>
+                <div class="location-timestamp"><span>Last updated:</span>
+                    {{placeDetail.place.modifiedAt | date:'MMMM dd, yyyy'}}</div>
+            </div>
+            <div class="column text-right">
+                <a class="btn btn-primary" ui-sref="places.list">Back to search</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Everything in sidebar-scrollable will scroll. -->
+    <div class="sidebar-scrollable">
+        <section>
+            <div class="metric-details">
+                <div class="row" ng-if="placeDetail.lastJobScore">
+                    <div class="column">
+                        <label class="network-score large flex-row columns-center">
+                            {{placeDetail.lastJobScore | number:0}}
+                            <span class="h3">Network Score</span>
+
+                            <!-- Tooltips how it works: If you have a div with class .tooltip add a title. The content of the title will display in the toolip using css. -->
+                            <div class="tooltip" title="This is a tooltip that keeps sdfjhskdjfh dfskjhas kjhdfsa kjdfsah sdfakjh kjfdsah "><i class="icon-info-circled"></i></div>
+                        </label>
+                    </div>
+                    <div class="column text-right">
+
+                    <div class="btn-group dropdown" uib-dropdown is-open="status.isopen"
+                        ng-if="placeDetail.downloads">
+                      <button id="single-button" type="button" class="btn btn-default btn-s" uib-dropdown-toggle ng-disabled="disabled" id="downloadButton">
+                        Download <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" uib-dropdown-menu role="menu"
+                        aria-labelledby="downloadButton">
+                        <li ng-repeat="item in placeDetail.downloads">
+                            <a role="menuitem" href="{{item.url}}"
+                                class="compare-remove">{{item.label}}</a>
+                        </li>
+                      </ul>
+                    </div>
+                </div>
+                <div class="row" ng-if="!placeDetail.lastJobScore">
+                    <div class="column">
+                        <label class="network-score large flex-row columns-center">
+                            <span class="h3">No results available</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <ul class="metric-list" ng-repeat="result in placeDetail.jobResults">
+            <li>{{result.metric}}
+                <div class="tooltip" title="This is a tooltip "><i class="icon-info-circled"></i></div>
+                <span class="network-score small">{{result.score | number:0}}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- Sidebar -->
+
+<!-- Map -->
+<div class="preview-map">
+    <div class="map"></div>
+</div>
+<!-- Map -->

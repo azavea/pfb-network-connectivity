@@ -10,20 +10,32 @@
         <div class="row">
             <div class="column">
                 <div class="form-group">
-                    <label for="1">Filter by city or town name</label>
-                    <input type="text" class="form-control">
+                    <label for="neighborhood-filter">Filter by city or town name</label>
+                    <ui-select
+                        name="neighborhood-filter"
+                        ng-model="placeList.neighborhoodFilter"
+                        title="Filter by Neighborhood">
+
+                        <ui-select-match allow-clear="true" placeholder="Neighborhood" >
+                            {{$select.selected.label}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="neighborhood.uuid as neighborhood in
+                                                   placeList.allNeighborhoods |
+                                                   filter: {label : $select.search}">
+                            <div ng-bind-html="neighborhood.label | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="column-7">
                 <div class="form-group">
-                    <label for="2">Sort by</label>
-                    <select name="2" id="" class="form-control">
-                        <option value="">Alphabetical</option>
-                        <option value="">Highest Rated</option>
-                        <option value="">Lowest Rated</option>
-                        <option value="">Last Updated</option>
+                    <label for="sort-options">Sort by</label>
+                    <select name="sort-options" class="form-control"
+                        ng-options="item as item.label for item in placeList.sortingOptions track by item.value"
+                        ng-model="placeList.sortBy"
+                        ng-change="placeList.getPlaces()">
                     </select>
                 </div>
             </div>
@@ -38,7 +50,7 @@
                         <span class="caret"></span>
                       </button>
 
-                      <!-- Were using bootstraps dropdown js -->
+                      <!-- We are using bootstraps dropdown js -->
                       <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdownMenu1">
 
                         <!-- Only up to 3 to compare. Duplicate li and children for each item -->
@@ -69,8 +81,7 @@
         <section>
             <!-- Duplicate .result div for each result. -->
             <div class="result" ng-repeat="neighborhood in placeList.places">
-                <!-- TODO: link to details page here -->
-                <a href="#" class="result-link"></a>
+                <a ui-sref="places.detail({uuid: '{{neighborhood.uuid}}' })" class="result-link"></a>
                 <div class="result-left">
 
                     <!-- .result-preview should display the shapefile preview -->
