@@ -1,5 +1,5 @@
 (function () {
     'use strict';
 
-    angular.module('pfb.home', []);
+    angular.module('pfb.home', ['pfb.components']);
 })();
