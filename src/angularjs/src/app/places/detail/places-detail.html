@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <!-- Everythign in sidebar-scrollable will scroll. -->
+    <!-- Everything in sidebar-scrollable will scroll. -->
     <div class="sidebar-scrollable">
         <section>
             <div class="metric-details">
@@ -34,20 +34,19 @@
                         </label>
                     </div>
                     <div class="column text-right">
-                        <div class="dropdown">
-                          <button class="btn btn-default dropdown-toggle btn-s" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Download
-                            <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li>
-                                <a href="#" class="compare-remove">Shapefile</a>
-                            </li>
-                            <li>
-                                <a href="#" class="compare-remove">CSV</a>
-                            </li>
-                          </ul>
-                        </div>
+
+                    <div class="btn-group dropdown" uib-dropdown is-open="status.isopen"
+                        ng-if="placeDetail.downloads">
+                      <button id="single-button" type="button" class="btn btn-default btn-s" uib-dropdown-toggle ng-disabled="disabled" id="downloadButton">
+                        Download <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" uib-dropdown-menu role="menu"
+                        aria-labelledby="downloadButton">
+                        <li ng-repeat="item in placeDetail.downloads">
+                            <a role="menuitem" href="{{item.url}}"
+                                class="compare-remove">{{item.label}}</a>
+                        </li>
+                      </ul>
                     </div>
                 </div>
                 <div class="row" ng-if="!placeDetail.lastJobScore">
