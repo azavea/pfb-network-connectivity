@@ -1,0 +1,12 @@
+<!-- TODO: fix styling. removing card-map class makes map visible -->
+<div class="card-map">
+    <!-- keep the .map class. It's important for sizing. -->
+    <div class="map map-below" id="map-{{::$id}}"
+        pfb-map
+        pfb-map-zoom="12"
+        pfb-map-center="ctl.mapCenter"
+        pfb-map-baselayer="ctl.baselayer"
+        pfb-map-options="ctl.mapOptions"
+        pfb-map-ready="ctl.onMapReady(map)">
+    </div>
+</div>
