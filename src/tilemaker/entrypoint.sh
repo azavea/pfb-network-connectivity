@@ -6,7 +6,7 @@ set -e
 source /opt/pfb/tilemaker/scripts/utils.sh
 
 export TL_MIN_ZOOM="${TL_MIN_ZOOM:-8}"
-export TL_MAX_ZOOM="${TL_MAX_ZOOM:-17}"
+export TL_MAX_ZOOM="${TL_MAX_ZOOM:-18}"
 
 if [ -z "${PFB_JOB_ID}" ]; then
     echo "Error: PFB_JOB_ID is required"
