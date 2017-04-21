@@ -3,19 +3,15 @@
 # Downloads a shapefile and converts it to raster tiles that it writes to S3
 
 set -e
+source /opt/pfb/tilemaker/scripts/utils.sh
 
-export TL_SHAPEFILE_NAME="${TL_SHAPEFILE_NAME:-neighborhood_ways}"
 export TL_MIN_ZOOM="${TL_MIN_ZOOM:-8}"
-export TL_MAX_ZOOM="${TL_MAX_ZOOM:-17}"
+export TL_MAX_ZOOM="${TL_MAX_ZOOM:-18}"
 
 if [ -z "${PFB_JOB_ID}" ]; then
     echo "Error: PFB_JOB_ID is required"
     exit 1
 fi
-
-function update_status() {
-    /opt/pfb/django/manage.py update_status "${PFB_JOB_ID}" "$@"
-}
 
 update_status "TILING" "Exporting tiles"
 
