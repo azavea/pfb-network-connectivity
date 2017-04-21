@@ -69,24 +69,44 @@ resource "aws_security_group_rule" "postgresql_bastion_egress" {
   source_security_group_id = "${module.vpc.bastion_security_group_id}"
 }
 
-resource "aws_security_group_rule" "postgresql_container_instance_ingress" {
+resource "aws_security_group_rule" "postgresql_app_container_instance_ingress" {
   type      = "ingress"
   from_port = 5432
   to_port   = 5432
   protocol  = "tcp"
 
   security_group_id        = "${module.database.database_security_group_id}"
-  source_security_group_id = "${aws_security_group.container_instance.id}"
+  source_security_group_id = "${aws_security_group.app_container_instance.id}"
 }
 
-resource "aws_security_group_rule" "postgresql_container_instance_egress" {
+resource "aws_security_group_rule" "postgresql_app_container_instance_egress" {
   type      = "egress"
   from_port = 5432
   to_port   = 5432
   protocol  = "tcp"
 
   security_group_id        = "${module.database.database_security_group_id}"
-  source_security_group_id = "${aws_security_group.container_instance.id}"
+  source_security_group_id = "${aws_security_group.app_container_instance.id}"
+}
+
+resource "aws_security_group_rule" "postgresql_batch_container_instance_ingress" {
+  type      = "ingress"
+  from_port = 5432
+  to_port   = 5432
+  protocol  = "tcp"
+
+  security_group_id        = "${module.database.database_security_group_id}"
+  source_security_group_id = "${aws_security_group.batch_container_instance.id}"
+}
+
+resource "aws_security_group_rule" "postgresql_batch_container_instance_egress" {
+  type      = "egress"
+  from_port = 5432
+  to_port   = 5432
+  protocol  = "tcp"
+
+  security_group_id        = "${module.database.database_security_group_id}"
+  source_security_group_id = "${aws_security_group.batch_container_instance.id}"
 }
 
 #
@@ -143,11 +163,11 @@ resource "aws_security_group_rule" "alb_pfb_app_container_instance_all_egress" {
   protocol  = "tcp"
 
   security_group_id        = "${aws_security_group.pfb_app_alb.id}"
-  source_security_group_id = "${aws_security_group.container_instance.id}"
+  source_security_group_id = "${aws_security_group.app_container_instance.id}"
 }
 
 #
-# Container instance security group resources
+# App Container Instance security group resources
 #
 resource "aws_security_group_rule" "container_instance_http_egress" {
   type        = "egress"
@@ -156,7 +176,7 @@ resource "aws_security_group_rule" "container_instance_http_egress" {
   protocol    = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
 
-  security_group_id = "${aws_security_group.container_instance.id}"
+  security_group_id = "${aws_security_group.app_container_instance.id}"
 }
 
 resource "aws_security_group_rule" "container_instance_https_egress" {
@@ -166,7 +186,7 @@ resource "aws_security_group_rule" "container_instance_https_egress" {
   protocol    = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
 
-  security_group_id = "${aws_security_group.container_instance.id}"
+  security_group_id = "${aws_security_group.app_container_instance.id}"
 }
 
 resource "aws_security_group_rule" "container_instance_postgresql_egress" {
@@ -175,7 +195,7 @@ resource "aws_security_group_rule" "container_instance_postgresql_egress" {
   to_port   = 5432
   protocol  = "tcp"
 
-  security_group_id        = "${aws_security_group.container_instance.id}"
+  security_group_id        = "${aws_security_group.app_container_instance.id}"
   source_security_group_id = "${module.database.database_security_group_id}"
 }
 
@@ -185,7 +205,7 @@ resource "aws_security_group_rule" "container_instance_bastion_ssh_ingress" {
   to_port   = 22
   protocol  = "tcp"
 
-  security_group_id        = "${aws_security_group.container_instance.id}"
+  security_group_id        = "${aws_security_group.app_container_instance.id}"
   source_security_group_id = "${module.vpc.bastion_security_group_id}"
 }
 
@@ -195,7 +215,7 @@ resource "aws_security_group_rule" "container_instance_alb_pfb_app_all_ingress" 
   to_port   = 65535
   protocol  = "tcp"
 
-  security_group_id        = "${aws_security_group.container_instance.id}"
+  security_group_id        = "${aws_security_group.app_container_instance.id}"
   source_security_group_id = "${aws_security_group.pfb_app_alb.id}"
 }
 
@@ -205,7 +225,7 @@ resource "aws_security_group_rule" "container_instance_alb_pfb_app_all_egress" {
   to_port   = 65535
   protocol  = "tcp"
 
-  security_group_id        = "${aws_security_group.container_instance.id}"
+  security_group_id        = "${aws_security_group.app_container_instance.id}"
   source_security_group_id = "${aws_security_group.pfb_app_alb.id}"
 }
 
@@ -216,5 +236,48 @@ resource "aws_security_group_rule" "container_instance_papertrail_egress" {
   protocol    = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
 
-  security_group_id = "${aws_security_group.container_instance.id}"
+  security_group_id = "${aws_security_group.app_container_instance.id}"
+}
+
+#
+# Batch Container Instance security group resources
+#
+resource "aws_security_group_rule" "batch_container_instance_http_egress" {
+  type        = "egress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.batch_container_instance.id}"
+}
+
+resource "aws_security_group_rule" "batch_container_instance_https_egress" {
+  type        = "egress"
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.batch_container_instance.id}"
+}
+
+resource "aws_security_group_rule" "batch_container_instance_postgresql_egress" {
+  type      = "egress"
+  from_port = 5432
+  to_port   = 5432
+  protocol  = "tcp"
+
+  security_group_id        = "${aws_security_group.batch_container_instance.id}"
+  source_security_group_id = "${module.database.database_security_group_id}"
+}
+
+resource "aws_security_group_rule" "batch_container_instance_bastion_ssh_ingress" {
+  type      = "ingress"
+  from_port = 22
+  to_port   = 22
+  protocol  = "tcp"
+
+  security_group_id        = "${aws_security_group.batch_container_instance.id}"
+  source_security_group_id = "${module.vpc.bastion_security_group_id}"
 }

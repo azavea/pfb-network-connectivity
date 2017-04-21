@@ -2,7 +2,7 @@
 -- INPUTS
 -- location: neighborhood
 -- :nb_max_trip_distance and :nb_output_srid psql vars must be set before running this script,
---      e.g. psql -v nb_max_trip_distance=3300 -v nb_output_srid=2163 -f connected_census_blocks.sql
+--      e.g. psql -v nb_max_trip_distance=2680 -v nb_output_srid=2163 -f connected_census_blocks.sql
 ----------------------------------------
 DROP TABLE IF EXISTS generated.neighborhood_connected_census_blocks;
 
@@ -56,7 +56,7 @@ WHERE   EXISTS (
 OR      (
             low_stress_cost IS NOT NULL
         AND CASE    WHEN COALESCE(high_stress_cost,0) = 0 THEN TRUE
-                    ELSE low_stress_cost::FLOAT / high_stress_cost <= 1.3
+                    ELSE low_stress_cost::FLOAT / high_stress_cost <= 1.25
                     END
         );
 

@@ -1,0 +1,50 @@
+.tooltip {
+  position: relative;
+  z-index: 999;
+  color: $brand-primary;
+  white-space: nowrap;
+  font-size: 1.4rem;
+  height: 20px;
+  display: inline-block;
+
+  &:after {
+    content: attr(title);
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(0%, -50%);
+    background: black;
+    border-radius: 2px;
+    color: white;
+    font-style: normal;
+    text-align: left;
+    opacity: 0;
+    pointer-events: none;
+    font-size: 1.4rem;
+    padding: 4px 10px;
+    font-weight: 400;
+    width: auto;
+    min-width: 140px;
+    max-width: 350px;
+    white-space: normal;
+    transition: opacity .2s ease-in-out;
+  }
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    opacity: 0;
+    top: 50%;
+    left: 100%;
+    transform: translate(-100%,-50%);
+    border: 7px solid transparent;
+    border-right-color:  black;
+    transition: opacity .2s ease-in-out;
+  }
+
+  &:hover:after,
+  &:hover:before {
+    opacity: 1;
+  }
+}

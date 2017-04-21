@@ -12,6 +12,7 @@ NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
 NB_SIGCTL_SEARCH_DIST="${NB_SIGCTL_SEARCH_DIST:-25}"    # max search distance for intersection controls
+NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
 
 # drop old tables
 echo 'Dropping old tables'
@@ -48,19 +49,9 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "DROP TABLE IF EXISTS scratch.neighborhood_cycwys_osm_way_types;"
 
-
-# Get the neighborhood_boundary bbox
-BBOX_SW_LNG=`psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "SELECT MIN(ST_Xmin(ST_Transform(geom, 4326))) FROM neighborhood_boundary;"`
-BBOX_SW_LAT=`psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "SELECT MIN(ST_Ymin(ST_Transform(geom, 4326))) FROM neighborhood_boundary;"`
-BBOX_NE_LNG=`psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "SELECT MAX(ST_Xmax(ST_Transform(geom, 4326))) FROM neighborhood_boundary;"`
-BBOX_NE_LAT=`psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "SELECT MAX(ST_Ymax(ST_Transform(geom, 4326))) FROM neighborhood_boundary;"`
-# Buffer it
-LNG_DIFF=`bc <<< "$BBOX_NE_LNG - $BBOX_SW_LNG"`
-LAT_DIFF=`bc <<< "$BBOX_NE_LAT - $BBOX_SW_LAT"`
-BBOX_SW_LAT=`bc <<< "$BBOX_SW_LAT - $LAT_DIFF"`
-BBOX_SW_LNG=`bc <<< "$BBOX_SW_LNG - $LNG_DIFF"`
-BBOX_NE_LAT=`bc <<< "$BBOX_NE_LAT + $LAT_DIFF"`
-BBOX_NE_LNG=`bc <<< "$BBOX_NE_LNG + $LNG_DIFF"`
+# Get the neighborhood_boundary bbox as extent of trimmed census blocks
+BBOX=$(psql -h ${NB_POSTGRESQL_HOST} -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "select ST_Extent(ST_Transform(geom, 4326)) from neighborhood_census_blocks;" | awk -F '[()]' '{print $2}' | tr " " ",")
+echo "CLIPPING OSM TO: ${BBOX}"
 
 OSM_TEMPDIR=`mktemp -d`
 
@@ -68,13 +59,13 @@ if [[ -f ${1} ]]; then
   update_status "IMPORTING" "Clipping provided OSM file"
   osmconvert "${1}" \
     --drop-broken-refs \
-    -b="${BBOX_SW_LNG}","${BBOX_SW_LAT}","${BBOX_NE_LNG}","${BBOX_NE_LAT}" \
+    -b="${BBOX}" \
     -o="${OSM_TEMPDIR}/converted.osm"
   OSM_DATA_FILE="${OSM_TEMPDIR}/converted.osm"
 else
   update_status "IMPORTING" "Downloading OSM data"
   # Download OSM data
-  OSM_API_URL="http://www.overpass-api.de/api/xapi?*[bbox=${BBOX_SW_LNG},${BBOX_SW_LAT},${BBOX_NE_LNG},${BBOX_NE_LAT}]"
+  OSM_API_URL="http://www.overpass-api.de/api/xapi?*[bbox=${BBOX}]"
   OSM_DATA_FILE="${OSM_TEMPDIR}/overpass.osm"
   wget -nv -O "${OSM_DATA_FILE}" "${OSM_API_URL}"
 fi
@@ -174,7 +165,12 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
 # process tables
 echo 'Updating field names'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-    -v nb_output_srid="${NB_OUTPUT_SRID}" -f ./prepare_tables.sql
+    -v nb_output_srid="${NB_OUTPUT_SRID}" \
+    -f ./prepare_tables.sql
+echo 'Clipping OSM source data to boundary + buffer'
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v nb_boundary_buffer="${NB_BOUNDARY_BUFFER}" \
+    -f ./clip_osm.sql
 echo 'Setting values on road segments'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/one_way.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../features/width_ft.sql

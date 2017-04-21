@@ -1,17 +1,101 @@
+from collections import OrderedDict
+
 from rest_framework import serializers
 
 from pfb_analysis.models import AnalysisJob, Neighborhood
 from pfb_network_connectivity.serializers import PFBModelSerializer
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
+
+class PrimaryKeyReferenceRelatedField(serializers.PrimaryKeyRelatedField):
+    """A custom relational field for read-only objects.
+
+    This field is for the specific case where:
+    1. We want to reference the model on create by its primary key
+    2. We want to print the full serialized representation of the object on to_representation,
+       using a serializer of our choice
+    """
+
+    def __init__(self, **kwargs):
+        """Custom init to take an extra 'serializer' argument
+
+        @param serializer A custom serializer instance, used to generate the object representation
+                          in to_representation()
+        """
+        self.serializer = kwargs.pop('serializer')
+        super(PrimaryKeyReferenceRelatedField, self).__init__(**kwargs)
+
+    def to_representation(self, value):
+        if self.allow_null is True and value.pk is None:
+            return None
+        try:
+            data = self.get_queryset().get(pk=value.pk)
+            serializer = self.serializer(data)
+            return serializer.data
+        except self.serializer.Meta.model.DoesNotExist:
+            self.fail('does_not_exist', pk_value=value.pk)
+        except (TypeError, ValueError):
+            self.fail('incorrect_type', data_type=type(value).__name__)
+
+    def get_choices(self, cutoff=None):
+        """This is used to get the param value for the POST form in the DRF browsable API.
+        It normally uses `to_representation` to get the param value, but we want it to use `pk`.
+        """
+        queryset = self.get_queryset()
+        if queryset is None:
+            # Ensure that field.choices returns something sensible
+            # even when accessed with a read-only field.
+            return {}
+
+        if cutoff is not None:
+            queryset = queryset[:cutoff]
+
+        return OrderedDict([(item.pk, self.display_value(item)) for item in queryset])
+
+
+class NeighborhoodSerializer(PFBModelSerializer):
+
+    class Meta:
+        model = Neighborhood
+        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'geom', 'geom_pt',)
+        read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
+                            'organization', 'name',)
+
+
+class NeighborhoodGeoJsonSerializer(GeoFeatureModelSerializer):
+
+    class Meta:
+        model = Neighborhood
+        id_field = 'uuid'
+        geo_field = 'geom_pt'
+        fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom_pt')
+
+
+class NeighborhoodSummarySerializer(PFBModelSerializer):
+    """Serializer for including neighborhood information in AnalysisJob results.
+
+    All the fields are read-only. Any changes to neighborhoods should happen through the
+    neighborhoods endpoint, which uses the regular serializer.
+    """
+
+    class Meta:
+        model = Neighborhood
+        fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom_pt')
+        read_only_fields = fields
 
 
 class AnalysisJobSerializer(PFBModelSerializer):
 
+    logs_url = serializers.SerializerMethodField()
     running_time = serializers.SerializerMethodField()
     start_time = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
-    neighborhood_label = serializers.SerializerMethodField()
-    neighborhood = serializers.PrimaryKeyRelatedField(queryset=Neighborhood.objects.all())
+    neighborhood = PrimaryKeyReferenceRelatedField(queryset=Neighborhood.objects.all(),
+                                                   serializer=NeighborhoodSummarySerializer)
     overall_score = serializers.FloatField(read_only=True)
+
+    def get_logs_url(self, obj):
+        return obj.logs_url
 
     def get_running_time(self, obj):
         return obj.running_time
@@ -22,9 +106,6 @@ class AnalysisJobSerializer(PFBModelSerializer):
     def get_status(self, obj):
         return obj.status
 
-    def get_neighborhood_label(self, obj):
-        return obj.neighborhood.label
-
     class Meta:
         model = AnalysisJob
         exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'overall_scores',
@@ -32,12 +113,3 @@ class AnalysisJobSerializer(PFBModelSerializer):
                    '_analysis_job_name', '_tilemaker_job_name',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'batch_job_id', 'batch', 'census_block_count',)
-
-
-class NeighborhoodSerializer(PFBModelSerializer):
-
-    class Meta:
-        model = Neighborhood
-        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'geom',)
-        read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                            'organization', 'name',)

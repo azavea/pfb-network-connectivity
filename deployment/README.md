@@ -30,6 +30,7 @@ You will be prompted to enter your AWS credentials, along with a default region.
 If you're deploying new application code, first set the commit to deploy, then build and push containers:
 ```bash
 vagrant@vagrant-ubuntu-trusty-64:~$ export GIT_COMMIT="<short-commit-to-deploy>"
+vagrant@vagrant-ubuntu-trusty-64:~$ export ENVIRONMENT="staging|production"
 vagrant@vagrant-ubuntu-trusty-64:~$ export PFB_AWS_ECR_ENDPOINT="<aws-account-id>.dkr.ecr.us-east-1.amazonaws.com"
 vagrant@vagrant-ubuntu-trusty-64:~$ ./scripts/cibuild && ./scripts/cipublish
 ```
@@ -37,7 +38,7 @@ vagrant@vagrant-ubuntu-trusty-64:~$ ./scripts/cibuild && ./scripts/cipublish
 Next, use the `infra` wrapper script to lookup the remote state of the infrastructure and assemble a plan for work to be done:
 
 ```bash
-vagrant@vagrant-ubuntu-trusty-64:~$ export PFB_SETTINGS_BUCKET="staging-pfb-config-us-east-1"
+vagrant@vagrant-ubuntu-trusty-64:~$ export PFB_SETTINGS_BUCKET="${ENVIRONMENT}-pfb-config-us-east-1"
 vagrant@vagrant-ubuntu-trusty-64:~$ ./scripts/infra plan
 ```
 

@@ -59,6 +59,7 @@ ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS community_centers_s
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS transit_low_stress;
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS transit_high_stress;
 ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS transit_score;
+ALTER TABLE neighborhood_census_blocks DROP COLUMN IF EXISTS overall_score;
 
 ALTER TABLE neighborhood_census_blocks ADD COLUMN road_ids INTEGER[];
 ALTER TABLE neighborhood_census_blocks ADD COLUMN pop_low_stress INT;
@@ -109,6 +110,7 @@ ALTER TABLE neighborhood_census_blocks ADD COLUMN community_centers_score FLOAT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN transit_low_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN transit_high_stress INT;
 ALTER TABLE neighborhood_census_blocks ADD COLUMN transit_score FLOAT;
+ALTER TABLE neighborhood_census_blocks ADD COLUMN overall_score FLOAT;
 
 -- indexes
 CREATE INDEX IF NOT EXISTS idx_neighborhood_blocks10 ON neighborhood_census_blocks (blockid10);

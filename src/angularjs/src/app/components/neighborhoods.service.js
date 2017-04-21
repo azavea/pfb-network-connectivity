@@ -21,6 +21,11 @@
                 params: {
                     limit: 'all'
                 }
+            },
+            'geojson': {
+                method: 'GET',
+                isArray: false,
+                url: '/api/neighborhoods_geojson/'
             }
         });
     }

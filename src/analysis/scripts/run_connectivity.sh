@@ -12,7 +12,7 @@ NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
-NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-3300}"
+NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 TOLERANCE_COLLEGES="${TOLERANCE_COLLEGES:-100}"         # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_COMM_CTR="${TOLERANCE_COMM_CTR:-50}"          # cluster tolerance given in units of $NB_OUTPUT_SRID
 TOLERANCE_DOCTORS="${TOLERANCE_DOCTORS:-50}"            # cluster tolerance given in units of $NB_OUTPUT_SRID
@@ -27,6 +27,13 @@ MIN_PATH_LENGTH="${MIN_PATH_LENGTH:-4800}"              # minimum path length to
 MIN_PATH_BBOX="${MIN_PATH_BBOX:-3300}"                  # minimum corner-to-corner span of path bounding box to be considered for recreation access
 BLOCK_ROAD_BUFFER="${BLOCK_ROAD_BUFFER:-15}"            # buffer distance to find roads associated with a block
 BLOCK_ROAD_MIN_LENGTH="${BLOCK_ROAD_MIN_LENGTH:-30}"    # minimum length road must overlap with block buffer to be associated
+SCORE_TOTAL="${SCORE_TOTAL:-100}"
+SCORE_PEOPLE="${SCORE_PEOPLE:-15}"
+SCORE_OPPORTUNITY="${SCORE_OPPORTUNITY:-20}"
+SCORE_CORESVCS="${SCORE_CORESVCS:-20}"
+SCORE_RETAIL="${SCORE_CORESVCS:-15}"
+SCORE_RECREATION="${SCORE_RECREATION:-15}"
+SCORE_TRANSIT="${SCORE_TRANSIT:-15}"
 
 # Limit custom output formatting for `time` command
 export TIME="\nTIMING: %C\nTIMING:\t%E elapsed %Kkb mem\n"
@@ -84,6 +91,13 @@ update_status "CONNECTIVITY" "Connected census blocks"
 
 update_status "METRICS" "Access: population"
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v max_score=1 \
+  -v step1=0.03 \
+  -v score1=0.1 \
+  -v step2=0.2 \
+  -v score2=0.4 \
+  -v step3=0.5 \
+  -v score3=0.8 \
   -f ../connectivity/access_population.sql
 
 update_status "METRICS" "Access: jobs"
@@ -91,6 +105,13 @@ update_status "METRICS" "Access: jobs"
   -f ../connectivity/census_block_jobs.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v max_score=1 \
+  -v step1=0.03 \
+  -v score1=0.1 \
+  -v step2=0.2 \
+  -v score2=0.4 \
+  -v step3=0.5 \
+  -v score3=0.8 \
   -f ../connectivity/access_jobs.sql
 
 update_status "METRICS" "Destinations"
@@ -158,108 +179,125 @@ update_status "METRICS" "Destinations"
 
 update_status "METRICS" "Access: colleges"
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=7 \
+  -v first=0.7 \
   -v second=0 \
   -v third=0 \
-  -v max_score=10 \
+  -v max_score=1 \
   -f ../connectivity/access_colleges.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=4 \
-  -v second=2 \
-  -v third=1 \
-  -v max_score=10 \
+  -v first=0.4 \
+  -v second=0.2 \
+  -v third=0.1 \
+  -v max_score=1 \
   -f ../connectivity/access_community_centers.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=4 \
-  -v second=2 \
-  -v third=1 \
-  -v max_score=10 \
+  -v first=0.4 \
+  -v second=0.2 \
+  -v third=0.1 \
+  -v max_score=1 \
   -f ../connectivity/access_doctors.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=4 \
-  -v second=2 \
-  -v third=1 \
-  -v max_score=10 \
+  -v first=0.4 \
+  -v second=0.2 \
+  -v third=0.1 \
+  -v max_score=1 \
   -f ../connectivity/access_dentists.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=7 \
+  -v first=0.7 \
   -v second=0 \
   -v third=0 \
-  -v max_score=10 \
+  -v max_score=1 \
   -f ../connectivity/access_hospitals.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=4 \
-  -v second=2 \
-  -v third=1 \
-  -v max_score=10 \
+  -v first=0.4 \
+  -v second=0.2 \
+  -v third=0.1 \
+  -v max_score=1 \
   -f ../connectivity/access_pharmacies.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=3 \
-  -v second=2 \
-  -v third=2 \
-  -v max_score=10 \
+  -v first=0.3 \
+  -v second=0.2 \
+  -v third=0.2 \
+  -v max_score=1 \
   -f ../connectivity/access_parks.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=4 \
-  -v second=2 \
-  -v third=1 \
-  -v max_score=10 \
+  -v first=0.4 \
+  -v second=0.2 \
+  -v third=0.1 \
+  -v max_score=1 \
   -f ../connectivity/access_retail.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=3 \
-  -v second=2 \
-  -v third=2 \
-  -v max_score=10 \
+  -v first=0.3 \
+  -v second=0.2 \
+  -v third=0.2 \
+  -v max_score=1 \
   -f ../connectivity/access_schools.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=7 \
+  -v first=0.7 \
   -v second=0 \
   -v third=0 \
-  -v max_score=10 \
+  -v max_score=1 \
   -f ../connectivity/access_social_services.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=6 \
-  -v second=2 \
+  -v first=0.6 \
+  -v second=0.2 \
   -v third=0 \
-  -v max_score=10 \
+  -v max_score=1 \
   -f ../connectivity/access_supermarkets.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=7 \
-  -v second=2 \
+  -v first=0.7 \
+  -v second=0.2 \
   -v third=0 \
-  -v max_score=10 \
+  -v max_score=1 \
   -v min_path_length="${MIN_PATH_LENGTH}" \
   -v min_bbox_length="${MIN_PATH_BBOX}" \
   -f ../connectivity/access_trails.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=6 \
+  -v first=0.6 \
   -v second=0 \
   -v third=0 \
-  -v max_score=10 \
+  -v max_score=1 \
   -f ../connectivity/access_transit.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-  -v first=7 \
+  -v first=0.7 \
   -v second=0 \
   -v third=0 \
-  -v max_score=10 \
+  -v max_score=1 \
   -f ../connectivity/access_universities.sql
+
+/usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v total=${SCORE_TOTAL} \
+  -v people=${SCORE_PEOPLE} \
+  -v opportunity=${SCORE_OPPORTUNITY} \
+  -v core_services=${SCORE_CORESVCS} \
+  -v retail=${SCORE_RETAIL} \
+  -v recreation=${SCORE_RECREATION} \
+  -v transit=${SCORE_TRANSIT} \
+  -f ../connectivity/access_overall.sql
 
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
   -f ../connectivity/score_inputs.sql
 
 update_status "METRICS" "Overall scores"
 /usr/bin/time psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+  -v total=${SCORE_TOTAL} \
+  -v people=${SCORE_PEOPLE} \
+  -v opportunity=${SCORE_OPPORTUNITY} \
+  -v core_services=${SCORE_CORESVCS} \
+  -v retail=${SCORE_RETAIL} \
+  -v recreation=${SCORE_RECREATION} \
+  -v transit=${SCORE_TRANSIT} \
   -f ../connectivity/overall_scores.sql

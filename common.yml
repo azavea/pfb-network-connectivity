@@ -14,7 +14,6 @@ services:
       - PFB_DB_PORT=5432
       - PFB_DB_USER=pfb
       - PFB_SECRET_KEY=secret
-      - PFB_AWS_BATCH_COMPUTE_ENVIRONMENT_ARN
       - PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME
       - PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION
       - PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME
@@ -22,7 +21,4 @@ services:
       - PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION
       - PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME
     volumes:
-      - ./data:/data
-      - ./src/django:/usr/src
-      - ./src/nginx/srv/static:/static/
       - $HOME/.aws:/root/.aws:ro

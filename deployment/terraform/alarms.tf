@@ -9,7 +9,7 @@ resource "aws_sns_topic" "global" {
 
 resource "aws_cloudwatch_metric_alarm" "ecs_cpu_util" {
   alarm_name          = "alarm${var.environment}ECSCPUUtilization"
-  alarm_description   = "Container service CPU utilization"
+  alarm_description   = "App Container service CPU utilization"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "CPUUtilization"
@@ -19,7 +19,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_util" {
   threshold           = "75"
 
   dimensions {
-    ClusterName = "${aws_ecs_cluster.container_instance.name}"
+    ClusterName = "${aws_ecs_cluster.app_container_instance.name}"
   }
 
   alarm_actions = ["${aws_sns_topic.global.arn}"]
@@ -27,7 +27,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_util" {
 
 resource "aws_cloudwatch_metric_alarm" "ecs_memory_util" {
   alarm_name          = "alarm${var.environment}ECSMemoryUtilization"
-  alarm_description   = "Container service memory utilization"
+  alarm_description   = "App Container service memory utilization"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
   metric_name         = "MemoryUtilization"
@@ -37,7 +37,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_util" {
   threshold           = "80"
 
   dimensions {
-    ClusterName = "${aws_ecs_cluster.container_instance.name}"
+    ClusterName = "${aws_ecs_cluster.app_container_instance.name}"
   }
 
   alarm_actions = ["${aws_sns_topic.global.arn}"]

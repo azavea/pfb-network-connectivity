@@ -43,7 +43,7 @@
                 Organization.save(ctl.org).$promise.then(function(org) {
                     ctl.org = org;
                     toastr.success('Organization created.');
-                    $state.go('organizations.list');
+                    $state.go('admin.organizations.list');
                 }, function() {
                     toastr.error('Error creating organization.');
                 });

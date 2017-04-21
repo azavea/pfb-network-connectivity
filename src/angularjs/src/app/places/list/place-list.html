@@ -1,0 +1,122 @@
+<pfb-navbar></pfb-navbar>
+
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+    <!-- Everything in .sidebar-header will not scroll.  -->
+    <div class="sidebar-header">
+        <h2 class="sidebar-title">City/Town Search</h2>
+        <div class="row">
+            <div class="column">
+                <div class="form-group">
+                    <label for="neighborhood-filter">Filter by city or town name</label>
+                    <ui-select
+                        name="neighborhood-filter"
+                        ng-model="placeList.neighborhoodFilter"
+                        title="Filter by Neighborhood">
+
+                        <ui-select-match allow-clear="true" placeholder="Neighborhood" >
+                            {{$select.selected.label}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="neighborhood.uuid as neighborhood in
+                                                   placeList.allNeighborhoods |
+                                                   filter: {label : $select.search}">
+                            <div ng-bind-html="neighborhood.label | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column-7">
+                <div class="form-group">
+                    <label for="sort-options">Sort by</label>
+                    <select name="sort-options" class="form-control"
+                        ng-options="item as item.label for item in placeList.sortingOptions track by item.value"
+                        ng-model="placeList.sortBy"
+                        ng-change="placeList.getPlaces()">
+                    </select>
+                </div>
+            </div>
+            <div class="column">
+
+                <!-- Compare dropdown -->
+                <div class="form-group">
+                    <label for="3">Compare</label>
+                    <div class="dropdown">
+                      <button class="btn btn-default dropdown-toggle btn-block" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        3 Selected
+                        <span class="caret"></span>
+                      </button>
+
+                      <!-- We are using bootstraps dropdown js -->
+                      <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdownMenu1">
+
+                        <!-- Only up to 3 to compare. Duplicate li and children for each item -->
+                        <li>
+                            <div class="compare-title">Los Angeles, California</div>
+                            <div class="network-score small">90</div>
+                            <a href="#" class="compare-remove">Remove</a>
+                        </li>
+                        <li>
+                            <div class="compare-title">Los Angeles, California</div>
+                            <div class="network-score small">90</div>
+                            <a href="#" class="compare-remove">Remove</a>
+                        </li>
+                        <li><a href="/compare.html" class="compare-btn">Compare Neighborhoods</a></li>
+                      </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Everythign in sidebar-scrollable will scroll.
+            #scrollHeaders makes the jquery for sticky headers work.
+
+            The stick headers are probably only needed when sorting alphabetically. -->
+    <div class="sidebar-scrollable" id="scrollHeaders">
+
+        <section>
+            <!-- Duplicate .result div for each result. -->
+            <div class="result" ng-repeat="neighborhood in placeList.places">
+                <a ui-sref="places.detail({uuid: '{{neighborhood.uuid}}' })" class="result-link"></a>
+                <div class="result-left">
+
+                    <!-- .result-preview should display the shapefile preview -->
+                    <div class="result-preview">
+                        <img src="http://placehold.it/75" alt="Shape Preview">
+                    </div>
+                    <div class="result-title">{{neighborhood.label}}, {{neighborhood.state_abbrev}}
+                        <div class="location-timestamp"><span>Last updated:</span> {{neighborhood.modifiedAt | date:'MMMM dd, yyyy'}}</div>
+                    </div>
+                </div>
+                <div class="result-right">
+                    <div class="network-score">{{neighborhood.overall_score | number:0}}</div>
+                    <div class="compare">
+                        <button class="btn btn-toggle active">Compare <span></span></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pagintation -->
+        <section class="paginate">
+            <button class="btn btn-default paginate-previous"
+                ng-click="placeList.getPrev()"
+                ng-disabled="!placeList.hasPrev">Previous</button>
+            <button class="btn btn-default paginate-previous"
+                ng-click="placeList.getNext()"
+                ng-disabled="!placeList.hasNext">Next</button>
+        </section>
+        <!-- Pagintation -->
+    </div>
+</div>
+<!-- Sidebar -->
+
+<!-- Map -->
+<div class="preview-map">
+    <div class="map"></div>
+</div>
+<!-- Map -->

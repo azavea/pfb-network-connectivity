@@ -1,0 +1,20 @@
+.container {
+	width: 100%;
+	max-width: 970px;
+	margin: auto;
+
+  @include respond-to('sm-down') {
+    padding: 0 1rem;
+  }
+}
+
+.container-small {
+  width: 100%;
+  max-width: 960px;
+  margin: auto;
+
+  @include respond-to('sm-down') {
+    padding: 1rem;
+  }
+}
+

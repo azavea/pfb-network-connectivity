@@ -1,45 +1,39 @@
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" ui-sref="analysis-jobs.list">
-        <img class="logo" src="assets/images/logo-pfb.png" alt="PfB Logo">
+<div class="navbar">
+  <div class="container">
+    <!-- Logo area -->
+    <div class="navbar-left">
+      <a ui-sref="home" class="brand">
+        <img ng-if="navbar.hideName" src="assets/images/placesforbikes-icon.png" alt="Places for bikes">
+        <img ng-if="!navbar.hideName" src="assets/images/placesforbikes-logo-white.png" alt="Places for bikes">
       </a>
     </div>
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav navbar-right">
-        <li ui-sref-active="active">
-          <a ui-sref="help">Help</a>
-        </li>
-        <li ui-sref-active="{'active': 'analysis-jobs'}">
-          <a ui-sref="analysis-jobs.list">Jobs</a>
-        </li>
-        <li ui-sref-active="{'active': 'neighborhoods'}">
-          <a ui-sref="neighborhoods.list">Neighborhoods</a>
-        </li>
-        <li ui-sref-active="{'active': 'users'}">
-          <a ng-if="navbar.isAdminUser" ui-sref="users.list">User Management</a>
-        </li>
-        <li ng-if="navbar.isAdminUser && navbar.isAdminOrg" ui-sref-active="{'active': 'organizations'}">
-          <a ng-if="navbar.isAdminUser" ui-sref="organizations.list">Org Management</a>
-        </li>
-        <li uib-dropdown class="dropdown"
-            ng-mouseenter="status.isopen = true" and ng-mouseleave="status.isopen = false"
-            is-open="status.isopen">
-          <a  uib-dropdown-toggle role="button">{{navbar.userName}}<span class="caret"></span></a>
-          <ul uib-dropdown-menu class="dropdown-menu">
-            <li><a ui-sref="users.edit({uuid: navbar.userUuid})">Account Settings</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a ui-sref="login" ng-click="navbar.logout()">Sign Out</a></li>
-          </ul>
-        </li>
-      </ul>
+    <!-- Logo area -->
+    <div class="navbar-right">
+      <nav>
+        <span ng-if="!navbar.admin">
+          <a ui-sref="places.list">All locations</a>
+          <a href="#">About</a>
+          <a href="#">Methodology</a>
+          <a href="http://www.peopleforbikes.org/" target="_blank">People for bikes</a>
+        </span>
+        <span ng-if="navbar.admin">
+          <a ui-sref="admin.help">Help</a>
+          <a ui-sref="admin.analysis-jobs.list">Jobs</a>
+          <a ui-sref="admin.neighborhoods.list">Neighborhoods</a>
+          <a ng-if="navbar.isAdminUser" ui-sref="admin.users.list">User Management</a>
+          <a ng-if="navbar.isAdminUser" ui-sref="admin.organizations.list">Org Management</a>
+          <span uib-dropdown class="dropdown"
+              ng-mouseenter="status.isopen = true" and ng-mouseleave="status.isopen = false"
+              is-open="status.isopen">
+            <a uib-dropdown-toggle role="button">{{navbar.userName}}<span class="caret"></span></a>
+            <ul uib-dropdown-menu class="dropdown-menu">
+              <li><a ui-sref="admin.users.edit({uuid: navbar.userUuid})">Account Settings</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a ui-sref="login" ng-click="navbar.logout()">Sign Out</a></li>
+            </ul>
+          </span>
+        </span>
+      </nav>
     </div>
   </div>
-</nav>
+</div>

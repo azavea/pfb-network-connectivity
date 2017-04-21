@@ -4,5 +4,6 @@
     angular.module('pfb.components',
                    ['pfb.components.analysis-jobs',
                     'pfb.components.auth',
-                    'pfb.components.filters']);
+                    'pfb.components.filters',
+                    'pfb.components.map']);
 })();
