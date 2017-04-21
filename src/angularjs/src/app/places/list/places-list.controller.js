@@ -72,7 +72,7 @@
             params = params || _.merge({}, $stateParams, defaultParams);
             params.ordering = ctl.sortBy.value;
             if (ctl.neighborhoodFilter) {
-                params.neighborhood = ctl.neighborhoodFilter;
+                params.neighborhood = ctl.neighborhoodFilter.uuid;
             }
 
             AnalysisJob.query(params).$promise.then(function(data) {
