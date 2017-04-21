@@ -7,7 +7,13 @@
         ctl.map = null;
 
         ctl.$onInit = function () {
-            ctl.mapOptions = { scrollWheelZoom: false, interactive: false };
+            ctl.mapOptions = {
+                scrollWheelZoom: false,
+                interactive: false,
+                zoomControl: false,
+                attributionControl: false
+            };
+
             ctl.mapCenter = [39.963277, -75.142971];
             ctl.baselayer = L.tileLayer(
                 'https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
