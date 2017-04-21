@@ -61,7 +61,8 @@ class Neighborhood(PFBModel):
                                      related_name='neighborhoods',
                                      on_delete=models.CASCADE)
     state_abbrev = USStateField(help_text='The US state of the uploaded neighborhood')
-    boundary_file = models.FileField(upload_to=get_neighborhood_file_upload_path,
+    boundary_file = models.FileField(max_length=1024,
+                                     upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
                                                'bike network analysis on')
 
