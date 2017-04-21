@@ -4,7 +4,7 @@
   position: relative;
   height: 100%;
   display: flex;
-  
+
   @include respond-to(sm-down) {
     flex-direction: column;
   }
@@ -42,6 +42,7 @@
 .card-map {
   flex-basis: none;
   width: 200px;
+  height: 100%;
   position: relative;
 
   @include respond-to(sm-down) {
