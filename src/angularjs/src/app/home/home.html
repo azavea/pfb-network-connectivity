@@ -26,7 +26,9 @@
             <div class="column-6" ng-repeat="city in home.cities">
                 <div class="card">
                     <a ui-sref="places.detail({uuid: '{{city.uuid}}' })" class="card-link"></a>
-                    <pfb-thumbnail-map></pfb-thumbnail-map>
+                    <div class="card-map">
+                        <pfb-thumbnail-map></pfb-thumbnail-map>
+                    </div>
                     <div class="card-details">
                         <h3>{{city.label}}</h3>
                         <h4>{{city.state_abbrev}}</h4>

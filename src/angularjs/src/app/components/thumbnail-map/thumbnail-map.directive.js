@@ -14,6 +14,7 @@
                 attributionControl: false
             };
 
+            // TODO: set center and zoom level by zooming to fit geojson polygon bounds
             ctl.mapCenter = [39.963277, -75.142971];
             ctl.baselayer = L.tileLayer(
                 'https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
