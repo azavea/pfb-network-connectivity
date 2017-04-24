@@ -23,45 +23,18 @@
 
             <!-- If you duplicate the .column-6 divs
                      and children the layout will adjust. -->
-            <div class="column-6">
+            <div class="column-6" ng-repeat="city in home.cities">
                 <div class="card">
-                    <a href="/town.html" class="card-link"></a>
+                    <a ui-sref="places.detail({uuid: '{{city.uuid}}' })" class="card-link"></a>
                     <div class="card-map">
                         <div class="map"></div>
                     </div>
                     <div class="card-details">
-                        <h3>City/Town Name</h3>
-                        <h4>State</h4>
-                        <div class="network-score large">90</div>
-                        <div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
-                    </div>
-                </div>
-            </div>
-            <div class="column-6">
-                <div class="card">
-                    <a href="/town.html" class="card-link"></a>
-                    <div class="card-map">
-                        <div class="map"></div>
-                    </div>
-                    <div class="card-details">
-                        <h3>City/Town Name</h3>
-                        <h4>State</h4>
-                        <div class="network-score large">90</div>
-                        <div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
-                    </div>
-                </div>
-            </div>
-            <div class="column-6">
-                <div class="card">
-                    <a href="/town.html" class="card-link"></a>
-                    <div class="card-map">
-                        <div class="map"></div>
-                    </div>
-                    <div class="card-details">
-                        <h3>City/Town Name</h3>
-                        <h4>State</h4>
-                        <div class="network-score large">90</div>
-                        <div class="location-timestamp"><span>Last updated:</span> August 12, 2017</div>
+                        <h3>{{city.label}}</h3>
+                        <h4>{{city.state_abbrev}}</h4>
+                        <div class="network-score large">{{city.overall_score | number:0}}</div>
+                        <div class="location-timestamp"><span>Last updated:</span>
+                            {{city.modifiedAt | date:'MMMM dd, yyyy'}}</div>
                     </div>
                 </div>
             </div>
