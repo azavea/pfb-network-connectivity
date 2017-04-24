@@ -60,13 +60,13 @@
                             return;
                         }
 
-                        // TODO: sort in some order so they will line up
-                        ctl.places[num].jobResults = _.map(results.overall_scores, function(obj, key) {
+                        // sort alphabetically by metric name so they will line up by row
+                        ctl.places[num].jobResults = _(results.overall_scores).map(function(obj, key) {
                             return {
                                 metric: key.replace(/_/g, ' '),
                                 score: obj.score_normalized
                             };
-                        });
+                        }).sortBy(function(result) { return result.metric; }).value();
                     });
                 }
             });
