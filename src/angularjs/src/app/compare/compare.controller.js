@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function CompareController($stateParams, Neighborhood, AnalysisJob, $log) {
+    function CompareController($stateParams, Neighborhood, AnalysisJob, $log, $location) {
         var ctl = this;
 
         initialize();
@@ -18,6 +18,7 @@
         function initialize() {
             ctl.places = [null, null, null];
             ctl.getPlace = getPlace;
+            ctl.clearSelection = clearSelection;
 
             $log.debug('place one: ');
             $log.debug($stateParams.place1);
@@ -59,6 +60,7 @@
                             return;
                         }
 
+                        // TODO: sort in some order so they will line up
                         ctl.places[num].jobResults = _.map(results.overall_scores, function(obj, key) {
                             return {
                                 metric: key.replace(/_/g, ' '),
@@ -68,6 +70,19 @@
                     });
                 }
             });
+        }
+
+        function clearSelection(num) {
+            var path = '/compare/';
+            if (num === 0) {
+                path += '/' + $stateParams.place2 + '/' + $stateParams.place3;
+            } else if (num === 1) {
+                path += $stateParams.place1 + '//' + $stateParams.place3;
+            } else {
+                path += $stateParams.place1 + '/' + $stateParams.place2 + '/';
+            }
+            $log.debug(path);
+            $location.path(path);
         }
     }
 
