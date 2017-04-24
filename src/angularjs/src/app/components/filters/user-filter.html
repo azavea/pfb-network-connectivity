@@ -3,14 +3,11 @@
     <th>Name</th>
     <th>
         <div class="dropdown user">
-            <ui-select ng-model="ctl.organizationFilter" title="Filter by Organization">
-                <ui-select-match allow-clear="true" placeholder="Organization" >
-                    {{$select.selected.name}}
-                </ui-select-match>
-                <ui-select-choices repeat="org.uuid as org in ctl.organizations | filter: { label: $select.search }">
-                    <div ng-bind-html="org.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <input ng-model="ctl.organizationFilter" title="Filter by Organization"
+            placeholder="Organization" type="text" class="form-control"
+            uib-typeahead="org as org.name for org in ctl.organizations |
+                           filter: $viewValue |
+                           limitTo: 8">
         </div>
     </th>
     <th>

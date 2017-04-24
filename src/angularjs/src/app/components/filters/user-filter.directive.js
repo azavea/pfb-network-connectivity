@@ -31,7 +31,7 @@
             }
             ctl.filters = {
                 role: UserRoles.roleFilters[newFilter],
-                organization: ctl.organizationFilter
+                organization: ctl.organizationFilter ? ctl.organizationFilter.uuid : null
             };
 
         }
@@ -42,7 +42,7 @@
             }
             ctl.filters = {
                 role: UserRoles.roleFilters[ctl.roleFilter],
-                organization: newFilter
+                organization: newFilter ? newFilter.uuid : null
             };
         }
     }
