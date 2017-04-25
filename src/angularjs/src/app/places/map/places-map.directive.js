@@ -1,9 +1,10 @@
 (function() {
 
     /* @ngInject */
-    function PlacesMapController($log, $scope) {
+    function PlacesMapController($filter, $http, $sanitize, $scope) {
         var ctl = this;
         ctl.map = null;
+        ctl.layerControl = null;
 
         ctl.$onInit = function () {
             ctl.mapOptions = {
@@ -24,18 +25,77 @@
         ctl.onMapReady = function (map) {
             ctl.map = map;
 
-            $log.debug('ready!');
-            $log.debug(ctl.pfbPlacesMapLayers);
-
             if (ctl.pfbPlacesMapLayers) {
                 setLayers(ctl.pfbPlacesMapLayers);
             }
         };
 
         function setLayers(layers) {
-            $log.debug('setLayers');
-            $log.debug(layers);
-            //$log.debug(ctl.pfbPlacesMapLayers);
+            if (!layers) {
+                return;
+            }
+
+            if (!ctl.layerControl) {
+                ctl.layerControl = L.control.layers({'Stamen': ctl.baselayer}, []).addTo(ctl.map);
+            }
+
+            _.map(layers, function(url, metric) {
+                var label = $sanitize(metric.replace(/_/g, ' '));
+                $http.get(url).then(function(response) {
+                    if (response.data && response.data.features) {
+                        var layer = L.geoJSON(response.data, {
+                            onEachFeature: onEachFeature
+                        });
+                        ctl.layerControl.addOverlay(layer, label);
+                    }
+                });
+            });
+
+            function onEachFeature(feature, layer) {
+                // TODO: Style marker and popup
+                layer.on({
+                    click: function () {
+                        if (feature && feature.geometry &&
+                            feature.geometry.coordinates) {
+                            var popup = L.popup()
+                                .setLatLng([
+                                    feature.geometry.coordinates[1],
+                                    feature.geometry.coordinates[0]
+                                ])
+                                .setContent(buildLabel(feature.properties));
+                            ctl.map.openPopup(popup);
+                        }
+                    }
+                });
+            }
+
+            /**
+             Convert GeoJSON properties into HTML snippet for Leaflet popup display.
+             */
+            function buildLabel(properties) {
+
+                // omit some less-useful properties
+                var ignore = ['blockid10', 'osm_id'];
+                properties = _.omitBy(properties, function(val, key) {
+                    return _.find(ignore, function(i) {return i === key;});
+                });
+
+                var snippet = '<ul>';
+                snippet += _.map(properties, function(val, key) {
+                    // humanize numbers: round to 3 digits and add commas
+                    if (Number.parseFloat(val)) {
+                        val = $filter('number')(val);
+                    }
+                    return ['<li>',
+                            key.replace(/_/g, ' '),
+                            ': ',
+                            (val ? val : '--'),
+                            '</li>'
+                            ].join('');
+                }).join('');
+                snippet += '</ul>';
+                return $sanitize(snippet);
+            }
         }
     }
 

@@ -54,9 +54,7 @@
 
                 if (lastJob) {
                     AnalysisJob.results({uuid: lastJob.uuid}).$promise.then(function(results) {
-                        $log.debug(results);
                         ctl.mapLayers = results.destinations_urls;
-                        $log.debug(ctl.mapLayers);
                         if (results.overall_scores) {
                             ctl.jobResults = _.map(results.overall_scores, function(obj, key) {
                                 return {
