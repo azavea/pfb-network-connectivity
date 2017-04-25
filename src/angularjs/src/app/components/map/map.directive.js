@@ -9,7 +9,7 @@
 
         ctl.$onChanges = function (changes) {
             ctl.updateMapOptions(changes);
-        }
+        };
 
         ctl.$postLink = function () {
             ctl.map = L.map(ctl.mapHTMLElement, ctl.pfbMapOptions);
@@ -20,7 +20,7 @@
                 pfbMapBaselayer: { currentValue: ctl.pfbMapBaselayer }
             });
             ctl.pfbMapReady({map: ctl.map});
-        }
+        };
 
         ctl.updateMapOptions = function (changes) {
             if (ctl.map) {
@@ -43,7 +43,7 @@
                     ctl.map.addLayer(ctl.baselayer);
                 }
             }
-        }
+        };
     }
 
     function PFBMapDirective() {
