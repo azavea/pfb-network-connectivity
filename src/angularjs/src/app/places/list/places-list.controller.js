@@ -24,7 +24,8 @@
         var defaultParams = {
             limit: null,
             offset: null,
-            latest: 'True'
+            latest: 'True',
+            status: 'COMPLETE'
         };
         var nextParams = {};
         var prevParams = {};
