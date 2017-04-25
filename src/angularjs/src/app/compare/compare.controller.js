@@ -20,13 +20,6 @@
             ctl.getPlace = getPlace;
             ctl.clearSelection = clearSelection;
 
-            $log.debug('place one: ');
-            $log.debug($stateParams.place1);
-            $log.debug('place two: ');
-            $log.debug($stateParams.place2);
-            $log.debug('place three: ');
-            $log.debug($stateParams.place3);
-
             getPlace(0, $stateParams.place1);
             getPlace(1, $stateParams.place2);
             getPlace(2, $stateParams.place3);
@@ -81,7 +74,6 @@
             } else {
                 path += $stateParams.place1 + '/' + $stateParams.place2 + '/';
             }
-            $log.debug(path);
             $location.path(path);
         }
     }
