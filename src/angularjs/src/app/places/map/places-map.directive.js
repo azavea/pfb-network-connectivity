@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlacesMapController($log) {
+    function PlacesMapController($log, $scope) {
         var ctl = this;
         ctl.map = null;
 
@@ -17,19 +17,34 @@
                     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
                     maxZoom: 18
                 });
+
+            $scope.$watch(function(){return ctl.pfbPlacesMapLayers;}, setLayers);
         };
 
         ctl.onMapReady = function (map) {
             ctl.map = map;
 
             $log.debug('ready!');
+            $log.debug(ctl.pfbPlacesMapLayers);
+
+            if (ctl.pfbPlacesMapLayers) {
+                setLayers(ctl.pfbPlacesMapLayers);
+            }
         };
+
+        function setLayers(layers) {
+            $log.debug('setLayers');
+            $log.debug(layers);
+            //$log.debug(ctl.pfbPlacesMapLayers);
+        }
     }
 
     function PlacesMapDirective() {
         var module = {
             restrict: 'E',
-            scope: true,
+            scope: {
+                pfbPlacesMapLayers: '='
+            },
             controller: 'PlacesMapController',
             controllerAs: 'ctl',
             bindToController: true,

@@ -26,6 +26,7 @@
             ctl.place = null;
             ctl.lastJobScore = null;
             ctl.jobResults = null;
+            ctl.mapLayers = {};
             ctl.getPlace = getPlace;
 
             ctl.downloads = null;
@@ -40,6 +41,7 @@
 
             AnalysisJob.query({neighborhood: uuid, latest: 'True'}).$promise.then(function(data) {
 
+                ctl.mapLayers = {};
                 if (!data.results || !data.results.length) {
                     $log.warn('no matching analysis job found for neighborhood ' + uuid);
                     ctl.lastJobScore = null;
@@ -52,6 +54,9 @@
 
                 if (lastJob) {
                     AnalysisJob.results({uuid: lastJob.uuid}).$promise.then(function(results) {
+                        $log.debug(results);
+                        ctl.mapLayers = results.destinations_urls;
+                        $log.debug(ctl.mapLayers);
                         if (results.overall_scores) {
                             ctl.jobResults = _.map(results.overall_scores, function(obj, key) {
                                 return {
