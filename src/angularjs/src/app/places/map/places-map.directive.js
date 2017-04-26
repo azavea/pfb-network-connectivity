@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlacesMapController($filter, $http, $sanitize, $scope) {
+    function PlacesMapController($filter, $http, $sanitize) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -18,13 +18,19 @@
                     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
                     maxZoom: 18
                 });
+        };
 
-            $scope.$watch(function(){return ctl.pfbPlacesMapLayers;}, setLayers);
+        ctl.$onChanges = function(changes) {
+            // set map layers once received from parent scope (paret-detail.controller)
+            if (changes.pfbPlacesMapLayers && changes.pfbPlacesMapLayers.currentValue && ctl.map) {
+                setLayers(changes.pfbPlacesMapLayers.currentValue);
+            }
         };
 
         ctl.onMapReady = function (map) {
             ctl.map = map;
 
+            // in case map layers set before map was ready, add layers now map is ready to go
             if (ctl.pfbPlacesMapLayers) {
                 setLayers(ctl.pfbPlacesMapLayers);
             }
@@ -103,7 +109,7 @@
         var module = {
             restrict: 'E',
             scope: {
-                pfbPlacesMapLayers: '='
+                pfbPlacesMapLayers: '<'
             },
             controller: 'PlacesMapController',
             controllerAs: 'ctl',
