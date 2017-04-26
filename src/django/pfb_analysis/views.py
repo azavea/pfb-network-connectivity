@@ -19,7 +19,8 @@ from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnl
 from .models import AnalysisJob, Neighborhood
 from .serializers import (AnalysisJobSerializer,
                           NeighborhoodSerializer,
-                          NeighborhoodGeoJsonSerializer)
+                          NeighborhoodGeoJsonSerializer,
+                          NeighborhoodBoundsGeoJsonSerializer)
 from .filters import AnalysisJobFilterSet
 
 
@@ -88,6 +89,13 @@ class NeighborhoodViewSet(NeighborhoodMixin, ModelViewSet):
         if serializer.is_valid():
             serializer.save(organization=self.request.user.organization,
                             name=slugify(serializer.validated_data['label']))
+
+
+class NeighborhoodBoundsGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
+    """For retrieving neighborhood centroids as GeoJSON feature collection."""
+
+    serializer_class = NeighborhoodBoundsGeoJsonSerializer
+    pagination_class = None
 
 
 class NeighborhoodGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
