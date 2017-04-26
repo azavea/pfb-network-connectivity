@@ -4,7 +4,7 @@
     "parameters": {},
     "containerProperties": {
         "image": "{image}",
-        "vcpus": 8,
+        "vcpus": 7,
         "memory": 30720,
         "command": [
             "/pfb/scripts/entrypoint.sh"
