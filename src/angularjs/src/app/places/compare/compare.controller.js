@@ -68,11 +68,11 @@
         function clearSelection(num) {
             var newParams = _.extend({}, $stateParams);
             newParams['place' + (num + 1)] = '';
-            $state.go('compare', newParams);
+            $state.go('places.compare', newParams);
         }
     }
 
     angular
-        .module('pfb.compare')
+        .module('pfb.places.compare')
         .controller('CompareController', CompareController);
 })();

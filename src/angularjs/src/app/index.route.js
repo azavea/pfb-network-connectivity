@@ -31,11 +31,11 @@
                 controllerAs: 'placeDetail',
                 templateUrl: 'app/places/detail/places-detail.html'
             })
-            .state('compare', {
-                url: '/compare/:place1/:place2/:place3',
+            .state('places.compare', {
+                url: ':compare/:place1/:place2/:place3/',
                 controller: 'CompareController',
                 controllerAs: 'compare',
-                templateUrl: 'app/compare/compare.html'
+                templateUrl: 'app/places/compare/compare.html'
             })
             .state('login', {
                 url: '/login/',
