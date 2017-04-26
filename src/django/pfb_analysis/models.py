@@ -31,6 +31,10 @@ from .functions import ObjectAtPath
 
 logger = logging.getLogger(__name__)
 
+# degree to which to simplify boundaries
+# https://docs.djangoproject.com/en/1.11/ref/contrib/gis/geos/#django.contrib.gis.geos.GEOSGeometry.simplify
+SIMPLIFICATION_TOLERANCE = 0.001
+
 
 def get_neighborhood_file_upload_path(instance, filename):
     """ Upload each boundary file to its own directory """
@@ -56,6 +60,7 @@ class Neighborhood(PFBModel):
     name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
     label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    geom_simple = MultiPolygonField(srid=4326, blank=True, null=True)
     geom_pt = PointField(srid=4326, blank=True, null=True)
     organization = models.ForeignKey(Organization,
                                      related_name='neighborhoods',
@@ -107,6 +112,10 @@ class Neighborhood(PFBModel):
             boundary_file = File(open(zip_filename))
             self.boundary_file = boundary_file
             self.geom = geom
+            try:
+                self.geom_simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE)])
+            except:
+                self.geom_simple = geom
             self.geom_pt = geom.centroid
             self.save()
         except:
@@ -154,6 +163,10 @@ class Neighborhood(PFBModel):
                     if geom.geom_type == 'Polygon':
                         geom = MultiPolygon([geom])
                     self.geom = geom
+                    try:
+                        self.geom_simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE)])
+                    except:
+                        self.geom_simple = geom
                     self.geom_pt = geom.centroid
             finally:
                 shutil.rmtree(tmpdir, ignore_errors=True)

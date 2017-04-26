@@ -76,8 +76,8 @@ class NeighborhoodBoundsGeoJsonSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Neighborhood
         id_field = 'uuid'
-        geo_field = 'geom'
-        fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom')
+        geo_field = 'geom_simple'
+        fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom_simple')
 
 
 class NeighborhoodSummarySerializer(PFBModelSerializer):
