@@ -46,14 +46,15 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 ENVIRONMENT="${ENVIRONMENT:-staging}"
                 BATCH_ANALYSIS_JOB_NAME_REVISION=$(docker-compose run --rm \
                     update-job-defs \
-                    --environment "${ENVIRONMENT}" \
-                    pfb-analysis-run-job.json \
+                    "${ENVIRONMENT}-pfb-analysis-run-job.json" \
                     "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}")
                 BATCH_TILEMAKER_JOB_NAME_REVISION=$(docker-compose run --rm \
                     update-job-defs \
-                    --environment "${ENVIRONMENT}" \
-                    pfb-tilemaker-run-job.json \
+                    "${ENVIRONMENT}-pfb-tilemaker-run-job.json" \
                     "${PFB_AWS_ECR_ENDPOINT}/pfb-tilemaker:${GIT_COMMIT}")
+
+                echo "Analysis Task Name:Revision -- ${BATCH_ANALYSIS_JOB_NAME_REVISION}"
+                echo "Tilemaker Task Name:Revision -- ${BATCH_TILEMAKER_JOB_NAME_REVISION}"
                 popd
 
                 rm -rf .terraform/ terraform.tfstate*
