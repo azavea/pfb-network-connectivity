@@ -18,7 +18,7 @@
         <div class="row stack-xs">
             <!-- Only up to three comparisons -->
             <div class="column-4" ng-repeat="place in compare.places track by $index">
-                <div class="card stack" ng-if="place">
+                <div class="card stack" ng-if="place.neighborhood">
                     <div class="card-details">
                         <!-- TODO: fix styling. Why does this not appear without btn classes? -->
                         <a class="compare-remove btn btn-secondary"
@@ -40,7 +40,7 @@
                 </div>
                 <!-- This column is the placeholder that users will see
                  only one or two cities are selected. -->
-                <div class="card compare-placeholder" ng-if="!place">
+                <div class="card compare-placeholder" ng-if="!place.neighborhood">
                     <div class="card-details">
                         <i class="icon-map"></i>
                         <div class="h2">Add a city/town to compare</div>

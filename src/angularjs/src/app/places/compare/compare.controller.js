@@ -10,59 +10,75 @@
     'use strict';
 
     /** @ngInject */
-    function CompareController($stateParams, Neighborhood, AnalysisJob, $log, $state) {
+    function CompareController($stateParams, Neighborhood, AnalysisJob, $log, $q, $state) {
         var ctl = this;
 
         initialize();
 
         function initialize() {
-            ctl.places = [null, null, null];
+            ctl.places = new Array(3);
             ctl.getPlace = getPlace;
             ctl.clearSelection = clearSelection;
 
-            getPlace(0, $stateParams.place1);
-            getPlace(1, $stateParams.place2);
-            getPlace(2, $stateParams.place3);
+            getPlaces([$stateParams.place1, $stateParams.place2, $stateParams.place3]);
+        }
+
+        function getPlaces(uuids) {
+            var promises = _.map(uuids, function(uuid, offset) {
+                return getPlace(offset, uuid);
+            });
+
+            // do not display any place until all places have been retrieved
+            $q.all(promises).then(function(results) {
+                ctl.places = results;
+            }, function(error) {
+                $log.error('Failed to retrieve places to compare:');
+                $log.error(error);
+                ctl.places = new Array(3);
+            });
         }
 
         function getPlace(num, uuid) {
+            var dfd = $q.defer();
             if (!uuid) {
-                return;
+                dfd.resolve({});
+                return dfd.promise;
             }
 
-            ctl.places[num] = {};
-
+            var place = {};
             Neighborhood.query({uuid: uuid}).$promise.then(function(data) {
-                ctl.places[num].neighborhood = new Neighborhood(data);
+                place.neighborhood = new Neighborhood(data);
             });
 
             AnalysisJob.query({neighborhood: uuid, latest: 'True'}).$promise.then(function(data) {
                 if (!data.results || !data.results.length) {
                     $log.warn('no matching analysis job found for neighborhood ' + uuid);
-                    ctl.places[num] = null;
-                    return;
+                    dfd.resolve({});
+                    return dfd.promise;
                 }
 
                 var lastJob = new AnalysisJob(data.results[0]);
-                ctl.places[num].lastJob = lastJob;
+                place.lastJob = lastJob;
 
-                if (lastJob) {
-                    AnalysisJob.results({uuid: lastJob.uuid}).$promise.then(function(results) {
-                        if (!results.overall_scores) {
-                            $log.warn('no job results found for neighborhood ' + lastJob.uuid);
-                            return;
-                        }
+                AnalysisJob.results({uuid: lastJob.uuid}).$promise.then(function(results) {
+                    if (!results.overall_scores) {
+                        $log.warn('no job results found for neighborhood ' + lastJob.uuid);
+                        dfd.resolve({});
+                        return dfd.promise;
+                    }
 
-                        // sort alphabetically by metric name so they will line up by row
-                        ctl.places[num].jobResults = _(results.overall_scores).map(function(obj, key) {
-                            return {
-                                metric: key.replace(/_/g, ' '),
-                                score: obj.score_normalized
-                            };
-                        }).sortBy(function(result) { return result.metric; }).value();
-                    });
-                }
+                    // sort alphabetically by metric name so they will line up by row
+                    place.jobResults = _(results.overall_scores).map(function(obj, key) {
+                        return {
+                            metric: key.replace(/_/g, ' '),
+                            score: obj.score_normalized
+                        };
+                    }).sortBy(function(result) { return result.metric; }).value();
+
+                    dfd.resolve(place);
+                });
             });
+            return dfd.promise;
         }
 
         function clearSelection(num) {
