@@ -25,9 +25,6 @@ def main():
     parser.add_argument('job_definition_filename', type=str)
     parser.add_argument('image_url', type=str)
 
-    parser.add_argument('--environment', type=str, default='staging',
-                        choices=('development', 'staging', 'production',),
-                        help='Launch into a specific environment')
     parser.add_argument('--deregister', action='store_true',
                         help='Deregister old verison of the job definition after updating')
     args = parser.parse_args()
@@ -36,8 +33,6 @@ def main():
                                        args.job_definition_filename)
     with open(path_to_config_json, 'r') as json_file:
         job_definition = json.load(json_file)
-        job_definition['jobDefinitionName'] = (job_definition['jobDefinitionName']
-                                               .format(environment=args.environment))
         job_definition['containerProperties']['image'] = args.image_url
 
         client = boto3.client('batch')

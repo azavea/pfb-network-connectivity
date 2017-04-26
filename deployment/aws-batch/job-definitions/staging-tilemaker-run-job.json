@@ -1,5 +1,5 @@
 {
-    "jobDefinitionName": "{environment}-pfb-tilemaker-run-job",
+    "jobDefinitionName": "staging-pfb-tilemaker-run-job",
     "type": "container",
     "parameters": {},
     "containerProperties": {

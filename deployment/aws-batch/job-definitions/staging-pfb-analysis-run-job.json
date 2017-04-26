@@ -1,5 +1,5 @@
 {
-    "jobDefinitionName": "{environment}-pfb-analysis-run-job",
+    "jobDefinitionName": "staging-pfb-analysis-run-job",
     "type": "container",
     "parameters": {},
     "containerProperties": {
