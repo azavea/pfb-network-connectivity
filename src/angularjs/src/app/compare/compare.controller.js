@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function CompareController($stateParams, Neighborhood, AnalysisJob, $log, $location) {
+    function CompareController($stateParams, Neighborhood, AnalysisJob, $log, $state) {
         var ctl = this;
 
         initialize();
@@ -66,15 +66,9 @@
         }
 
         function clearSelection(num) {
-            var path = '/compare/';
-            if (num === 0) {
-                path += '/' + $stateParams.place2 + '/' + $stateParams.place3;
-            } else if (num === 1) {
-                path += $stateParams.place1 + '//' + $stateParams.place3;
-            } else {
-                path += $stateParams.place1 + '/' + $stateParams.place2 + '/';
-            }
-            $location.path(path);
+            var newParams = _.extend({}, $stateParams);
+            newParams['place' + (num + 1)] = '';
+            $state.go('compare', newParams);
         }
     }
 
