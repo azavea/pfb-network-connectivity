@@ -1,11 +1,11 @@
 {
-    "jobDefinitionName": "{environment}-pfb-analysis-run-job",
+    "jobDefinitionName": "production-pfb-analysis-run-job",
     "type": "container",
     "parameters": {},
     "containerProperties": {
         "image": "{image}",
-        "vcpus": 2,
-        "memory": 12288,
+        "vcpus": 7,
+        "memory": 30720,
         "command": [
             "/pfb/scripts/entrypoint.sh"
         ],
@@ -18,19 +18,19 @@
         }],
         "environment": [{
             "name": "PFB_MAINTENANCE_WORK_MEM",
-            "value": "2048MB"
+            "value": "4092MB"
         }, {
             "name": "PFB_MAX_WAL_SIZE",
             "value": "4096MB"
         }, {
             "name": "PFB_SHARED_BUFFERS",
-            "value": "3072MB"
+            "value": "7168MB"
         }, {
             "name": "PFB_TEMP_FILE_LIMIT",
-            "value": "104857600"
+            "value": "26214400"
         }, {
             "name": "PFB_WORK_MEM",
-            "value": "1536MB"
+            "value": "3072MB"
         }],
         "mountPoints": [{
             "sourceVolume": "pgdata",

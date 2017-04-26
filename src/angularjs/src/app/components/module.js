@@ -5,5 +5,6 @@
                    ['pfb.components.analysis-jobs',
                     'pfb.components.auth',
                     'pfb.components.filters',
-                    'pfb.components.map']);
+                    'pfb.components.map',
+                    'pfb.components.thumbnailMap']);
 })();

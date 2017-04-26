@@ -16,4 +16,4 @@ docker_options: "--storage-opt dm.basesize=20G"
 docker_compose_version: 1.9.0
 
 # azavea.terraform
-terraform_version: 0.9.1
+terraform_version: 0.9.3
