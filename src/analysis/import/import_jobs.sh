@@ -35,7 +35,14 @@ NB_POSTGRESQL_PASSWORD - Default: gis
 }
 
 function import_job_data() {
-    NB_TEMPDIR=`mktemp -d`
+
+    ROOT_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}"
+    NB_TEMPDIR="${ROOT_TEMPDIR}/import_jobs"
+    mkdir -p "${NB_TEMPDIR}"
+    # Dir and files must be world readable/executable for postgres to use copy command
+    # Must chmod after creating subdir
+    chmod -R 775 "${ROOT_TEMPDIR}"
+
     NB_STATE_ABBREV="${1}"
     NB_DATA_TYPE="${2:-main}"    # Either 'main' or 'aux'
     NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2014.csv"
@@ -74,8 +81,6 @@ CREATE TABLE IF NOT EXISTS \"state_od_${NB_DATA_TYPE}_JT00_2014\" (
         -c "TRUNCATE TABLE \"state_od_${NB_DATA_TYPE}_JT00_2014\";"
 
     # Load data
-    # Dir and files must be world readable/executable for postgres to use copy command
-    chmod -R 775 "${NB_TEMPDIR}"
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
         -c "COPY \"state_od_${NB_DATA_TYPE}_JT00_2014\"(w_geocode, h_geocode, \"S000\", \"SA01\", \"SA02\", \"SA03\", \"SE01\", \"SE02\", \"SE03\", \"SI01\", \"SI02\", \"SI03\", createdate) FROM '${NB_TEMPDIR}/${NB_JOB_FILENAME}' DELIMITER ',' CSV HEADER;"
 

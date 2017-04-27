@@ -8,8 +8,6 @@ NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 
-NB_TEMPDIR=`mktemp -d`
-
 source "$(dirname $0)"/../scripts/utils.sh
 
 set -e
@@ -66,6 +64,9 @@ then
     else
         NB_BOUNDARY_FILE="${1}"
         NB_STATE_FIPS="${2}"
+
+        NB_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}/import_neighborhood"
+        mkdir -p "${NB_TEMPDIR}"
 
         NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
 

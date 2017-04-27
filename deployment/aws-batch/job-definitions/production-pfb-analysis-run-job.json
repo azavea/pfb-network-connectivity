@@ -15,8 +15,16 @@
             "host": {
                 "sourcePath": "/media/nvme0n1/pgdata"
             }
+        }, {
+            "name": "tmp",
+            "host": {
+                "sourcePath": "/media/nvme0n1/tmp"
+            }
         }],
         "environment": [{
+            "name": "NB_MAX_TRIP_DISTANCE",
+            "value": "2680"
+        }, {
             "name": "PFB_MAINTENANCE_WORK_MEM",
             "value": "4092MB"
         }, {
@@ -35,6 +43,10 @@
         "mountPoints": [{
             "sourceVolume": "pgdata",
             "containerPath": "/pgdata",
+            "readOnly": false
+        }, {
+            "sourceVolume": "tmp",
+            "containerPath": "/tmp",
             "readOnly": false
         }],
         "readonlyRootFilesystem": false,
