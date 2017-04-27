@@ -360,7 +360,7 @@ class AnalysisJob(PFBModel):
     @property
     def running_time(self):
         """ Return the running time of the job in seconds """
-        first_update = self.status_updates.first()
+        first_update = self.status_updates.filter(status=self.Status.IMPORTING).first()
         last_update = self.status_updates.last()
         if first_update is None or last_update is None:
             return 0
@@ -428,6 +428,7 @@ class AnalysisJob(PFBModel):
         environment = self.base_environment()
         # Job-specific settings
         environment.update({
+            'NB_TEMPDIR': os.path.join('/tmp', str(self.uuid)),
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,

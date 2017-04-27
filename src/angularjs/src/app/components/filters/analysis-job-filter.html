@@ -2,27 +2,23 @@
     <th>ID</th>
     <th>
         <div class="dropdown">
-            <ui-select ng-model="ctl.statusFilter" title="Filter by Status">
-                <ui-select-match allow-clear="true" placeholder="Status" >
-                    {{$select.selected}}
-                </ui-select-match>
-                <ui-select-choices repeat="status in ctl.statuses | filter: $select.search">
-                    <div ng-bind-html="status | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+        <input name="neighborhood-filter" ng-model="ctl.statusFilter" title="Filter by Status"
+            placeholder="Status" type="text" class="form-control"
+            uib-typeahead="status for status in ctl.statuses |
+                           filter: $viewValue |
+                           limitTo: 8">
         </div>
     </th>
     <th>
         <div class="dropdown neighborhood">
-            <ui-select ng-model="ctl.neighborhoodFilter" title="Filter by Neighborhood">
-                <ui-select-match allow-clear="true" placeholder="Neighborhood" >
-                    {{$select.selected.label}}
-                </ui-select-match>
-                <ui-select-choices repeat="neighborhood.uuid as neighborhood in
-                                           ctl.neighborhoods | filter: {uuid : $select.search}">
-                    <div ng-bind-html="neighborhood.label | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <input title="Filter by Neighborhood" placeholder="Neighborhood"
+                ng-model="ctl.neighborhoodFilter"
+                type="text" class="form-control"
+                uib-typeahead="neighborhood as (neighborhood.label + ', ' +
+                               neighborhood.state_abbrev) for neighborhood in ctl.neighborhoods |
+                               filter: {label : $viewValue} |
+                               limitTo: 8">
+
         </div>
     </th>
     <th>Batch Job ID</th>

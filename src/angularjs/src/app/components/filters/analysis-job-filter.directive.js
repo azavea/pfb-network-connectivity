@@ -34,7 +34,7 @@
                 return;
             }
             ctl.filters = {
-                neighborhood: newFilter,
+                neighborhood: newFilter ? newFilter.uuid : null,
                 status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
             };
         }
@@ -44,7 +44,7 @@
                 return;
             }
             ctl.filters = {
-                neighborhood: ctl.neighborhoodFilter,
+                neighborhood: ctl.neighborhoodFilter ? ctl.neighborhoodFilter.uuid : null,
                 status: AnalysisJobStatuses.filterMap[newFilter]
             };
         }
@@ -54,7 +54,7 @@
                 return;
             }
             ctl.filters = {
-                neighborhood: ctl.neighborhoodFilter,
+                neighborhood: ctl.neighborhoodFilter ? ctl.neighborhoodFilter.uuid : null,
                 status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
             };
         }
