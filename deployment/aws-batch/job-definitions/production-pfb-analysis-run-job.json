@@ -22,6 +22,9 @@
             }
         }],
         "environment": [{
+            "name": "NB_MAX_TRIP_DISTANCE",
+            "value": "2680"
+        }, {
             "name": "PFB_MAINTENANCE_WORK_MEM",
             "value": "4092MB"
         }, {
