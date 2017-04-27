@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function PlaceDetailController($stateParams, Neighborhood, AnalysisJob, Places) {
+    function PlaceDetailController($stateParams, $log, Neighborhood, AnalysisJob, Places) {
         var ctl = this;
 
         var downloadOptions = [
@@ -23,12 +23,7 @@
         initialize();
 
         function initialize() {
-            ctl.place = null;
-            ctl.lastJobScore = null;
-            ctl.scores = null;
-            ctl.mapLayers = {};
-
-            ctl.downloads = null;
+            clearPlace();  // serves to initialize to empty values
 
             getPlace($stateParams.uuid);
         }
@@ -50,7 +45,18 @@
                     ctl.scores = null;
                     ctl.downloads = null;
                 }
+            }).catch(function () {
+                $log.warn("could not load place", uuid);
+                clearPlace();
             });
+        }
+
+        function clearPlace() {
+            ctl.place = null;
+            ctl.lastJobScore = null;
+            ctl.scores = null;
+            ctl.mapLayers = {};
+            ctl.downloads = null;
         }
     }
 
