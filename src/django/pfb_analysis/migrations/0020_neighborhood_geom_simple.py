@@ -5,14 +5,13 @@ from __future__ import unicode_literals
 import django.contrib.gis.db.models.fields
 from django.db import migrations
 
+from pfb_analysis.models import simplify_geom
+
 
 def add_neighborhood_simplified_geoms(apps, schema_editor):
     Neighborhood = apps.get_model("pfb_analysis", "Neighborhood")
     for n in Neighborhood.objects.all():
-        try:
-            n.geom_simple = django.contrib.gis.geos.MultiPolygon([n.geom.simplify(0.001)])
-        except:
-            n.geom_simple = n.geom
+        n.geom_simple = simplify_geom(n.geom)
         n.save()
 
 
