@@ -53,7 +53,8 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
 BBOX=$(psql -h ${NB_POSTGRESQL_HOST} -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -t -c "select ST_Extent(ST_Transform(geom, 4326)) from neighborhood_census_blocks;" | awk -F '[()]' '{print $2}' | tr " " ",")
 echo "CLIPPING OSM TO: ${BBOX}"
 
-OSM_TEMPDIR=`mktemp -d`
+OSM_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}/import_osm"
+mkdir -p "${OSM_TEMPDIR}"
 
 if [[ -f ${1} ]]; then
   update_status "IMPORTING" "Clipping provided OSM file"

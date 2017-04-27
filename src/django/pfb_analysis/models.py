@@ -428,6 +428,7 @@ class AnalysisJob(PFBModel):
         environment = self.base_environment()
         # Job-specific settings
         environment.update({
+            'NB_TEMPDIR': os.path.join('/tmp', str(self.uuid)),
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,

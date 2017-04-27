@@ -16,7 +16,9 @@ function generate_tiles_from_shapefile() {
 
     update_status "TILING" "Generating tiles for ${TL_SHAPEFILE_NAME}"
 
-    PFB_TEMPDIR=`mktemp -d`
+    PFB_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}/tilemaker"
+    mkdir -p "${PFB_TEMPDIR}"
+
     pushd $PFB_TEMPDIR
 
     # Download and unzip shapefile
