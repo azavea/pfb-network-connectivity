@@ -6,6 +6,12 @@ export NB_POSTGRESQL_DB=pfb
 export NB_POSTGRESQL_USER=gis
 export NB_POSTGRESQL_PASSWORD=gis
 
+# NB_MAX_TRIP_DISTANCE should be in the same units of the NB_OUTPUT_SRID projection
+# Typically meters because we autodetect and use UTM zones
+export NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
+# Same units as NB_MAX_TRIP_DISTANCE
+export NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
+
 source "$(dirname $0)"/utils.sh
 
 PFB_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}"
