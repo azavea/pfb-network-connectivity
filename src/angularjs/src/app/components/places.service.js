@@ -46,8 +46,10 @@
                         return dfd.promise;
                     }
 
+                    place.results = results;
+
                     // sort alphabetically by metric name so they will line up by row
-                    place.jobResults = _(results.overall_scores).map(function(obj, key) {
+                    place.scores = _(results.overall_scores).map(function(obj, key) {
                         return {
                             metric: key.replace(/_/g, ' '),
                             score: obj.score_normalized
