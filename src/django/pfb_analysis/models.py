@@ -360,7 +360,7 @@ class AnalysisJob(PFBModel):
     @property
     def running_time(self):
         """ Return the running time of the job in seconds """
-        first_update = self.status_updates.first()
+        first_update = self.status_updates.filter(status=self.Status.IMPORTING).first()
         last_update = self.status_updates.last()
         if first_update is None or last_update is None:
             return 0
