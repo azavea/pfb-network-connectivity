@@ -2,7 +2,7 @@
 (function() {
 
     /* @ngInject */
-    function ThumbnailMapController($log) {
+    function ThumbnailMapController() {
         var ctl = this;
         ctl.map = null;
 
@@ -25,8 +25,6 @@
 
         ctl.onMapReady = function (map) {
             ctl.map = map;
-
-            $log.debug('ready!');
         };
     }
 
