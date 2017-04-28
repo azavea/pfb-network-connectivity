@@ -548,15 +548,10 @@ class AnalysisJob(PFBModel):
         return '{}/tiles'.format(self.s3_results_path)
 
     def _s3_url_for_result_resource(self, filename):
-        key = '/'.join((self.s3_results_path, filename))
-        s3 = boto3.client('s3')
-        return s3.generate_presigned_url(
-            ClientMethod='get_object',
-            ExpiresIn=settings.PFB_ANALYSIS_PRESIGNED_URL_EXPIRES,
-            Params={
-                'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
-                'Key': key
-            }
+        return 'https://s3.amazonaws.com/{bucket}/{path}/{filename}'.format(
+            bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            path=self.s3_results_path,
+            filename=filename,
         )
 
 
