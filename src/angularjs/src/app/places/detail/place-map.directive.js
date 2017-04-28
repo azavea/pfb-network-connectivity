@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlacesMapController($filter, $http, $sanitize) {
+    function PlaceMapController($filter, $http, $sanitize) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -22,8 +22,8 @@
 
         ctl.$onChanges = function(changes) {
             // set map layers once received from parent scope (paret-detail.controller)
-            if (changes.pfbPlacesMapLayers && changes.pfbPlacesMapLayers.currentValue && ctl.map) {
-                setLayers(changes.pfbPlacesMapLayers.currentValue);
+            if (changes.pfbPlaceMapLayers && changes.pfbPlaceMapLayers.currentValue && ctl.map) {
+                setLayers(changes.pfbPlaceMapLayers.currentValue);
             }
         };
 
@@ -31,8 +31,8 @@
             ctl.map = map;
 
             // in case map layers set before map was ready, add layers now map is ready to go
-            if (ctl.pfbPlacesMapLayers) {
-                setLayers(ctl.pfbPlacesMapLayers);
+            if (ctl.pfbPlaceMapLayers) {
+                setLayers(ctl.pfbPlaceMapLayers);
             }
         };
 
@@ -105,23 +105,23 @@
         }
     }
 
-    function PlacesMapDirective() {
+    function PlaceMapDirective() {
         var module = {
             restrict: 'E',
             scope: {
-                pfbPlacesMapLayers: '<'
+                pfbPlaceMapLayers: '<'
             },
-            controller: 'PlacesMapController',
+            controller: 'PlaceMapController',
             controllerAs: 'ctl',
             bindToController: true,
-            templateUrl: 'app/places/map/places-map.html'
+            templateUrl: 'app/places/detail/place-map.html'
         };
         return module;
     }
 
 
-    angular.module('pfb.places.map')
-        .controller('PlacesMapController', PlacesMapController)
-        .directive('pfbPlacesMap', PlacesMapDirective);
+    angular.module('pfb.places.detail')
+        .controller('PlaceMapController', PlaceMapController)
+        .directive('pfbPlaceMap', PlaceMapDirective);
 
 })();
