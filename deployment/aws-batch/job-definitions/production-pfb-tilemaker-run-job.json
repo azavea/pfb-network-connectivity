@@ -7,8 +7,8 @@
     },
     "containerProperties": {
         "image": "{image}",
-        "vcpus": 1,
-        "memory": 1024,
+        "vcpus": 4,
+        "memory": 4096,
         "command": [],
         "jobRoleArn": "",
         "environment": [],
