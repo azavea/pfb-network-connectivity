@@ -37,31 +37,26 @@
 
                 <!-- Compare dropdown -->
                 <div class="form-group">
-                    <label for="3">Compare</label>
-                    <div class="dropdown">
-                      <button class="btn btn-default dropdown-toggle btn-block" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        3 Selected
-                        <span class="caret"></span>
-                      </button>
-
-                      <!-- We are using bootstraps dropdown js -->
-                      <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdownMenu1">
-
-                        <!-- Only up to 3 to compare. Duplicate li and children for each item -->
-                        <li>
-                            <div class="compare-title">Los Angeles, California</div>
-                            <div class="network-score small">90</div>
+                    <label for="compare-dropdown">Compare</label>
+                    <select ng-model="placeList.placeToRemoveFromComparison" name="compare-dropdown"
+                        ng-disabled="!placeList.comparePlaces.length" class="form-control"
+                        id="role" type="text">
+                    <option selected disabled value="">{{placeList.comparePlaces.length}} Selected</option>
+                    <option ng-repeat="neighborhood in placeList.comparePlaces"
+                        value="{{neighborhood.uuid}}">
+                        <div>
+                            <div class="compare-title">{{neighborhood.label}},
+                                {{neighborhood.state_abbrev}}</div>
+                            <div class="network-score small">{{neighborhood.overall_score | number:0}}</div>
                             <a href="#" class="compare-remove">Remove</a>
-                        </li>
-                        <li>
-                            <div class="compare-title">Los Angeles, California</div>
-                            <div class="network-score small">90</div>
-                            <a href="#" class="compare-remove">Remove</a>
-                        </li>
-                        <li><a href="/compare.html" class="compare-btn">Compare Neighborhoods</a></li>
-                      </ul>
-                    </div>
+                        </div>
+                    </option>
+                    <option value="compare">
+                        <a href="#" class="compare-btn">Compare Places</a>
+                    </option>
+                    </select>
                 </div>
+
             </div>
         </div>
     </div>
@@ -90,7 +85,10 @@
                 <div class="result-right">
                     <div class="network-score">{{neighborhood.overall_score | number:0}}</div>
                     <div class="compare">
-                        <button class="btn btn-toggle active">Compare <span></span></button>
+                        <button ng-disabled="neighborhood.comparing" class="btn btn-toggle active"
+                            ng-click="placeList.addPlaceToCompare(neighborhood)">Compare
+                            <span></span>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function PlaceListController($state, $stateParams, $scope, Pagination, AuthService,
+    function PlaceListController($log, $state, $stateParams, $scope, Pagination, AuthService,
                                  Neighborhood, AnalysisJob) {
         var ctl = this;
 
@@ -43,6 +43,10 @@
             ctl.places = [];
 
             ctl.neighborhoodFilter = null;
+            ctl.placeToRemoveFromComparison = null;
+
+            ctl.comparePlaces = [];
+            ctl.addPlaceToCompare = addPlaceToCompare;
 
             ctl.sortBy = sortingOptions[0]; // default to alphabetical order
             ctl.sortingOptions = sortingOptions;
@@ -52,6 +56,55 @@
             getPlaces();
             loadOptions();
             $scope.$watch(function(){return ctl.neighborhoodFilter;}, filterNeighborhood);
+            $scope.$watch(function(){return ctl.placeToRemoveFromComparison;}, selectedComparePlace);
+        }
+
+        function addPlaceToCompare(place) {
+            if (place.comparing) {
+                $log.warn('aready have place selected to compare');
+                return;
+            }
+
+            if (ctl.comparePlaces.length < 3) {
+                place.comparing = true;
+                ctl.comparePlaces.push(place);
+            } else {
+                $log.warn('already have three places to compare');
+
+            }
+        }
+
+        /**
+         * Fired when an option selected from comparison drop-down.
+         * Either remove a selected place from comparison list, or if special last option selected,
+         * go to comparison page with selections.
+         */
+        function selectedComparePlace(uuid) {
+            if (!uuid) {
+                return; // on page load, this watch fires will no value
+            }
+
+            // use special flag for bottom list item, which is to go to the compare page
+            if (uuid === 'compare') {
+                var newParams = _.extend({}, $stateParams);
+                _.map(ctl.comparePlaces, function(place, offset) {
+                    newParams['place' + (offset + 1)] = place.uuid;
+                });
+                $state.go('places.compare', newParams);
+            } else {
+                _.remove(ctl.comparePlaces, function(place) {
+                    if (place.uuid === uuid) {
+                        // unset convenience flag indicating this is a place to compare
+                        place.comparing = false;
+                        return true;
+                    }
+                    return false;
+                });
+
+                // be sure to clear current selection once removing it as an option
+                // sometimes angular does this on its own, but it doesn't seem to be consistent
+                ctl.placeToRemoveFromComparison = null;
+            }
         }
 
         function filterNeighborhood(newFilter, oldFilter) {
@@ -83,6 +136,8 @@
                     // get properties from the neighborhood's last run job
                     neighborhood.modifiedAt = obj.modifiedAt;
                     neighborhood.overall_score = obj.overall_score;
+                    // add convenience flag to indicate if place selected for comparison
+                    neighborhood.comparing = false;
                     return neighborhood;
                 });
 
