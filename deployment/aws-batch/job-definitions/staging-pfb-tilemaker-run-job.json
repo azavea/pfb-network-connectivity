@@ -2,9 +2,6 @@
     "jobDefinitionName": "staging-pfb-tilemaker-run-job",
     "type": "container",
     "parameters": {},
-    "retryStrategy": {
-        "attempts": 2
-    },
     "containerProperties": {
         "image": "{image}",
         "vcpus": 2,
