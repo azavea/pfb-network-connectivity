@@ -80,7 +80,8 @@
 
                     <!-- .result-preview should display the shapefile preview -->
                     <div class="result-preview">
-                        <pfb-thumbnail-map></pfb-thumbnail-map>
+                        <pfb-thumbnail-map pfb-thumbnail-map-place="neighborhood.uuid">
+                        </pfb-thumbnail-map>
                     </div>
                     <div class="result-title">{{neighborhood.label}}, {{neighborhood.state_abbrev}}
                         <div class="location-timestamp"><span>Last updated:</span> {{neighborhood.modifiedAt | date:'MMMM dd, yyyy'}}</div>

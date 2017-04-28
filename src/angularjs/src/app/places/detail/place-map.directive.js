@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlaceMapController($filter, $http, $sanitize, MapConfig) {
+    function PlaceMapController($filter, $http, $sanitize, MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -11,8 +11,8 @@
                 scrollWheelZoom: true
             };
 
-            // TODO: set center and zoom level by zooming to fit geojson polygon bounds
-            ctl.mapCenter = [39.963277, -75.142971];
+            // set center and zoom level by zooming to fit geojson polygon bounds, once loaded
+            ctl.boundsConus = MapConfig.conusBounds;
             ctl.baselayer = L.tileLayer(
                 MapConfig.baseLayers.Positron.url, {
                     attribution: MapConfig.baseLayers.Positron.attribution,
@@ -22,8 +22,14 @@
 
         ctl.$onChanges = function(changes) {
             // set map layers once received from parent scope (paret-detail.controller)
-            if (changes.pfbPlaceMapLayers && changes.pfbPlaceMapLayers.currentValue && ctl.map) {
-                setLayers(changes.pfbPlaceMapLayers.currentValue);
+            if (ctl.map) {
+                if (changes.pfbPlaceMapLayers && changes.pfbPlaceMapLayers.currentValue) {
+                    setLayers(changes.pfbPlaceMapLayers.currentValue);
+                }
+
+                if (changes.pfbPlaceMapUuid && changes.pfbPlaceMapUuid.currentValue) {
+                    addBounds(changes.pfbPlaceMapUuid.currentValue);
+                }
             }
         };
 
@@ -35,6 +41,15 @@
                 setLayers(ctl.pfbPlaceMapLayers);
             }
         };
+
+        function addBounds(uuid) {
+            Neighborhood.bounds({uuid: uuid}).$promise.then(function (data) {
+                ctl.boundsLayer = L.geoJSON(data, {});
+                ctl.map.addLayer(ctl.boundsLayer);
+                ctl.map.fitBounds(ctl.boundsLayer.getBounds());
+                ctl.layerControl.addOverlay(ctl.boundsLayer, 'area boundary');
+            });
+        }
 
         function setLayers(layers) {
             if (!layers) {
@@ -109,7 +124,8 @@
         var module = {
             restrict: 'E',
             scope: {
-                pfbPlaceMapLayers: '<'
+                pfbPlaceMapLayers: '<',
+                pfbPlaceMapUuid: '<'
             },
             controller: 'PlaceMapController',
             controllerAs: 'ctl',
