@@ -21,7 +21,7 @@
         }
     },
     conusBounds: [[24.396308, -124.848974], [49.384358, -66.885444]],
-    conusMaxZoom: 18
+    conusMaxZoom: 17
   };
 
   angular
