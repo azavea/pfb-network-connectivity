@@ -6,7 +6,7 @@ set -e
 source /opt/pfb/tilemaker/scripts/utils.sh
 
 export TL_MIN_ZOOM="${TL_MIN_ZOOM:-8}"
-export TL_MAX_ZOOM="${TL_MAX_ZOOM:-18}"
+export TL_MAX_ZOOM="${TL_MAX_ZOOM:-17}"
 export TL_NUM_PARTS="${TL_NUM_PARTS:-4}"
 export TIME="\nTIMING: %C\nTIMING:\t%E elapsed %Kkb mem\n"
 
