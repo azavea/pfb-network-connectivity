@@ -243,11 +243,9 @@ WATCHMAN_CHECKS = (
 # https://github.com/jschneier/django-storages
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_AUTO_CREATE_BUCKET = True
 AWS_STORAGE_BUCKET_NAME = os.getenv('PFB_S3_STORAGE_BUCKET',
                                     '{0}-pfb-storage-{1}'.format(DEV_USER, AWS_REGION))
 AWS_QUERYSTRING_AUTH = False
-AWS_QUERYSTRING_EXPIRE = 3600 * 24 * 14     # Two weeks
 
 
 # Email
