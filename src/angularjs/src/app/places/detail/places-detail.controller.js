@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function PlaceDetailController($stateParams, Neighborhood, AnalysisJob, $log) {
+    function PlaceDetailController($stateParams, $log, Neighborhood, AnalysisJob, Places) {
         var ctl = this;
 
         var downloadOptions = [
@@ -23,57 +23,40 @@
         initialize();
 
         function initialize() {
-            ctl.place = null;
-            ctl.lastJobScore = null;
-            ctl.jobResults = null;
-            ctl.mapLayers = {};
-            ctl.getPlace = getPlace;
-
-            ctl.downloads = null;
+            clearPlace();  // serves to initialize to empty values
 
             getPlace($stateParams.uuid);
         }
 
         function getPlace(uuid) {
-            Neighborhood.query({uuid: uuid}).$promise.then(function(data) {
-                ctl.place = new Neighborhood(data);
-            });
-
-            AnalysisJob.query({neighborhood: uuid, latest: 'True'}).$promise.then(function(data) {
-
-                ctl.mapLayers = {};
-                if (!data.results || !data.results.length) {
-                    $log.warn('no matching analysis job found for neighborhood ' + uuid);
-                    ctl.lastJobScore = null;
-                    ctl.downloads = null;
-                    return;
-                }
-
-                var lastJob = new AnalysisJob(data.results[0]);
-                ctl.lastJobScore = lastJob.overall_score;
-
-                if (lastJob) {
-                    AnalysisJob.results({uuid: lastJob.uuid}).$promise.then(function(results) {
-                        ctl.mapLayers = results.destinations_urls;
-                        if (results.overall_scores) {
-                            ctl.jobResults = _.map(results.overall_scores, function(obj, key) {
-                                return {
-                                    metric: key.replace(/_/g, ' '),
-                                    score: obj.score_normalized
-                                };
-                            });
-
-                            ctl.downloads = _.map(downloadOptions, function(option) {
-                                return {label: option.label, url: results[option.value]};
-                            });
-                        } else {
-                            $log.warn('no job results found');
-                            ctl.jobResults = null;
-                            ctl.downloads = null;
-                        }
+            ctl.mapLayers = {};
+            Places.getPlace(uuid).then(function (place) {
+                ctl.place = place.neighborhood;
+                if (place.lastJob) {
+                    ctl.lastJobScore = place.lastJob.overall_score;
+                    ctl.mapLayers = place.results.destinations_urls;
+                    ctl.scores = place.scores;
+                    ctl.downloads = _.map(downloadOptions, function(option) {
+                        return {label: option.label, url: place.results[option.value]};
                     });
+                } else {
+                    ctl.lastJobScore = null;
+                    ctl.mapLayers = null;
+                    ctl.scores = null;
+                    ctl.downloads = null;
                 }
+            }).catch(function () {
+                $log.warn("could not load place", uuid);
+                clearPlace();
             });
+        }
+
+        function clearPlace() {
+            ctl.place = null;
+            ctl.lastJobScore = null;
+            ctl.scores = null;
+            ctl.mapLayers = {};
+            ctl.downloads = null;
         }
     }
 

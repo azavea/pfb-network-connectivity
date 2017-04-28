@@ -1,9 +1,10 @@
 <!-- keep the .map class. It's important for sizing. -->
  <div class="map map-below" id="map-{{::$id}}"
      pfb-map
-     pfb-places-map-layers="ctl.mapLayers"
+     pfb-place-map-layers="ctl.mapLayers"
+     pfb-place-map-uuid="ctl.pfbPlaceMapUuid"
      pfb-map-zoom="12"
-     pfb-map-center="ctl.mapCenter"
+     pfb-map-bounds="ctl.boundsConus"
      pfb-map-baselayer="ctl.baselayer"
      pfb-map-options="ctl.mapOptions"
      pfb-map-ready="ctl.onMapReady(map)">

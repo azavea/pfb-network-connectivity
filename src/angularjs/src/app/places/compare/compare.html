@@ -1,55 +1,56 @@
 <pfb-navbar></pfb-navbar>
-<!-- Top most header with hero image -->
-<header class="main-header">
-    <div class="container text-center">
-        <img src="assets/images/placesforbikes-icon.png" alt="Places for bikes" class="pfb-logo">
-        <div class="pfb-logo-text">PlacesForBikes Network Score</div>
-        <h1>Learn how biking in your city/town stacks up against other cities/towns in terms of biking</h1>
-    </div>
-</header>
-<!-- Top most header with hero image -->
 
-<!-- Section containing leaderboard -->
-<section class="leaders">
+<!-- All Comparisons -->
+<section class="comparisons">
     <div class="container">
         <h2 class="decor">
-            <i class="icon-trophy"></i>
-            Leading Cities/Towns
+            <i class="icon-compare"></i>
+            City/Town Comparison
         </h2>
+        <div class="row align-center">
+                <div class="btn-group">
+                    <button class="btn btn-secondary"
+                        ui-sref="places.compare({place1: '', place2: '', place3: ''})">Clear Selections</button>
+                    <button ui-sref="places.list" class="btn btn-secondary">Back to Search</button>
+                </div>
+        </div>
+
         <div class="row stack-xs">
-
-            <!-- I imagine no more than 8 in the leaderboard
-                     will suffice. Having more will make the page very long. -->
-
-            <!-- If you duplicate the .column-6 divs
-                     and children the layout will adjust. -->
-            <div class="column-6" ng-repeat="city in home.cities">
-                <div class="card">
-                    <a ui-sref="places.detail({uuid: '{{city.uuid}}' })" class="card-link"></a>
-                    <div class="card-map">
-                        <pfb-thumbnail-map pfb-thumbnail-map-place="city.uuid"></pfb-thumbnail-map>
-                    </div>
+            <!-- Only up to three comparisons -->
+            <div class="column-4" ng-repeat="place in compare.places track by $index">
+                <div class="card stack" ng-if="place.neighborhood">
                     <div class="card-details">
-                        <h3>{{city.label}}</h3>
-                        <h4>{{city.state_abbrev}}</h4>
-                        <div class="network-score large">{{city.overall_score | number:0}}</div>
+                        <!-- TODO: fix styling. Why does this not appear without btn classes? -->
+                        <a class="compare-remove btn btn-secondary"
+                            ng-click="compare.clearSelection($index)"><i class="icon-cross"></i></a>
+                        <h3>{{place.neighborhood.label}}</h3>
+                        <h4>{{place.neighborhood.state_abbrev}}</h4>
+                        <div class="network-score large">{{place.lastJob.overall_score | number:0}}</div>
                         <div class="location-timestamp"><span>Last updated:</span>
-                            {{city.modifiedAt | date:'MMMM dd, yyyy'}}</div>
+                            {{place.lastJob.modifiedAt | date:'MMMM dd, yyyy'}}</div>
+                    </div>
+                    <div class="card-map">s
+                        <pfb-thumbnail-map></pfb-thumbnail-map>
+                    </div>
+                    <ul class="metric-list" ng-repeat="result in place.scores">
+                        <li>{{result.metric}}
+                            <span class="network-score small">{{result.score | number:0}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <!-- This column is the placeholder that users will see
+                 only one or two cities are selected. -->
+                <div class="card compare-placeholder" ng-if="!place.neighborhood">
+                    <div class="card-details">
+                        <i class="icon-map"></i>
+                        <div class="h2">Add a city/town to compare</div>
+                        <a ui-sref="places.list" class="btn btn-primary btn-block">Search city/towns</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<!-- Section containing leaderboard -->
-
-<!-- Section containing nationwide overview map -->
-<section class="nationwide-map">
-    <div class="container">
-        <pfb-neighborhood-map></pfb-neighborhood-map>
-    </div>
-</section>
-<!-- Section containing nationwide overview map -->
 
 <!-- Section containing how each metric is calculated -->
 <section class="calculation">
@@ -61,16 +62,10 @@
         <div class="row stack-xs">
             <div class="column-6">
                 <div class="card alternate">
-
-                    <!-- This card image div is currently empty
-                             because I dont know what the metric names
-                             are. Images or icons might not make sense
-                             to even show so we might remove. If we do
-                             the layout will auto adjust. -->
                     <div class="card-image"></div>
                     <div class="card-details">
                         <div class="card-title">
-                            <h3>Metric 1</h3>
+                            <h3>Metric Name</h3>
                         </div>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni aliquam minima voluptates asperiores, nostrum nesciunt! Suscipit laborum consequatur sit odit quia magnam hic voluptatem, optio. Nisi itaque quidem a nobis!</p>
                     </div>

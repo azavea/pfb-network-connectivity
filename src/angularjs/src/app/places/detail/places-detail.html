@@ -58,7 +58,7 @@
                 </div>
             </div>
         </section>
-        <ul class="metric-list" ng-repeat="result in placeDetail.jobResults">
+        <ul class="metric-list" ng-repeat="result in placeDetail.scores">
             <li>{{result.metric}}
                 <div class="tooltip" title="This is a tooltip "><i class="icon-info-circled"></i></div>
                 <span class="network-score small">{{result.score | number:0}}</span>
@@ -70,6 +70,9 @@
 
 <!-- Map -->
 <div class="preview-map">
-    <pfb-places-map pfb-places-map-layers="placeDetail.mapLayers"></pfb-places-map>
+    <pfb-place-map
+        pfb-place-map-layers="placeDetail.mapLayers"
+        pfb-place-map-uuid="placeDetail.place.uuid">
+    </pfb-place-map>
 </div>
 <!-- Map -->

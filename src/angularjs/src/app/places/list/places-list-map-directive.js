@@ -1,13 +1,12 @@
-
 (function() {
 
     /* @ngInject */
-    function NeighborhoodMapController(MapConfig, Neighborhood) {
+    function PlacesListMapController(MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
+        ctl.layerControl = null;
 
         ctl.$onInit = function () {
-            ctl.mapOptions = { scrollWheelZoom: false };
             ctl.boundsConus = MapConfig.conusBounds;
             ctl.baselayer = L.tileLayer(
                 MapConfig.baseLayers.Positron.url, {
@@ -18,17 +17,29 @@
 
         ctl.onMapReady = function (map) {
             ctl.map = map;
+
+            var satelliteLayer = L.tileLayer(MapConfig.baseLayers.Satellite.url, {
+                attribution: MapConfig.baseLayers.Satellite.attribution,
+                maxZoom: MapConfig.conusMaxZoom
+            });
+
+            if (!ctl.layerControl) {
+                ctl.layerControl = L.control.layers({
+                        'Positron': ctl.baselayer,
+                        'Satellite': satelliteLayer
+                    },
+                    []).addTo(ctl.map);
+            }
+
             Neighborhood.geojson().$promise.then(function (data) {
-                ctl.count = data && data.features ? data.features.length : '0';
                 ctl.neighborhoodLayer = L.geoJSON(data, {
                     onEachFeature: onEachFeature
                 });
+                ctl.layerControl.addOverlay(ctl.neighborhoodLayer, 'Places');
                 map.addLayer(ctl.neighborhoodLayer);
             });
 
             function onEachFeature(feature, layer) {
-                // TODO: Style marker and popup
-                // TODO: Add link to neighborhood detail in popup
                 layer.on({
                     click: function () {
                         if (feature && feature.geometry &&
@@ -47,20 +58,23 @@
         };
     }
 
-    function NeighborhoodMapDirective() {
+    function PlacesListMapDirective() {
         var module = {
             restrict: 'E',
-            controller: 'NeighborhoodMapController',
+            scope: {
+                pfbPlacesListMapLayers: '<'
+            },
+            controller: 'PlacesListMapController',
             controllerAs: 'ctl',
             bindToController: true,
-            templateUrl: 'app/home/neighborhood-map.html'
+            templateUrl: 'app/places/list/places-list-map.html'
         };
         return module;
     }
 
 
-    angular.module('pfb.home')
-        .controller('NeighborhoodMapController', NeighborhoodMapController)
-        .directive('pfbNeighborhoodMap', NeighborhoodMapDirective);
+    angular.module('pfb.places.list')
+        .controller('PlacesListMapController', PlacesListMapController)
+        .directive('pfbPlacesListMap', PlacesListMapDirective);
 
 })();

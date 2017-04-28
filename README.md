@@ -41,6 +41,12 @@ Run `./scripts/setup` to install project dependencies and prepare the developmen
 vagrant ssh
 ```
 
+Once in the VM, with your AWS credentials configured, run the following commands to configure your development S3 buckets:
+```
+aws s3api create-bucket --bucket "${DEV_USER}-pfb-storage-us-east-1"
+aws s3api put-bucket-policy --bucket "${DEV_USER}-pfb-storage-us-east-1" --policy "{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::${DEV_USER}-pfb-storage-us-east-1/*\"}]}"
+```
+
 At this point, if you only intend to run the 'Bike Network Analysis', skip directly to [Running the Analysis](#running-the-analysis)
 
 To start the application containers:
