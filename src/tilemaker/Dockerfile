@@ -66,7 +66,7 @@ RUN set -xe && \
     ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
     rm -r ./awscli-bundle*
 
-RUN apt-get install -y gdal-bin time
+RUN apt-get install -y gdal-bin time parallel
 
 # Install tl and other utilities
 RUN npm install -g \
