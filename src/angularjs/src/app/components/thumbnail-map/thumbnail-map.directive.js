@@ -16,7 +16,7 @@
             };
 
             // will set center and zoom level by zooming to fit geojson polygon bounds when loaded
-            ctl.mapCenter = [39.963277, -75.142971];
+            ctl.boundsConus = MapConfig.conusBounds;
             ctl.baselayer = L.tileLayer(
                 MapConfig.baseLayers.Positron.url, {
                     attribution: MapConfig.baseLayers.Positron.attribution,
@@ -54,7 +54,7 @@
         var module = {
             restrict: 'E',
             scope: {
-                'pfbThumbnailMapPlace': '<'
+                pfbThumbnailMapPlace: '<'
             },
             controller: 'ThumbnailMapController',
             controllerAs: 'ctl',
