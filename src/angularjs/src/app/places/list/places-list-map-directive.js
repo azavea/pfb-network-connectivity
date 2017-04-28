@@ -9,8 +9,8 @@
         ctl.$onInit = function () {
             ctl.boundsConus = MapConfig.conusBounds;
             ctl.baselayer = L.tileLayer(
-                MapConfig.baseLayers.Stamen.url, {
-                    attribution: MapConfig.baseLayers.Stamen.attribution,
+                MapConfig.baseLayers.Positron.url, {
+                    attribution: MapConfig.baseLayers.Positron.attribution,
                     maxZoom: MapConfig.conusMaxZoom
                 });
         };
@@ -25,7 +25,7 @@
 
             if (!ctl.layerControl) {
                 ctl.layerControl = L.control.layers({
-                        'Stamen': ctl.baselayer,
+                        'Positron': ctl.baselayer,
                         'Satellite': satelliteLayer
                     },
                     []).addTo(ctl.map);

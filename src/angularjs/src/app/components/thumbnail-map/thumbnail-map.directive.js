@@ -17,8 +17,8 @@
             // TODO: set center and zoom level by zooming to fit geojson polygon bounds
             ctl.mapCenter = [39.963277, -75.142971];
             ctl.baselayer = L.tileLayer(
-                MapConfig.baseLayers.Stamen.url, {
-                    attribution: MapConfig.baseLayers.Stamen.attribution,
+                MapConfig.baseLayers.Positron.url, {
+                    attribution: MapConfig.baseLayers.Positron.attribution,
                     maxZoom: MapConfig.conusMaxZoom
                 });
         };

@@ -10,8 +10,8 @@
             ctl.mapOptions = { scrollWheelZoom: false };
             ctl.boundsConus = MapConfig.conusBounds;
             ctl.baselayer = L.tileLayer(
-                MapConfig.baseLayers.Stamen.url, {
-                    attribution: MapConfig.baseLayers.Stamen.attribution,
+                MapConfig.baseLayers.Positron.url, {
+                    attribution: MapConfig.baseLayers.Positron.attribution,
                     maxZoom: MapConfig.conusMaxZoom
                 });
         };
