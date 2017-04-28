@@ -1,36 +1,26 @@
 (function() {
 
     /* @ngInject */
-    function PlacesListMapController(Neighborhood) {
+    function PlacesListMapController(MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
 
         ctl.$onInit = function () {
-            ctl.mapOptions = {
-                scrollWheelZoom: true
-            };
-
-            ctl.boundsConus = [[24.396308, -124.848974], [49.384358, -66.885444]];
+            ctl.boundsConus = MapConfig.conusBounds;
             ctl.baselayer = L.tileLayer(
-                'https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
-                    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-                    maxZoom: 18
+                MapConfig.baseLayers.Stamen.url, {
+                    attribution: MapConfig.baseLayers.Stamen.attribution,
+                    maxZoom: MapConfig.conusMaxZoom
                 });
         };
 
         ctl.onMapReady = function (map) {
             ctl.map = map;
 
-            var esriSatelliteAttribution = [
-                '&copy; <a href="http://www.esri.com/">Esri</a> ',
-                'Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, ',
-                'AEX, Getmapping, Aerogrid, IGN, IGP, swisstopo, and the GIS User Community'
-            ].join('');
-
-            var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: esriSatelliteAttribution,
-                maxZoom: 18
+            var satelliteLayer = L.tileLayer(MapConfig.baseLayers.Satellite.url, {
+                attribution: MapConfig.baseLayers.Satellite.attribution,
+                maxZoom: MapConfig.conusMaxZoom
             });
 
             if (!ctl.layerControl) {
@@ -42,7 +32,6 @@
             }
 
             Neighborhood.geojson().$promise.then(function (data) {
-                ctl.count = data && data.features ? data.features.length : '0';
                 ctl.neighborhoodLayer = L.geoJSON(data, {
                     onEachFeature: onEachFeature
                 });
