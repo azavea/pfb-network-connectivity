@@ -33,21 +33,67 @@ function generate_tiles_from_shapefile() {
 
     # Get bounds. ogrinfo can handle big files, but doesn't provide tons of output flexibility, so
     # parse out the answer from the blob of text it returns.
-    TL_BOUNDS=$(ogrinfo -so -al "/data/${TL_SHAPEFILE_NAME}.shp" \
+    export TL_BOUNDS=$(ogrinfo -so -al "/data/${TL_SHAPEFILE_NAME}.shp" \
         | grep Extent | sed -E 's/.*\((.*), (.*)\) - \((.*), (.*)\).*/\1 \2 \3 \4/')
 
     # Make tiles and upload them to S3.
-    # 'tl' only has totally-quiet or very-verbose (every tile) output options, so this filters
+    # 'tl' only has totally-quiet or very-verbose (every tile) output options, so we filter
     # the output to show the first line then every 1000th line thereafter.
-    /usr/bin/time -f "\nTIMING: %C\nTIMING:\t%E elapsed %Kkb mem\n" \
-    tl copy --min-zoom "${TL_MIN_ZOOM}" --max-zoom "${TL_MAX_ZOOM}" \
-        --bounds "${TL_BOUNDS}" \
-        "mapnik:///opt/pfb/tilemaker/styles/${TL_SHAPEFILE_NAME}_style.xml" \
-        "s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_TILES_PATH}/${TL_SHAPEFILE_NAME}/{z}/{x}/{y}.png" \
-        | awk 'NR == 1 || NR % 1000 == 0'
+    #
+    # The work is done in the two functions, which are spawned in many (relatively) bit-sized
+    # pieces with `parallel`
+
+    # Define these once to save space below. They need to be exported because they'll be used
+    # in the functions.
+    export TL_INPUT="mapnik:///opt/pfb/tilemaker/styles/${TL_SHAPEFILE_NAME}_style.xml"
+    export TL_OUTPUT="s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_TILES_PATH}/${TL_SHAPEFILE_NAME}/{z}/{x}/{y}.png"
+    # To generate locally instead of straight-to-S3, the destination param would be something like:
+    # export TL_OUTPUT="file:///data/tiles/${TL_SHAPEFILE_NAME}/"
+
+    # Function to generate tiles for the given zoomlevel for the whole area.
+    # For low-zoom layers that run fast anyway, partitioning isn't much of a win because the
+    # tiles on the edges that get generated twice will account for a significant percentage
+    # of the total.
+    function run_tl_zoom() {
+        ZOOMLEVEL="${1}"
+        /usr/bin/time tl copy --min-zoom "${ZOOMLEVEL}" --max-zoom "${ZOOMLEVEL}" \
+            --bounds "${TL_BOUNDS}" \
+            "${TL_INPUT}" "${TL_OUTPUT}" \
+            | awk 'NR == 1 || NR % 1000 == 0'
+    }
+
+    # Function to generate tiles for the given zoomlevel and the given partition, where the
+    # partition is made by splitting the space into NUM_PARTS longitude bands and setting
+    # the bounding box to only the one indicated by PART.
+    function run_partitioned_tl() {
+        NUM_PARTS="${1}"
+        PART="${2}"
+        ZOOMLEVEL="${3}"
+        TL_SUB_BOUNDS=$(/opt/pfb/tilemaker/scripts/split_bbox.py "${TL_BOUNDS} ${NUM_PARTS} ${PART}")
+
+        /usr/bin/time tl copy --min-zoom "${ZOOMLEVEL}" --max-zoom "${ZOOMLEVEL}" \
+            --bounds "${TL_SUB_BOUNDS}" \
+            "${TL_INPUT}" "${TL_OUTPUT}" \
+            | awk 'NR == 1 || NR % 1000 == 0'
+    }
+
+    export -f run_tl_zoom
+    export -f run_partitioned_tl
+
+    echo "Launching low-zoom ${TL_SHAPEFILE_NAME} tile generation commands"
+    parallel --no-notice run_tl_zoom ::: `seq ${TL_MIN_ZOOM} 12`
+
+    echo "Launching partitioned ${TL_SHAPEFILE_NAME} tile generation commands"
+    parallel --no-notice run_partitioned_tl "${TL_NUM_PARTS}" {2} {1} \
+        ::: `seq 13 ${TL_MAX_ZOOM}` \
+        ::: `seq 1 ${TL_NUM_PARTS}`
 
     popd
 }
 
-generate_tiles_from_shapefile "neighborhood_ways"
-generate_tiles_from_shapefile "neighborhood_census_blocks"
+if [ -n "${TL_SHAPEFILE_NAME}" ]; then
+    generate_tiles_from_shapefile "${TL_SHAPEFILE_NAME}"
+else
+    generate_tiles_from_shapefile "neighborhood_ways"
+    generate_tiles_from_shapefile "neighborhood_census_blocks"
+fi
