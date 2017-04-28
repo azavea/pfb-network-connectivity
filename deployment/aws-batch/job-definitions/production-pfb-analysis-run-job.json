@@ -2,9 +2,6 @@
     "jobDefinitionName": "production-pfb-analysis-run-job",
     "type": "container",
     "parameters": {},
-    "retryStrategy": {
-        "attempts": 2
-    },
     "containerProperties": {
         "image": "{image}",
         "vcpus": 8,
