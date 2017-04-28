@@ -31,10 +31,36 @@ from .functions import ObjectAtPath
 
 logger = logging.getLogger(__name__)
 
+# degree to which to simplify boundaries
+# https://docs.djangoproject.com/en/1.11/ref/contrib/gis/geos/#django.contrib.gis.geos.GEOSGeometry.simplify
+SIMPLIFICATION_TOLERANCE_MORE = 0.001
+SIMPLIFICATION_TOLERANCE_LESS = 0.0001
+
 
 def get_neighborhood_file_upload_path(instance, filename):
     """ Upload each boundary file to its own directory """
     return 'neighborhood_boundaries/{0}/{1}'.format(instance.name, os.path.basename(filename))
+
+
+def simplify_geom(geom):
+    """Attempt to simplify a multipolygon, will fallback options
+
+    Fall back to simplify less, or none at all.
+    """
+    try:
+        simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_MORE)])
+    except:
+        simple = None
+    try:
+        # sometimes an empty geometry may result, likely due to
+        # https://trac.osgeo.org/geos/ticket/741
+        if not simple or simple.empty or not simple.valid:
+            simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)])
+        if simple.empty or not simple.valid:
+            simple = geom
+    except:
+        simple = geom
+    return simple
 
 
 def create_environment(**kwargs):
@@ -56,6 +82,7 @@ class Neighborhood(PFBModel):
     name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
     label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    geom_simple = MultiPolygonField(srid=4326, blank=True, null=True)
     geom_pt = PointField(srid=4326, blank=True, null=True)
     organization = models.ForeignKey(Organization,
                                      related_name='neighborhoods',
@@ -107,6 +134,7 @@ class Neighborhood(PFBModel):
             boundary_file = File(open(zip_filename))
             self.boundary_file = boundary_file
             self.geom = geom
+            self.geom_simple = simplify_geom(geom)
             self.geom_pt = geom.centroid
             self.save()
         except:
@@ -154,6 +182,7 @@ class Neighborhood(PFBModel):
                     if geom.geom_type == 'Polygon':
                         geom = MultiPolygon([geom])
                     self.geom = geom
+                    self.geom_simple = simplify_geom(geom)
                     self.geom_pt = geom.centroid
             finally:
                 shutil.rmtree(tmpdir, ignore_errors=True)

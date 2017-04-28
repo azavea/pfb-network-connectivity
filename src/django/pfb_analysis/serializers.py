@@ -71,6 +71,15 @@ class NeighborhoodGeoJsonSerializer(GeoFeatureModelSerializer):
         fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom_pt')
 
 
+class NeighborhoodBoundsGeoJsonSerializer(GeoFeatureModelSerializer):
+
+    class Meta:
+        model = Neighborhood
+        id_field = 'uuid'
+        geo_field = 'geom_simple'
+        fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom_simple')
+
+
 class NeighborhoodSummarySerializer(PFBModelSerializer):
     """Serializer for including neighborhood information in AnalysisJob results.
 

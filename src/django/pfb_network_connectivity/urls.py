@@ -32,6 +32,9 @@ router.register(r'neighborhoods', analysis_views.NeighborhoodViewSet, base_name=
 router.register(r'neighborhoods_geojson',
                 analysis_views.NeighborhoodGeoJsonViewSet,
                 base_name='neighborhoods_geojson')
+router.register(r'neighborhoods_bounds_geojson',
+                analysis_views.NeighborhoodBoundsGeoJsonViewSet,
+                base_name='neighborhoods_bounds_geojson')
 
 
 urlpatterns = [
