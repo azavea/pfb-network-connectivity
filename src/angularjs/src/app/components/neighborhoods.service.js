@@ -26,6 +26,11 @@
                 method: 'GET',
                 isArray: false,
                 url: '/api/neighborhoods_geojson/'
+            },
+            'bounds': {
+                method: 'GET',
+                isArray: false,
+                url: '/api/neighborhoods_bounds_geojson/:uuid/'
             }
         });
     }
