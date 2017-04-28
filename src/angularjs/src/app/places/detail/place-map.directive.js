@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlacesMapController($filter, $http, $sanitize) {
+    function PlaceMapController($filter, $http, $sanitize, MapConfig) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -14,16 +14,16 @@
             // TODO: set center and zoom level by zooming to fit geojson polygon bounds
             ctl.mapCenter = [39.963277, -75.142971];
             ctl.baselayer = L.tileLayer(
-                'https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
-                    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-                    maxZoom: 18
+                MapConfig.baseLayers.Positron.url, {
+                    attribution: MapConfig.baseLayers.Positron.attribution,
+                    maxZoom: MapConfig.conusMaxZoom
                 });
         };
 
         ctl.$onChanges = function(changes) {
             // set map layers once received from parent scope (paret-detail.controller)
-            if (changes.pfbPlacesMapLayers && changes.pfbPlacesMapLayers.currentValue && ctl.map) {
-                setLayers(changes.pfbPlacesMapLayers.currentValue);
+            if (changes.pfbPlaceMapLayers && changes.pfbPlaceMapLayers.currentValue && ctl.map) {
+                setLayers(changes.pfbPlaceMapLayers.currentValue);
             }
         };
 
@@ -31,8 +31,8 @@
             ctl.map = map;
 
             // in case map layers set before map was ready, add layers now map is ready to go
-            if (ctl.pfbPlacesMapLayers) {
-                setLayers(ctl.pfbPlacesMapLayers);
+            if (ctl.pfbPlaceMapLayers) {
+                setLayers(ctl.pfbPlaceMapLayers);
             }
         };
 
@@ -42,7 +42,7 @@
             }
 
             if (!ctl.layerControl) {
-                ctl.layerControl = L.control.layers({'Stamen': ctl.baselayer}, []).addTo(ctl.map);
+                ctl.layerControl = L.control.layers({'Positron': ctl.baselayer}, []).addTo(ctl.map);
             }
 
             _.map(layers, function(url, metric) {
@@ -105,23 +105,23 @@
         }
     }
 
-    function PlacesMapDirective() {
+    function PlaceMapDirective() {
         var module = {
             restrict: 'E',
             scope: {
-                pfbPlacesMapLayers: '<'
+                pfbPlaceMapLayers: '<'
             },
-            controller: 'PlacesMapController',
+            controller: 'PlaceMapController',
             controllerAs: 'ctl',
             bindToController: true,
-            templateUrl: 'app/places/map/places-map.html'
+            templateUrl: 'app/places/detail/place-map.html'
         };
         return module;
     }
 
 
-    angular.module('pfb.places.map')
-        .controller('PlacesMapController', PlacesMapController)
-        .directive('pfbPlacesMap', PlacesMapDirective);
+    angular.module('pfb.places.detail')
+        .controller('PlaceMapController', PlaceMapController)
+        .directive('pfbPlaceMap', PlaceMapDirective);
 
 })();
