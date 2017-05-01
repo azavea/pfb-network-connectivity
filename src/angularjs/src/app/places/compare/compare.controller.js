@@ -18,6 +18,7 @@
         function initialize() {
             ctl.places = new Array(3);
             ctl.clearSelection = clearSelection;
+            ctl.goToPlacesList = goToPlacesList;
 
             getPlaces([$stateParams.place1, $stateParams.place2, $stateParams.place3]);
         }
@@ -41,6 +42,11 @@
             var newParams = _.extend({}, $stateParams);
             newParams['place' + (num + 1)] = '';
             $state.go('places.compare', newParams);
+        }
+
+        // navigate to places list, preserving route parameters for selected places to compare
+        function goToPlacesList() {
+            $state.go('places.list', $stateParams);
         }
     }
 

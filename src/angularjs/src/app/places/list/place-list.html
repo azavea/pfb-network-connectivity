@@ -86,7 +86,7 @@
                     <div class="network-score">{{neighborhood.overall_score | number:0}}</div>
                     <div class="compare">
                         <button ng-disabled="neighborhood.comparing" class="btn btn-toggle active"
-                            ng-click="placeList.addPlaceToCompare(neighborhood)">Compare
+                            ng-click="placeList.addPlaceToCompare(neighborhood, true)">Compare
                             <span></span>
                         </button>
                     </div>

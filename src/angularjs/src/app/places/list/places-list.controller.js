@@ -10,8 +10,8 @@
     'use strict';
 
     /** @ngInject */
-    function PlaceListController($log, $state, $stateParams, $scope, Pagination, AuthService,
-                                 Neighborhood, AnalysisJob) {
+    function PlaceListController($log, $state, $stateParams, $scope,
+                                 Pagination, AuthService, Neighborhood, AnalysisJob) {
         var ctl = this;
 
         var sortingOptions = [
@@ -59,7 +59,14 @@
             $scope.$watch(function(){return ctl.placeToRemoveFromComparison;}, selectedComparePlace);
         }
 
-        function addPlaceToCompare(place) {
+        /**
+         * Add a place to the list of up to three places to view on compare page.
+         *
+         * @param {Neighborhood} place Neighborhood to list of places to compare
+         * @param {boolean} updateUrl If true, will update URL without refreshing the page
+                                      to include the place UUID in the route
+         */
+        function addPlaceToCompare(place, updateUrl) {
             if (place.comparing) {
                 $log.warn('aready have place selected to compare');
                 return;
@@ -68,6 +75,12 @@
             if (ctl.comparePlaces.length < 3) {
                 place.comparing = true;
                 ctl.comparePlaces.push(place);
+
+                // update URL to include place to compare, to retain state in case of page refresh
+                if (updateUrl) {
+                    $stateParams['place' + ctl.comparePlaces.length] = place.uuid;
+                    $state.go('places.list', $stateParams, {notify: false});
+                }
             } else {
                 $log.warn('already have three places to compare');
 
@@ -92,10 +105,12 @@
                 });
                 $state.go('places.compare', newParams);
             } else {
-                _.remove(ctl.comparePlaces, function(place) {
+                _.remove(ctl.comparePlaces, function(place, offset) {
                     if (place.uuid === uuid) {
                         // unset convenience flag indicating this is a place to compare
                         place.comparing = false;
+                        $stateParams['place' + (offset + 1)] = '';
+                        $state.go('places.list', $stateParams, {notify: false});
                         return true;
                     }
                     return false;
@@ -129,6 +144,10 @@
                 params.neighborhood = ctl.neighborhoodFilter.uuid;
             }
 
+            // Read out pre-set places to compare from the URL. Keep this state in the URL
+            // so user can navigate between places list and comparison without losing selections.
+            var uuidsToCompare = [$stateParams.place1, $stateParams.place2, $stateParams.place3];
+
             AnalysisJob.query(params).$promise.then(function(data) {
 
                 ctl.places = _.map(data.results, function(obj) {
@@ -136,8 +155,14 @@
                     // get properties from the neighborhood's last run job
                     neighborhood.modifiedAt = obj.modifiedAt;
                     neighborhood.overall_score = obj.overall_score;
+
                     // add convenience flag to indicate if place selected for comparison
-                    neighborhood.comparing = false;
+                    if (_.includes(uuidsToCompare, neighborhood.uuid)) {
+                        addPlaceToCompare(neighborhood, false);
+                    } else {
+                        neighborhood.comparing = false;
+                    }
+
                     return neighborhood;
                 });
 
