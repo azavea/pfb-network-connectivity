@@ -39,10 +39,10 @@
                 <div class="form-group">
                     <label for="compare-dropdown">Compare</label>
                     <select ng-model="placeList.placeToRemoveFromComparison" name="compare-dropdown"
-                        ng-disabled="!placeList.comparePlaces.length" class="form-control"
+                        ng-disabled="!placeList.comparePlacesCount()" class="form-control"
                         id="role" type="text">
-                    <option selected disabled value="">{{placeList.comparePlaces.length}} Selected</option>
-                    <option ng-repeat="neighborhood in placeList.comparePlaces"
+                    <option selected disabled value="">{{placeList.comparePlacesCount()}} Selected</option>
+                    <option ng-repeat="neighborhood in placeList.comparePlaces | filter:{uuid: '!!'}"
                         value="{{neighborhood.uuid}}">
                         <div>
                             <div class="compare-title">{{neighborhood.label}},

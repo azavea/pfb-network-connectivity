@@ -45,8 +45,9 @@
             ctl.neighborhoodFilter = null;
             ctl.placeToRemoveFromComparison = null;
 
-            ctl.comparePlaces = [];
+            ctl.comparePlaces = new Array(3);
             ctl.addPlaceToCompare = addPlaceToCompare;
+            ctl.comparePlacesCount = comparePlacesCount;
 
             ctl.sortBy = sortingOptions[0]; // default to alphabetical order
             ctl.sortingOptions = sortingOptions;
@@ -72,14 +73,14 @@
                 return;
             }
 
-            if (ctl.comparePlaces.length < 3) {
+            // put place in first empty comparison slot of the three available
+            var firstEmpty = _.findIndex(ctl.comparePlaces, function(place) { return !place; });
+            if (firstEmpty > -1) {
                 place.comparing = true;
-                ctl.comparePlaces.push(place);
-
+                ctl.comparePlaces[firstEmpty] = place;
                 // update URL to include place to compare, to retain state in case of page refresh
                 if (updateUrl) {
-                    $stateParams['place' + ctl.comparePlaces.length] = place.uuid;
-                    $state.go('places.list', $stateParams, {notify: false});
+                    updateComparisonsInUrl();
                 }
             } else {
                 $log.warn('already have three places to compare');
@@ -99,22 +100,21 @@
 
             // use special flag for bottom list item, which is to go to the compare page
             if (uuid === 'compare') {
-                var newParams = _.extend({}, $stateParams);
-                _.map(ctl.comparePlaces, function(place, offset) {
-                    newParams['place' + (offset + 1)] = place.uuid;
-                });
-                $state.go('places.compare', newParams);
+                $state.go('places.compare', $stateParams);
             } else {
-                _.remove(ctl.comparePlaces, function(place, offset) {
-                    if (place.uuid === uuid) {
-                        // unset convenience flag indicating this is a place to compare
-                        place.comparing = false;
-                        $stateParams['place' + (offset + 1)] = '';
-                        $state.go('places.list', $stateParams, {notify: false});
-                        return true;
-                    }
-                    return false;
+                var removeOffset = _.findIndex(ctl.comparePlaces, function(place) {
+                    return place.uuid === uuid;
                 });
+
+                if (removeOffset > -1) {
+                    // unset flag on Neighborhood marking selection for comparison
+                    ctl.comparePlaces[removeOffset].comparing = false;
+                    // remove Neighborhood from array of places selected for comparison
+                    ctl.comparePlaces[removeOffset] = null;
+                    updateComparisonsInUrl();
+                } else {
+                    $log.warn('no place with UUID ' + uuid + ' found to remove from comparison');
+                }
 
                 // be sure to clear current selection once removing it as an option
                 // sometimes angular does this on its own, but it doesn't seem to be consistent
@@ -122,11 +122,29 @@
             }
         }
 
+        // convenience method to track number of selected places
+        function comparePlacesCount() {
+            return _.reduce(ctl.comparePlaces, function(sum, place) {
+                if (place) {
+                    return sum + 1;
+                } else {
+                    return sum;
+                }
+            }, 0);
+        }
+
+        // helper to update URL after places added or removed for comparison, without reloading
+        function updateComparisonsInUrl() {
+            _.each(ctl.comparePlaces, function(place, index) {
+                $stateParams['place' + (index + 1)] = place ? place.uuid : '';
+            });
+            $state.go('places.list', $stateParams, {notify: false});
+        }
+
         function filterNeighborhood(newFilter, oldFilter) {
             if (newFilter === oldFilter) {
                 return;
             }
-
             getPlaces();
         }
 
