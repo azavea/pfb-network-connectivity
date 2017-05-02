@@ -18,6 +18,7 @@
         function initialize() {
             ctl.places = new Array(3);
             ctl.clearSelection = clearSelection;
+            ctl.goToPlacesList = goToPlacesList;
 
             getPlaces([$stateParams.place1, $stateParams.place2, $stateParams.place3]);
         }
@@ -37,10 +38,20 @@
             });
         }
 
+        /**
+         * Remove a place selected for comparison. Update URL and clear card without reloading.
+         *
+         * @param {Integer} num Offset to clear in list of three slots for places to compare
+         */
         function clearSelection(num) {
-            var newParams = _.extend({}, $stateParams);
-            newParams['place' + (num + 1)] = '';
-            $state.go('places.compare', newParams);
+            $stateParams['place' + (num + 1)] = '';
+            ctl.places[num] = null;
+            $state.go('places.compare', $stateParams, {notify: false});
+        }
+
+        // navigate to places list, preserving route parameters for selected places to compare
+        function goToPlacesList() {
+            $state.go('places.list', $stateParams);
         }
     }
 

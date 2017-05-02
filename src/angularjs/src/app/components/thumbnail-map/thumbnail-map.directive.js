@@ -12,7 +12,8 @@
                 scrollWheelZoom: false,
                 interactive: false,
                 zoomControl: false,
-                attributionControl: false
+                attributionControl: false,
+                zoomAnimation: false
             };
 
             // will set center and zoom level by zooming to fit geojson polygon bounds when loaded
@@ -36,6 +37,20 @@
         ctl.onMapReady = function (map) {
             ctl.map = map;
 
+            ctl.map.on('layeradd', function() {
+                // Tell map to recalculate its size. Otherwise transition to compare page may
+                // result in incorrect pan/zoom to bounds.
+                ctl.map.invalidateSize(false);
+
+                if (ctl.boundsLayer) {
+                    var bounds = ctl.boundsLayer.getBounds();
+                    ctl.map.fitBounds(bounds, {
+                        maxZoom: MapConfig.conusMaxZoom,
+                        animate: false
+                    });
+                }
+            });
+
             if (ctl.pfbThumbnailMapPlace) {
                 loadBounds(ctl.pfbThumbnailMapPlace);
             }
@@ -45,7 +60,6 @@
             Neighborhood.bounds({uuid: uuid}).$promise.then(function (data) {
                 ctl.boundsLayer = L.geoJSON(data, {});
                 ctl.map.addLayer(ctl.boundsLayer);
-                ctl.map.fitBounds(ctl.boundsLayer.getBounds());
             });
         }
     }

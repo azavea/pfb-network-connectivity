@@ -20,7 +20,7 @@
                 template: '<ui-view/>'
             })
             .state('places.list', {
-                url: '',
+                url: ':place1/:place2/:place3/',
                 controller: 'PlaceListController',
                 controllerAs: 'placeList',
                 templateUrl: 'app/places/list/place-list.html'
@@ -32,7 +32,7 @@
                 templateUrl: 'app/places/detail/places-detail.html'
             })
             .state('places.compare', {
-                url: ':compare/:place1/:place2/:place3/',
+                url: '/compare/:place1/:place2/:place3/',
                 controller: 'CompareController',
                 controllerAs: 'compare',
                 templateUrl: 'app/places/compare/compare.html'

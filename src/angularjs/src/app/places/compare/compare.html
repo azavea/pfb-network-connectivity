@@ -11,7 +11,8 @@
                 <div class="btn-group">
                     <button class="btn btn-secondary"
                         ui-sref="places.compare({place1: '', place2: '', place3: ''})">Clear Selections</button>
-                    <button ui-sref="places.list" class="btn btn-secondary">Back to Search</button>
+                    <button ng-click="compare.goToPlacesList()"
+                        class="btn btn-secondary">Back to Search</button>
                 </div>
         </div>
 
@@ -20,21 +21,28 @@
             <div class="column-4" ng-repeat="place in compare.places track by $index">
                 <div class="card stack" ng-if="place.neighborhood">
                     <div class="card-details">
-                        <!-- TODO: fix styling. Why does this not appear without btn classes? -->
-                        <a class="compare-remove btn btn-secondary"
-                            ng-click="compare.clearSelection($index)"><i class="icon-cross"></i></a>
+                        <!-- TODO: fix styling. Why does icon not appear? -->
+                        <a class="compare-remove"
+                            ng-click="compare.clearSelection($index)"><i class="icon-cross"></i>X</a>
                         <h3>{{place.neighborhood.label}}</h3>
                         <h4>{{place.neighborhood.state_abbrev}}</h4>
                         <div class="network-score large">{{place.lastJob.overall_score | number:0}}</div>
                         <div class="location-timestamp"><span>Last updated:</span>
                             {{place.lastJob.modifiedAt | date:'MMMM dd, yyyy'}}</div>
                     </div>
-                    <div class="card-map">s
-                        <pfb-thumbnail-map></pfb-thumbnail-map>
+                    <div class="card-map">
+                        <pfb-thumbnail-map
+                            pfb-thumbnail-map-place="place.neighborhood.uuid"></pfb-thumbnail-map>
                     </div>
-                    <ul class="metric-list" ng-repeat="result in place.scores">
-                        <li>{{result.metric}}
+                    <ul class="metric-list">
+                        <li ng-repeat="result in place.scores">{{result.metric}}
                             <span class="network-score small">{{result.score | number:0}}</span>
+                        </li>
+                        <li>
+                            <section>
+                                <a ui-sref="places.detail({uuid: place.neighborhood.uuid})"
+                                    class="btn btn-secondary btn-block">View Place</a>
+                            </section>
                         </li>
                     </ul>
                 </div>
@@ -44,7 +52,8 @@
                     <div class="card-details">
                         <i class="icon-map"></i>
                         <div class="h2">Add a city/town to compare</div>
-                        <a ui-sref="places.list" class="btn btn-primary btn-block">Search city/towns</a>
+                        <a ng-click="compare.goToPlacesList()"
+                            class="btn btn-primary btn-block">Search city/towns</a>
                     </div>
                 </div>
             </div>
