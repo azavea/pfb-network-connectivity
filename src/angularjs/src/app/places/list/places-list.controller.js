@@ -46,9 +46,10 @@
 
             ctl.comparePlaces = new Array(3);
             ctl.addPlaceToCompare = addPlaceToCompare;
-            ctl.comparePlacesCount = comparePlacesCount;
             ctl.removeComparePlace = removeComparePlace;
             ctl.goComparePlaces = goComparePlaces;
+            // convenience property to track number of selected places; must be updated on add/remove
+            ctl.comparePlacesCount = 0;
 
             ctl.sortBy = sortingOptions[0]; // default to alphabetical order
             ctl.sortingOptions = sortingOptions;
@@ -78,6 +79,7 @@
             if (firstEmpty > -1) {
                 place.comparing = true;
                 ctl.comparePlaces[firstEmpty] = place;
+                ctl.comparePlacesCount++;
                 // update URL to include place to compare, to retain state in case of page refresh
                 if (updateUrl) {
                     updateComparisonsInUrl();
@@ -112,21 +114,11 @@
                 ctl.comparePlaces[removeOffset].comparing = false;
                 // remove Neighborhood from array of places selected for comparison
                 ctl.comparePlaces[removeOffset] = null;
+                ctl.comparePlacesCount--;
                 updateComparisonsInUrl();
             } else {
                 $log.warn('no place with UUID ' + uuid + ' found to remove from comparison');
             }
-        }
-
-        // convenience method to track number of selected places
-        function comparePlacesCount() {
-            return _.reduce(ctl.comparePlaces, function(sum, place) {
-                if (place) {
-                    return sum + 1;
-                } else {
-                    return sum;
-                }
-            }, 0);
         }
 
         // helper to update URL after places added or removed for comparison, without reloading

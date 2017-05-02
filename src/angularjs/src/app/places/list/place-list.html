@@ -40,8 +40,8 @@
                     <div class="btn-group" uib-dropdown is-open="status.isopen">
                         <button class="btn btn-default btn-block" type="button"
                             id="dropdown-compare" aria-haspopup="true" aria-expanded="true"
-                            uib-dropdown-toggle ng-disabled="placeList.comparePlacesCount() < 1">
-                                {{placeList.comparePlacesCount()}} Selected
+                            uib-dropdown-toggle ng-disabled="placeList.comparePlacesCount < 1">
+                                {{placeList.comparePlacesCount}} Selected
                                 <span class="caret"></span>
                         </button>
                     <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdown-compare"
@@ -90,8 +90,8 @@
                     <div class="network-score">{{neighborhood.overall_score | number:0}}</div>
                     <div class="compare">
                         <button ng-if="!neighborhood.comparing"
-                            ng-disabled="placeList.comparePlacesCount() >=3"
-                            ng-class="(placeList.comparePlacesCount() >=3) ?
+                            ng-disabled="placeList.comparePlacesCount >=3"
+                            ng-class="(placeList.comparePlacesCount >=3) ?
                                 'btn btn-toggle' : 'btn btn-toggle active'"
                             ng-click="placeList.addPlaceToCompare(neighborhood, true)">Compare
                             <span></span>
