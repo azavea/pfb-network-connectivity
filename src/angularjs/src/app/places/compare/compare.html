@@ -31,7 +31,8 @@
                             {{place.lastJob.modifiedAt | date:'MMMM dd, yyyy'}}</div>
                     </div>
                     <div class="card-map">
-                        <pfb-thumbnail-map></pfb-thumbnail-map>
+                        <pfb-thumbnail-map
+                            pfb-thumbnail-map-place="place.neighborhood.uuid"></pfb-thumbnail-map>
                     </div>
                     <ul class="metric-list">
                         <li ng-repeat="result in place.scores">{{result.metric}}
