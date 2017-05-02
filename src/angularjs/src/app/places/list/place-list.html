@@ -34,29 +34,33 @@
                 </div>
             </div>
             <div class="column">
-
                 <!-- Compare dropdown -->
                 <div class="form-group">
-                    <label for="compare-dropdown">Compare</label>
-                    <select ng-model="placeList.placeToRemoveFromComparison" name="compare-dropdown"
-                        ng-disabled="!placeList.comparePlacesCount()" class="form-control"
-                        id="role" type="text">
-                    <option selected disabled value="">{{placeList.comparePlacesCount()}} Selected</option>
-                    <option ng-repeat="neighborhood in placeList.comparePlaces | filter:{uuid: '!!'}"
-                        value="{{neighborhood.uuid}}">
-                        <div>
-                            <div class="compare-title">{{neighborhood.label}},
-                                {{neighborhood.state_abbrev}}</div>
-                            <div class="network-score small">{{neighborhood.overall_score | number:0}}</div>
-                            <a href="#" class="compare-remove">Remove</a>
-                        </div>
-                    </option>
-                    <option value="compare">
-                        <a href="#" class="compare-btn">Compare Places</a>
-                    </option>
-                    </select>
+                    <label for="dropdown-compare">Compare</label>
+                    <div class="btn-group" uib-dropdown is-open="status.isopen">
+                        <button class="btn btn-default btn-block" type="button"
+                            id="dropdown-compare" aria-haspopup="true" aria-expanded="true"
+                            uib-dropdown-toggle>
+                                {{placeList.comparePlacesCount()}} Selected
+                                <span class="caret"></span>
+                        </button>
+                    <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdown-compare"
+                        uib-dropdown-menu>
+                        <li ng-repeat="neighborhood in placeList.comparePlaces | filter:{uuid: '!!'}">
+                            <div>
+                                <div class="compare-title">{{neighborhood.label}},
+                                    {{neighborhood.state_abbrev}}</div>
+                                <div class="network-score small">{{neighborhood.overall_score | number:0}}</div>
+                                <a ng-click="placeList.selectedComparePlace(neighborhood.uuid)"
+                                    class="compare-remove">Remove</a>
+                            </div>
+                        </li>
+                        <li>
+                            <a ng-click="placeList.selectedComparePlace('compare')"
+                                class="compare-btn">Compare Places</a>
+                        </li>
+                    </ul>
                 </div>
-
             </div>
         </div>
     </div>

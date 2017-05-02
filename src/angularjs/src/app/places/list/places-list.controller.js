@@ -43,11 +43,11 @@
             ctl.places = [];
 
             ctl.neighborhoodFilter = null;
-            ctl.placeToRemoveFromComparison = null;
 
             ctl.comparePlaces = new Array(3);
             ctl.addPlaceToCompare = addPlaceToCompare;
             ctl.comparePlacesCount = comparePlacesCount;
+            ctl.selectedComparePlace = selectedComparePlace;
 
             ctl.sortBy = sortingOptions[0]; // default to alphabetical order
             ctl.sortingOptions = sortingOptions;
@@ -57,7 +57,6 @@
             getPlaces();
             loadOptions();
             $scope.$watch(function(){return ctl.neighborhoodFilter;}, filterNeighborhood);
-            $scope.$watch(function(){return ctl.placeToRemoveFromComparison;}, selectedComparePlace);
         }
 
         /**
@@ -115,10 +114,6 @@
                 } else {
                     $log.warn('no place with UUID ' + uuid + ' found to remove from comparison');
                 }
-
-                // be sure to clear current selection once removing it as an option
-                // sometimes angular does this on its own, but it doesn't seem to be consistent
-                ctl.placeToRemoveFromComparison = null;
             }
         }
 
