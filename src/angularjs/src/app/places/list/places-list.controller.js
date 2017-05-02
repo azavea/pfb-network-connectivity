@@ -151,6 +151,9 @@
                 params.neighborhood = ctl.neighborhoodFilter.uuid;
             }
 
+            ctl.comparePlacesCount = 0;
+            ctl.comparePlaces = new Array(3);
+
             // Read out pre-set places to compare from the URL. Keep this state in the URL
             // so user can navigate between places list and comparison without losing selections.
             var uuidsToCompare = [$stateParams.place1, $stateParams.place2, $stateParams.place3];
