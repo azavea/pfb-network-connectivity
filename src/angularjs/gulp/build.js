@@ -79,6 +79,16 @@ gulp.task('images', function () {
     .pipe(gulp.dest(path.join(conf.paths.dist, '/assets/images/')));
 });
 
+gulp.task('leaflet', function () {
+    return gulp.src(path.join(conf.paths.bower, '/leaflet/dist/images/*'))
+    .pipe($.imagemin({
+      optimizationLevel: 3,
+      progressive: true,
+      interlaced: true
+    }))
+    .pipe(gulp.dest(path.join(conf.paths.dist, '/styles/images/')));
+});
+
 gulp.task('favicons', function () {
     return gulp.src(path.join(conf.paths.src, '/assets/favicons/**/*'))
         .pipe(gulp.dest(path.join(conf.paths.dist, '/')));
@@ -109,4 +119,4 @@ gulp.task('clean', function () {
   return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/')]);
 });
 
-gulp.task('build', ['html', 'images', 'favicons', 'fonts', 'other']);
+gulp.task('build', ['html', 'images', 'leaflet', 'favicons', 'fonts', 'other']);
