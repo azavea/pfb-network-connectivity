@@ -40,7 +40,7 @@
                     <div class="btn-group" uib-dropdown is-open="status.isopen">
                         <button class="btn btn-default btn-block" type="button"
                             id="dropdown-compare" aria-haspopup="true" aria-expanded="true"
-                            uib-dropdown-toggle>
+                            uib-dropdown-toggle ng-disabled="placeList.comparePlacesCount() < 1">
                                 {{placeList.comparePlacesCount()}} Selected
                                 <span class="caret"></span>
                         </button>
@@ -51,12 +51,12 @@
                                 <div class="compare-title">{{neighborhood.label}},
                                     {{neighborhood.state_abbrev}}</div>
                                 <div class="network-score small">{{neighborhood.overall_score | number:0}}</div>
-                                <a ng-click="placeList.selectedComparePlace(neighborhood.uuid)"
+                                <a ng-click="placeList.removeComparePlace(neighborhood.uuid)"
                                     class="compare-remove">Remove</a>
                             </div>
                         </li>
                         <li>
-                            <a ng-click="placeList.selectedComparePlace('compare')"
+                            <a ng-click="placeList.goComparePlaces()"
                                 class="compare-btn">Compare Places</a>
                         </li>
                     </ul>
@@ -89,8 +89,15 @@
                 <div class="result-right">
                     <div class="network-score">{{neighborhood.overall_score | number:0}}</div>
                     <div class="compare">
-                        <button ng-disabled="neighborhood.comparing" class="btn btn-toggle active"
+                        <button ng-if="!neighborhood.comparing"
+                            ng-disabled="placeList.comparePlacesCount() >=3"
+                            ng-class="(placeList.comparePlacesCount() >=3) ?
+                                'btn btn-toggle' : 'btn btn-toggle active'"
                             ng-click="placeList.addPlaceToCompare(neighborhood, true)">Compare
+                            <span></span>
+                        </button>
+                        <button ng-if="neighborhood.comparing" class="btn btn-toggle"
+                            ng-click="placeList.removeComparePlace(neighborhood.uuid)">Remove
                             <span></span>
                         </button>
                     </div>

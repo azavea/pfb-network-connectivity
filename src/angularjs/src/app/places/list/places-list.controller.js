@@ -47,7 +47,8 @@
             ctl.comparePlaces = new Array(3);
             ctl.addPlaceToCompare = addPlaceToCompare;
             ctl.comparePlacesCount = comparePlacesCount;
-            ctl.selectedComparePlace = selectedComparePlace;
+            ctl.removeComparePlace = removeComparePlace;
+            ctl.goComparePlaces = goComparePlaces;
 
             ctl.sortBy = sortingOptions[0]; // default to alphabetical order
             ctl.sortingOptions = sortingOptions;
@@ -87,33 +88,33 @@
             }
         }
 
+        function goComparePlaces() {
+            $state.go('places.compare', $stateParams);
+        }
+
         /**
          * Fired when an option selected from comparison drop-down.
-         * Either remove a selected place from comparison list, or if special last option selected,
-         * go to comparison page with selections.
+         * Remove a selected place from comparison list.
+         *
+         * @param {String} uuid Neighborhood ID to remove from set of places to compare
          */
-        function selectedComparePlace(uuid) {
+        function removeComparePlace(uuid) {
             if (!uuid) {
                 return; // on page load, this watch fires will no value
             }
 
-            // use special flag for bottom list item, which is to go to the compare page
-            if (uuid === 'compare') {
-                $state.go('places.compare', $stateParams);
-            } else {
-                var removeOffset = _.findIndex(ctl.comparePlaces, function(place) {
-                    return place && place.uuid === uuid;
-                });
+            var removeOffset = _.findIndex(ctl.comparePlaces, function(place) {
+                return place && place.uuid === uuid;
+            });
 
-                if (removeOffset > -1) {
-                    // unset flag on Neighborhood marking selection for comparison
-                    ctl.comparePlaces[removeOffset].comparing = false;
-                    // remove Neighborhood from array of places selected for comparison
-                    ctl.comparePlaces[removeOffset] = null;
-                    updateComparisonsInUrl();
-                } else {
-                    $log.warn('no place with UUID ' + uuid + ' found to remove from comparison');
-                }
+            if (removeOffset > -1) {
+                // unset flag on Neighborhood marking selection for comparison
+                ctl.comparePlaces[removeOffset].comparing = false;
+                // remove Neighborhood from array of places selected for comparison
+                ctl.comparePlaces[removeOffset] = null;
+                updateComparisonsInUrl();
+            } else {
+                $log.warn('no place with UUID ' + uuid + ' found to remove from comparison');
             }
         }
 
