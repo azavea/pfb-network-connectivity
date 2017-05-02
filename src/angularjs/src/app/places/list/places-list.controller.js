@@ -90,6 +90,7 @@
             }
         }
 
+        // Convenience method to transition to places comparison page.
         function goComparePlaces() {
             $state.go('places.compare', $stateParams);
         }

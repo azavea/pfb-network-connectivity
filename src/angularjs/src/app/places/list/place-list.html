@@ -56,7 +56,9 @@
                             </div>
                         </li>
                         <li>
-                            <a ng-click="placeList.goComparePlaces()"
+                            <!-- only go to comparison page if at least two places selected -->
+                            <a ng-click="placeList.comparePlacesCount > 1 ? placeList.goComparePlaces() : ''"
+                                ng-disabled="placeList.comparePlacesCount < 2"
                                 class="compare-btn">Compare Places</a>
                         </li>
                     </ul>
