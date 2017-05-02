@@ -103,7 +103,7 @@
                 $state.go('places.compare', $stateParams);
             } else {
                 var removeOffset = _.findIndex(ctl.comparePlaces, function(place) {
-                    return place.uuid === uuid;
+                    return place && place.uuid === uuid;
                 });
 
                 if (removeOffset > -1) {
