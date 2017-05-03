@@ -14,6 +14,10 @@
                 controllerAs: 'home',
                 templateUrl: 'app/home/home.html'
             })
+            .state('methodology', {
+                url: '/methodology',
+                templateUrl: 'app/methodology.html'
+            })
             .state('places', {
                 abstract: true,
                 url: '/places/',

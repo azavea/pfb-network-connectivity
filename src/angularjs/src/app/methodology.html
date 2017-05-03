@@ -1,0 +1,57 @@
+<pfb-navbar></pfb-navbar>
+
+<section class="calculation">
+    <div class="container">
+        <h2 class="decor">
+            <i class="icon-calc"></i>
+            Methodology
+        </h2>
+        <div class="column-12">
+                <div class="card alternate">
+                    <div class="card-image"></div>
+                    <div class="card-details">
+                        <p>The Bike Network Analysis (BNA) score is computed over four steps: data collection, traffic stress, destination access, and score aggregation. Each of these is described in separate sections below.</p>
+                        <div class="card-title">
+                            <h3>Data Collection</h3>
+                        </div>
+                        <p>The BNA relies on data from two sources: The U.S. Census and OpenStreetMap (OSM). Census blocks, obtained directly from the U.S. Census, serve as the basic unit of analysis for all of the connectivity measures. Information about Jobs is provided by the U.S. Census as part of its Longitudinal Employer-Household Dynamics data. OSM provides a fully-routable network of on- and off-street transportation facilities, including details about the types of bicycle facilities on any given street segment. OSM also includes data for all destination types.</p>
+                        <div class="card-title">
+                            <h3>Traffic Stress</h3>
+                        </div>
+                        <p>The BNA relies on the concept of a low-stress bike network. The concept of Traffic Stress has emerged as a useful way to think of bicycle facilities in terms of the types of users who would be comfortable riding on them in a given situation. Since our measures are concerned with low-stress bicycling, our methodology focuses on roadway characteristics that generally translate to an LTS 1 or LTS 2 rating. In practical terms, this is intended to correspond with the comfort level of a typical adult with an interest in riding a bicycle but who is concerned about interactions with vehicular traffic.</p>
+                        <p>The OSM data we use to build the bike network uses a system of tags to represent different elements of a roadway. A list of tags that we use both for bicycle facilities and destinations is available <a href="https://s3.amazonaws.com/pfb-public-documents/OSM.Tags.xlsx">here</a>. For a description of how OSM tags relate to on-the-ground bicycle facilities you can refer to <a href="https://docs.google.com/document/d/1HuAXQUnCEcv9aLZyIDHkLTJ5ZSKfB-U4MlJSmN-1BLk/edit?usp=sharing">these tagging guidelines</a>. Please note that our methodology also accounts for some edge cases involving obsolete or non-standard tagging. For a full review of the logic, we invite you to review the <a target="_blank" href="https://github.com/azavea/pfb-network-connectivity">source code</a>.</p>
+                        <p>Once we’ve built the transportation network, we rate every link and intersection for Traffic Stress. There are several bicycle facility types that the original Traffic Stress methodology did not consider. We have followed the same basic approach but our methodology includes some new facility types. You can follow our logic using <a href="https://s3.amazonaws.com/pfb-public-documents/Charts.for.LTS.Definitions.2017-0403.xlsx">this spreadsheet</a>.</p>
+                        <p>While OSM data gives us a great base on which to build, it can vary in terms of the availability of detailed roadway characteristics. To account for situations where OSM data is not sufficient, we developed default assumptions based on OSM’s hierarchy of roads. (The defaults are given in the ratings spreadsheet linked above.) The default assumptions are only used when OSM data is not complete.</p>
+                        <p>The BNA takes the OSM characteristics on each link in the transportation network and evaluates for traffic stress by applying the ratings outlined in the ratings tables.</p>
+                        <div class="card-title">
+                            <h3>Destination Access</h3>
+                        </div>
+                        <p>Once we have established the stress ratings, we evaluate every census block to determine which other census blocks are within biking distance and can be reached on the low-stress network. The BNA assumes a biking distance of ten minutes at an average speed of ten miles per hour (one and two-thirds miles or 2,680 meters). No one likes a detour so we also assume that a low-stress route is only available if it doesn’t force a person to go out of their way by more than 25% compared to a car trip. We also assume that a census block is connected to any road that either follows its perimeter or serves its interior. In practice, this means you can get to a destination whose front door is on a stressful street if you can get to a low-stress street around the corner. Finally, we assume that two census blocks are connected if and only if there is an unbroken low-stress connection between them. In other words, even a short stretch of stressful biking negates a potential connection. This is consistent with the Traffic Stress concept and also highlights the importance of a continuous network, rather than the patchwork of facilities that is common in many U.S. cities.</p>
+                        <p>We use the transportation network to route from each census block to every other census block within biking distance, noting whether a low-stress connection between the two is possible. We also summarize the number and types of destinations available in each census block. Using this information paired with the knowledge of which census blocks are connected on the low-stress network, we calculate the total number of destinations accessible on the low-stress network and compare that with the total number of destinations that are within biking distance regardless of whether they are accessible via the low-stress network.</p>
+                        <p>Points are assigned on a scale of 0-100 for each destination type based on the number of destinations available on the low-stress network, as well as the ratio of low-stress destinations to all destinations within biking distance. The scoring places higher value on the first few low-stress destinations by assigning points on a stepped scale. Beyond the first few low stress destinations, points are prorated up to 100 based on the ration of low-stress to high-stress. For example, a census block with low-stress access to only one park out of five nearby parks would receive 30 points. A census block with low-stress access to two parks out five would receive 50 points (30 for the first park, 20 for the second). A census block with low-stress access to four parks out of five would receive 85 points (30 for the first, 20 for the second, 20 for the third, and 15 out of the remaining 30 points for connecting one of the remaining two parks).</p>
+                        <div>
+                            <p>The BNA’s six scoring categories are:</p>
+                            <ol type="1">
+                                <li>People</li>
+                                <li>Opportunity</li>
+                                <li>Core Services</li>
+                                <li>Recreation</li>
+                                <li>Retail</li>
+                                <li>Transit</li>
+                            </ol>
+                        </div>
+                        <p>Many of the categories are composed of a mix of destination types. In these cases, the category score is calculated by combining the scores of each of its member destination type scores. Weights for each destination type are used to represent their relative importance within the category. For census blocks where a destination type is not reachable by either high- or low-stress means, that destination type is excluded from the calculations. For example, the Opportunity score within a city with no institute of higher education is produced by excluding the Higher Education destination type so the score is unaffected by its absence.</p>
+                        <p>We use the category scores to calculate one overall score. This step also uses weights, which are applied to each category. The step thresholds, destination scoring, and weighting assumptions are all described in <a href="https://s3.amazonaws.com/pfb-public-documents/Scoring.categories.xlsx">this spreadsheet</a>.</p>
+                        <div class="card-title">
+                            <h3>Score Aggregation</h3>
+                        </div>
+                        <p>The BNA scoring operates at two geographic levels. Up to now, the description has focused on scoring of individual census blocks. The census block score is visible on the citywide map where blue blocks are relatively well connected and red blocks are poorly connected.</p>
+                        <p>We use the scoring results from the census blocks to develop scores for the whole city. This is accomplished by weighting each census block according to its population and then summarizing scores across the city. For cities where a particular category has no destinations, that category is excluded from consideration. For example, if a city has no rail stations or bus transfer stations, the transit score is not factored into the overall score. The category weights are listed in the spreadsheet linked above.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<pfb-footer></pfb-footer>
