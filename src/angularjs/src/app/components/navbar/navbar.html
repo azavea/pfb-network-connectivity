@@ -2,10 +2,25 @@
   <div class="container">
     <!-- Logo area -->
     <div class="navbar-left">
-      <a ui-sref="home" class="brand">
-        <img ng-if="navbar.hideName" src="assets/images/placesforbikes-icon.png" alt="Places for bikes">
-        <img ng-if="!navbar.hideName" src="assets/images/placesforbikes-logo-white.png" alt="Places for bikes">
-      </a>
+      <span uib-dropdown class="dropdown"
+              ng-mouseenter="login.isopen=true" and ng-mouseleave="login.isopen=false"
+              is-open="login.isopen">
+            <a uib-dropdown-toggle role="button" class="brand">
+                <img ng-if="navbar.hideName" src="assets/images/placesforbikes-icon.png"
+                    alt="Places for bikes">
+                <img ng-if="!navbar.hideName" src="assets/images/placesforbikes-logo-white.png"
+                    alt="Places for bikes">
+                <span class="caret"></span>
+            </a>
+            <ul uib-dropdown-menu class="dropdown-menu">
+              <li><a ui-sref="home">Home</a></li>
+              <li role="separator" class="divider"></li>
+              <li ng-if="navbar.userName"><a ui-sref="login" ng-click="navbar.logout()"
+                class="dropdown-link">Sign Out</a></li>
+              <li ng-if="!navbar.userName"><a ui-sref="login" ng-click="navbar.logout()"
+                class="dropdown-link">Sign In</a></li>
+            </ul>
+        </span>
     </div>
     <!-- Logo area -->
     <div class="navbar-right">
