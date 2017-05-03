@@ -11,6 +11,8 @@
             <a href="#">About</a>
             <a href="#">Methodology</a>
             <a href="http://www.peopleforbikes.org/" target="_blank">People for bikes</a>
+            <a ng-if="footer.loggedIn" ui-sref="login" ng-click="footer.logout()">Sign Out</a>
+            <a ng-if="!footer.loggedIn" ui-sref="login">Sign In</a>
         </nav>
     </div>
 </footer>

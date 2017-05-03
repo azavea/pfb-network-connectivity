@@ -11,7 +11,16 @@
     'use strict';
 
     /** @ngInject */
-    function FooterController() {
+    function FooterController(AuthService) {
+        var ctl = this;
+
+        initialize();
+
+        function initialize() {
+            ctl.logout = AuthService.logout;
+            // if user ID cookie is set, assume user is logged in
+            ctl.loggedIn = !!AuthService.getUserId();
+        }
     }
 
     function pfbFooter() {
