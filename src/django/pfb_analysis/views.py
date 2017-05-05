@@ -3,6 +3,7 @@ from datetime import datetime
 
 import us
 
+from django.db import connection
 from django.utils.text import slugify
 
 from rest_framework import status
@@ -92,17 +93,39 @@ class NeighborhoodViewSet(NeighborhoodMixin, ModelViewSet):
 
 
 class NeighborhoodBoundsGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
-    """For retrieving neighborhood centroids as GeoJSON feature collection."""
+    """For retrieving neighborhood bounds multipolygon as GeoJSON feature collection."""
 
     serializer_class = NeighborhoodBoundsGeoJsonSerializer
     pagination_class = None
 
 
-class NeighborhoodGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
-    """For retrieving neighborhood centroids as GeoJSON feature collection."""
+class NeighborhoodGeoJsonViewSet(APIView):
+    """For retrieving all neighborhood centroids as GeoJSON feature collection."""
 
-    serializer_class = NeighborhoodGeoJsonSerializer
-    pagination_class = None
+    def get(self, request, format=None):
+        """
+        Uses raw query for fetching as GeoJSON because it is much faster to let PostGIS generate
+        than Djangonauts serializer.
+        """
+        query = """
+        SELECT row_to_json(fc)
+        FROM (
+            SELECT 'FeatureCollection' AS type,
+                array_to_json(array_agg(f)) AS features
+            FROM (SELECT 'Feature' AS type, ST_AsGeoJSON(g.geom_pt)::json AS geometry, g.uuid AS id,
+                  row_to_json((SELECT p FROM (
+                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    AS properties
+            FROM pfb_analysis_neighborhood AS g) AS f)  AS fc;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            json = cursor.fetchone()
+            if not json or not len(json):
+                return Response({})
+
+        return Response(json[0])
 
 
 class USStateView(APIView):
