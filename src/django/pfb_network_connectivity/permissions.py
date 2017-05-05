@@ -14,7 +14,7 @@ def is_admin(user):
     Returns:
         bool: True if user has an admin role
     """
-    return user.role == UserRoles.ADMIN
+    return hasattr(user, 'organization') and user.role == UserRoles.ADMIN
 
 
 def is_editor(user):
@@ -131,11 +131,11 @@ class RestrictedCreate(permissions.BasePermission):
             request (rest_framework.request.Request): request to check for
         """
 
-        if not request.user or not request.user.is_authenticated():
-            return False
-
         if request.method in permissions.SAFE_METHODS:
             return True
+
+        if not request.user or not request.user.is_authenticated():
+            return False
 
         if 'AnalysisJobViewSet' == view.__class__.__name__:
             return request.user.role != UserRoles.VIEWER
