@@ -85,12 +85,8 @@
                 User.save(ctl.user).$promise.then(function() {
                     $state.go('admin.users.list');
                 }, function(error) {
-                    for (var key in error.data) {
-                        if (error.data.hasOwnProperty(key)) {
-                            for (var msg in error.data[key]) {
-                                toastr.error(error.data[key][msg], {timeOut: 5000});
-                            }
-                        }
+                    if (error.data && error.data.detail) {
+                        toastr.error(error.data.detail, {timeOut: 5000});
                     }
                 });
             }
