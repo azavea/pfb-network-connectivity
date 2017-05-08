@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.decorators import detail_route
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import (AllowAny, DjangoModelPermissionsOrAnonReadOnly)
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
@@ -96,6 +96,7 @@ class NeighborhoodBoundsGeoJsonViewList(APIView):
 
     pagination_class = None
     filter_class = None
+    permission_classes = (AllowAny,)
 
     def get(self, request, format=None, *args, **kwargs):
         query = """
@@ -126,6 +127,7 @@ class NeighborhoodBoundsGeoJsonViewDetail(APIView):
 
     pagination_class = None
     filter_class = None
+    permission_classes = (AllowAny,)
 
     def get(self, request, format=None, *args, **kwargs):
         query = """
@@ -164,6 +166,7 @@ class NeighborhoodGeoJsonViewSet(APIView):
 
     pagination_class = None
     filter_class = None
+    permission_classes = (AllowAny,)
 
     def get(self, request, format=None, *args, **kwargs):
         """
@@ -196,6 +199,7 @@ class USStateView(APIView):
 
     pagination_class = None
     filter_class = None
+    permission_classes = (AllowAny,)
 
     def get(self, request, format=None, *args, **kwargs):
         return Response([{'abbr': state.abbr, 'name': state.name} for state in us.STATES])
