@@ -13,6 +13,7 @@ var gutil = require('gulp-util');
  */
 exports.paths = {
     src: 'src',
+    bower: 'bower_components',
     dist: 'dist',
     tmp: '.tmp',
     e2e: 'e2e'

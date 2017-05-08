@@ -69,7 +69,6 @@ INSTALLED_APPS = [
     'django_filters',
     'localflavor',
     'rest_framework',
-    'rest_framework_gis',
     'rest_framework.authtoken',
     'storages',
     'watchman',
@@ -205,7 +204,6 @@ logging.config.dictConfig({
             'handlers': ['console'],
             'level': DJANGO_LOG_LEVEL,
         }
-
     }
 })
 

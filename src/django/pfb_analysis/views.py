@@ -1,13 +1,17 @@
 from collections import OrderedDict
 from datetime import datetime
+import logging
 
 import us
 
+from django.db import connection, DataError
 from django.utils.text import slugify
 
 from rest_framework import status
 from rest_framework.decorators import detail_route
+from rest_framework.exceptions import NotFound
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
@@ -18,10 +22,11 @@ from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnl
 
 from .models import AnalysisJob, Neighborhood
 from .serializers import (AnalysisJobSerializer,
-                          NeighborhoodSerializer,
-                          NeighborhoodGeoJsonSerializer,
-                          NeighborhoodBoundsGeoJsonSerializer)
+                          NeighborhoodSerializer)
 from .filters import AnalysisJobFilterSet
+
+
+logger = logging.getLogger(__name__)
 
 
 class AnalysisJobViewSet(ModelViewSet):
@@ -29,7 +34,7 @@ class AnalysisJobViewSet(ModelViewSet):
 
     queryset = AnalysisJob.objects.all()
     serializer_class = AnalysisJobSerializer
-    permission_classes = (RestrictedCreate,)
+    permission_classes = (RestrictedCreate, DjangoModelPermissionsOrAnonReadOnly)
     filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label',
@@ -69,18 +74,13 @@ class AnalysisJobViewSet(ModelViewSet):
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
 
-class NeighborhoodMixin(APIView):
-    """Shared properties of the neighborhood viewsets."""
-
-    queryset = Neighborhood.objects.all()
-    permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
-    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
-    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
-
-
-class NeighborhoodViewSet(NeighborhoodMixin, ModelViewSet):
+class NeighborhoodViewSet(ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
+    queryset = Neighborhood.objects.all()
+    permission_classes = (IsAdminOrgAndAdminCreateEditOnly, DjangoModelPermissionsOrAnonReadOnly)
+    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
+    filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
     ordering_fields = ('created_at',)
@@ -91,22 +91,111 @@ class NeighborhoodViewSet(NeighborhoodMixin, ModelViewSet):
                             name=slugify(serializer.validated_data['label']))
 
 
-class NeighborhoodBoundsGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
-    """For retrieving neighborhood centroids as GeoJSON feature collection."""
+class NeighborhoodBoundsGeoJsonViewList(APIView):
+    """For retrieving all neighborhood bounds multipolygons as GeoJSON feature collection."""
 
-    serializer_class = NeighborhoodBoundsGeoJsonSerializer
     pagination_class = None
+    filter_class = None
+
+    def get(self, request, format=None, *args, **kwargs):
+        query = """
+        SELECT row_to_json(fc)
+        FROM (
+            SELECT 'FeatureCollection' AS type,
+                array_to_json(array_agg(f)) AS features
+            FROM (SELECT 'Feature' AS type,
+                  ST_AsGeoJSON(g.geom_simple)::json AS geometry,
+                  g.uuid AS id,
+                  row_to_json((SELECT p FROM (
+                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    AS properties
+            FROM pfb_analysis_neighborhood AS g) AS f) AS fc;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            json = cursor.fetchone()
+            if not json or not len(json):
+                return Response({})
+
+        return Response(json[0])
 
 
-class NeighborhoodGeoJsonViewSet(NeighborhoodMixin, ReadOnlyModelViewSet):
-    """For retrieving neighborhood centroids as GeoJSON feature collection."""
+class NeighborhoodBoundsGeoJsonViewDetail(APIView):
+    """For retrieving a single neighborhood bound multipolygon as GeoJSON feature collection."""
 
-    serializer_class = NeighborhoodGeoJsonSerializer
     pagination_class = None
+    filter_class = None
+
+    def get(self, request, format=None, *args, **kwargs):
+        query = """
+        SELECT row_to_json(fc)
+        FROM (
+            SELECT 'FeatureCollection' AS type,
+                array_to_json(array_agg(f)) AS features
+            FROM (SELECT 'Feature' AS type,
+                  ST_AsGeoJSON(g.geom_simple)::json AS geometry,
+                  g.uuid AS id,
+                  row_to_json((SELECT p FROM (
+                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    AS properties
+            FROM pfb_analysis_neighborhood AS g WHERE g.uuid = %s) AS f) AS fc;
+        """
+
+        # get the neighborhood ID from the request
+        uuid = kwargs.get('neighborhood', '')
+        if not uuid:
+            return Response({})
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(query, [uuid])
+                json = cursor.fetchone()
+                if not json or not len(json):
+                    return Response({})
+        except DataError:
+            raise NotFound(detail='{} is not a valid neighborhood UUID.'.format(uuid))
+
+        return Response(json[0])
+
+
+class NeighborhoodGeoJsonViewSet(APIView):
+    """For retrieving all neighborhood centroids as GeoJSON feature collection."""
+
+    pagination_class = None
+    filter_class = None
+
+    def get(self, request, format=None, *args, **kwargs):
+        """
+        Uses raw query for fetching as GeoJSON because it is much faster to let PostGIS generate
+        than Djangonauts serializer.
+        """
+        query = """
+        SELECT row_to_json(fc)
+        FROM (
+            SELECT 'FeatureCollection' AS type,
+                array_to_json(array_agg(f)) AS features
+            FROM (SELECT 'Feature' AS type, ST_AsGeoJSON(g.geom_pt)::json AS geometry, g.uuid AS id,
+                  row_to_json((SELECT p FROM (
+                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    AS properties
+            FROM pfb_analysis_neighborhood AS g) AS f)  AS fc;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            json = cursor.fetchone()
+            if not json or not len(json):
+                return Response({})
+
+        return Response(json[0])
 
 
 class USStateView(APIView):
     """Convenience endpoint for available U.S. state options."""
 
-    def get(self, request, format=None):
+    pagination_class = None
+    filter_class = None
+
+    def get(self, request, format=None, *args, **kwargs):
         return Response([{'abbr': state.abbr, 'name': state.name} for state in us.STATES])

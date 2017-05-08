@@ -29,12 +29,6 @@ router.register(r'organizations', user_views.OrganizationViewSet, base_name='org
 router.register(r'users', user_views.PFBUserViewSet, base_name='users')
 router.register(r'analysis_jobs', analysis_views.AnalysisJobViewSet, base_name='analysis_jobs')
 router.register(r'neighborhoods', analysis_views.NeighborhoodViewSet, base_name='neighborhoods')
-router.register(r'neighborhoods_geojson',
-                analysis_views.NeighborhoodGeoJsonViewSet,
-                base_name='neighborhoods_geojson')
-router.register(r'neighborhoods_bounds_geojson',
-                analysis_views.NeighborhoodBoundsGeoJsonViewSet,
-                base_name='neighborhoods_bounds_geojson')
 
 
 urlpatterns = [
@@ -44,6 +38,16 @@ urlpatterns = [
 
     # US States View
     url(r'^api/states/', analysis_views.USStateView.as_view()),
+
+    # Neighborhood points set
+    url(r'^api/neighborhoods_geojson/', analysis_views.NeighborhoodGeoJsonViewSet.as_view()),
+
+    # Neighborhood bounds
+    url(r'^api/neighborhoods_bounds_geojson/$',
+        analysis_views.NeighborhoodBoundsGeoJsonViewList.as_view()),
+    url(r'^api/neighborhoods_bounds_geojson/(?P<neighborhood>[0-9a-f-]+)/$',
+        analysis_views.NeighborhoodBoundsGeoJsonViewDetail.as_view()),
+
 
     # User Views
     url(r'^api/login/', user_views.PFBUserLoginView.as_view()),
