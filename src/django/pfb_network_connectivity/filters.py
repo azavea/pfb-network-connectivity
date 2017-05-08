@@ -19,6 +19,8 @@ class OrgAutoFilterBackend(filters.BaseFilterBackend):
     """Filter that only allows users to see their organization's own objects."""
 
     def filter_queryset(self, request, queryset, view):
+        if not hasattr(request.user, 'organization'):
+            return queryset
         if queryset.model == Organization:
             return queryset.filter(uuid=request.user.organization_id)
         elif queryset.model == AnalysisJob:
@@ -31,7 +33,7 @@ class OrgOrAdminAutoFilterBackend(filters.BaseFilterBackend):
     """Filter that allows non-admin users to see only their own organization's objects."""
 
     def filter_queryset(self, request, queryset, view):
-        if is_admin_org(request.user):
+        if not hasattr(request.user, 'organization') or is_admin_org(request.user):
             return queryset
         elif queryset.model == Organization:
             return queryset.filter(uuid=request.user.organization_id)
@@ -43,7 +45,7 @@ class SelfUserAutoFilterBackend(filters.BaseFilterBackend):
     """Filter used on users endpoint to limit queryset to only user if user is not admin."""
 
     def filter_queryset(self, request, queryset, view):
-        if is_admin(request.user):
+        if not hasattr(request.user, 'organization') or is_admin_org(request.user):
             return queryset
         else:
             return queryset.filter(uuid=request.user.uuid)

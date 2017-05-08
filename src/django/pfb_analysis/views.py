@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework.decorators import detail_route
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
@@ -33,7 +34,7 @@ class AnalysisJobViewSet(ModelViewSet):
 
     queryset = AnalysisJob.objects.all()
     serializer_class = AnalysisJobSerializer
-    permission_classes = (RestrictedCreate,)
+    permission_classes = (RestrictedCreate, DjangoModelPermissionsOrAnonReadOnly)
     filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label',
@@ -77,7 +78,7 @@ class NeighborhoodViewSet(ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
     queryset = Neighborhood.objects.all()
-    permission_classes = (IsAdminOrgAndAdminCreateEditOnly,)
+    permission_classes = (IsAdminOrgAndAdminCreateEditOnly, DjangoModelPermissionsOrAnonReadOnly)
     filter_fields = ('organization', 'name', 'label', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     serializer_class = NeighborhoodSerializer
