@@ -7,8 +7,11 @@ from rest_framework import (
 )
 
 from pfb_network_connectivity.serializers import PFBModelSerializer
-from users.models import Organization, OrganizationTypes, PFBUser
-from pfb_network_connectivity.permissions import is_admin, is_admin_org
+from users.models import Organization, OrganizationTypes, PFBUser, UserRoles
+from pfb_network_connectivity.permissions import (is_admin,
+                                                  is_admin_org,
+                                                  is_org_admin,
+                                                  users_in_same_organization)
 
 
 class OrganizationSerializer(PFBModelSerializer):
@@ -66,10 +69,18 @@ class PFBUserSerializer(PFBModelSerializer):
         return obj.organization.org_type == OrganizationTypes.ADMIN
 
     def validate_role(self, value):
-        # if post and admin, no restrictions
-        if self.request.method == 'POST' and is_admin(self.request.user):
+        # if admin, no restrictions
+        if is_admin(self.request.user):
             return value
-
+        # org admins can only set role to their access or below, and can't change admin role
+        elif is_org_admin(self.request.user):
+            if value == UserRoles.ADMIN:
+                raise exceptions.PermissionDenied(detail='Organization administrators cannot put users in administrative role')  # NOQA: E501
+            elif (value != UserRoles.ADMIN and self.instance and hasattr(self.instance, 'role') and
+                  self.instance.role == UserRoles.ADMIN):
+                    raise exceptions.PermissionDenied(detail='Organization administrators cannot change role of administrative user')  # NOQA: E501
+            else:
+                return value
         if value != self.instance.role and not is_admin(self.request.user):
             raise exceptions.PermissionDenied(detail="Cannot change a user's group")
         else:
@@ -91,8 +102,9 @@ class PFBUserSerializer(PFBModelSerializer):
         if is_admin_org(self.request.user) and is_admin(self.request.user):
             return value
 
-        # admin is setting org to same, acceptable
-        if is_admin(self.request.user) and request_user.organization.label == value.label:
-            return value
-        else:
-            raise exceptions.PermissionDenied(detail="Unable to set user's organization")
+        # admin or org admin allowed to set to their own organization
+        if (is_admin(self.request.user) or is_org_admin(self.request.user)):
+            if self.request.user.organization.label == value.label:
+                return value
+
+        raise exceptions.PermissionDenied(detail="Unable to set user's organization")

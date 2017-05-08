@@ -73,6 +73,7 @@ class Organization(PFBModel):
 class UserRoles(object):
     """Enum-like object to track acceptable user roles"""
     ADMIN = 'ADMIN'
+    ORGADMIN = 'ORGADMIN'
     VIEWER = 'VIEWER'
     EDITOR = 'EDITOR'
     UPLOADER = 'UPLOADER'
@@ -81,6 +82,7 @@ class UserRoles(object):
 
     CHOICES = (
         (ADMIN, 'Administrator'),
+        (ORGADMIN, 'Organization Administrator'),
         (VIEWER, 'Viewer'),
         (EDITOR, 'Editor'),
         (UPLOADER, 'Uploader')
@@ -128,6 +130,9 @@ class PFBUser(AbstractBaseUser, PermissionsMixin, PFBModel):
 
     **Admin.** Administrators have the most access within an organization. They can manage
     users and manage the neighborhood site.
+
+    **Org Admin.** Can manage users, but only within their organization and only for permission
+    levels at or below their own.
 
     **Editor.** Editors can manage all aspects within an organization with the exception of users.
 

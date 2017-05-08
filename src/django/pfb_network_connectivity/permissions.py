@@ -17,6 +17,18 @@ def is_admin(user):
     return hasattr(user, 'organization') and user.role == UserRoles.ADMIN
 
 
+def is_org_admin(user):
+    """Returns true is user has organization admin role."""
+    return hasattr(user, 'organization') and user.role == UserRoles.ORGADMIN
+
+
+def users_in_same_organization(user_one, user_two):
+    """Returns true if the two users passed in belong to the same organization."""
+    if not hasattr(user_one, 'organization') or not hasattr(user_two, 'organization'):
+        return False
+    return user_one.organization == user_two.organization
+
+
 def is_editor(user):
     """Helper function to check if user has an editor role
 
@@ -93,7 +105,7 @@ class IsAdminOrSelfOnly(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated():
             return False
 
-        if is_admin(request.user):
+        if is_admin(request.user) or is_org_admin(request.user):
             return True
 
         if view.action in self.ALLOWED_ACTIONS or request.method in permissions.SAFE_METHODS:
@@ -112,6 +124,10 @@ class IsAdminOrSelfOnly(permissions.BasePermission):
             return False
 
         if is_admin(request.user):
+            return True
+
+        # org admin users can only modify users within their own organization
+        if is_org_admin(request.user) and users_in_same_organization(request.user, obj):
             return True
 
         # read-write only access to one's own user object for non-admin users
