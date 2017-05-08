@@ -32,10 +32,11 @@
      * Resource for user roles
      */
     function UserRoles() {
-        var roles = ['Viewer', 'Administrator', 'Editor', 'Uploader'];
+        var roles = ['Viewer', 'Administrator', 'Organization Administrator', 'Editor', 'Uploader'];
         var roleFilters = {
             'Viewer': 'VIEWER',
             'Administrator': 'ADMIN',
+            'Organization Administrator': 'ORGADMIN',
             'Editor': 'EDITOR',
             'Uploader': 'UPLOADER'
         };

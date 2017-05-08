@@ -10,13 +10,15 @@
     'use strict';
 
     /** @ngInject */
-    function UserDetailController($state, $stateParams, toastr, User, Organization, AuthService, TokenService) {
+    function UserDetailController($state, $stateParams, toastr,
+                                  User, Organization, AuthService, TokenService) {
         var ctl = this;
 
         function initialize() {
             ctl.organizations = {};
             ctl.user = {};
             ctl.isAdminUser = AuthService.isAdminUser();
+            ctl.isOrgAdminUser = AuthService.isOrgAdminUser();
             ctl.isAdminOrg = AuthService.isAdminOrg();
             ctl.saveUser = saveUser;
             ctl.setUserActive = setUserActive;
@@ -27,6 +29,7 @@
             ctl.roleOptions = {
                 VIEWER: 'Viewer',
                 ADMIN: 'Administrator',
+                ORGADMIN: 'Organization Administrator',
                 EDITOR: 'Editor',
                 UPLOADER: 'Uploader'
             };

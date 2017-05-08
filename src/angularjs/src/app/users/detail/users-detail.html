@@ -45,7 +45,7 @@
             <div class="form-group">
               <label for="role">Role</label>
               <select name="role" ng-model="user.user.role"
-                      ng-disabled="!user.isAdminUser || user.loggedInEmail === user.user.email"
+                      ng-disabled="!(user.isAdminUser || user.isOrgAdminUser) || user.loggedInEmail === user.user.email"
                       class="form-control" id="role" type="text" required>
                 <option ng-repeat="(key, value) in user.roleOptions" value="{{key}}">{{value}}</option>
               </select>

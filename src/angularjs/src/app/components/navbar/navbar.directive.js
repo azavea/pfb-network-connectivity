@@ -19,6 +19,7 @@
         function initialize() {
             ctl.isAdminOrg = AuthService.isAdminOrg();
             ctl.isAdminUser = AuthService.isAdminUser();
+            ctl.isAdminOrOrgAdminUser = AuthService.isAdminUser() || AuthService.isOrgAdminUser();
             ctl.logout = AuthService.logout;
             ctl.userUuid = AuthService.getUserId();
             ctl.userName = AuthService.getUserName();

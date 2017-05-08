@@ -34,6 +34,7 @@
             ctl.roleOptions = {
                 VIEWER: 'Viewer',
                 ADMIN: 'Administrator',
+                ORGADMIN: 'Organization Administrator',
                 EDITOR: 'Editor',
                 UPLOADER: 'Uploader'
             };
