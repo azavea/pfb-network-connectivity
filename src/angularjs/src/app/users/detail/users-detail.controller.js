@@ -76,6 +76,10 @@
                 ctl.user.$update().then(function(user) {
                     ctl.user = user;
                     toastr.info('Changes saved.');
+                }, function(error) {
+                    if (error.data && error.data.detail) {
+                        toastr.error(error.data.detail, {timeOut: 5000});
+                    }
                 });
             } else {
                 User.save(ctl.user).$promise.then(function() {
