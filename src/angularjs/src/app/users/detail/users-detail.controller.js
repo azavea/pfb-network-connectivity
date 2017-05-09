@@ -29,9 +29,7 @@
             ctl.roleOptions = {
                 VIEWER: 'Viewer',
                 ADMIN: 'Administrator',
-                ORGADMIN: 'Organization Administrator',
-                EDITOR: 'Editor',
-                UPLOADER: 'Uploader'
+                ORGADMIN: 'Organization Administrator'
             };
 
             ctl.createToken = createToken;

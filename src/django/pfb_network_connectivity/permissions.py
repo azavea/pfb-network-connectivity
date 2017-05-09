@@ -29,18 +29,6 @@ def users_in_same_organization(user_one, user_two):
     return user_one.organization == user_two.organization
 
 
-def is_editor(user):
-    """Helper function to check if user has an editor role
-
-    Arguments:
-        user (users.models.PFBUser): user to check role type
-
-    Returns:
-        bool: True if user has an editor role
-    """
-    return user.role == UserRoles.EDITOR
-
-
 def is_not_subscriber(user):
     """Helper function to check if user is not in a subscriber organization
 

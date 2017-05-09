@@ -75,17 +75,13 @@ class UserRoles(object):
     ADMIN = 'ADMIN'
     ORGADMIN = 'ORGADMIN'
     VIEWER = 'VIEWER'
-    EDITOR = 'EDITOR'
-    UPLOADER = 'UPLOADER'
 
-    DEFAULT_CREATE = [ADMIN, EDITOR]
+    DEFAULT_CREATE = [ADMIN]
 
     CHOICES = (
         (ADMIN, 'Administrator'),
         (ORGADMIN, 'Organization Administrator'),
         (VIEWER, 'Viewer'),
-        (EDITOR, 'Editor'),
-        (UPLOADER, 'Uploader')
     )
 
 
@@ -133,11 +129,6 @@ class PFBUser(AbstractBaseUser, PermissionsMixin, PFBModel):
 
     **Org Admin.** Can manage users, but only within their organization and only for permission
     levels at or below their own.
-
-    **Editor.** Editors can manage all aspects within an organization with the exception of users.
-
-    **Uploader.** Has the ability to upload new analysis results for an organization and view
-    existing results.
 
     **Viewer.** Viewers have read-only access to resources associated with an organization.
 

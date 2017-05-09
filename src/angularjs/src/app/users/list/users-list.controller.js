@@ -37,9 +37,7 @@
             ctl.roleOptions = {
                 VIEWER: 'Viewer',
                 ADMIN: 'Administrator',
-                ORGADMIN: 'Organization Administrator',
-                EDITOR: 'Editor',
-                UPLOADER: 'Uploader'
+                ORGADMIN: 'Organization Administrator'
             };
             getUsers();
             ctl.filters = {};
