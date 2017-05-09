@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function UserDetailController($state, $stateParams, toastr,
+    function UserDetailController($log, $state, $stateParams, toastr,
                                   User, Organization, AuthService, TokenService) {
         var ctl = this;
 
@@ -55,6 +55,8 @@
                     TokenService.getToken($stateParams.uuid).then(function(token) {
                         ctl.token = token;
                     });
+                }, function(error) {
+                    displayError(error);
                 });
             }
         }
@@ -77,17 +79,13 @@
                     ctl.user = user;
                     toastr.info('Changes saved.');
                 }, function(error) {
-                    if (error.data && error.data.detail) {
-                        toastr.error(error.data.detail, {timeOut: 5000});
-                    }
+                    displayError(error);
                 });
             } else {
                 User.save(ctl.user).$promise.then(function() {
                     $state.go('admin.users.list');
                 }, function(error) {
-                    if (error.data && error.data.detail) {
-                        toastr.error(error.data.detail, {timeOut: 5000});
-                    }
+                    displayError(error);
                 });
             }
         }
@@ -103,7 +101,18 @@
                     else {
                         toastr.info('User deactivated');
                     }
+                }, function(error) {
+                    displayError(error);
                 });
+            }
+        }
+
+        // Helper to display error popup on DRF request failure
+        function displayError(error) {
+            if (error.data && error.data.detail) {
+                toastr.error(error.data.detail, {timeOut: 5000});
+            } else {
+                $log.error(error);
             }
         }
     }
