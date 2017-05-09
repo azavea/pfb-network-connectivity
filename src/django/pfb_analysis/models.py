@@ -78,6 +78,15 @@ class Neighborhood(PFBModel):
     def __str__(self):
         return "<Neighborhood: {} ({})>".format(self.name, self.organization.name)
 
+    class Visibility(object):
+        PUBLIC = 'public'
+        PRIVATE = 'private'
+
+        CHOICES = (
+            (PUBLIC, 'Public',),
+            (PRIVATE, 'Private',),
+        )
+
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
     label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
@@ -92,6 +101,9 @@ class Neighborhood(PFBModel):
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
                                                'bike network analysis on')
+    visibility = models.CharField(max_length=10,
+                                  choices=Visibility.CHOICES,
+                                  default=Visibility.PUBLIC)
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """

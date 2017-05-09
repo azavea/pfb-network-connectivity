@@ -18,6 +18,11 @@
             ctl.states.$promise.then(function(response) {
                 ctl.states = response;
             });
+            // TODO: De-dupe from API?
+            ctl.visibilities = [
+                ['public', 'Public'],
+                ['private', 'Private']
+            ]
         }
 
         initialize();
@@ -32,6 +37,7 @@
                 data: {
                     boundary_file: ctl.file,
                     state_abbrev: ctl.state.abbr,
+                    visibility: ctl.visibility,
                     label: ctl.label
                 }
             }).then(function() {
