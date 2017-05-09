@@ -10,13 +10,15 @@
     'use strict';
 
     /** @ngInject */
-    function UserDetailController($state, $stateParams, toastr, User, Organization, AuthService, TokenService) {
+    function UserDetailController($log, $state, $stateParams, toastr,
+                                  User, Organization, AuthService, TokenService) {
         var ctl = this;
 
         function initialize() {
             ctl.organizations = {};
             ctl.user = {};
             ctl.isAdminUser = AuthService.isAdminUser();
+            ctl.isOrgAdminUser = AuthService.isOrgAdminUser();
             ctl.isAdminOrg = AuthService.isAdminOrg();
             ctl.saveUser = saveUser;
             ctl.setUserActive = setUserActive;
@@ -27,8 +29,7 @@
             ctl.roleOptions = {
                 VIEWER: 'Viewer',
                 ADMIN: 'Administrator',
-                EDITOR: 'Editor',
-                UPLOADER: 'Uploader'
+                ORGADMIN: 'Organization Administrator'
             };
 
             ctl.createToken = createToken;
@@ -52,6 +53,8 @@
                     TokenService.getToken($stateParams.uuid).then(function(token) {
                         ctl.token = token;
                     });
+                }, function(error) {
+                    displayError(error);
                 });
             }
         }
@@ -73,18 +76,14 @@
                 ctl.user.$update().then(function(user) {
                     ctl.user = user;
                     toastr.info('Changes saved.');
+                }, function(error) {
+                    displayError(error);
                 });
             } else {
                 User.save(ctl.user).$promise.then(function() {
                     $state.go('admin.users.list');
                 }, function(error) {
-                    for (var key in error.data) {
-                        if (error.data.hasOwnProperty(key)) {
-                            for (var msg in error.data[key]) {
-                                toastr.error(error.data[key][msg], {timeOut: 5000});
-                            }
-                        }
-                    }
+                    displayError(error);
                 });
             }
         }
@@ -100,7 +99,18 @@
                     else {
                         toastr.info('User deactivated');
                     }
+                }, function(error) {
+                    displayError(error);
                 });
+            }
+        }
+
+        // Helper to display error popup on DRF request failure
+        function displayError(error) {
+            if (error.data && error.data.detail) {
+                toastr.error(error.data.detail, {timeOut: 5000});
+            } else {
+                $log.error(error);
             }
         }
     }

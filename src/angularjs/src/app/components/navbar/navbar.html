@@ -22,7 +22,7 @@
           <a ui-sref="admin.help">Help</a>
           <a ui-sref="admin.analysis-jobs.list">Jobs</a>
           <a ui-sref="admin.neighborhoods.list">Neighborhoods</a>
-          <a ng-if="navbar.isAdminUser" ui-sref="admin.users.list">User Management</a>
+          <a ng-if="navbar.isAdminOrOrgAdminUser" ui-sref="admin.users.list">User Management</a>
           <a ng-if="navbar.isAdminUser" ui-sref="admin.organizations.list">Org Management</a>
           <span uib-dropdown class="dropdown"
               ng-mouseenter="status.isopen = true" and ng-mouseleave="status.isopen = false"

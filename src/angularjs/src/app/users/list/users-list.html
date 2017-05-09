@@ -14,7 +14,8 @@
             <td>{{user.orgName}}</td>
             <td>{{userList.roleOptions[user.role]}}</td>
             <td>
-              <a ui-sref="admin.users.edit({uuid: user.uuid})"><button class="btn-link">Edit</button></a>
+              <a ng-if="userList.isAdminUser || (userList.isOrgAdminUser && user.role !== 'ADMIN')"
+              ui-sref="admin.users.edit({uuid: user.uuid})"><button class="btn-link">Edit</button></a>
             </td>
           </tr>
         </tbody>
