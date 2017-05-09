@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function UserListController($state, $stateParams, $scope, Pagination, User) {
+    function UserListController($state, $stateParams, $scope, AuthService, Pagination, User) {
         var ctl = this;
 
         var defaultParams = {
@@ -30,6 +30,9 @@
             ctl.getPrev = getPrev;
 
             ctl.users = [];
+
+            ctl.isAdminUser = AuthService.isAdminUser();
+            ctl.isOrgAdminUser = AuthService.isOrgAdminUser();
 
             ctl.roleOptions = {
                 VIEWER: 'Viewer',
