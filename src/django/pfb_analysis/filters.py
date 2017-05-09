@@ -15,16 +15,8 @@ class AnalysisJobFilterSet(filters.FilterSet):
       - latest, to return only the most recent analysis job for each neighborhood
     """
 
-    status = django_filters.ChoiceFilter(choices=AnalysisJob.Status.CHOICES,
-                                         method='filter_status')
+    status = django_filters.ChoiceFilter(choices=AnalysisJob.Status.CHOICES)
     latest = django_filters.BooleanFilter(method='filter_latest')
-
-    def filter_status(self, queryset, name, value):
-        if value:
-            matches = [m.pk for m in queryset.all() if m.status == value]
-            queryset = queryset.filter(pk__in=matches)
-
-        return queryset
 
     def filter_latest(self, queryset, name, value):
         """ Filters down to the latest successful analysis for each neighborhood, but falls back

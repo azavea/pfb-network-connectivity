@@ -18,6 +18,11 @@ def set_last_job(apps, schema_editor):
                 neighborhood.save()
                 break
 
+        # if have no completed job, go with the last modified job
+        if not neighborhood.last_job and jobs.count():
+            neighborhood.last_job = jobs[0]
+            neighborhood.save()
+
 
 class Migration(migrations.Migration):
 

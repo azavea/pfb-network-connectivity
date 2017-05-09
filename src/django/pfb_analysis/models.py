@@ -314,17 +314,10 @@ class AnalysisJob(PFBModel):
     _tilemaker_job_name = models.CharField(max_length=50, default='')
     start_time = models.DateTimeField(null=True, blank=True)
     final_runtime = models.PositiveIntegerField(default=0)
-    last_status = models.CharField(choices=Status.CHOICES,
-                                   max_length=12,
-                                   default=Status.CREATED)
+    status = models.CharField(choices=Status.CHOICES, max_length=12, default=Status.CREATED)
 
     objects = AnalysisJobManager()
 
-    @property
-    def status(self):
-        """ Return current status for this job """
-        latest_update = self.status_updates.last()
-        return latest_update.status if latest_update else self.Status.CREATED
 
     @property
     def batch_job_status(self):
@@ -555,14 +548,17 @@ class AnalysisJob(PFBModel):
             return
 
         update = self.status_updates.create(job=self, status=status, step=step, message=message)
-        self.last_status = status
-        if status == self.Status.COMPLETE:
+        self.status = status
+        # neighborhood last job is last completed, or last updated
+        if (status == self.Status.COMPLETE or not self.neighborhood.last_job or
+                self.neighborhood.last_job.status != self.Status.COMPLETE):
             self.neighborhood.last_job = self
             self.neighborhood.save()
-        elif status == self.Status.IMPORTING and not self.start_time:
+
+        if status == self.Status.IMPORTING and not self.start_time:
             self.start_time = update.timestamp
-        if status in self.Status.DONE_STATUSES:
-            self.final_runtime = self.running_time()
+        elif status in self.Status.DONE_STATUSES:
+            self.final_runtime = self.running_time
         self.save()
 
     @property
