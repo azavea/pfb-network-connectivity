@@ -146,8 +146,7 @@ class RestrictedCreate(permissions.BasePermission):
     """Restricts access for POST actions on views"""
 
     def has_permission(self, request, view):
-        """Allow everyone except viewers to create results, only admins and editors for others
-
+        """Allow only admins to create results
         Arguments:
             request (rest_framework.request.Request): request to check for
         """
@@ -159,7 +158,7 @@ class RestrictedCreate(permissions.BasePermission):
             return False
 
         if 'AnalysisJobViewSet' == view.__class__.__name__:
-            return request.user.role != UserRoles.VIEWER
+            return is_admin(request.user)
         elif ('OrganizationViewSet' == view.__class__.__name__ and
               is_admin(request.user) and is_admin_org(request.user)):
             return True
