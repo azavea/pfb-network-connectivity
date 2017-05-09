@@ -312,6 +312,11 @@ class AnalysisJob(PFBModel):
     _analysis_job_name = models.CharField(max_length=50, default='')
     tilemaker_job_definition = models.CharField(max_length=50, default=generate_tilemaker_job_def)
     _tilemaker_job_name = models.CharField(max_length=50, default='')
+    start_time = models.DateTimeField(null=True, blank=True)
+    final_runtime = models.PositiveIntegerField(default=0)
+    last_status = models.CharField(choices=Status.CHOICES,
+                                   max_length=12,
+                                   default=Status.CREATED)
 
     objects = AnalysisJobManager()
 
@@ -404,20 +409,15 @@ class AnalysisJob(PFBModel):
     @property
     def running_time(self):
         """ Return the running time of the job in seconds """
-        first_update = self.status_updates.filter(status=self.Status.IMPORTING).first()
-        last_update = self.status_updates.last()
-        if first_update is None or last_update is None:
-            return 0
-        start = first_update.timestamp
-        end = last_update.timestamp
-        diff = end - start
-        return int(diff.total_seconds())
+        if self.final_runtime or not self.start_time:
+            # already calculated for a job that's done, or 0 if not started yet
+            return self.final_runtime
 
-    @property
-    def start_time(self):
-        """ Return start time of the job as a datetime object """
-        first_update = self.status_updates.first()
-        return first_update.timestamp if first_update else None
+        last_update = self.status_updates.last()
+        if last_update is None:
+            return 0
+        diff = last_update.timestamp - self.start_time
+        return int(diff.total_seconds())
 
     @property
     def ways_url(self):
@@ -551,11 +551,19 @@ class AnalysisJob(PFBModel):
             raise
 
     def update_status(self, status, step='', message=''):
-        if self.status != self.Status.CANCELLED:
-            self.status_updates.create(job=self, status=status, step=step, message=message)
-            if self.status == self.Status.COMPLETE:
-                self.neighborhood.last_job = self
-                self.neighborhood.save()
+        if self.status == self.Status.CANCELLED:
+            return
+
+        update = self.status_updates.create(job=self, status=status, step=step, message=message)
+        self.last_status = status
+        if status == self.Status.COMPLETE:
+            self.neighborhood.last_job = self
+            self.neighborhood.save()
+        elif status == self.Status.IMPORTING and not self.start_time:
+            self.start_time = update.timestamp
+        if status in self.Status.DONE_STATUSES:
+            self.final_runtime = self.running_time()
+        self.save()
 
     @property
     def s3_results_path(self):
