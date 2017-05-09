@@ -104,6 +104,9 @@ class Neighborhood(PFBModel):
     visibility = models.CharField(max_length=10,
                                   choices=Visibility.CHOICES,
                                   default=Visibility.PUBLIC)
+    last_job = models.ForeignKey('AnalysisJob',
+                                 related_name='last_job_neighborhood',
+                                 on_delete=models.CASCADE, null=True)
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
@@ -550,6 +553,9 @@ class AnalysisJob(PFBModel):
     def update_status(self, status, step='', message=''):
         if self.status != self.Status.CANCELLED:
             self.status_updates.create(job=self, status=status, step=step, message=message)
+            if self.status == self.Status.COMPLETE:
+                self.neighborhood.last_job = self
+                self.neighborhood.save()
 
     @property
     def s3_results_path(self):
