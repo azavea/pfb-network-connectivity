@@ -19,16 +19,17 @@ class AnalysisJobFilterSet(filters.FilterSet):
     latest = django_filters.BooleanFilter(method='filter_latest')
 
     def filter_latest(self, queryset, name, value):
-        """ Filters down to the latest successful analysis for each neighborhood, but falls back
+        """ Return latest successful analysis for each neighborhood, but falls back
         to the latest modified if there are no successful analysis jobs for a neighborhood.
 
         This means that if it's applied on top of a status filter, it follows the fallback
         path and returns the latest job with the given status.
 
-        Runs tons of queries, but the query expression required to do this would be gnarly.
+        Pre-fetches related neighborhoods to reduce queries during serialization.
         """
         if type(value) is bool:
-            queryset = queryset.filter(last_job_neighborhood__isnull=(not value))
+            queryset = queryset.select_related('neighborhood').filter(
+                last_job_neighborhood__isnull=(not value))
 
         return queryset
 

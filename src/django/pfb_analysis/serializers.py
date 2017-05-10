@@ -24,12 +24,14 @@ class PrimaryKeyReferenceRelatedField(serializers.PrimaryKeyRelatedField):
         self.serializer = kwargs.pop('serializer')
         super(PrimaryKeyReferenceRelatedField, self).__init__(**kwargs)
 
+    def use_pk_only_optimization(self):
+        return False
+
     def to_representation(self, value):
         if self.allow_null is True and value.pk is None:
             return None
         try:
-            data = self.get_queryset().get(pk=value.pk)
-            serializer = self.serializer(data)
+            serializer = self.serializer(value)
             return serializer.data
         except self.serializer.Meta.model.DoesNotExist:
             self.fail('does_not_exist', pk_value=value.pk)
