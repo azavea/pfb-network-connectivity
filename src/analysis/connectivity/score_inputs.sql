@@ -172,7 +172,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'People',
         'Average score of access to population',
-        SUM(pop10 * pop_score / tmp_pop.overall),
+        SUM(CASE WHEN tmp_pop.overall = 0 THEN 0 ELSE pop10 * pop_score / tmp_pop.overall END),
         regexp_replace('Average population score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -281,7 +281,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Average score of access to jobs',
-        SUM(pop10 * emp_score / tmp_pop.overall),
+        SUM(CASE WHEN tmp_pop.overall = 0 THEN 0 ELSE pop10 * emp_score / tmp_pop.overall END),
         regexp_replace('Average employment score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -388,7 +388,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Average score of access to K12 schools',
-        SUM(pop10 * schools_score / tmp_pop.k12),
+        SUM(CASE WHEN tmp_pop.k12 = 0 THEN 0 ELSE pop10 * schools_score / tmp_pop.k12 END),
         regexp_replace('Average K12 schools score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -582,7 +582,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Average score of access to tech/vocational colleges',
-        SUM(pop10 * colleges_score / tmp_pop.tech),
+        SUM(CASE WHEN tmp_pop.tech = 0 THEN 0 ELSE pop10 * colleges_score / tmp_pop.tech END),
         regexp_replace('Average tech/vocational colleges score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -782,7 +782,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Average score of access to universities',
-        SUM(pop10 * universities_score / tmp_pop.univ),
+        SUM(CASE WHEN tmp_pop.univ = 0 THEN 0 ELSE pop10 * universities_score / tmp_pop.univ END),
         regexp_replace('Average universities score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -982,7 +982,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Average score of access to doctors',
-        SUM(pop10 * doctors_score / tmp_pop.doctor),
+        SUM(CASE WHEN tmp_pop.doctor = 0 THEN 0 ELSE pop10 * doctors_score / tmp_pop.doctor END),
         regexp_replace('Average doctors score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -1181,7 +1181,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Average score of access to dentists',
-        SUM(pop10 * dentists_score / tmp_pop.dentist),
+        SUM(CASE WHEN tmp_pop.dentist = 0 THEN 0 ELSE pop10 * dentists_score / tmp_pop.dentist END),
         regexp_replace('Average dentists score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -1380,7 +1380,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Average score of access to hospitals',
-        SUM(pop10 * hospitals_score / tmp_pop.hospital),
+        SUM(CASE WHEN tmp_pop.hospital = 0 THEN 0 ELSE pop10 * hospitals_score / tmp_pop.hospital END),
         regexp_replace('Average hospital score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -1579,7 +1579,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Average score of access to pharmacies',
-        SUM(pop10 * pharmacies_score / tmp_pop.pharmacy),
+        SUM(CASE WHEN tmp_pop.pharmacy = 0 THEN 0 ELSE pop10 * pharmacies_score / tmp_pop.pharmacy END),
         regexp_replace('Average pharmacies score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -1778,7 +1778,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Retail',
         'Average score of access to retail',
-        SUM(pop10 * retail_score / tmp_pop.retail),
+        SUM(CASE WHEN tmp_pop.retail = 0 THEN 0 ELSE pop10 * retail_score / tmp_pop.retail END),
         regexp_replace('Average retail score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -1977,7 +1977,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Average score of access to grocery stores',
-        SUM(pop10 * supermarkets_score / tmp_pop.grocery),
+        SUM(CASE WHEN tmp_pop.grocery = 0 THEN 0 ELSE pop10 * supermarkets_score / tmp_pop.grocery END),
         regexp_replace('Average grocery score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -2176,7 +2176,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Average score of access to social services',
-        SUM(pop10 * social_services_score / tmp_pop.social_svcs),
+        SUM(CASE WHEN tmp_pop.social_svcs = 0 THEN 0 ELSE pop10 * social_services_score / tmp_pop.social_svcs END),
         regexp_replace('Average social services score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -2375,7 +2375,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         'Average score of access to parks',
-        SUM(pop10 * parks_score / tmp_pop.parks),
+        SUM(CASE WHEN tmp_pop.parks = 0 THEN 0 ELSE pop10 * parks_score / tmp_pop.parks END),
         regexp_replace('Average parks score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -2574,7 +2574,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         'Average score of access to trails',
-        SUM(pop10 * trails_score / tmp_pop.trails),
+        SUM(CASE WHEN tmp_pop.trails = 0 THEN 0 ELSE pop10 * trails_score / tmp_pop.trails END),
         regexp_replace('Average trails score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -2680,7 +2680,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         'Average score of access to community centers',
-        SUM(pop10 * community_centers_score / tmp_pop.comm_ctrs),
+        SUM(CASE WHEN tmp_pop.comm_ctrs = 0 THEN 0 ELSE pop10 * community_centers_score / tmp_pop.comm_ctrs END),
         regexp_replace('Average community centers score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
@@ -2879,7 +2879,7 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Transit',
         'Average score of access to transit',
-        SUM(pop10 * transit_score / tmp_pop.transit),
+        SUM(CASE WHEN tmp_pop.transit = 0 THEN 0 ELSE pop10 * transit_score / tmp_pop.transit END),
         regexp_replace('Average transit score for census blocks
             weighted by population.','\n\s+',' ','g'),
         regexp_replace('On average, census blocks in the neighborhood received
