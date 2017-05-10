@@ -103,4 +103,4 @@ class AnalysisJobSerializer(PFBModelSerializer):
                    'analysis_job_definition', 'tilemaker_job_definition',
                    '_analysis_job_name', '_tilemaker_job_name',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                            'batch_job_id', 'batch', 'census_block_count',)
+                            'batch_job_id', 'batch', 'census_block_count', 'final_runtime',)
