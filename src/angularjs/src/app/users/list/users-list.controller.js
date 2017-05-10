@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function UserListController($state, $stateParams, $scope, Pagination, User) {
+    function UserListController($state, $stateParams, $scope, AuthService, Pagination, User) {
         var ctl = this;
 
         var defaultParams = {
@@ -31,11 +31,13 @@
 
             ctl.users = [];
 
+            ctl.isAdminUser = AuthService.isAdminUser();
+            ctl.isOrgAdminUser = AuthService.isOrgAdminUser();
+
             ctl.roleOptions = {
                 VIEWER: 'Viewer',
                 ADMIN: 'Administrator',
-                EDITOR: 'Editor',
-                UPLOADER: 'Uploader'
+                ORGADMIN: 'Organization Administrator'
             };
             getUsers();
             ctl.filters = {};

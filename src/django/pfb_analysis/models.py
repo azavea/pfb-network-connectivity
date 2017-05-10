@@ -78,6 +78,15 @@ class Neighborhood(PFBModel):
     def __str__(self):
         return "<Neighborhood: {} ({})>".format(self.name, self.organization.name)
 
+    class Visibility(object):
+        PUBLIC = 'public'
+        PRIVATE = 'private'
+
+        CHOICES = (
+            (PUBLIC, 'Public',),
+            (PRIVATE, 'Private',),
+        )
+
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
     label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
@@ -92,6 +101,12 @@ class Neighborhood(PFBModel):
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
                                                'bike network analysis on')
+    visibility = models.CharField(max_length=10,
+                                  choices=Visibility.CHOICES,
+                                  default=Visibility.PUBLIC)
+    last_job = models.ForeignKey('AnalysisJob',
+                                 related_name='last_job_neighborhood',
+                                 on_delete=models.CASCADE, null=True)
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
@@ -297,14 +312,12 @@ class AnalysisJob(PFBModel):
     _analysis_job_name = models.CharField(max_length=50, default='')
     tilemaker_job_definition = models.CharField(max_length=50, default=generate_tilemaker_job_def)
     _tilemaker_job_name = models.CharField(max_length=50, default='')
+    start_time = models.DateTimeField(null=True, blank=True)
+    final_runtime = models.PositiveIntegerField(default=0)
+    status = models.CharField(choices=Status.CHOICES, max_length=12, default=Status.CREATED)
 
     objects = AnalysisJobManager()
 
-    @property
-    def status(self):
-        """ Return current status for this job """
-        latest_update = self.status_updates.last()
-        return latest_update.status if latest_update else self.Status.CREATED
 
     @property
     def batch_job_status(self):
@@ -389,20 +402,15 @@ class AnalysisJob(PFBModel):
     @property
     def running_time(self):
         """ Return the running time of the job in seconds """
-        first_update = self.status_updates.filter(status=self.Status.IMPORTING).first()
-        last_update = self.status_updates.last()
-        if first_update is None or last_update is None:
-            return 0
-        start = first_update.timestamp
-        end = last_update.timestamp
-        diff = end - start
-        return int(diff.total_seconds())
+        if self.final_runtime or not self.start_time:
+            # already calculated for a job that's done, or 0 if not started yet
+            return self.final_runtime
 
-    @property
-    def start_time(self):
-        """ Return start time of the job as a datetime object """
-        first_update = self.status_updates.first()
-        return first_update.timestamp if first_update else None
+        last_update = self.status_updates.last()
+        if last_update is None:
+            return 0
+        diff = last_update.timestamp - self.start_time
+        return int(diff.total_seconds())
 
     @property
     def ways_url(self):
@@ -536,8 +544,22 @@ class AnalysisJob(PFBModel):
             raise
 
     def update_status(self, status, step='', message=''):
-        if self.status != self.Status.CANCELLED:
-            self.status_updates.create(job=self, status=status, step=step, message=message)
+        if self.status == self.Status.CANCELLED:
+            return
+
+        update = self.status_updates.create(job=self, status=status, step=step, message=message)
+        self.status = status
+        # neighborhood last job is last completed, or last updated
+        if (status == self.Status.COMPLETE or not self.neighborhood.last_job or
+                self.neighborhood.last_job.status != self.Status.COMPLETE):
+            self.neighborhood.last_job = self
+            self.neighborhood.save()
+
+        if status == self.Status.IMPORTING and not self.start_time:
+            self.start_time = update.timestamp
+        elif status in self.Status.DONE_STATUSES:
+            self.final_runtime = self.running_time
+        self.save()
 
     @property
     def s3_results_path(self):

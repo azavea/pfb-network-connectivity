@@ -17,16 +17,16 @@ def is_admin(user):
     return hasattr(user, 'organization') and user.role == UserRoles.ADMIN
 
 
-def is_editor(user):
-    """Helper function to check if user has an editor role
+def is_org_admin(user):
+    """Returns true is user has organization admin role."""
+    return hasattr(user, 'organization') and user.role == UserRoles.ORGADMIN
 
-    Arguments:
-        user (users.models.PFBUser): user to check role type
 
-    Returns:
-        bool: True if user has an editor role
-    """
-    return user.role == UserRoles.EDITOR
+def users_in_same_organization(user_one, user_two):
+    """Returns true if the two users passed in belong to the same organization."""
+    if not hasattr(user_one, 'organization') or not hasattr(user_two, 'organization'):
+        return False
+    return user_one.organization == user_two.organization
 
 
 def is_not_subscriber(user):
@@ -93,7 +93,7 @@ class IsAdminOrSelfOnly(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated():
             return False
 
-        if is_admin(request.user):
+        if is_admin(request.user) or is_org_admin(request.user):
             return True
 
         if view.action in self.ALLOWED_ACTIONS or request.method in permissions.SAFE_METHODS:
@@ -114,6 +114,15 @@ class IsAdminOrSelfOnly(permissions.BasePermission):
         if is_admin(request.user):
             return True
 
+        # org admin users cannot modify full admin users
+        if (request.method not in self.ALLOWED_OBJECT_METHODS and
+                is_org_admin(request.user) and is_admin(obj)):
+            return False
+
+        # org admin users can only modify users within their own organization
+        if is_org_admin(request.user) and users_in_same_organization(request.user, obj):
+            return True
+
         # read-write only access to one's own user object for non-admin users
         if request.method in self.ALLOWED_OBJECT_METHODS and request.user == obj:
             return True
@@ -125,8 +134,7 @@ class RestrictedCreate(permissions.BasePermission):
     """Restricts access for POST actions on views"""
 
     def has_permission(self, request, view):
-        """Allow everyone except viewers to create results, only admins and editors for others
-
+        """Allow only admins to create results
         Arguments:
             request (rest_framework.request.Request): request to check for
         """
@@ -138,7 +146,7 @@ class RestrictedCreate(permissions.BasePermission):
             return False
 
         if 'AnalysisJobViewSet' == view.__class__.__name__:
-            return request.user.role != UserRoles.VIEWER
+            return is_admin(request.user)
         elif ('OrganizationViewSet' == view.__class__.__name__ and
               is_admin(request.user) and is_admin_org(request.user)):
             return True

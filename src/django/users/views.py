@@ -72,12 +72,6 @@ class PFBUserViewSet(viewsets.ModelViewSet):
     updating, deleting users in addition to changing passwords and generating/retrieving
     tokens for a user.
 
-    TODO:
-        This endpoint needs to be locked down to admins and others once that functionality
-        has been added
-
-        Add a filter field for groups once permissions have been set up
-
     Attributes:
         queryset: django queryset, note 'auth_token' is selected with queryset
         serializer_class (PFBUserSerializer): serializes users

@@ -174,46 +174,59 @@ INSERT INTO generated.neighborhood_overall_scores (
     score_id, score_original, human_explanation
 )
 SELECT  'core_services',
-        (
-            0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_doctors')
-            + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_dentists')
-            + 0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_hospitals')
-            + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_pharmacies')
-            + 0.25 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_grocery')
-            + 0.15 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_social_services')
-        ) /
-        (
-            CASE
-            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE doctors_high_stress > 0)
-                THEN 0.2
-            ELSE 0
-            END
-            +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE dentists_high_stress > 0)
-                    THEN 0.1
-                ELSE 0
-                END
-            +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE hospitals_high_stress > 0)
-                    THEN 0.2
-                ELSE 0
-                END
-            +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE pharmacies_high_stress > 0)
-                    THEN 0.1
-                ELSE 0
-                END
-            +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE supermarkets_high_stress > 0)
-                    THEN 0.25
-                ELSE 0
-                END
-            +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE social_services_high_stress > 0)
-                    THEN 0.15
-                ELSE 0
-                END
-        ),
+        CASE
+        WHEN EXISTS (
+            SELECT  1
+            FROM    neighborhood_census_blocks
+            WHERE   doctors_high_stress > 0
+            OR      dentists_high_stress > 0
+            OR      hospitals_high_stress > 0
+            OR      pharmacies_high_stress > 0
+            OR      supermarkets_high_stress > 0
+            OR      social_services_high_stress > 0
+        )
+            THEN    (
+                        0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_doctors')
+                        + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_dentists')
+                        + 0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_hospitals')
+                        + 0.1 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_pharmacies')
+                        + 0.25 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_grocery')
+                        + 0.15 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'core_services_social_services')
+                    ) /
+                    (
+                        CASE
+                        WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE doctors_high_stress > 0)
+                            THEN 0.2
+                        ELSE 0
+                        END
+                        +   CASE
+                            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE dentists_high_stress > 0)
+                                THEN 0.1
+                            ELSE 0
+                            END
+                        +   CASE
+                            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE hospitals_high_stress > 0)
+                                THEN 0.2
+                            ELSE 0
+                            END
+                        +   CASE
+                            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE pharmacies_high_stress > 0)
+                                THEN 0.1
+                            ELSE 0
+                            END
+                        +   CASE
+                            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE supermarkets_high_stress > 0)
+                                THEN 0.25
+                            ELSE 0
+                            END
+                        +   CASE
+                            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE social_services_high_stress > 0)
+                                THEN 0.15
+                            ELSE 0
+                            END
+                    )
+        ELSE NULL
+        END,
         NULL;
 
 -- retail
@@ -261,28 +274,38 @@ INSERT INTO generated.neighborhood_overall_scores (
     score_id, score_original, human_explanation
 )
 SELECT  'recreation',
-        (
-            0.4 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_parks')
-            + 0.35 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_trails')
-            + 0.25 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_community_centers')
-        ) /
-        (
-            CASE
-            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE parks_high_stress > 0)
-                THEN 0.4
-            ELSE 0
-            END
-            +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE trails_high_stress > 0)
-                    THEN 0.35
-                ELSE 0
-                END
-            +   CASE
-                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE community_centers_high_stress > 0)
-                    THEN 0.25
-                ELSE 0
-                END
-        ),
+        CASE
+        WHEN EXISTS (
+            SELECT  1
+            FROM    neighborhood_census_blocks
+            WHERE   parks_high_stress > 0
+            OR      trails_high_stress > 0
+            OR      community_centers_high_stress > 0
+        )
+            THEN    (
+                        0.4 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_parks')
+                        + 0.35 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_trails')
+                        + 0.25 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'recreation_community_centers')
+                    ) /
+                    (
+                        CASE
+                        WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE parks_high_stress > 0)
+                            THEN 0.4
+                        ELSE 0
+                        END
+                        +   CASE
+                            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE trails_high_stress > 0)
+                                THEN 0.35
+                            ELSE 0
+                            END
+                        +   CASE
+                            WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE community_centers_high_stress > 0)
+                                THEN 0.25
+                            ELSE 0
+                            END
+                    )
+        ELSE NULL
+        END,
         NULL;
 
 -- transit

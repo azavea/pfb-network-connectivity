@@ -45,7 +45,7 @@
             <div class="form-group">
               <label for="role">Role</label>
               <select name="role" ng-model="user.user.role"
-                      ng-disabled="!user.isAdminUser || user.loggedInEmail === user.user.email"
+                      ng-disabled="user.loggedInEmail === user.user.email"
                       class="form-control" id="role" type="text" required>
                 <option ng-repeat="(key, value) in user.roleOptions" value="{{key}}">{{value}}</option>
               </select>
@@ -57,7 +57,7 @@
             <div ng-if="user.organizations" class="form-group">
               <label for="organization">Organization</label>
               <select name="organization" ng-model="user.user.organization"
-                      ng-disabled="!user.isAdminUser && !user.isAdminOrg || user.loggedInEmail == user.user.email"
+                      ng-disabled="user.loggedInEmail == user.user.email"
                       class="form-control" id="role" type="text" required>
                 <option ng-repeat="(key, value) in user.organizations"
                         value="{{key}}">{{value.name}}</option>

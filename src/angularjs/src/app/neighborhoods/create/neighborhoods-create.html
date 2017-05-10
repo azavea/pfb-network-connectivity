@@ -32,6 +32,16 @@
               </select>
             </div>
           </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label for="role">Visibility</label>
+              <select ng-init="neighborhoodCreate.visibility = 'public'"
+                      ng-model="neighborhoodCreate.visibility"
+                      ng-options="v[0] as v[1] for v in neighborhoodCreate.visibilities"
+                      class="form-control" id="role" type="text">
+              </select>
+            </div>
+          </div>
         </div>
         <div class="row">
           <div class="col-sm-12">

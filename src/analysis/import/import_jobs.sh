@@ -54,7 +54,16 @@ function import_job_data() {
         aws s3 cp "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz" "${JOB_DOWNLOAD}"
     else
         JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+        set +e
         wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
+        WGET_STATUS=$?
+        set -e
+        if [[ $WGET_STATUS -eq 8 ]]; then
+            echo "No 2014 job data available, falling back to 2013 data..."
+            JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+            NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2013.csv"
+            wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
+        fi
     fi
     gunzip -c "${JOB_DOWNLOAD}" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
 
@@ -62,7 +71,7 @@ function import_job_data() {
     # Import to postgresql
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
         -c "
-CREATE TABLE IF NOT EXISTS \"state_od_${NB_DATA_TYPE}_JT00_2014\" (
+CREATE TABLE IF NOT EXISTS \"state_od_${NB_DATA_TYPE}_JT00\" (
     w_geocode varchar(15),
     h_geocode varchar(15),
     \"S000\" integer,
@@ -78,20 +87,18 @@ CREATE TABLE IF NOT EXISTS \"state_od_${NB_DATA_TYPE}_JT00_2014\" (
     createdate VARCHAR(32)
 );"
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-        -c "TRUNCATE TABLE \"state_od_${NB_DATA_TYPE}_JT00_2014\";"
+        -c "TRUNCATE TABLE \"state_od_${NB_DATA_TYPE}_JT00\";"
 
     # Load data
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
-        -c "COPY \"state_od_${NB_DATA_TYPE}_JT00_2014\"(w_geocode, h_geocode, \"S000\", \"SA01\", \"SA02\", \"SA03\", \"SE01\", \"SE02\", \"SE03\", \"SI01\", \"SI02\", \"SI03\", createdate) FROM '${NB_TEMPDIR}/${NB_JOB_FILENAME}' DELIMITER ',' CSV HEADER;"
+        -c "COPY \"state_od_${NB_DATA_TYPE}_JT00\"(w_geocode, h_geocode, \"S000\", \"SA01\", \"SA02\", \"SA03\", \"SE01\", \"SE02\", \"SE03\", \"SI01\", \"SI02\", \"SI03\", createdate) FROM '${NB_TEMPDIR}/${NB_JOB_FILENAME}' DELIMITER ',' CSV HEADER;"
 
     # Remove NB_TEMPDIR
     rm -rf "${NB_TEMPDIR}"
 }
 
-if [ "${BASH_SOURCE[0]}" = "${0}" ]
-then
-    if [ "${1:-}" = "--help" ] || [ -z "${1:-}" ]
-    then
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ] || [ -z "${1:-}" ]; then
         usage
     else
         NB_STATE_ABBREV="${1,,}"  # force to lower case to match the jobs file download paths
@@ -99,6 +106,5 @@ then
         update_status "IMPORTING" "Importing jobs data"
         import_job_data "${NB_STATE_ABBREV}" "main"
         import_job_data "${NB_STATE_ABBREV}" "aux"
-
     fi
 fi
