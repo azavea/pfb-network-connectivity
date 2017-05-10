@@ -28,24 +28,7 @@ class AnalysisJobFilterSet(filters.FilterSet):
         Runs tons of queries, but the query expression required to do this would be gnarly.
         """
         if type(value) is bool:
-            matches = set()
-            initial_job_set = queryset.all()
-            neighborhood_ids = set(job.neighborhood_id for job in initial_job_set)
-            for neighborhood in Neighborhood.objects.filter(pk__in=neighborhood_ids):
-                status_set = AnalysisJobStatusUpdate.objects.filter(
-                    job__neighborhood=neighborhood,
-                    job__in=initial_job_set)
-                success_set = status_set.filter(status=AnalysisJob.Status.SUCCESS_STATUS)
-                if success_set.exists():
-                    status_set = success_set
-                if status_set.exists():
-                    matches.add(status_set.latest('timestamp').job.pk)
-                else:
-                    matches.add(neighborhood.analysis_jobs.latest('modified_at').pk)
-            if value is True:
-                queryset = queryset.filter(pk__in=matches)
-            else:
-                queryset = queryset.exclude(pk__in=matches)
+            queryset = queryset.filter(last_job_neighborhood__isnull=(not value))
 
         return queryset
 
