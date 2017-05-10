@@ -28,8 +28,7 @@ class AnalysisJobFilterSet(filters.FilterSet):
         Pre-fetches related neighborhoods to reduce queries during serialization.
         """
         if type(value) is bool:
-            queryset = queryset.select_related('neighborhood').filter(
-                last_job_neighborhood__isnull=(not value))
+            queryset = queryset.filter(last_job_neighborhood__isnull=(not value))
 
         return queryset
 
