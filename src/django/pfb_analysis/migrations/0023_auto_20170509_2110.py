@@ -9,7 +9,7 @@ def set_last_status(apps, schema_editor):
     AnalysisJob = apps.get_model('pfb_analysis', 'AnalysisJob')
     for job in AnalysisJob.objects.all():
         latest_update = job.status_updates.last()
-        job.last_status = latest_update.status if latest_update else self.Status.CREATED
+        job.last_status = latest_update.status if latest_update else 'CREATED'
         first_update = job.status_updates.filter(status='IMPORTING').first()
         if first_update:
             job.start_time = first_update.timestamp
