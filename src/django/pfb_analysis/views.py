@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 class AnalysisJobViewSet(ModelViewSet):
     """For listing or retrieving analysis jobs."""
 
-    queryset = AnalysisJob.objects.all()
+    queryset = AnalysisJob.objects.select_related('neighborhood').all()
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate, IsAuthenticatedOrReadOnly)
     filter_class = AnalysisJobFilterSet
@@ -77,7 +77,7 @@ class AnalysisJobViewSet(ModelViewSet):
 class NeighborhoodViewSet(ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
-    queryset = Neighborhood.objects.all()
+    queryset = Neighborhood.objects.select_related('organization').all()
     permission_classes = (IsAdminOrgAndAdminCreateEditOnly, IsAuthenticatedOrReadOnly)
     filter_fields = ('organization', 'name', 'label', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
