@@ -20,8 +20,9 @@ from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
 from pfb_network_connectivity.filters import OrgAutoFilterBackend
 from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
 
-from .models import AnalysisJob, Neighborhood
+from .models import AnalysisJob, AnalysisScoreMetadata, Neighborhood
 from .serializers import (AnalysisJobSerializer,
+                          AnalysisScoreMetadataSerializer,
                           NeighborhoodSerializer)
 from .filters import AnalysisJobFilterSet
 
@@ -72,6 +73,16 @@ class AnalysisJobViewSet(ModelViewSet):
             return Response(results, status=status.HTTP_200_OK)
         else:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+
+class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):
+    """Convenience endpoint for available analysis score metadata"""
+
+    queryset = AnalysisScoreMetadata.objects.all()
+    serializer_class = AnalysisScoreMetadataSerializer
+    pagination_class = None
+    filter_class = None
+    permission_classes = (AllowAny,)
 
 
 class NeighborhoodViewSet(ModelViewSet):
