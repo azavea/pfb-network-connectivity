@@ -247,8 +247,8 @@ AWS_QUERYSTRING_AUTH = False
 
 
 # Email
-DEFAULT_FROM_EMAIL = 'noreply@pfb.azavea.com'
-REPOSITORY_HELP_EMAIL = os.getenv('REPOSITORY_HELP_EMAIL', 'help@pfb.azavea.com')
+DEFAULT_FROM_EMAIL = 'noreply@bna.peopleforbikes.org'
+REPOSITORY_HELP_EMAIL = os.getenv('REPOSITORY_HELP_EMAIL', 'help@bna.peopleforbikes.org')
 
 if DJANGO_ENV in ['staging', 'production']:
     EMAIL_BACKEND = 'django_amazon_ses.backends.boto.EmailBackend'
