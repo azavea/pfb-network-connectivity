@@ -41,10 +41,10 @@
         }
 
         function filterJobs(filters) {
-            var params = _.merge({}, defaultParams, filters);
+            var params = _.merge({}, defaultParams);
 
             if (filters.neighborhood) {
-                params.neighborhood = filters.neighborhood;
+                params.search = filters.neighborhood;
             }
             if (filters.status) {
                 params.status = filters.status;
