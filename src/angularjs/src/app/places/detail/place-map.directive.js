@@ -59,7 +59,10 @@
             }
 
             if (!ctl.layerControl) {
-                ctl.layerControl = L.control.layers({}, []).addTo(ctl.map);
+                var options = {
+                    sortLayers: true
+                };
+                ctl.layerControl = L.control.layers({}, {}, options).addTo(ctl.map);
             }
 
             _.map(layers.tileLayers, function(layerObj) {
