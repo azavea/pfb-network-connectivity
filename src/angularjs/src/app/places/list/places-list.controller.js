@@ -27,6 +27,10 @@
             latest: 'True',
             status: 'COMPLETE'
         };
+        var mapStyleKeys = {
+            DEFAULT: 'default',
+            COMPARE: 'compare'
+        };
         var nextParams = {};
         var prevParams = {};
 
@@ -42,6 +46,7 @@
             ctl.getPrev = getPrev;
             ctl.places = [];
             ctl.searchText = '';
+            ctl.mapPlaces = {};
 
             ctl.comparePlaces = new Array(3);
             ctl.addPlaceToCompare = addPlaceToCompare;
@@ -82,6 +87,7 @@
                 if (updateUrl) {
                     updateComparisonsInUrl();
                 }
+                setMapPlaces(ctl.places);
             } else {
                 $log.warn('already have three places to compare');
 
@@ -115,6 +121,7 @@
                 ctl.comparePlaces[removeOffset] = null;
                 ctl.comparePlacesCount--;
                 updateComparisonsInUrl();
+                setMapPlaces(ctl.places);
             } else {
                 $log.warn('no place with UUID ' + uuid + ' found to remove from comparison');
             }
@@ -163,6 +170,7 @@
 
                     return neighborhood;
                 });
+                setMapPlaces(ctl.places);
 
                 if (data.next) {
                     ctl.hasNext = true;
@@ -195,6 +203,19 @@
             getPlaces(params);
         }
 
+        // Must set ctl.mapPlaces via this so that the object ref gets updated
+        function setMapPlaces(places) {
+            var mapPlaces = _.reduce(places, function (result, value) {
+                result[value.uuid] = mapStyleKeys.DEFAULT;
+                return result;
+            }, {});
+            _.forEach(ctl.comparePlaces, function (place) {
+                if (place && place.uuid) {
+                    mapPlaces[place.uuid] = mapStyleKeys.COMPARE;
+                }
+            });
+            ctl.mapPlaces = mapPlaces;
+        }
     }
 
     angular

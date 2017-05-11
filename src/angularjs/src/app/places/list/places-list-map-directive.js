@@ -5,6 +5,11 @@
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
+        // keys in this object are the uuids of the items to filter from the
+        //   geojson requested by this directive
+        // values are a string that can be used to group the items, typically
+        //   for something like pulling a specific styling config
+        ctl.neighborhoods = {};
 
         ctl.$onInit = function () {
             ctl.boundsConus = MapConfig.conusBounds;
@@ -14,6 +19,11 @@
                     maxZoom: MapConfig.conusMaxZoom
                 });
         };
+
+        ctl.$onChanges = function (changes) {
+            ctl.neighborhoods = changes.pfbPlacesListMapNeighborhoods.currentValue || {};
+            drawNeighborhoods();
+        }
 
         ctl.onMapReady = function (map) {
             ctl.map = map;
@@ -32,12 +42,29 @@
             }
 
             Neighborhood.geojson().$promise.then(function (data) {
-                ctl.neighborhoodLayer = L.geoJSON(data, {
-                    onEachFeature: onEachFeature
-                });
-                ctl.layerControl.addOverlay(ctl.neighborhoodLayer, 'Places');
-                map.addLayer(ctl.neighborhoodLayer);
+                ctl.geojson = data;
+                drawNeighborhoods();
             });
+
+        };
+
+        function drawNeighborhoods() {
+            if (!(ctl.geojson && ctl.map)) {
+                return;
+            }
+            if (ctl.neighborhoodLayer) {
+                ctl.map.removeLayer(ctl.neighborhoodLayer);
+            }
+            var geojson = {
+                type: "FeatureCollection",
+                features: _.filter(ctl.geojson.features, function (f) {
+                    return !!(ctl.neighborhoods[f.id])
+                })
+            };
+            ctl.neighborhoodLayer = L.geoJSON(geojson, {
+                onEachFeature: onEachFeature
+            });
+            ctl.map.addLayer(ctl.neighborhoodLayer);
 
             function onEachFeature(feature, layer) {
                 layer.on({
@@ -55,14 +82,14 @@
                     }
                 });
             }
-        };
+        }
     }
 
     function PlacesListMapDirective() {
         var module = {
             restrict: 'E',
             scope: {
-                pfbPlacesListMapLayers: '<'
+                pfbPlacesListMapNeighborhoods: '<'
             },
             controller: 'PlacesListMapController',
             controllerAs: 'ctl',
