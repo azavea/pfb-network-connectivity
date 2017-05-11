@@ -43,24 +43,25 @@
                                 {{placeList.comparePlacesCount}} Selected
                                 <span class="caret"></span>
                         </button>
-                    <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdown-compare"
-                        uib-dropdown-menu>
-                        <li ng-repeat="neighborhood in placeList.comparePlaces | filter:{uuid: '!!'}">
-                            <div>
-                                <div class="compare-title">{{neighborhood.label}},
-                                    {{neighborhood.state_abbrev}}</div>
-                                <div class="network-score small">{{neighborhood.overall_score | number:0}}</div>
-                                <a ng-click="placeList.removeComparePlace(neighborhood.uuid)"
-                                    class="compare-remove">Remove</a>
-                            </div>
-                        </li>
-                        <li>
-                            <!-- only go to comparison page if at least two places selected -->
-                            <a ng-click="placeList.comparePlacesCount > 1 ? placeList.goComparePlaces() : ''"
-                                ng-disabled="placeList.comparePlacesCount < 2"
-                                class="compare-btn">Compare Places</a>
-                        </li>
-                    </ul>
+                        <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdown-compare"
+                            uib-dropdown-menu>
+                            <li ng-repeat="neighborhood in placeList.comparePlaces | filter:{uuid: '!!'}">
+                                <div>
+                                    <div class="compare-title">{{neighborhood.label}},
+                                        {{neighborhood.state_abbrev}}</div>
+                                    <div class="network-score small">{{neighborhood.overall_score | number:0}}</div>
+                                    <a ng-click="placeList.removeComparePlace(neighborhood.uuid)"
+                                        class="compare-remove">Remove</a>
+                                </div>
+                            </li>
+                            <li>
+                                <!-- only go to comparison page if at least two places selected -->
+                                <a ng-click="placeList.comparePlacesCount > 1 ? placeList.goComparePlaces() : ''"
+                                    ng-disabled="placeList.comparePlacesCount < 2"
+                                    class="compare-btn">Compare Places</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,7 +72,6 @@
 
             The stick headers are probably only needed when sorting alphabetically. -->
     <div class="sidebar-scrollable" id="scrollHeaders">
-
         <section>
             <!-- Duplicate .result div for each result. -->
             <div class="result" ng-repeat="neighborhood in placeList.places track by neighborhood.uuid">
