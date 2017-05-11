@@ -10,7 +10,7 @@
 
     /* @ngInject */
     function ScoreMetadata($resource) {
-        return $resource('/api/score_metadata/', {}, {});
+        return $resource('/api/score_metadata/', {}, {cache: true});
     }
 
     angular.module('pfb.components')
