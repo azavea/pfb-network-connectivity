@@ -118,7 +118,7 @@
   },
   {
     "model": "pfb_analysis.AnalysisScoreMetadata",
-    "pk": "core_services_retail",
+    "pk": "retail",
     "fields": {
       "label": "Retail",
       "category": "Retail",
