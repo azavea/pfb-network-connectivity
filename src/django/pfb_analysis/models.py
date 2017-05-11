@@ -106,7 +106,7 @@ class Neighborhood(PFBModel):
                                   default=Visibility.PUBLIC)
     last_job = models.ForeignKey('AnalysisJob',
                                  related_name='last_job_neighborhood',
-                                 on_delete=models.CASCADE, null=True)
+                                 on_delete=models.CASCADE, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
