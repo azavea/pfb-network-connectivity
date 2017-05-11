@@ -41,12 +41,12 @@
             ctl.hasPrev = false;
             ctl.getPrev = getPrev;
             ctl.places = [];
-
-            ctl.neighborhoodFilter = null;
+            ctl.searchText = '';
 
             ctl.comparePlaces = new Array(3);
             ctl.addPlaceToCompare = addPlaceToCompare;
             ctl.removeComparePlace = removeComparePlace;
+            ctl.filterNeighborhoods = filterNeighborhoods;
             ctl.goComparePlaces = goComparePlaces;
             // convenience property to track number of selected places; must be updated on add/remove
             ctl.comparePlacesCount = 0;
@@ -57,8 +57,6 @@
             ctl.getPlaces = getPlaces;
 
             getPlaces();
-            loadOptions();
-            $scope.$watch(function(){return ctl.neighborhoodFilter;}, filterNeighborhood);
         }
 
         /**
@@ -130,25 +128,15 @@
             $state.go('places.list', $stateParams, {notify: false});
         }
 
-        function filterNeighborhood(newFilter, oldFilter) {
-            if (newFilter === oldFilter) {
-                return;
-            }
+        function filterNeighborhoods() {
             getPlaces();
-        }
-
-        function loadOptions() {
-            // fetch all neighborhoods, to populate the search bar
-            Neighborhood.all().$promise.then(function(data) {
-                ctl.allNeighborhoods = data.results;
-            });
         }
 
         function getPlaces(params) {
             params = params || _.merge({}, $stateParams, defaultParams);
             params.ordering = ctl.sortBy.value;
-            if (ctl.neighborhoodFilter) {
-                params.neighborhood = ctl.neighborhoodFilter.uuid;
+            if (ctl.searchText) {
+                params.search = ctl.searchText;
             }
 
             ctl.comparePlacesCount = 0;
