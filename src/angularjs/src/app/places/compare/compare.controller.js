@@ -10,13 +10,15 @@
     'use strict';
 
     /** @ngInject */
-    function CompareController($stateParams, Neighborhood, AnalysisJob, Places, $log, $q, $state) {
+    function CompareController($stateParams, AnalysisJob, Neighborhood, Places, ScoreMetadata,
+                               $log, $q, $state) {
         var ctl = this;
 
         initialize();
 
         function initialize() {
             ctl.places = new Array(3);
+            ctl.metadata = {};
             ctl.clearSelection = clearSelection;
             ctl.goToPlacesList = goToPlacesList;
 
@@ -28,9 +30,23 @@
                 return Places.getPlace(uuid);
             });
 
+            // first request score metadata
+            promises.unshift(ScoreMetadata.query().$promise);
+
             // do not display any place until all places have been retrieved
             $q.all(promises).then(function(results) {
-                ctl.places = results;
+                // first element is the metadata; rest are the places
+                var metadata = _.reduce(_.head(results), function (result, score) {
+                    result[score.name] = {
+                        label: score.label,
+                        category: score.category,
+                        description: score.description
+                    };
+                    return result;
+                }, {});
+                ctl.metadata = metadata;
+
+                ctl.places = _.drop(results);
             }, function(error) {
                 $log.error('Failed to retrieve places to compare:');
                 $log.error(error);
