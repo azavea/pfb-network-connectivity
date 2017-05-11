@@ -49,7 +49,7 @@
                 ctl.boundsLayer = L.geoJSON(data, {});
                 ctl.map.addLayer(ctl.boundsLayer);
                 ctl.map.fitBounds(ctl.boundsLayer.getBounds());
-                ctl.layerControl.addBaseLayer(ctl.boundsLayer, 'area boundary');
+                ctl.layerControl.addOverlay(ctl.boundsLayer, 'area boundary', 'Overlays');
             });
         }
 
@@ -59,10 +59,12 @@
             }
 
             if (!ctl.layerControl) {
-                var options = {
-                    sortLayers: true
-                };
-                ctl.layerControl = L.control.layers({}, {}, options).addTo(ctl.map);
+                ctl.layerControl = L.control.groupedLayers({}, {
+                    'Overlays': {},
+                    'Destinations': {}
+                }, {
+                    exclusiveGroups: ['Overlays', 'Destinations']
+                }).addTo(ctl.map);
             }
 
             _.map(layers.tileLayers, function(layerObj) {
@@ -70,7 +72,7 @@
                 var layer = L.tileLayer(layerObj.url, {
                     maxZoom: MapConfig.conusMaxZoom
                 });
-                ctl.layerControl.addBaseLayer(layer, label);
+                ctl.layerControl.addOverlay(layer, label, 'Overlays');
             });
 
             _.map(layers.featureLayers, function(layerObj) {
@@ -80,7 +82,7 @@
                         var layer = L.geoJSON(response.data, {
                             onEachFeature: onEachFeature
                         });
-                        ctl.layerControl.addOverlay(layer, label);
+                        ctl.layerControl.addOverlay(layer, label, 'Destinations');
                     }
                 });
             });
