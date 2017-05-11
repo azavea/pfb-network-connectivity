@@ -4,6 +4,7 @@ import logging
 
 import us
 
+from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
 
@@ -33,7 +34,12 @@ logger = logging.getLogger(__name__)
 class AnalysisJobViewSet(ModelViewSet):
     """For listing or retrieving analysis jobs."""
 
-    queryset = AnalysisJob.objects.select_related('neighborhood').all()
+    def get_queryset(self):
+        queryset = AnalysisJob.objects.select_related('neighborhood').all()
+        if isinstance(self.request.user, AnonymousUser):
+            queryset = queryset.filter(neighborhood__visibility=Neighborhood.Visibility.PUBLIC)
+        return queryset
+
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate, IsAuthenticatedOrReadOnly)
     filter_class = AnalysisJobFilterSet
@@ -88,7 +94,12 @@ class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):
 class NeighborhoodViewSet(ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
-    queryset = Neighborhood.objects.select_related('organization').all()
+    def get_queryset(self):
+        queryset = Neighborhood.objects.select_related('organization').all()
+        if isinstance(self.request.user, AnonymousUser):
+            queryset = queryset.filter(visibility=Neighborhood.Visibility.PUBLIC)
+        return queryset
+
     permission_classes = (IsAdminOrgAndAdminCreateEditOnly, IsAuthenticatedOrReadOnly)
     filter_fields = ('organization', 'name', 'label', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
