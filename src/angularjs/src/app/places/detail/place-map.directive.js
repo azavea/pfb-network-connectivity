@@ -62,17 +62,17 @@
                 ctl.layerControl = L.control.layers({}, []).addTo(ctl.map);
             }
 
-            _.map(layers.tileLayers, function(url, name) {
-                var label = $sanitize(name.replace(/_/g, ' '));
-                var layer = L.tileLayer(url, {
+            _.map(layers.tileLayers, function(layerObj) {
+                var label = $sanitize(layerObj.name.replace(/_/g, ' '));
+                var layer = L.tileLayer(layerObj.url, {
                     maxZoom: MapConfig.conusMaxZoom
                 });
                 ctl.layerControl.addBaseLayer(layer, label);
             });
 
-            _.map(layers.featureLayers, function(url, metric) {
-                var label = $sanitize(metric.replace(/_/g, ' '));
-                $http.get(url).then(function(response) {
+            _.map(layers.featureLayers, function(layerObj) {
+                var label = $sanitize(layerObj.name.replace(/_/g, ' '));
+                $http.get(layerObj.url).then(function(response) {
                     if (response.data && response.data.features) {
                         var layer = L.geoJSON(response.data, {
                             onEachFeature: onEachFeature

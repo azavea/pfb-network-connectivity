@@ -376,19 +376,18 @@ class AnalysisJob(PFBModel):
     @property
     def destinations_urls(self):
         """ Return a dict of the available destinations files for this job """
-        return {
-            destination: self._s3_url_for_result_resource('neighborhood_{}.geojson'
-                                                          .format(destination))
-            for destination in settings.PFB_ANALYSIS_DESTINATIONS
-        }
+        return [{
+            'name': destination,
+            'url': self._s3_url_for_result_resource('neighborhood_{}.geojson'.format(destination))
+        } for destination in settings.PFB_ANALYSIS_DESTINATIONS]
 
     @property
     def tile_urls(self):
-        return {
-            layer: self._s3_url_for_result_resource('tiles/neighborhood_{}'.format(layer) +
+        return [{
+            'name': layer,
+            'url': self._s3_url_for_result_resource('tiles/neighborhood_{}'.format(layer) +
                                                     '/{z}/{x}/{y}.png')
-            for layer in ['census_blocks', 'ways']
-        }
+        } for layer in ['census_blocks', 'ways']]
 
     @property
     def overall_scores_url(self):
