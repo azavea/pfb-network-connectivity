@@ -383,6 +383,14 @@ class AnalysisJob(PFBModel):
         }
 
     @property
+    def tile_urls(self):
+        return {
+            layer: self._s3_url_for_result_resource('tiles/neighborhood_{}'.format(layer) +
+                                                    '/{z}/{x}/{y}.png')
+            for layer in ['census_blocks', 'ways']
+        }
+
+    @property
     def overall_scores_url(self):
         return self._s3_url_for_result_resource('neighborhood_overall_scores.csv')
 

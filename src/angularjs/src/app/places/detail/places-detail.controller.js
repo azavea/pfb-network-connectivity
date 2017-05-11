@@ -53,7 +53,10 @@
                 ctl.place = place.neighborhood;
                 if (place.lastJob) {
                     ctl.lastJobScore = place.lastJob.overall_score;
-                    ctl.mapLayers = place.results.destinations_urls;
+                    ctl.mapLayers = {
+                        tileLayers: place.results.tile_urls,
+                        featureLayers: place.results.destinations_urls
+                    };
                     ctl.scores = place.scores;
                     ctl.downloads = _.map(downloadOptions, function(option) {
                         return {label: option.label, url: place.results[option.value]};

@@ -17,7 +17,7 @@
                 MapConfig.baseLayers.Positron.url, {
                     attribution: MapConfig.baseLayers.Positron.attribution,
                     maxZoom: MapConfig.conusMaxZoom
-                });
+            });
         };
 
         ctl.$onChanges = function(changes) {
@@ -36,6 +36,8 @@
         ctl.onMapReady = function (map) {
             ctl.map = map;
 
+            ctl.baselayer.addTo(ctl.map);
+
             // in case map layers set before map was ready, add layers now map is ready to go
             if (ctl.pfbPlaceMapLayers) {
                 setLayers(ctl.pfbPlaceMapLayers);
@@ -47,7 +49,7 @@
                 ctl.boundsLayer = L.geoJSON(data, {});
                 ctl.map.addLayer(ctl.boundsLayer);
                 ctl.map.fitBounds(ctl.boundsLayer.getBounds());
-                ctl.layerControl.addOverlay(ctl.boundsLayer, 'area boundary');
+                ctl.layerControl.addBaseLayer(ctl.boundsLayer, 'area boundary');
             });
         }
 
@@ -57,10 +59,18 @@
             }
 
             if (!ctl.layerControl) {
-                ctl.layerControl = L.control.layers({'Positron': ctl.baselayer}, []).addTo(ctl.map);
+                ctl.layerControl = L.control.layers({}, []).addTo(ctl.map);
             }
 
-            _.map(layers, function(url, metric) {
+            _.map(layers.tileLayers, function(url, name) {
+                var label = $sanitize(name.replace(/_/g, ' '));
+                var layer = L.tileLayer(url, {
+                    maxZoom: MapConfig.conusMaxZoom
+                });
+                ctl.layerControl.addBaseLayer(layer, label);
+            });
+
+            _.map(layers.featureLayers, function(url, metric) {
                 var label = $sanitize(metric.replace(/_/g, ' '));
                 $http.get(url).then(function(response) {
                     if (response.data && response.data.features) {
