@@ -36,8 +36,6 @@
         ctl.onMapReady = function (map) {
             ctl.map = map;
 
-            ctl.baselayer.addTo(ctl.map);
-
             // in case map layers set before map was ready, add layers now map is ready to go
             if (ctl.pfbPlaceMapLayers) {
                 setLayers(ctl.pfbPlaceMapLayers);
@@ -58,8 +56,16 @@
                 return;
             }
 
+            var satelliteLayer = L.tileLayer(MapConfig.baseLayers.Satellite.url, {
+                attribution: MapConfig.baseLayers.Satellite.attribution,
+                maxZoom: MapConfig.conusMaxZoom
+            });
+
             if (!ctl.layerControl) {
-                ctl.layerControl = L.control.groupedLayers({}, {
+                ctl.layerControl = L.control.groupedLayers({
+                    'Positron': ctl.baselayer,
+                    'Satellite': satelliteLayer
+                }, {
                     'Overlays': {},
                     'Destinations': {}
                 }, {
