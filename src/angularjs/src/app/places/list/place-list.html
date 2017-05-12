@@ -39,8 +39,8 @@
                     <div class="btn-group" uib-dropdown is-open="status.isopen">
                         <button class="btn btn-default btn-block" type="button"
                             id="dropdown-compare" aria-haspopup="true" aria-expanded="true"
-                            uib-dropdown-toggle ng-disabled="placeList.comparePlacesCount < 1">
-                                {{placeList.comparePlacesCount}} Selected
+                            uib-dropdown-toggle ng-disabled="placeList.comparePlaces.length < 1">
+                                {{placeList.comparePlaces.length}} Selected
                                 <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu compare-dropdown" aria-labelledby="dropdown-compare"
@@ -56,8 +56,8 @@
                             </li>
                             <li>
                                 <!-- only go to comparison page if at least two places selected -->
-                                <a ng-click="placeList.comparePlacesCount > 1 ? placeList.goComparePlaces() : ''"
-                                    ng-disabled="placeList.comparePlacesCount < 2"
+                                <a ng-click="placeList.comparePlaces.length > 1 ? placeList.goComparePlaces() : ''"
+                                    ng-disabled="placeList.comparePlaces.length < 2"
                                     class="compare-btn">Compare Places</a>
                             </li>
                         </ul>
@@ -90,15 +90,16 @@
                 <div class="result-right">
                     <div class="network-score">{{neighborhood.overall_score | number:0}}</div>
                     <div class="compare">
-                        <button ng-if="!neighborhood.comparing"
-                            ng-disabled="placeList.comparePlacesCount >=3"
-                            ng-class="(placeList.comparePlacesCount >=3) ?
-                                'btn btn-toggle' : 'btn btn-toggle active'"
-                            ng-click="placeList.addPlaceToCompare(neighborhood, true)">Compare
+                        <button ng-if="!placeList.isInPlaceCompare(neighborhood.uuid)"
+                                ng-disabled="placeList.isPlaceCompareFull()"
+                                ng-class="(placeList.isPlaceCompareFull()) ?
+                                    'btn btn-toggle' : 'btn btn-toggle active'"
+                                ng-click="placeList.addPlaceToCompare(neighborhood)">Compare
                             <span></span>
                         </button>
-                        <button ng-if="neighborhood.comparing" class="btn btn-toggle"
-                            ng-click="placeList.removeComparePlace(neighborhood.uuid)">Remove
+                        <button ng-if="placeList.isInPlaceCompare(neighborhood.uuid)"
+                                class="btn btn-toggle"
+                                ng-click="placeList.removeComparePlace(neighborhood.uuid)">Remove
                             <span></span>
                         </button>
                     </div>
