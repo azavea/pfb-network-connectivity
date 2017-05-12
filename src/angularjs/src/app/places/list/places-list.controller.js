@@ -133,7 +133,7 @@
         }
 
         function getPlaces(params) {
-            params = params || _.merge({}, $stateParams, defaultParams);
+            params = params || _.merge({}, defaultParams);
             params.ordering = ctl.sortBy.value;
             if (ctl.searchText) {
                 params.search = ctl.searchText;
