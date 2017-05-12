@@ -51,8 +51,9 @@
                     // sort alphabetically by metric name so they will line up by row
                     place.scores = _(results.overall_scores).map(function(obj, key) {
                         return {
-                            metric: key.replace(/_/g, ' '),
-                            score: obj.score_normalized
+                            metric: key,
+                            score: obj.score,
+                            score_normalized: obj.score_normalized
                         };
                     }).sortBy(function(result) { return result.metric; }).value();
 

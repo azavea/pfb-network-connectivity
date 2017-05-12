@@ -27,6 +27,10 @@
             latest: 'True',
             status: 'COMPLETE'
         };
+        var mapStyleKeys = {
+            DEFAULT: 'default',
+            COMPARE: 'compare'
+        };
         var nextParams = {};
         var prevParams = {};
 
@@ -41,15 +45,17 @@
             ctl.hasPrev = false;
             ctl.getPrev = getPrev;
             ctl.places = [];
+            ctl.searchText = '';
+            ctl.mapPlaces = {};
 
-            ctl.neighborhoodFilter = null;
-
-            ctl.comparePlaces = new Array(3);
+            ctl.comparePlaces = [];
+            ctl.maxPlaceCompare = 3;
             ctl.addPlaceToCompare = addPlaceToCompare;
             ctl.removeComparePlace = removeComparePlace;
+            ctl.filterNeighborhoods = filterNeighborhoods;
             ctl.goComparePlaces = goComparePlaces;
-            // convenience property to track number of selected places; must be updated on add/remove
-            ctl.comparePlacesCount = 0;
+            ctl.isInPlaceCompare = isInPlaceCompare;
+            ctl.isPlaceCompareFull = isPlaceCompareFull;
 
             ctl.sortBy = sortingOptions[0]; // default to alphabetical order
             ctl.sortingOptions = sortingOptions;
@@ -57,36 +63,22 @@
             ctl.getPlaces = getPlaces;
 
             getPlaces();
-            loadOptions();
-            $scope.$watch(function(){return ctl.neighborhoodFilter;}, filterNeighborhood);
         }
 
         /**
          * Add a place to the list of up to three places to view on compare page.
          *
          * @param {Neighborhood} place Neighborhood to list of places to compare
-         * @param {boolean} updateUrl If true, will update URL without refreshing the page
-                                      to include the place UUID in the route
          */
-        function addPlaceToCompare(place, updateUrl) {
-            if (place.comparing) {
+        function addPlaceToCompare(place) {
+            if (isInPlaceCompare(place.uuid)) {
                 $log.warn('aready have place selected to compare');
-                return;
-            }
-
-            // put place in first empty comparison slot of the three available
-            var firstEmpty = _.findIndex(ctl.comparePlaces, function(place) { return !place; });
-            if (firstEmpty > -1) {
-                place.comparing = true;
-                ctl.comparePlaces[firstEmpty] = place;
-                ctl.comparePlacesCount++;
-                // update URL to include place to compare, to retain state in case of page refresh
-                if (updateUrl) {
-                    updateComparisonsInUrl();
-                }
-            } else {
+            } else if (isPlaceCompareFull()) {
                 $log.warn('already have three places to compare');
-
+            } else {
+                ctl.comparePlaces.push(place);
+                updateComparisonsInUrl();
+                setMapPlaces(ctl.places);
             }
         }
 
@@ -106,53 +98,50 @@
                 return; // on page load, this watch fires will no value
             }
 
-            var removeOffset = _.findIndex(ctl.comparePlaces, function(place) {
-                return place && place.uuid === uuid;
-            });
-
+            var removeOffset = getPlaceCompareIndex(uuid);
             if (removeOffset > -1) {
-                // unset flag on Neighborhood marking selection for comparison
-                ctl.comparePlaces[removeOffset].comparing = false;
                 // remove Neighborhood from array of places selected for comparison
-                ctl.comparePlaces[removeOffset] = null;
-                ctl.comparePlacesCount--;
+                ctl.comparePlaces.splice(removeOffset, 1);
                 updateComparisonsInUrl();
+                setMapPlaces(ctl.places);
             } else {
                 $log.warn('no place with UUID ' + uuid + ' found to remove from comparison');
             }
         }
 
+        function getPlaceCompareIndex(uuid) {
+            return _.findIndex(ctl.comparePlaces, function (p) {
+                return p && p.uuid === uuid;
+            });
+        }
+
+        function isInPlaceCompare(uuid) {
+            return getPlaceCompareIndex(uuid) !== -1;
+        }
+
+        function isPlaceCompareFull() {
+            return ctl.comparePlaces.length >= ctl.maxPlaceCompare;
+        }
+
         // helper to update URL after places added or removed for comparison, without reloading
         function updateComparisonsInUrl() {
-            _.each(ctl.comparePlaces, function(place, index) {
-                $stateParams['place' + (index + 1)] = place ? place.uuid : '';
-            });
+            for (var i = 0; i < ctl.maxPlaceCompare; i++) {
+                var place = ctl.comparePlaces[i];
+                $stateParams['place' + (i + 1)] = place ? place.uuid : '';
+            }
             $state.go('places.list', $stateParams, {notify: false});
         }
 
-        function filterNeighborhood(newFilter, oldFilter) {
-            if (newFilter === oldFilter) {
-                return;
-            }
+        function filterNeighborhoods() {
             getPlaces();
         }
 
-        function loadOptions() {
-            // fetch all neighborhoods, to populate the search bar
-            Neighborhood.all().$promise.then(function(data) {
-                ctl.allNeighborhoods = data.results;
-            });
-        }
-
         function getPlaces(params) {
-            params = params || _.merge({}, $stateParams, defaultParams);
+            params = params || _.merge({}, defaultParams);
             params.ordering = ctl.sortBy.value;
-            if (ctl.neighborhoodFilter) {
-                params.neighborhood = ctl.neighborhoodFilter.uuid;
+            if (ctl.searchText) {
+                params.search = ctl.searchText;
             }
-
-            ctl.comparePlacesCount = 0;
-            ctl.comparePlaces = new Array(3);
 
             // Read out pre-set places to compare from the URL. Keep this state in the URL
             // so user can navigate between places list and comparison without losing selections.
@@ -166,15 +155,13 @@
                     neighborhood.modifiedAt = obj.modifiedAt;
                     neighborhood.overall_score = obj.overall_score;
 
-                    // add convenience flag to indicate if place selected for comparison
                     if (_.includes(uuidsToCompare, neighborhood.uuid)) {
-                        addPlaceToCompare(neighborhood, false);
-                    } else {
-                        neighborhood.comparing = false;
+                        addPlaceToCompare(neighborhood);
                     }
 
                     return neighborhood;
                 });
+                setMapPlaces(ctl.places);
 
                 if (data.next) {
                     ctl.hasNext = true;
@@ -191,7 +178,6 @@
                     ctl.hasPrev = false;
                     prevParams = {};
                 }
-
             });
         }
 
@@ -207,6 +193,19 @@
             getPlaces(params);
         }
 
+        // Must set ctl.mapPlaces via this so that the object ref gets updated
+        function setMapPlaces(places) {
+            var mapPlaces = _.reduce(places, function (result, value) {
+                result[value.uuid] = mapStyleKeys.DEFAULT;
+                return result;
+            }, {});
+            _.forEach(ctl.comparePlaces, function (place) {
+                if (place && place.uuid) {
+                    mapPlaces[place.uuid] = mapStyleKeys.COMPARE;
+                }
+            });
+            ctl.mapPlaces = mapPlaces;
+        }
     }
 
     angular

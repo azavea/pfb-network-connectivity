@@ -1,5 +1,7 @@
 import logging
 
+from django.db.models import Q
+
 from rest_framework import filters
 import django_filters
 
@@ -15,8 +17,9 @@ class AnalysisJobFilterSet(filters.FilterSet):
       - latest, to return only the most recent analysis job for each neighborhood
     """
 
-    status = django_filters.ChoiceFilter(choices=AnalysisJob.Status.CHOICES)
     latest = django_filters.BooleanFilter(method='filter_latest')
+    search = django_filters.CharFilter(method='filter_search')
+    status = django_filters.ChoiceFilter(choices=AnalysisJob.Status.CHOICES)
 
     def filter_latest(self, queryset, name, value):
         """ Return latest successful analysis for each neighborhood, but falls back
@@ -31,6 +34,10 @@ class AnalysisJobFilterSet(filters.FilterSet):
             queryset = queryset.filter(last_job_neighborhood__isnull=(not value))
 
         return queryset
+
+    def filter_search(self, queryset, name, value):
+        return queryset.filter(Q(neighborhood__label__icontains=value) |
+                               Q(neighborhood__state_abbrev__icontains=value))
 
     class Meta:
         model = AnalysisJob

@@ -10,7 +10,8 @@
     /* @ngInject */
     function State($resource) {
         return $resource('/api/states/', {}, {
-            'query': {
+            cache: true,
+            query: {
                 method: 'GET',
                 isArray: true
             }

@@ -106,7 +106,7 @@ class Neighborhood(PFBModel):
                                   default=Visibility.PUBLIC)
     last_job = models.ForeignKey('AnalysisJob',
                                  related_name='last_job_neighborhood',
-                                 on_delete=models.CASCADE, null=True)
+                                 on_delete=models.CASCADE, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving, which disallows blank state_abbrev """
@@ -376,11 +376,18 @@ class AnalysisJob(PFBModel):
     @property
     def destinations_urls(self):
         """ Return a dict of the available destinations files for this job """
-        return {
-            destination: self._s3_url_for_result_resource('neighborhood_{}.geojson'
-                                                          .format(destination))
-            for destination in settings.PFB_ANALYSIS_DESTINATIONS
-        }
+        return [{
+            'name': destination,
+            'url': self._s3_url_for_result_resource('neighborhood_{}.geojson'.format(destination))
+        } for destination in settings.PFB_ANALYSIS_DESTINATIONS]
+
+    @property
+    def tile_urls(self):
+        return [{
+            'name': layer,
+            'url': self._s3_url_for_result_resource('tiles/neighborhood_{}'.format(layer) +
+                                                    '/{z}/{x}/{y}.png')
+        } for layer in ['census_blocks', 'ways']]
 
     @property
     def overall_scores_url(self):

@@ -10,7 +10,13 @@
     'use strict';
 
     /** @ngInject */
-    function PlaceDetailController($stateParams, $log, Neighborhood, AnalysisJob, Places) {
+    function PlaceDetailController($stateParams,
+                                   $log,
+                                   $q,
+                                   AnalysisJob,
+                                   Neighborhood,
+                                   Places,
+                                   ScoreMetadata) {
         var ctl = this;
 
         var downloadOptions = [
@@ -30,11 +36,27 @@
 
         function getPlace(uuid) {
             ctl.mapLayers = {};
-            Places.getPlace(uuid).then(function (place) {
+            $q.all([
+                Places.getPlace(uuid),
+                ScoreMetadata.query().$promise
+            ]).then(function (results) {
+                var place = results[0];
+                var metadata = _.reduce(results[1], function (result, score) {
+                    result[score.name] = {
+                        label: score.label,
+                        category: score.category,
+                        description: score.description
+                    };
+                    return result;
+                }, {});
+                ctl.metadata = metadata;
                 ctl.place = place.neighborhood;
                 if (place.lastJob) {
                     ctl.lastJobScore = place.lastJob.overall_score;
-                    ctl.mapLayers = place.results.destinations_urls;
+                    ctl.mapLayers = {
+                        tileLayers: place.results.tile_urls,
+                        featureLayers: place.results.destinations_urls
+                    };
                     ctl.scores = place.scores;
                     ctl.downloads = _.map(downloadOptions, function(option) {
                         return {label: option.label, url: place.results[option.value]};

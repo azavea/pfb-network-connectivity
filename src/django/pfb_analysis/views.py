@@ -4,6 +4,7 @@ import logging
 
 import us
 
+from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
 
@@ -20,8 +21,9 @@ from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
 from pfb_network_connectivity.filters import OrgAutoFilterBackend
 from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
 
-from .models import AnalysisJob, Neighborhood
+from .models import AnalysisJob, AnalysisScoreMetadata, Neighborhood
 from .serializers import (AnalysisJobSerializer,
+                          AnalysisScoreMetadataSerializer,
                           NeighborhoodSerializer)
 from .filters import AnalysisJobFilterSet
 
@@ -32,7 +34,12 @@ logger = logging.getLogger(__name__)
 class AnalysisJobViewSet(ModelViewSet):
     """For listing or retrieving analysis jobs."""
 
-    queryset = AnalysisJob.objects.select_related('neighborhood').all()
+    def get_queryset(self):
+        queryset = AnalysisJob.objects.select_related('neighborhood').all()
+        if isinstance(self.request.user, AnonymousUser):
+            queryset = queryset.filter(neighborhood__visibility=Neighborhood.Visibility.PUBLIC)
+        return queryset
+
     serializer_class = AnalysisJobSerializer
     permission_classes = (RestrictedCreate, IsAuthenticatedOrReadOnly)
     filter_class = AnalysisJobFilterSet
@@ -64,6 +71,7 @@ class AnalysisJobViewSet(ModelViewSet):
                 ('census_blocks_url', job.census_blocks_url),
                 ('connected_census_blocks_url', job.connected_census_blocks_url),
                 ('destinations_urls', job.destinations_urls),
+                ('tile_urls', job.tile_urls),
                 ('overall_scores', job.overall_scores),
                 ('overall_scores_url', job.overall_scores_url),
                 ('score_inputs_url', job.score_inputs_url),
@@ -74,10 +82,25 @@ class AnalysisJobViewSet(ModelViewSet):
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
 
+class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):
+    """Convenience endpoint for available analysis score metadata"""
+
+    queryset = AnalysisScoreMetadata.objects.all()
+    serializer_class = AnalysisScoreMetadataSerializer
+    pagination_class = None
+    filter_class = None
+    permission_classes = (AllowAny,)
+
+
 class NeighborhoodViewSet(ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
-    queryset = Neighborhood.objects.select_related('organization').all()
+    def get_queryset(self):
+        queryset = Neighborhood.objects.select_related('organization').all()
+        if isinstance(self.request.user, AnonymousUser):
+            queryset = queryset.filter(visibility=Neighborhood.Visibility.PUBLIC)
+        return queryset
+
     permission_classes = (IsAdminOrgAndAdminCreateEditOnly, IsAuthenticatedOrReadOnly)
     filter_fields = ('organization', 'name', 'label', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)

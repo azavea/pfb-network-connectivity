@@ -59,7 +59,7 @@
             How the BNA Score is calculated
         </h2>
         <div class="row stack-xs">
-            <div class="column-6">
+            <div class="column-6" ng-repeat="card in home.scoreCards">
                 <div class="card alternate">
 
                     <!-- This card image div is currently empty
@@ -70,42 +70,9 @@
                     <div class="card-image"></div>
                     <div class="card-details">
                         <div class="card-title">
-                            <h3>Metric 1</h3>
+                            <h3>{{ ::card.title }}</h3>
                         </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni aliquam minima voluptates asperiores, nostrum nesciunt! Suscipit laborum consequatur sit odit quia magnam hic voluptatem, optio. Nisi itaque quidem a nobis!</p>
-                    </div>
-                </div>
-            </div>
-            <div class="column-6">
-                <div class="card alternate">
-                    <div class="card-image"></div>
-                    <div class="card-details">
-                        <div class="card-title">
-                            <h3>Metric 2</h3>
-                        </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni aliquam minima voluptates asperiores, nostrum nesciunt! Suscipit laborum consequatur sit odit quia magnam hic voluptatem, optio. Nisi itaque quidem a nobis!</p>
-                    </div>
-                </div>
-            </div>
-            <div class="column-6">
-                <div class="card alternate">
-                    <div class="card-image"></div>
-                    <div class="card-details">
-                        <div class="card-title">
-                            <h3>Metric 3</h3>
-                        </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni aliquam minima voluptates asperiores, nostrum nesciunt! Suscipit laborum consequatur sit odit quia magnam hic voluptatem, optio. Nisi itaque quidem a nobis!</p>
-                    </div>
-                </div>
-            </div>
-            <div class="column-6">
-                <div class="card alternate">
-                    <div class="card-image"></div>
-                    <div class="card-details">
-                        <div class="card-title">
-                            <h3>Metric 4</h3>
-                        </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni aliquam minima voluptates asperiores, nostrum nesciunt! Suscipit laborum consequatur sit odit quia magnam hic voluptatem, optio. Nisi itaque quidem a nobis!</p>
+                        <p>{{ ::card.description }}</p>
                     </div>
                 </div>
             </div>

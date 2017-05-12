@@ -30,7 +30,7 @@ work as intended.
 
 First you'll need to copy the example ansible group_vars file:
 ```
-cp deployment/ansible/group_vars/all.example deployment/group_vars/all
+cp deployment/ansible/group_vars/all.example deployment/ansible/group_vars/all
 ```
 If you have access to the AWS console, copy the appropriate values at the links below into `deployment/ansible/group_vars/all`, choosing the resources with 'staging' in the name:
 - [AWS Batch Job Queues](https://console.aws.amazon.com/batch/home?region=us-east-1#/queues): Copy the staging `analysis` and `tilemaker` job queue names to the appropriate equivalent group var setting.

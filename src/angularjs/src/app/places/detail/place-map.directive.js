@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlaceMapController($filter, $http, $sanitize, MapConfig, Neighborhood) {
+    function PlaceMapController($filter, $http, $sanitize, $q, MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -17,7 +17,7 @@
                 MapConfig.baseLayers.Positron.url, {
                     attribution: MapConfig.baseLayers.Positron.attribution,
                     maxZoom: MapConfig.conusMaxZoom
-                });
+            });
         };
 
         ctl.$onChanges = function(changes) {
@@ -47,7 +47,7 @@
                 ctl.boundsLayer = L.geoJSON(data, {});
                 ctl.map.addLayer(ctl.boundsLayer);
                 ctl.map.fitBounds(ctl.boundsLayer.getBounds());
-                ctl.layerControl.addOverlay(ctl.boundsLayer, 'area boundary');
+                ctl.layerControl.addOverlay(ctl.boundsLayer, 'area boundary', 'Overlays');
             });
         }
 
@@ -56,19 +56,49 @@
                 return;
             }
 
+            var satelliteLayer = L.tileLayer(MapConfig.baseLayers.Satellite.url, {
+                attribution: MapConfig.baseLayers.Satellite.attribution,
+                maxZoom: MapConfig.conusMaxZoom
+            });
+
             if (!ctl.layerControl) {
-                ctl.layerControl = L.control.layers({'Positron': ctl.baselayer}, []).addTo(ctl.map);
+                ctl.layerControl = L.control.groupedLayers({
+                    'Positron': ctl.baselayer,
+                    'Satellite': satelliteLayer
+                }, {
+                    'Overlays': {},
+                    'Destinations': {}
+                }, {
+                    exclusiveGroups: ['Overlays', 'Destinations']
+                }).addTo(ctl.map);
             }
 
-            _.map(layers, function(url, metric) {
-                var label = $sanitize(metric.replace(/_/g, ' '));
-                $http.get(url).then(function(response) {
+            _.map(layers.tileLayers, function(layerObj) {
+                var label = $sanitize(layerObj.name.replace(/_/g, ' '));
+                var layer = L.tileLayer(layerObj.url, {
+                    maxZoom: MapConfig.conusMaxZoom
+                });
+                ctl.layerControl.addOverlay(layer, label, 'Overlays');
+            });
+
+            // We need to fetch and do some processing on each destination layer, which means
+            // they could come back and get inserted in arbitrary order.
+            // Loading them all before adding them to the picker lets us sort.
+            var destLayerPromises = _.map(layers.featureLayers, function(layerObj) {
+                var label = $sanitize(layerObj.name.replace(/_/g, ' '));
+                return $http.get(layerObj.url).then(function(response) {
                     if (response.data && response.data.features) {
                         var layer = L.geoJSON(response.data, {
                             onEachFeature: onEachFeature
                         });
-                        ctl.layerControl.addOverlay(layer, label);
+                        return {'layer': layer, 'label': label};
                     }
+                });
+            });
+
+            $q.all(destLayerPromises).then(function (layers) {
+                _.forEach(_.sortBy(layers, 'label'), function (layer) {
+                    ctl.layerControl.addOverlay(layer.layer, layer.label, 'Destinations');
                 });
             });
 

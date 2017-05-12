@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from rest_framework import serializers
 
-from pfb_analysis.models import AnalysisJob, Neighborhood
+from pfb_analysis.models import AnalysisJob, AnalysisScoreMetadata, Neighborhood
 from pfb_network_connectivity.serializers import PFBModelSerializer
 
 
@@ -61,7 +61,7 @@ class NeighborhoodSerializer(PFBModelSerializer):
         exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'geom', 'geom_simple',
                    'geom_pt',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                            'organization', 'name',)
+                            'organization', 'last_job', 'name',)
 
 
 class NeighborhoodSummarySerializer(PFBModelSerializer):
@@ -106,3 +106,11 @@ class AnalysisJobSerializer(PFBModelSerializer):
                    '_analysis_job_name', '_tilemaker_job_name',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'batch_job_id', 'batch', 'census_block_count', 'final_runtime',)
+
+
+class AnalysisScoreMetadataSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnalysisScoreMetadata
+        fields = ('name', 'label', 'category', 'description',)
+        read_only_fields = ('name', 'label', 'category', 'description',)

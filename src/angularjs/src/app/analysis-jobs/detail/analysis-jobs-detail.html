@@ -73,9 +73,9 @@
                   <td>Ways</td>
                   <td><a ng-href="{{ analysisJobDetail.results.ways_url }}">ESRI Shapefile</a></td>
               </tr>
-              <tr ng-repeat="(key, url) in analysisJobDetail.results.destinations_urls">
-                  <td>Destination: {{ key }}</td>
-                  <td><a ng-href="{{ url }}">GeoJSON</a></td>
+              <tr ng-repeat="layer in analysisJobDetail.results.destinations_urls">
+                  <td>Destination: {{ layer.name }}</td>
+                  <td><a ng-href="{{ layer.url }}">GeoJSON</a></td>
               </tr>
           </tbody>
       </table>
