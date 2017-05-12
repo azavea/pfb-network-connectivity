@@ -71,6 +71,7 @@ class AnalysisJobViewSet(ModelViewSet):
                 ('census_blocks_url', job.census_blocks_url),
                 ('connected_census_blocks_url', job.connected_census_blocks_url),
                 ('destinations_urls', job.destinations_urls),
+                ('tile_urls', job.tile_urls),
                 ('overall_scores', job.overall_scores),
                 ('overall_scores_url', job.overall_scores_url),
                 ('score_inputs_url', job.score_inputs_url),
