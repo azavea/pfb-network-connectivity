@@ -36,7 +36,7 @@ class AnalysisJobFilterSet(filters.FilterSet):
         return queryset
 
     def filter_search(self, queryset, name, value):
-        return queryset.filter(Q(neighborhood__name__icontains=value) |
+        return queryset.filter(Q(neighborhood__label__icontains=value) |
                                Q(neighborhood__state_abbrev__icontains=value))
 
     class Meta:
