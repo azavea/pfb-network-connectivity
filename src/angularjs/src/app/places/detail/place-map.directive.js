@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlaceMapController($filter, $http, $sanitize, MapConfig, Neighborhood) {
+    function PlaceMapController($filter, $http, $sanitize, $q, MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -81,15 +81,24 @@
                 ctl.layerControl.addOverlay(layer, label, 'Overlays');
             });
 
-            _.map(layers.featureLayers, function(layerObj) {
+            // We need to fetch and do some processing on each destination layer, which means
+            // they could come back and get inserted in arbitrary order.
+            // Loading them all before adding them to the picker lets us sort.
+            var destLayerPromises = _.map(layers.featureLayers, function(layerObj) {
                 var label = $sanitize(layerObj.name.replace(/_/g, ' '));
-                $http.get(layerObj.url).then(function(response) {
+                return $http.get(layerObj.url).then(function(response) {
                     if (response.data && response.data.features) {
                         var layer = L.geoJSON(response.data, {
                             onEachFeature: onEachFeature
                         });
-                        ctl.layerControl.addOverlay(layer, label, 'Destinations');
+                        return {'layer': layer, 'label': label};
                     }
+                });
+            });
+
+            $q.all(destLayerPromises).then(function (layers) {
+                _.forEach(_.sortBy(layers, 'label'), function (layer) {
+                    ctl.layerControl.addOverlay(layer.layer, layer.label, 'Destinations');
                 });
             });
 
