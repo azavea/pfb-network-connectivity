@@ -91,14 +91,13 @@
                     <div class="network-score">{{neighborhood.overall_score | number:0}}</div>
                     <div class="compare">
                         <button ng-if="!placeList.isInPlaceCompare(neighborhood.uuid)"
+                                class="btn btn-toggle"
                                 ng-disabled="placeList.isPlaceCompareFull()"
-                                ng-class="(placeList.isPlaceCompareFull()) ?
-                                    'btn btn-toggle' : 'btn btn-toggle active'"
                                 ng-click="placeList.addPlaceToCompare(neighborhood)">Compare
                             <span></span>
                         </button>
                         <button ng-if="placeList.isInPlaceCompare(neighborhood.uuid)"
-                                class="btn btn-toggle"
+                                class="btn btn-toggle active"
                                 ng-click="placeList.removeComparePlace(neighborhood.uuid)">Remove
                             <span></span>
                         </button>
