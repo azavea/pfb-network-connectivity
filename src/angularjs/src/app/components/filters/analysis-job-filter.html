@@ -2,23 +2,29 @@
     <th>ID</th>
     <th>
         <div class="dropdown">
-        <input name="neighborhood-filter" ng-model="ctl.statusFilter" title="Filter by Status"
-            placeholder="Status" type="text" class="form-control"
-            uib-typeahead="status for status in ctl.statuses |
-                           filter: $viewValue |
-                           limitTo: 8">
+        <input name="neighborhood-filter"
+               title="Filter by Status"
+               placeholder="Status"
+               ng-model="ctl.statusFilter"
+               ng-model-options="{ debounce: 400 }"
+               ng-change="ctl.onStatusFilterChanged()"
+               type="text"
+               uib-typeahead="status for status in ctl.statuses | filter: $viewValue | limitTo: 8"
+               typeahead-wait-ms="400"
+               typeahead-on-select="ctl.onStatusFilterChanged($item)"
+               class="form-control">
         </div>
     </th>
     <th>
         <div class="dropdown neighborhood">
-            <input title="Filter by Neighborhood" placeholder="Neighborhood"
-                ng-model="ctl.neighborhoodFilter"
-                type="text" class="form-control"
-                uib-typeahead="neighborhood as (neighborhood.label + ', ' +
-                               neighborhood.state_abbrev) for neighborhood in ctl.neighborhoods |
-                               filter: {label : $viewValue} |
-                               limitTo: 8">
-
+            <input name="neighborhood-filter"
+                   title="Filter by Neighborhood"
+                   placeholder="Neighborhood"
+                   ng-model="ctl.searchText"
+                   ng-model-options="{ debounce: 400 }"
+                   ng-change="ctl.filterNeighborhoods()"
+                   type="text"
+                   class="form-control"/>
         </div>
     </th>
     <th>Batch Job ID</th>

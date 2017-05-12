@@ -8,54 +8,29 @@
      * Controller for the analysis job filtering table header
      */
     /** @ngInject */
-    function AnalysisJobFilterController($scope, Neighborhood, AuthService, AnalysisJobStatuses) {
+    function AnalysisJobFilterController($scope, AnalysisJobStatuses) {
         var ctl = this;
         initialize();
 
         function initialize() {
-            loadOptions(ctl.param);
-            $scope.$watch(function(){return ctl.statusFilter;}, filterStatus);
-            $scope.$watch(function(){return ctl.neighborhoodFilter;}, filterNeighborhood);
-            $scope.$watch(function(){return ctl.analysisJobFilter;}, filterBoundary);
-        }
-
-        function loadOptions() {
-            Neighborhood.all().$promise.then(function(data) {
-                ctl.neighborhoods = data.results;
-            });
-
-            ctl.statusFilter = null;
-            ctl.neighborhoodFilter = null;
+            ctl.statusFilter = '';
             ctl.statuses = AnalysisJobStatuses.statuses;
+            ctl.filterNeighborhoods = filterNeighborhoods;
+            ctl.onStatusFilterChanged = onStatusFilterChanged;
         }
 
-        function filterNeighborhood(newFilter, oldFilter) {
-            if (newFilter === oldFilter) {
-                return;
-            }
+        function filterNeighborhoods() {
             ctl.filters = {
-                neighborhood: newFilter ? newFilter.uuid : null,
+                neighborhood: ctl.searchText,
                 status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
             };
         }
 
-        function filterStatus(newFilter, oldFilter) {
-            if (newFilter === oldFilter) {
-                return;
-            }
+        function onStatusFilterChanged($item) {
+            var status = AnalysisJobStatuses.filterMap[$item || ctl.statusFilter];
             ctl.filters = {
-                neighborhood: ctl.neighborhoodFilter ? ctl.neighborhoodFilter.uuid : null,
-                status: AnalysisJobStatuses.filterMap[newFilter]
-            };
-        }
-
-        function filterBoundary(newFilter, oldFilter) {
-            if (newFilter === oldFilter) {
-                return;
-            }
-            ctl.filters = {
-                neighborhood: ctl.neighborhoodFilter ? ctl.neighborhoodFilter.uuid : null,
-                status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
+                neighborhood: ctl.searchText,
+                status: status || ''
             };
         }
     }

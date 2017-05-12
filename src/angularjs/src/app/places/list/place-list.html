@@ -11,13 +11,12 @@
             <div class="column">
                 <div class="form-group">
                     <label for="neighborhood-filter">Filter by place name</label>
-                    <input name="neighborhood-filter" ng-model="placeList.neighborhoodFilter"
-                        type="text" class="form-control"
-                        uib-typeahead="neighborhood as (neighborhood.label + ', ' +
-                                       neighborhood.state_abbrev) for neighborhood in
-                                       placeList.allNeighborhoods |
-                                       filter: {label : $viewValue} |
-                                       limitTo: 8">
+                    <input name="neighborhood-filter"
+                           ng-model="placeList.searchText"
+                           ng-model-options="{ debounce: 400 }"
+                           ng-change="placeList.filterNeighborhoods()"
+                           type="text"
+                           class="form-control"/>
 
                 </div>
             </div>
@@ -75,7 +74,7 @@
 
         <section>
             <!-- Duplicate .result div for each result. -->
-            <div class="result" ng-repeat="neighborhood in placeList.places">
+            <div class="result" ng-repeat="neighborhood in placeList.places track by neighborhood.uuid">
                 <a ui-sref="places.detail({uuid: '{{neighborhood.uuid}}' })" class="result-link"></a>
                 <div class="result-left">
 
