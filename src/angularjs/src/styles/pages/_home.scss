@@ -30,7 +30,7 @@
 
   .pfb-logo {
     max-width: 10rem;
-  } 
+  }
 
   .pfb-logo-text {
     font-size: 3rem;
@@ -137,5 +137,29 @@
 
   .decor {
     color: #fff;
+  }
+
+  .card-details {
+    &:before,
+    &:after {
+      content: '';
+      height: 6px;
+      transform: skew(45deg);
+      display: inline-block;
+      position: absolute;
+      top: 0px;
+    }
+
+    &:before {
+      background: #00aaf6;
+      width: 25%;
+      left: 5px;
+    }
+
+    &:after {
+      background: red;
+      width: 35%;
+      left: 40%;
+    }
   }
 }
