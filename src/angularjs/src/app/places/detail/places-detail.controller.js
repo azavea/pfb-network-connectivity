@@ -38,18 +38,10 @@
             ctl.mapLayers = {};
             $q.all([
                 Places.getPlace(uuid),
-                ScoreMetadata.query().$promise
+                ScoreMetadata.query()
             ]).then(function (results) {
                 var place = results[0];
-                var metadata = _.reduce(results[1], function (result, score) {
-                    result[score.name] = {
-                        label: score.label,
-                        category: score.category,
-                        description: score.description
-                    };
-                    return result;
-                }, {});
-                ctl.metadata = metadata;
+                ctl.metadata = results[1];
                 ctl.place = place.neighborhood;
                 if (place.lastJob) {
                     ctl.lastJobScore = place.lastJob.overall_score;
