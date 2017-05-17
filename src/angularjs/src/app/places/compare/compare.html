@@ -23,7 +23,9 @@
                     <div class="card-details">
                         <!-- TODO: fix styling. Why does icon not appear? -->
                         <a class="compare-remove"
-                            ng-click="compare.clearSelection($index)"><i class="icon-cross"></i>X</a>
+                           ng-click="compare.clearSelection($index)">
+                            <i class="icon-cross"></i>
+                        </a>
                         <h3>{{place.neighborhood.label}}</h3>
                         <h4>{{place.neighborhood.state_abbrev}}</h4>
                         <div class="network-score large">{{place.lastJob.overall_score | number:0}}</div>
