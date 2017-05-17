@@ -24,7 +24,7 @@
         ctl.cities = null;
         ctl.scoreCards = [{
             title: 'People',
-            description: 'Sometimes you want to meet at a friend’s house or visit your parents. It is important for bike networks to connect people to each other. Our People measure uses population data from the U.S. Census to determine how well you are connected by bike to the people around you.'
+            description: 'Sometimes you want to meet at a friend&#39s house or visit your parents. It is important for bike networks to connect people to each other. Our People measure uses population data from the U.S. Census to determine how well you are connected by bike to the people around you.'
         }, {
             title: 'Opportunity',
             description: 'Jobs and education are critical to ensuring that everyone has opportunities to improve their situation. Our Opportunity measure uses job data from the U.S. Census along with locations of K-12 schools, vocational and technical colleges, and institutes of higher education to evaluate how easily you can access these opportunities by bike.'
