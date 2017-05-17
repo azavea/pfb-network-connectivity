@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlaceMapController($filter, $http, $sanitize, $q, MapConfig, Neighborhood) {
+    function PlaceMapController($filter, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -70,6 +70,14 @@
                     'Destinations': {}
                 }, {
                     exclusiveGroups: ['Overlays', 'Destinations']
+                }).addTo(ctl.map);
+            }
+            if (!ctl.printButton) {
+                ctl.printButton = L.control.mapButton({
+                    controlClasses: ['leaflet-control-layers'],
+                    iconClasses: ['icon-print']
+                }, function () {
+                    $window.print();
                 }).addTo(ctl.map);
             }
 
