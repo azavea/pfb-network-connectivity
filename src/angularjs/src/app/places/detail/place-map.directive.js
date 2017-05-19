@@ -45,9 +45,8 @@
         function addBounds(uuid) {
             Neighborhood.bounds({uuid: uuid}).$promise.then(function (data) {
                 ctl.boundsLayer = L.geoJSON(data, {});
-                ctl.map.addLayer(ctl.boundsLayer);
                 ctl.map.fitBounds(ctl.boundsLayer.getBounds());
-                ctl.layerControl.addOverlay(ctl.boundsLayer, 'area boundary', 'Overlays');
+                ctl.layerControl.addOverlay(ctl.boundsLayer, 'Area boundary', 'Overlays');
             });
         }
 
@@ -82,10 +81,18 @@
             }
 
             _.map(layers.tileLayers, function(layerObj) {
-                var label = $sanitize(layerObj.name.replace(/_/g, ' '));
+                // Get desired label
+                var label = {
+                    'ways': 'Stress Network',
+                    'census_blocks': 'Census blocks with access'
+                }[layerObj.name];
                 var layer = L.tileLayer(layerObj.url, {
                     maxZoom: MapConfig.conusMaxZoom
                 });
+                // Desired default view is showing the network, so add that to the map
+                if (layerObj.name === 'ways') {
+                    ctl.map.addLayer(layer);
+                }
                 ctl.layerControl.addOverlay(layer, label, 'Overlays');
             });
 
@@ -94,6 +101,7 @@
             // Loading them all before adding them to the picker lets us sort.
             var destLayerPromises = _.map(layers.featureLayers, function(layerObj) {
                 var label = $sanitize(layerObj.name.replace(/_/g, ' '));
+                label = label[0].toUpperCase() + label.slice(1);
                 return $http.get(layerObj.url).then(function(response) {
                     if (response.data && response.data.features) {
                         var layer = L.geoJSON(response.data, {
