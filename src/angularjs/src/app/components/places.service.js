@@ -52,8 +52,10 @@
                     place.scores = _(results.overall_scores).map(function(obj, key) {
                         return {
                             metric: key,
-                            score: obj.score,
-                            score_normalized: obj.score_normalized
+                            score: obj.score_original,
+                            // 'population_total' is missing its 'score_normalized'
+                            score_normalized: (key === 'population_total' ? obj.score_original :
+                                               obj.score_normalized)
                         };
                     }).sortBy(function(result) { return result.metric; }).value();
 
