@@ -45,7 +45,7 @@ class AnalysisJobViewSet(ModelViewSet):
     filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label',
-                       'neighborhood__state_abbrev')
+                       'neighborhood__state_abbrev', 'population_total')
     ordering = ('-created_at',)
 
     def perform_create(self, serializer):
