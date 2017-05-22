@@ -628,6 +628,9 @@ class AnalysisScoreMetadata(models.Model):
                                 help_text='Used to group scores with the same category together')
     description = models.CharField(max_length=1024, blank=True, null=True,
                                    help_text='Long description of the metric')
+    priority = models.PositiveSmallIntegerField(blank=True, null=True,
+                                                help_text='Determines sort order in response, ' +
+                                                          'lower numbers sort first')
 
     class Meta:
         ordering = ('name',)
