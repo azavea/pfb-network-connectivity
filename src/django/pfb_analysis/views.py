@@ -85,7 +85,7 @@ class AnalysisJobViewSet(ModelViewSet):
 class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):
     """Convenience endpoint for available analysis score metadata"""
 
-    queryset = AnalysisScoreMetadata.objects.all()
+    queryset = AnalysisScoreMetadata.objects.all().order_by('priority')
     serializer_class = AnalysisScoreMetadataSerializer
     pagination_class = None
     filter_class = None

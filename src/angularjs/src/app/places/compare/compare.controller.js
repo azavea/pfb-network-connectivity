@@ -31,20 +31,12 @@
             });
 
             // first request score metadata
-            promises.unshift(ScoreMetadata.query().$promise);
+            promises.unshift(ScoreMetadata.query());
 
             // do not display any place until all places have been retrieved
             $q.all(promises).then(function(results) {
                 // first element is the metadata; rest are the places
-                var metadata = _.reduce(_.head(results), function (result, score) {
-                    result[score.name] = {
-                        label: score.label,
-                        category: score.category,
-                        description: score.description
-                    };
-                    return result;
-                }, {});
-                ctl.metadata = metadata;
+                ctl.metadata = _.head(results);
 
                 ctl.places = _.drop(results);
             }, function(error) {
