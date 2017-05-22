@@ -86,6 +86,7 @@ class AnalysisJobSerializer(PFBModelSerializer):
     neighborhood = PrimaryKeyReferenceRelatedField(queryset=Neighborhood.objects.all(),
                                                    serializer=NeighborhoodSummarySerializer)
     overall_score = serializers.FloatField(read_only=True)
+    population_total = serializers.IntegerField(read_only=True)
 
     def get_logs_url(self, obj):
         return obj.logs_url

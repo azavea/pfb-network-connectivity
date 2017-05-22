@@ -243,8 +243,12 @@ class AnalysisBatch(PFBModel):
 class AnalysisJobManager(models.Manager):
     def get_queryset(self):
         qs = super(AnalysisJobManager, self).get_queryset()
-        return qs.annotate(overall_score=ObjectAtPath('overall_scores',
-                                                      ('overall_score', 'score_normalized')))
+        qs = (qs.annotate(overall_score=ObjectAtPath('overall_scores',
+                                                     ('overall_score', 'score_normalized')))
+                .annotate(population_total=ObjectAtPath('overall_scores',
+                                                        ('population_total', 'score_original'),
+                          output_field=models.PositiveIntegerField())))
+        return qs
 
 
 def generate_analysis_job_def():
