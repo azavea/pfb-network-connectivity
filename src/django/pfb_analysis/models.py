@@ -89,7 +89,8 @@ class Neighborhood(PFBModel):
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.SlugField(max_length=256, help_text='Unique slug for neighborhood')
-    label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood')
+    label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood, ' +
+                                                       'should not include State')
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
     geom_simple = MultiPolygonField(srid=4326, blank=True, null=True)
     geom_pt = PointField(srid=4326, blank=True, null=True)
@@ -203,7 +204,7 @@ class Neighborhood(PFBModel):
                 shutil.rmtree(tmpdir, ignore_errors=True)
 
     class Meta:
-        unique_together = ('name', 'organization',)
+        unique_together = ('name', 'state_abbrev', 'organization',)
 
 
 class AnalysisBatch(PFBModel):
