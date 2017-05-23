@@ -74,7 +74,7 @@
             if (!ctl.printButton) {
                 ctl.printButton = L.control.mapButton({
                     controlClasses: ['leaflet-control-layers'],
-                    iconClasses: ['icon-print']
+                    iconClasses: ['leaflet-btn icon-print']
                 }, function () {
                     $window.print();
                 }).addTo(ctl.map);
