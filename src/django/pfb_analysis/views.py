@@ -45,7 +45,7 @@ class AnalysisJobViewSet(ModelViewSet):
     filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label',
-                       'neighborhood__state_abbrev')
+                       'neighborhood__state_abbrev', 'population_total')
     ordering = ('-created_at',)
 
     def perform_create(self, serializer):
@@ -85,7 +85,7 @@ class AnalysisJobViewSet(ModelViewSet):
 class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):
     """Convenience endpoint for available analysis score metadata"""
 
-    queryset = AnalysisScoreMetadata.objects.all()
+    queryset = AnalysisScoreMetadata.objects.all().order_by('priority')
     serializer_class = AnalysisScoreMetadataSerializer
     pagination_class = None
     filter_class = None

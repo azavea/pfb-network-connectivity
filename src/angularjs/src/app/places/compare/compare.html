@@ -23,7 +23,9 @@
                     <div class="card-details">
                         <!-- TODO: fix styling. Why does icon not appear? -->
                         <a class="compare-remove"
-                            ng-click="compare.clearSelection($index)"><i class="icon-cross"></i>X</a>
+                           ng-click="compare.clearSelection($index)">
+                            <i class="icon-cross"></i>
+                        </a>
                         <h3>{{place.neighborhood.label}}</h3>
                         <h4>{{place.neighborhood.state_abbrev}}</h4>
                         <div class="network-score large">{{place.lastJob.overall_score | number:0}}</div>
@@ -35,17 +37,15 @@
                             pfb-thumbnail-map-place="place.neighborhood.uuid"></pfb-thumbnail-map>
                     </div>
                     <ul class="metric-list">
-                        <li ng-repeat="result in place.scores">
-                            {{ ::compare.metadata[result.metric].label }}
-                            <span class="network-score small">
-                                {{result.score_normalized | number:0}}
-                            </span>
+                        <li ng-repeat="m in compare.metadata"
+                            ng-if="place.scores[m.name]">
+                            {{ ::m.label }}
+                            <div class="tooltip" data-title="{{ ::m.description }}"><i class="icon-info-circled"></i></div>
+                            <span class="network-score small">{{ ::place.scores[m.name].score_normalized | number:0 }}</span>
                         </li>
                         <li>
-                            <section>
                                 <a ui-sref="places.detail({uuid: place.neighborhood.uuid})"
                                     class="btn btn-secondary btn-block">View Place</a>
-                            </section>
                         </li>
                     </ul>
                 </div>

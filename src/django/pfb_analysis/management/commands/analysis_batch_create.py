@@ -71,7 +71,7 @@ class Command(BaseCommand):
                     city = feature['properties']['city']
                     state = feature['properties']['state']
                     osm_extract_url = feature['properties'].get('osm_url', None)
-                    label = '{}, {}'.format(city, state)
+                    label = city
                     name = Neighborhood.name_for_label(label)
 
                     # Get or create neighborhood for feature

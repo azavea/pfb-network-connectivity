@@ -8,7 +8,7 @@
     <div class="sidebar-header">
         <div class="row">
             <div class="column-8">
-                <h2 class="sidebar-title">{{placeDetail.place.label}}</h2>
+                <h2 class="sidebar-title">{{placeDetail.place.label }}</h2>
                 <h4 class="sidebar-title">{{placeDetail.place.state_abbrev}}</h4>
                 <div class="location-timestamp"><span>Last updated:</span>
                     {{placeDetail.place.modifiedAt | date:'MMMM dd, yyyy'}}</div>
@@ -27,15 +27,14 @@
                     <div class="column">
                         <label class="network-score large flex-row columns-center">
                             {{placeDetail.lastJobScore | number:0}}
-                            <span class="h3">Network Score</span>
+                            <span class="h3">BNA Score</span>
 
-                            <!-- Tooltips how it works: If you have a div with class .tooltip add a title. The content of the title will display in the toolip using css. -->
-                            <div class="tooltip" title="This is a tooltip that keeps sdfjhskdjfh dfskjhas kjhdfsa kjdfsah sdfakjh kjfdsah "><i class="icon-info-circled"></i></div>
+                            <div class="tooltip" data-title="On average, this is how well the bike network gets people to the places they want to go."><i class="icon-info-circled"></i></div>
                         </label>
                     </div>
                     <div class="column text-right">
 
-                    <div class="btn-group dropdown" uib-dropdown is-open="status.isopen"
+                    <div class="dropdown" uib-dropdown is-open="status.isopen"
                         ng-if="placeDetail.downloads">
                       <button id="single-button" type="button" class="btn btn-default btn-s" uib-dropdown-toggle ng-disabled="disabled" id="downloadButton">
                         Download <span class="caret"></span>
@@ -59,10 +58,11 @@
             </div>
         </section>
         <ul class="metric-list">
-            <li ng-repeat="result in placeDetail.scores">
-                {{ ::placeDetail.metadata[result.metric].label }}
-                <div class="tooltip" title="{{ ::placeDetail.metadata[result.metric].description }}"><i class="icon-info-circled"></i></div>
-                <span class="network-score small">{{ ::result.score_normalized | number:0 }}</span>
+            <li ng-repeat="m in placeDetail.metadata"
+                ng-if="placeDetail.scores[m.name]">
+                {{ ::m.label }}
+                <div class="tooltip" data-title="{{ ::m.description }}"><i class="icon-info-circled"></i></div>
+                <span class="network-score small">{{ ::placeDetail.scores[m.name].score_normalized | number:0 }}</span>
             </li>
         </ul>
     </div>

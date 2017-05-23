@@ -35,7 +35,7 @@
             <div class="column">
                 <!-- Compare dropdown -->
                 <div class="form-group">
-                    <label for="dropdown-compare">Compare</label>
+                    <label for="dropdown-compare">Compare (up to 3 places)</label>
                     <div class="btn-group" uib-dropdown is-open="status.isopen">
                         <button class="btn btn-default btn-block" type="button"
                             id="dropdown-compare" aria-haspopup="true" aria-expanded="true"
@@ -91,14 +91,13 @@
                     <div class="network-score">{{neighborhood.overall_score | number:0}}</div>
                     <div class="compare">
                         <button ng-if="!placeList.isInPlaceCompare(neighborhood.uuid)"
+                                class="btn btn-toggle"
                                 ng-disabled="placeList.isPlaceCompareFull()"
-                                ng-class="(placeList.isPlaceCompareFull()) ?
-                                    'btn btn-toggle' : 'btn btn-toggle active'"
                                 ng-click="placeList.addPlaceToCompare(neighborhood)">Compare
                             <span></span>
                         </button>
                         <button ng-if="placeList.isInPlaceCompare(neighborhood.uuid)"
-                                class="btn btn-toggle"
+                                class="btn btn-toggle active"
                                 ng-click="placeList.removeComparePlace(neighborhood.uuid)">Remove
                             <span></span>
                         </button>

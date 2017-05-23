@@ -30,7 +30,7 @@
 
   .pfb-logo {
     max-width: 10rem;
-  } 
+  }
 
   .pfb-logo-text {
     font-size: 3rem;
@@ -87,12 +87,17 @@
     left: 0;
     transform: translate(0, -50%);
     text-align: center;
+    margin-left: 10px;
+    border: 1px solid darken($brand-primary, 5%);
 
     @include respond-to(xs) {
       position: absolute;
-      width: 100%;
       transform: none;
-      top: initial;
+      margin: 0;
+      width: auto;
+      left: 10px;
+      right: 10px;
+      top: 10px;
 
       .card-details {
         padding: 1rem;
@@ -102,21 +107,24 @@
 
   .overview-total {
     @extend .h1;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin: 0;
 
     @include respond-to(xs) {
       display: inline-block;
       vertical-align: middle;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
     }
   }
 
   .overview-total-label {
     @extend .h5;
+    margin: 0;
 
     @include respond-to(xs) {
       display: inline-block;
       vertical-align: middle;
+      margin: 1rem 0;
     }
   }
 
@@ -137,5 +145,29 @@
 
   .decor {
     color: #fff;
+  }
+
+  .card-details {
+    &:before,
+    &:after {
+      content: '';
+      height: 6px;
+      transform: skew(45deg);
+      display: inline-block;
+      position: absolute;
+      top: 0px;
+    }
+
+    &:before {
+      background: #00aaf6;
+      width: 25%;
+      left: 5px;
+    }
+
+    &:after {
+      background: red;
+      width: 35%;
+      left: 40%;
+    }
   }
 }

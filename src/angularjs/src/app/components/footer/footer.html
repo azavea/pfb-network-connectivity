@@ -3,12 +3,13 @@
     <div class="container">
         <div class="footer-left">
             <a ui-sref="home" class="brand">
-                <img src="assets/images/placesforbikes-logo-white.png" alt="Places for bikes">
+                <img src="assets/images/people-for-bikes-logo.svg" alt="Places for bikes">
             </a>
         </div>
         <nav class="footer-right">
             <a ui-sref="places.list">All places</a>
-            <a href="#">About</a>
+            <a ui-sref="home">About</a>
+            <a href="http://www.peopleforbikes.org/placesforbikes/pages/bike-network-analysis" target="_blank">How can I get a BNA for my place?</a>
             <a ui-sref="methodology">Methodology</a>
             <a href="http://www.peopleforbikes.org/" target="_blank">PeopleForBikes</a>
             <a ng-if="footer.loggedIn" ui-sref="login" ng-click="footer.logout()">Sign Out</a>

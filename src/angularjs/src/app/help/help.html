@@ -1,16 +1,20 @@
 <pfb-navbar></pfb-navbar>
 
 <div class="container">
-  <div class="row">
-    <div class="help-body col-sm-7 col-sm-offset-1">
+  <div class="row align-center">
+    <div class="help-body column-12">
       <h1>Help</h1>
 
-      <h2 class="help-heading" id="help-topic-one">Authentication</h2>
-      <p>The Account Settings page contains a field for an API token. If no API token exists, click the <code>Refresh</code> link to generate a new token. Once a token is created, authenticating API requests involves supplying the provided token via the <code>Authorization</code> HTTP header. Below is an example using <code>curl</code>:</p>
+      <div class="panel">
+          <div class="panel-body">
+              <h2 class="help-heading" id="help-topic-one">Authentication</h2>
+                  <p>The Account Settings page contains a field for an API token. If no API token exists, click the <code>Refresh</code> link to generate a new token. Once a token is created, authenticating API requests involves supplying the provided token via the <code>Authorization</code> HTTP header. Below is an example using <code>curl</code>:</p>
 
-      <pre class="hljs-wrapper" hljs hljs-language="bash" hljs-interpolate="true">
+                  <pre class="hljs-wrapper" hljs hljs-language="bash" hljs-interpolate="true">
 curl -H "Authorization: Token TOKEN" \
      -X GET "{{help.protocol}}://{{help.host}}/api/boundary-results/"</pre>
+          </div>
+      </div>
    </div>
   </div>
 </div>

@@ -2,11 +2,11 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-10 col-md-push-1">
+    <div class="column-12">
       <h1>Run Analysis</h1>
       <form name="analysisJobCreateForm" novalidate ng-submit="analysisJobCreate.create()">
         <div class="row">
-          <div class="col-sm-4">
+          <div class="column-4">
             <div class="form-group">
               <label for="role">Neighborhood</label>
               <select ng-model="analysisJobCreate.neighborhood"
@@ -16,7 +16,7 @@
               </select>
             </div>
           </div>
-          <div class="col-sm-4">
+          <div class="column-4">
             <div class="form-group">
               <label for="label">OSM extract URL (optional)</label>
               <input ng-model="analysisJobCreate.osmUrl"
@@ -25,7 +25,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-12">
+          <div class="column-12">
             <button type="submit" ng-disabled="analysisJobCreateForm.$invalid"
                     class="btn-primary btn">Submit Analysis Job</button>
           </div>

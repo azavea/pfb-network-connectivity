@@ -10,3 +10,20 @@
 .map-below {
   z-index: 0;
 }
+
+.pfb-control-map-button {
+  cursor: pointer;
+}
+
+.leaflet-btn {
+  width: 44px;
+  height: 44px;
+
+  &[class*=icon-] {
+    display: block;
+    font-size: 20px;
+    line-height: 44px;
+    text-align: center;
+    color: #000;
+  }
+}

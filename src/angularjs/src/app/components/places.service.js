@@ -47,15 +47,11 @@
                     }
 
                     place.results = results;
-
-                    // sort alphabetically by metric name so they will line up by row
-                    place.scores = _(results.overall_scores).map(function(obj, key) {
-                        return {
-                            metric: key,
-                            score: obj.score,
-                            score_normalized: obj.score_normalized
-                        };
-                    }).sortBy(function(result) { return result.metric; }).value();
+                    place.scores = results.overall_scores;
+                    _.each(results.overall_scores, function (scores, key) {
+                        scores.score_normalized = (key === 'population_total' ?
+                                                   scores.score_original : scores.score_normalized)
+                    });
 
                     dfd.resolve(place);
                 });

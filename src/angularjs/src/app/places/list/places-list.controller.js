@@ -15,10 +15,11 @@
         var ctl = this;
 
         var sortingOptions = [
-            {value: 'neighborhood__state_abbrev,neighborhood__label', label: 'Alphabetical'},
+            {value: 'neighborhood__state_abbrev,neighborhood__label', label: 'Alphabetical by State'},
             {value: '-overall_score', label: 'Highest Rated'},
             {value: 'overall_score', label: 'Lowest Rated'},
-            {value: '-modified_at', label: 'Last Updated'}
+            {value: '-modified_at', label: 'Last Updated'},
+            {value: '-population_total', label: 'Population'}
         ];
 
         var defaultParams = {

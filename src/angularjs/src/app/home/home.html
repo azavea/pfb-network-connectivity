@@ -2,9 +2,9 @@
 <!-- Top most header with hero image -->
 <header class="main-header">
     <div class="container text-center">
-        <img src="assets/images/placesforbikes-icon.png" alt="Places for bikes" class="pfb-logo">
-        <div class="pfb-logo-text">PlacesForBikes Network Score</div>
-        <h1>Learn how biking in your place stacks up against other places in terms of biking</h1>
+        <img src="assets/images/people-for-bikes-icon.svg" alt="Places for bikes" class="pfb-logo">
+        <div class="pfb-logo-text">PlacesForBikes Bike Network Analysis (BNA) Score</div>
+        <h1>Find out how biking in your community stacks up against other places</h1>
     </div>
 </header>
 <!-- Top most header with hero image -->
@@ -61,13 +61,6 @@
         <div class="row stack-xs">
             <div class="column-6" ng-repeat="card in home.scoreCards">
                 <div class="card alternate">
-
-                    <!-- This card image div is currently empty
-                             because I dont know what the metric names
-                             are. Images or icons might not make sense
-                             to even show so we might remove. If we do
-                             the layout will auto adjust. -->
-                    <div class="card-image"></div>
                     <div class="card-details">
                         <div class="card-title">
                             <h3>{{ ::card.title }}</h3>
