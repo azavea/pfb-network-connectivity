@@ -19,6 +19,30 @@
   }
 }
 
+.pfb-stripe {
+  &:before,
+  &:after {
+    content: '';
+    height: 6px;
+    transform: skew(45deg);
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+  }
+
+  &:before {
+    background: #00aaf6;
+    width: 25%;
+    left: 5px;
+  }
+
+  &:after {
+    background: red;
+    width: 35%;
+    left: 40%;
+  }
+}
+
 .card-link {
   position: absolute;
   top: 0;
