@@ -36,14 +36,14 @@ label {
 
   // Placeholders
   &::-moz-placeholder {
-    color: $shade-light;
+    color: $shade-normal;
     opacity: 1;
   }
   &:-ms-input-placeholder {
-    color: $shade-light;
+    color: $shade-normal;
   }
   &::-webkit-input-placeholder {
-    color: $shade-light;
+    color: $shade-normal;
   }
 
   // Unstyle the caret on `<select>`s in IE10+.

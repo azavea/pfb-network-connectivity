@@ -2,7 +2,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-10 col-md-push-1">
+    <div class="column-12">
       <button class="btn btn-danger pull-right"
               ng-click="analysisJobDetail.cancel(analysisJobDetail.job.uuid)">
         <span class="glyphicon glyphicon-ban-circle"></span>
@@ -14,10 +14,8 @@
         Refresh
       </button>
 
+        <a class="btn btn-default" ui-sref="admin.analysis-jobs.list">Go back</a>
       <h1 class="no-margin-top">
-        <a class="btn" ui-sref="admin.analysis-jobs.list">
-          <span class="glyphicon glyphicon-chevron-left"></span>
-        </a>
         Analysis Job
       </h1>
       <table class="table" ng-if="analysisJobDetail.job">
