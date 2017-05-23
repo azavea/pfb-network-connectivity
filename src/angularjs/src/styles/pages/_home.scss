@@ -87,12 +87,17 @@
     left: 0;
     transform: translate(0, -50%);
     text-align: center;
+    margin-left: 10px;
+    border: 1px solid darken($brand-primary, 5%);
 
     @include respond-to(xs) {
       position: absolute;
-      width: 100%;
       transform: none;
-      top: initial;
+      margin: 0;
+      width: auto;
+      left: 10px;
+      right: 10px;
+      top: 10px;
 
       .card-details {
         padding: 1rem;
@@ -102,21 +107,24 @@
 
   .overview-total {
     @extend .h1;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin: 0;
 
     @include respond-to(xs) {
       display: inline-block;
       vertical-align: middle;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
     }
   }
 
   .overview-total-label {
     @extend .h5;
+    margin: 0;
 
     @include respond-to(xs) {
       display: inline-block;
       vertical-align: middle;
+      margin: 1rem 0;
     }
   }
 
