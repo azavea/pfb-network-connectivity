@@ -199,17 +199,17 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f .
 # primary
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
     -v class=primary -v default_speed=40 -v default_lanes=2 \
-    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=4 \
+    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=5 \
     -f ../stress/stress_segments_higher_order.sql
 # secondary
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
     -v class=secondary -v default_speed=40 -v default_lanes=2 \
-    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=4 \
+    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=5 \
     -f ../stress/stress_segments_higher_order.sql
 # tertiary
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
     -v class=tertiary -v default_speed=30 -v default_lanes=1 \
-    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=4 \
+    -v default_parking=1 -v default_parking_width=8 -v default_facility_width=5 \
     -f ../stress/stress_segments_higher_order.sql
 # residential
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
