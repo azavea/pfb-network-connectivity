@@ -27,6 +27,11 @@
       &:hover {
         color: $link-color;
       }
+
+      &.active {
+        color: $link-color;
+        box-shadow: 0 2px 0 0 $link-color;
+      }
     }
   }
 }
