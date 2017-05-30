@@ -1,10 +1,23 @@
 (function() {
 
     /* @ngInject */
-    function PlaceMapController($filter, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
+    function PlaceMapController($log, $filter, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
+
+        ctl.legends = {
+            census_blocks: {
+                position: 'bottomright',
+                colors: ['#e2231a', '#c92433', '#b1264d', '#982766', '#802980', '#664396', '#4c5eac', '#3378c2', '#1993d8', '#00aeef'],
+                labels: ['0 - 6', '6 - 12', '12 - 18', '18 - 24', '24 - 30', '30 - 36', '36 - 42', '42 - 48', '48 - 54', '54 - 100']
+            },
+            ways: {
+                position: 'bottomright',
+                colors: ['#00aeef', '#e2231a'],
+                labels: ['Low Stress', 'High Stress']
+            }
+        }
 
         ctl.$onInit = function () {
             ctl.mapOptions = {
@@ -33,8 +46,26 @@
             }
         };
 
+        ctl.onLayerAdd = function (event) {
+            var layer = event.layer;
+            var legend = layer.legend;
+            if (legend) {
+                legend.addTo(ctl.map);
+            }
+        }
+
+        ctl.onLayerRemove = function (event) {
+            var layer = event.layer;
+            var legend = layer.legend;
+            if (legend) {
+                legend.remove();
+            }
+        }
+
         ctl.onMapReady = function (map) {
             ctl.map = map;
+            ctl.map.on('layeradd', ctl.onLayerAdd);
+            ctl.map.on('layerremove', ctl.onLayerRemove);
 
             // in case map layers set before map was ready, add layers now map is ready to go
             if (ctl.pfbPlaceMapLayers) {
@@ -89,6 +120,12 @@
                 var layer = L.tileLayer(layerObj.url, {
                     maxZoom: MapConfig.conusMaxZoom
                 });
+
+                // Add legend object to layer so it can be toggled in layer event handler
+                var legendOptions = ctl.legends[layerObj.name];
+                if (legendOptions) {
+                    layer.legend = L.control.legend(legendOptions);
+                }
                 // Desired default view is showing the network, so add that to the map
                 if (layerObj.name === 'ways') {
                     ctl.map.addLayer(layer);
