@@ -1,23 +1,10 @@
 (function() {
 
     /* @ngInject */
-    function PlaceMapController($log, $filter, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
+    function PlaceMapController($filter, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
-
-        ctl.legends = {
-            census_blocks: {
-                position: 'bottomright',
-                colors: ['#e2231a', '#c92433', '#b1264d', '#982766', '#802980', '#664396', '#4c5eac', '#3378c2', '#1993d8', '#00aeef'],
-                labels: ['0 - 6', '6 - 12', '12 - 18', '18 - 24', '24 - 30', '30 - 36', '36 - 42', '42 - 48', '48 - 54', '54 - 100']
-            },
-            ways: {
-                position: 'bottomright',
-                colors: ['#00aeef', '#e2231a'],
-                labels: ['Low Stress', 'High Stress']
-            }
-        }
 
         ctl.$onInit = function () {
             ctl.mapOptions = {
@@ -122,7 +109,7 @@
                 });
 
                 // Add legend object to layer so it can be toggled in layer event handler
-                var legendOptions = ctl.legends[layerObj.name];
+                var legendOptions = MapConfig.legends[layerObj.name];
                 if (legendOptions) {
                     layer.legend = L.control.legend(legendOptions);
                 }
