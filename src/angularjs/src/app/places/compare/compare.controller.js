@@ -38,9 +38,12 @@
                 // first element in results is the metadata; rest are the places
                 var groupedMetadata = _.chain(results).head().groupBy('category').value();
                 ctl.metadata = [];
-                _.each(groupedMetadata, function(metrics) {
+                var categories = _.keys(groupedMetadata).sort();
+                $log.debug(categories);
+                _.each(categories, function(category) {
+                    var metrics = groupedMetadata[category];
                     var totalMetric = _.remove(metrics, function(metric) {
-                        return metric.label && metric.label.indexOf('Total') > -1;
+                        return metric.label && metric.label.indexOf(' Total') > -1;
                     });
 
                     if (totalMetric && totalMetric.length) {
