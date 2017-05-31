@@ -27,7 +27,20 @@
         }
     },
     conusBounds: [[24.396308, -124.848974], [49.384358, -66.885444]],
-    conusMaxZoom: 17
+    conusMaxZoom: 17,
+    legends: {
+        census_blocks: {
+            position: 'bottomright',
+            colors: ['#e2231a', '#c92433', '#b1264d', '#982766', '#802980', '#664396', '#4c5eac', '#3378c2', '#1993d8', '#00aeef'],
+            labels: ['0 - 6', '6 - 12', '12 - 18', '18 - 24', '24 - 30', '30 - 36', '36 - 42', '42 - 48', '48 - 54', '54 - 100'],
+            title: 'BNA Score'
+        },
+        ways: {
+            position: 'bottomright',
+            colors: ['#00aeef', '#e2231a'],
+            labels: ['Low Stress', 'High Stress']
+        }
+    }
   };
 
   angular
