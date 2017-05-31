@@ -36,31 +36,7 @@
             // do not display any place until all places have been retrieved
             $q.all(promises).then(function(results) {
                 // first element in results is the metadata; rest are the places
-                var groupedMetadata = _.chain(results).head().groupBy('category').value();
-                ctl.metadata = [];
-                var categories = _.keys(groupedMetadata).sort();
-                $log.debug(categories);
-                _.each(categories, function(category) {
-                    var metrics = groupedMetadata[category];
-                    var totalMetric = _.remove(metrics, function(metric) {
-                        return metric.label && metric.label.indexOf(' Total') > -1;
-                    });
-
-                    if (totalMetric && totalMetric.length) {
-                        totalMetric = totalMetric[0]; // remove returns an array
-                        ctl.metadata.push(totalMetric);
-                        _.each(metrics, function(metric) {
-                            metric.subscoreClass = 'subscore';
-                            ctl.metadata.push(metric);
-                        });
-                    } else {
-                        _.each(metrics, function(metric) {
-                            ctl.metadata.push(metric);
-                        });
-                    }
-                });
-                $log.debug(ctl.metadata);
-
+                ctl.metadata = _.head(results);
                 ctl.places = _.drop(results);
             }, function(error) {
                 $log.error('Failed to retrieve places to compare:');
