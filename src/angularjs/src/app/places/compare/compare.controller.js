@@ -36,7 +36,8 @@
             // do not display any place until all places have been retrieved
             $q.all(promises).then(function(results) {
                 // first element is the metadata; rest are the places
-                ctl.metadata = _.head(results);
+                ctl.metadata = _.chain(results).head().groupBy('category').value();
+                $log.debug(ctl.metadata);
 
                 ctl.places = _.drop(results);
             }, function(error) {
