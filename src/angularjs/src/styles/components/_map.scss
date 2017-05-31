@@ -15,6 +15,13 @@
   cursor: pointer;
 }
 
+.pfb-control-map-button.leaflet-control {
+  position: absolute;
+  top: 60px;
+  right: 0px;
+  z-index: 1;
+}
+
 .leaflet-btn {
   width: 44px;
   height: 44px;
