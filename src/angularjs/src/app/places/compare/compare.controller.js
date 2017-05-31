@@ -35,8 +35,27 @@
 
             // do not display any place until all places have been retrieved
             $q.all(promises).then(function(results) {
-                // first element is the metadata; rest are the places
-                ctl.metadata = _.chain(results).head().groupBy('category').value();
+                // first element in results is the metadata; rest are the places
+                var groupedMetadata = _.chain(results).head().groupBy('category').value();
+                ctl.metadata = [];
+                _.each(groupedMetadata, function(metrics) {
+                    var totalMetric = _.remove(metrics, function(metric) {
+                        return metric.label && metric.label.indexOf('Total') > -1;
+                    });
+
+                    if (totalMetric && totalMetric.length) {
+                        totalMetric = totalMetric[0]; // remove returns an array
+                        ctl.metadata.push(totalMetric);
+                        _.each(metrics, function(metric) {
+                            metric.subscoreClass = 'subscore';
+                            ctl.metadata.push(metric);
+                        });
+                    } else {
+                        _.each(metrics, function(metric) {
+                            ctl.metadata.push(metric);
+                        });
+                    }
+                });
                 $log.debug(ctl.metadata);
 
                 ctl.places = _.drop(results);

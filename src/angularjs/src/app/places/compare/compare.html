@@ -37,15 +37,13 @@
                             pfb-thumbnail-map-place="place.neighborhood.uuid"></pfb-thumbnail-map>
                     </div>
                     <ul class="metric-list">
-                        <span ng-repeat="(category, metrics) in compare.metadata">
-                            <li><h2>{{ ::category }}</h2></li>
-                            <li ng-repeat="m in metrics"
-                                ng-if="place.scores[m.name]">
-                                {{ ::m.label }}
-                                <div class="tooltip" data-title="{{ ::m.description }}"><i class="icon-info-circled"></i></div>
-                                <span class="network-score small">{{ ::place.scores[m.name].score_normalized | number:0 }}</span>
-                            </li>
-                        </span>
+                        <li ng-repeat="m in compare.metadata"
+                            ng-if="place.scores[m.name]"
+                            ng-class="m.subscoreClass">
+                            {{ ::m.label }}
+                            <div class="tooltip" data-title="{{ ::m.description }}"><i class="icon-info-circled"></i></div>
+                            <span class="network-score small">{{ ::place.scores[m.name].score_normalized | number:0 }}</span>
+                        </li>
                         <li>
                             <a ui-sref="places.detail({uuid: place.neighborhood.uuid})"
                                 class="btn btn-secondary btn-block">View Place</a>
