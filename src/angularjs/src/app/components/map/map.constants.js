@@ -7,14 +7,16 @@
             url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
             attribution: [
                 '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, ',
-                '&copy; <a href="https://carto.com/attribution">CARTO</a>'].join('')
+                '&copy; <a href="https://carto.com/attribution">CARTO</a> | ',
+                '<a target="_blank" href="http://learnosm.org/en/">Improve this map</a>'].join('')
         },
         'Stamen' : {
             url: 'https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png',
             attribution: ['Map tiles by <a href="http://stamen.com">Stamen Design</a>, ',
                 'under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ',
                 'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under ',
-                '<a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+                '<a href="http://www.openstreetmap.org/copyright">ODbL</a>. | ',
+                '<a target="_blank" href="http://learnosm.org/en/">Improve this map</a>'
             ].join('')
         },
         'Satellite': {
