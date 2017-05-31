@@ -17,9 +17,13 @@
             }
             this.colors = colors;
             this.labels = labels;
+            this.title = options.title || null;
         },
         onAdd: function () {
             var div = L.DomUtil.create('div', 'leaflet-control-layers pfb-control-legend');
+            if (this.title) {
+                div.innerHTML += '<h5>' + this.title + '</h5>';
+            }
             for (var i = 0; i < this.colors.length; i++) {
                 div.innerHTML +=
                     '<i style="background:' + this.colors[i] + '"></i> ' + this.labels[i] + '<br>';
