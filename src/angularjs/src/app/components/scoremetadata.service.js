@@ -8,42 +8,27 @@
 (function() {
     'use strict';
 
-    /**
-     Sort metrics in metadata by category, with total first in the category.
-     Add subscoreClass property to metrics that should be indented under the total.
-     */
-    function orderCategories(response) {
-        var metadata = [];
+    // Add subscoreClass property to metrics that should be indented under the total.
+    function labelSubcategories(response) {
 
         // remove overall score and group into categories
-        var groupedMetadata = _.chain(response).reject(function(m) {
+        var metadata = _.reject(response, function(m) {
             return m.name === 'overall_score';
-        }).groupBy('category').value();
+        });
 
-        // sort by category name (note population category is blank string and sorts to top)
-        var categories = _.keys(groupedMetadata).sort();
-
-        // Build metadata array, sorted by category.
-        // Category total metric comes first within a category, if it exists.
-        // If it does exist, the other metrics within its category have a special property added,
-        // 'subscoreClass', which can be used to format sub-scores under the total.
-        _.each(categories, function(category) {
-            var metrics = groupedMetadata[category];
-            var totalMetric = _.remove(metrics, function(metric) {
-                return metric.label && metric.label.indexOf(' Total') > -1;
-            });
-
-            if (totalMetric && totalMetric.length) {
-                totalMetric = totalMetric[0]; // remove returns an array
-                metadata.push(totalMetric);
-                _.each(metrics, function(metric) {
-                    metric.subscoreClass = 'subscore';
-                    metadata.push(metric);
-                });
+        // Rely on API ordering to have all metrics grouped by category, with the total
+        // for the category, if it exists, listed first.
+        // Set here 'subscoreClass' as a property on the other metrics,
+        // which can be used to format sub-scores under the total.
+        var lastCategory = null;
+        var haveTotal = false;
+        _.each(metadata, function(metric) {
+            if (lastCategory !== metric.category) {
+                lastCategory = metric.category;
+                haveTotal = metric.label && metric.label.indexOf(' Total') > -1;
+                metric.subscoreClass = null;
             } else {
-                _.each(metrics, function(metric) {
-                    metadata.push(metric);
-                });
+                metric.subscoreClass = haveTotal ? 'subscore': null;
             }
         });
         return metadata;
@@ -58,7 +43,7 @@
         function query() {
             return $http.get('/api/score_metadata/', {cache: true}).then(function (response) {
                 var metadata = response.data || [];
-                return orderCategories(metadata);
+                return labelSubcategories(metadata);
             });
         }
     }
