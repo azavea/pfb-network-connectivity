@@ -14,12 +14,48 @@
                                  Pagination, AuthService, Neighborhood, AnalysisJob) {
         var ctl = this;
 
+        var defaultGroupFn = function () {
+            return 'SKIPHEADER';
+        }
+
         var sortingOptions = [
-            {value: 'neighborhood__state_abbrev,neighborhood__label', label: 'Alphabetical by State'},
-            {value: '-overall_score', label: 'Highest Rated'},
-            {value: 'overall_score', label: 'Lowest Rated'},
-            {value: '-modified_at', label: 'Last Updated'},
-            {value: '-population_total', label: 'Population'}
+            {
+                // string that gets passed to the /api/analysis_jobs/?ordering param
+                value: 'neighborhood__state_abbrev,neighborhood__label',
+                // Human readable label to show in dropdown UI
+                label: 'Alphabetical by State',
+                // A bit hacky. The value for the groupFn key corresponds to the 'iteratee' param
+                //  of https://lodash.com/docs/4.17.4#groupBy
+                // The _.groupBy keys will be used as the section headers in the list UI.
+                // If you don't want section headers, groupFn blank, the
+                // defaultGroupFn above will be used.
+                groupFn: 'state_abbrev'
+            }, {
+                value: '-overall_score',
+                label: 'Highest Rated'
+            }, {
+                value: 'overall_score',
+                label: 'Lowest Rated'
+            }, {
+                value: '-modified_at',
+                label: 'Last Updated'
+            }, {
+                value: '-population_total',
+                label: 'Population',
+                groupFn: function (n) {
+                    var pop = n.population_total;
+                    if (pop >= 500000) {
+                        return 'Large';
+                    } else if (pop >= 100000) {
+                        return 'Medium';
+                    } else if (pop > 0) {
+                        return 'Small';
+                    } else {
+                        return 'Unknown';
+                    }
+
+                }
+            }
         ];
 
         var defaultParams = {
@@ -150,11 +186,12 @@
 
             AnalysisJob.query(params).$promise.then(function(data) {
 
-                ctl.places = _.map(data.results, function(obj) {
+                var places = _.map(data.results, function(obj) {
                     var neighborhood = new Neighborhood(obj.neighborhood);
                     // get properties from the neighborhood's last run job
                     neighborhood.modifiedAt = obj.modifiedAt;
                     neighborhood.overall_score = obj.overall_score;
+                    neighborhood.population_total = obj.population_total;
 
                     if (_.includes(uuidsToCompare, neighborhood.uuid)) {
                         addPlaceToCompare(neighborhood);
@@ -162,7 +199,10 @@
 
                     return neighborhood;
                 });
-                setMapPlaces(ctl.places);
+                setMapPlaces(places);
+                var groupedPlaces = _.groupBy(places, ctl.sortBy.groupFn || defaultGroupFn);
+                ctl.sections = _.keys(groupedPlaces).sort();
+                ctl.places = groupedPlaces;
 
                 if (data.next) {
                     ctl.hasNext = true;
