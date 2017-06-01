@@ -35,9 +35,8 @@
 
             // do not display any place until all places have been retrieved
             $q.all(promises).then(function(results) {
-                // first element is the metadata; rest are the places
+                // first element in results is the metadata; rest are the places
                 ctl.metadata = _.head(results);
-
                 ctl.places = _.drop(results);
             }, function(error) {
                 $log.error('Failed to retrieve places to compare:');

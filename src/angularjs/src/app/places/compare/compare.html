@@ -38,14 +38,15 @@
                     </div>
                     <ul class="metric-list">
                         <li ng-repeat="m in compare.metadata"
-                            ng-if="place.scores[m.name]">
+                            ng-if="place.scores[m.name]"
+                            ng-class="m.subscoreClass">
                             {{ ::m.label }}
                             <div class="tooltip" data-title="{{ ::m.description }}"><i class="icon-info-circled"></i></div>
                             <span class="network-score small">{{ ::place.scores[m.name].score_normalized | number:0 }}</span>
                         </li>
                         <li>
-                                <a ui-sref="places.detail({uuid: place.neighborhood.uuid})"
-                                    class="btn btn-secondary btn-block">View Place</a>
+                            <a ui-sref="places.detail({uuid: place.neighborhood.uuid})"
+                                class="btn btn-secondary btn-block">View Place</a>
                         </li>
                     </ul>
                 </div>
