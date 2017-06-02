@@ -15,6 +15,13 @@
   cursor: pointer;
 }
 
+.pfb-control-map-button.leaflet-control {
+  position: absolute;
+  top: 60px;
+  right: 0px;
+  z-index: 1;
+}
+
 .leaflet-btn {
   width: 44px;
   height: 44px;
@@ -25,5 +32,24 @@
     line-height: 44px;
     text-align: center;
     color: #000;
+  }
+}
+
+.pfb-control-legend {
+  padding: 5px;
+  line-height: 18px;
+  color: #555;
+
+  h5 {
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+
+  i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
   }
 }

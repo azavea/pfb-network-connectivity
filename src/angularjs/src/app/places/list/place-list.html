@@ -72,9 +72,10 @@
 
             The stick headers are probably only needed when sorting alphabetically. -->
     <div class="sidebar-scrollable" id="scrollHeaders">
-        <section>
+        <section ng-repeat="s in placeList.sections">
+            <div class="section-title" title="{{ ::s }}" ng-if="s !== 'SKIPHEADER'">{{ ::s }}</div>
             <!-- Duplicate .result div for each result. -->
-            <div class="result" ng-repeat="neighborhood in placeList.places track by neighborhood.uuid">
+            <div class="result" ng-repeat="neighborhood in placeList.places[s] track by neighborhood.uuid">
                 <a ui-sref="places.detail({uuid: '{{neighborhood.uuid}}' })" class="result-link"></a>
                 <div class="result-left">
 
