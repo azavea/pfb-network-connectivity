@@ -1,0 +1,127 @@
+@media print {
+  .navbar {
+    .navbar-right {
+      display: none;
+    }
+  }
+
+  .preview-map {
+    height: 320px;
+    width: 100%;
+    position: absolute;
+    left: initial;
+    right: initial;
+    bottom: initial;
+    display: block !important;
+
+    pfb-place-map {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .map {
+      position: relative !important;
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    .leaflet-top {
+      display: none !important;
+    }
+  }
+
+  .metric-details {
+
+    .column.text-right {
+      display: none;
+    }
+
+    .network-score {
+      display: flex;
+      flex-direction: column;
+      font-size: 30px;
+    }
+  }
+
+  .sidebar {
+    position: relative;
+    top: 320px;
+    bottom: initial;
+    border: none;
+    width: auto;
+
+    .sidebar-header {
+      text-align: center;
+
+      .column-8 {
+        width: 100%;
+      }
+
+      .column.text-right {
+        display: none;
+      }
+    }
+
+    .network-score {
+      float: none;
+      height: auto;
+      width: auto;
+      order: -1;
+    }
+
+    .tooltip {
+      float: right;
+      width: 300px;
+      order: 2;
+      height: auto;
+      margin: auto;
+
+      i {
+        display: none;
+      }
+    }
+
+    .tooltip:before {
+      display: none;
+    }
+
+    .tooltip:after {
+      opacity: 1;
+      background: none;
+      color: black;
+      padding: 0;
+      position: relative;
+      top: initial;
+      left: initial;
+      display: block;
+      transform: none;
+      text-align: center;
+      font-style: italic;
+    }
+  }
+
+  .metric-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    li {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      width: 100%;
+      line-height: 1;
+      padding: 1rem !important;
+    }
+  }
+
+  .network-score,
+  .tooltip,
+  .tooltip:after,
+  .metric-list li {
+    page-break-inside: avoid;
+  }
+}
