@@ -71,7 +71,7 @@
 .btn-default {
   background: #fff;
   border-color: $shade-normal;
-  color: $shade-dark;
+  color: #000;
 
   &:hover, &.hover,
   &:active, &.active, {
@@ -146,7 +146,7 @@
   @include button-states($danger);
 }
 
-/* 
+/*
  * Button Sizes
  */
 .btn-tiny {
@@ -169,7 +169,7 @@
 }
 
 
-/* 
+/*
  * Button actions
  */
 .btn-toggle {
@@ -247,7 +247,7 @@
 }
 
 
-/* 
+/*
  * Button groups
  */
 .btn-group {
