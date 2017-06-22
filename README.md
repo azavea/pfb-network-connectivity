@@ -16,6 +16,11 @@ Requirements:
 3. Before starting the VM, ensure the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` is set. NFS is not supported on windows, so we need to ensure that Vagrant ignores our request for it.
 4. Do not use `vagrant reload`. In some cases it will create a new VM rather than autodetecting that the old one exists
 
+#### Notes for non-Windows users
+
+1. An NFS daemon must be running on the host machine. This should be enabled by default on MacOS. Linux computers may require the installation of an additional
+package such as nfs-kernel-server on Ubuntu.
+
 ### Setting up AWS credentials
 
 As noted above, ensure the AWS CLI is installed on your host machine. Once it is, you can configure your PFB account credentials by running:
