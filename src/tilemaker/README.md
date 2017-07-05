@@ -23,27 +23,76 @@ tile styles being applied.
 
 ### To open and edit the styles
 
-- Download the latest release of Mapbox Studio Classic from https://mapbox.s3.amazonaws.com/mapbox-studio/index.html (the [Mapbox download page](https://www.mapbox.com/mapbox-studio-classic/) links to an older, seemingly-broken version) and install it (for Linux,
-that just means unzipping it and running the `atom` command from the base directory).
-- Modify the hard-coded absolute paths in the following files to point to the actual locations
-on your machine.
+#### Install Mapbox Studio Classic
+
+[Mapbox Studio Classic](https://www.mapbox.com/mapbox-studio-classic/) is deprecated
+(you have to confirm it's really what you want when you go to that page), but we're just using it
+as a graphical editor then extracting Mapnik XML styles to use in our own stand-alone process.
+
+To install:
+- For MacOS, the version linked from the page above ([v0.3.8](https://mapbox.s3.amazonaws.com/mapbox-studio/mapbox-studio-darwin-x64-v0.3.8.zip)) works fine.
+- For Linux, it seems not to.  The latest release from https://mapbox.s3.amazonaws.com/mapbox-studio/index.html (currently ["nsis-upgrade"](https://mapbox.s3.amazonaws.com/mapbox-studio/mapbox-studio-linux-x64-nsis-upgrade.zip)) should work.  Installation is just unzipping it and
+running the `atom` command from the base directory.
+
+We aren't publishing anything to Mapbox, but you still have to sign in with a Mapbox Studio
+account to use Classic.
+
+#### Open the project
+
+**Edit file paths**
+The project consists of both a data source (it uses the exports from Glendale, AZ, chosen
+arbitrarily) and a style.  There are absolute paths stored in some of the files that constitute
+the project, which will need to be changed to match your local directory structure.
+
+So before opening the project, modify all the hard-coded paths beginning with `/home/` in the
+following files to point to the correct locations on your machine:
   ```
   working_files/combined_data.tm2source/data.yml
   working_files/combined_data.tm2source/data.xml
   working_files/combined_styles.tm2/project.yml
   working_files/combined_styles.tm2/project.xml
   ```
-- In Mapbox Studio Classic, click "Styles & Sources" > "Browse" and select the
-`combined_styles.tm2` directory.  It should open a map of the defined tile layers, using data
-from Glendale, AZ.
-- Add or edit styles and data sources.  The styling interface isn't wildly user-friendly, since
+(Since these files are tracked, this will cause a diff.  It's fine if they get changed in the repo
+to the right paths for whoever worked on them last.)
+
+**Open project**
+- After you've started Mapbox Studio Classic and signed in, you'll see a "New Style or Source" view.
+Click the box on the right, for "Blank source".
+
+![New Style or Source view](images/new_style_or_source.png?raw=true)
+
+- That will put you in the main editor view with no layers or styles. Click "Styles & Sources" in
+the bottom left then "Browse" in the panel that appears.
+
+![Styles and Sources](images/styles_and_sources.png?raw=true)
+
+- Find the `working_files` directory in the file browser and select `combined_styles.tm2`, then
+click "Open".
+
+![Open .tm2 project](images/open_tm2_project.png?raw=true)
+
+- The project should now be loaded and the map and the syles should show in the editor.
+
+![Edit view](images/edit.png?raw=true)
+
+Once you've opened the project once, the "New Style or Source" view will no longer appear. On
+startup, you'll go straight to the edit view. Not necessarily to right to your last project, but
+it should now show up in the "Styles & Sources" panel, so you don't have to Browse for it again.
+
+
+#### Edit and save
+
+Add or edit styles and data sources.  The styling interface isn't wildly user-friendly, since
 it requires writing style rules by hand, but the "Docs" panel provides a decent reference, and it
 provides a preview that updates on save.
 
-### To save changes
-
 We're not generating tiles using the TM2 project directly.  We use stand-alone Mapnik XML files
-that each define their styles and data sources.  To update the census blocks style, open
-`working_files/combined_styles.tm2/project.xml` and find the
-`<Style name="neighborhood_census_blocks">` element.  Copy the whole thing over top of
+that each define their styles and data sources.  Once you've saved changes to the Mapbox Studio
+project, you need to copy them by hand to the Mapnik style files.
+
+For example, to update the census blocks style, open `working_files/combined_styles.tm2/project.xml`
+and find the `<Style name="neighborhood_census_blocks">` element.  Copy the whole thing over top of
 the one in `styles/neighborhood_census_blocks_style.xml`.  The data source shouldn't need changing.
+
+Commit your changes to the TM2 project as well as to the XML styles, so that the project stays in
+sync and subsequent edits can start from it.
