@@ -143,6 +143,7 @@
     <LineSymbolizer offset="- 2" stroke-width="2" stroke-opacity="0" />
   </Rule>
 </Style>
+
 <Layer name="neighborhood_waysTF" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
   <StyleName>neighborhood_waysTF</StyleName>
   <StyleName>neighborhood_waysTF-fill</StyleName>
@@ -299,6 +300,7 @@
     <LineSymbolizer offset="2" stroke-width="2" stroke-opacity="0" />
   </Rule>
 </Style>
+
 <Layer name="neighborhood_waysFT" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
   <StyleName>neighborhood_waysFT</StyleName>
   <StyleName>neighborhood_waysFT-fill</StyleName>

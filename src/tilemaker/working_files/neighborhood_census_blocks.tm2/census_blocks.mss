@@ -1,5 +1,5 @@
 #neighborhood_census_blocks[OVERALL_SC != null] {
-  polygon-opacity: 0.5;
+  polygon-opacity: 0.65;
 }
 
 #neighborhood_census_blocks[OVERALL_SC >= 0][OVERALL_SC < 6] {

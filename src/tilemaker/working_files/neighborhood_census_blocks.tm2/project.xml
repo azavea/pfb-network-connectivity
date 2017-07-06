@@ -21,47 +21,47 @@
 <Style name="neighborhood_census_blocks" filter-mode="first">
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 54) and ([OVERALL_SC] &lt;= 100)</Filter>
-    <PolygonSymbolizer fill="#00aeef" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#00aeef" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 48) and ([OVERALL_SC] &lt; 54)</Filter>
-    <PolygonSymbolizer fill="#1993d8" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#1993d8" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 42) and ([OVERALL_SC] &lt; 48)</Filter>
-    <PolygonSymbolizer fill="#3378c2" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#3378c2" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 36) and ([OVERALL_SC] &lt; 42)</Filter>
-    <PolygonSymbolizer fill="#4c5eac" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#4c5eac" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 30) and ([OVERALL_SC] &lt; 36)</Filter>
-    <PolygonSymbolizer fill="#664396" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#664396" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 24) and ([OVERALL_SC] &lt; 30)</Filter>
-    <PolygonSymbolizer fill="#802980" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#802980" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 18) and ([OVERALL_SC] &lt; 24)</Filter>
-    <PolygonSymbolizer fill="#982766" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#982766" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 12) and ([OVERALL_SC] &lt; 18)</Filter>
-    <PolygonSymbolizer fill="#b1264d" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#b1264d" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 6) and ([OVERALL_SC] &lt; 12)</Filter>
-    <PolygonSymbolizer fill="#c92433" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#c92433" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 0) and ([OVERALL_SC] &lt; 6)</Filter>
-    <PolygonSymbolizer fill="#e2231a" fill-opacity="0.5" />
+    <PolygonSymbolizer fill="#e2231a" fill-opacity="0.65" />
   </Rule>
   <Rule>
     <Filter>([OVERALL_SC] != null)</Filter>
-    <PolygonSymbolizer fill-opacity="0.5" />
+    <PolygonSymbolizer fill-opacity="0.65" />
   </Rule>
 </Style>
 <Layer name="neighborhood_census_blocks"

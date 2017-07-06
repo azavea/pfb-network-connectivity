@@ -14,7 +14,6 @@
   <Parameter name="scheme"><![CDATA[xyz]]></Parameter>
 </Parameters>
 
-
 <Style name="neighborhood_census_blocks" filter-mode="first">
   <Rule>
     <Filter>([OVERALL_SC] &gt;= 54) and ([OVERALL_SC] &lt;= 100)</Filter>
@@ -61,6 +60,7 @@
     <PolygonSymbolizer fill-opacity="0.65" />
   </Rule>
 </Style>
+
 <Layer name="neighborhood_census_blocks"
   srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
     <StyleName>neighborhood_census_blocks</StyleName>
