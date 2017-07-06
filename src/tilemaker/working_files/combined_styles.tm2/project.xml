@@ -4,16 +4,98 @@
 
 <Parameters>
   <Parameter name="bounds">-180,-85.0511,180,85.0511</Parameter>
-  <Parameter name="center">-112.2267,33.5514,12</Parameter>
+  <Parameter name="center">-111.0903,40.5177,11</Parameter>
   <Parameter name="format">png8:m=h</Parameter>
   <Parameter name="maxzoom">22</Parameter>
   <Parameter name="minzoom">0</Parameter>
   <Parameter name="name"><![CDATA[Combined styles - Glendale]]></Parameter>
-  <Parameter name="source"><![CDATA[tmsource:///home/local/AZVA-INT/khoekema/projects/pfb/pfb-network-connectivity/src/tilemaker/working_files/combined_data.tm2source]]></Parameter>
+  <Parameter name="source"><![CDATA[tmsource:///Users/andrew/src/pfb-network-connectivity/src/tilemaker/working_files/combined_data.tm2source]]></Parameter>
 </Parameters>
 
 
+<Style name="neighborhood_waysTF-fill" filter-mode="first">
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 3.75" stroke-width="2" stroke="#ffffff" stroke-dasharray="8, 4" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 2.5" stroke-width="2" stroke="#ffffff" stroke-dasharray="8, 4" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 5" stroke-width="2" stroke="#ffffff" stroke-dasharray="8, 4" />
+  </Rule>
+</Style>
 <Style name="neighborhood_waysTF" filter-mode="first">
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke-opacity="0" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="- 1" stroke-width="1" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="- 2" stroke-width="2" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke-opacity="0" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="- 1" stroke-width="1" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="- 2" stroke-width="2" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke-opacity="0" stroke="#00aeef" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="- 1" stroke-width="1" stroke="#00aeef" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="- 2" stroke-width="2" stroke="#00aeef" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke-opacity="0" stroke="#006b3e" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="- 1" stroke-width="1" stroke="#006b3e" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] &lt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="- 2" stroke-width="2" stroke="#006b3e" />
+  </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
@@ -33,52 +115,277 @@
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="- 1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="- 2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="- 1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="- 2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="- 1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="- 2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="- 1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] = 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="- 2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" />
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#00aeef" offset="- 1" stroke-width="1" />
+    <LineSymbolizer stroke="#00aeef" offset="- 1" stroke-width="1" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#00aeef" offset="- 2" stroke-width="2" />
+    <LineSymbolizer stroke="#00aeef" offset="- 2" stroke-width="2" stroke-opacity="0" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="- 1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="- 2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="- 1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="- 2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="- 1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="- 2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="- 1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_SEG_STR] &gt; 1) and ([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="- 2" stroke-width="2" stroke-opacity="1" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#e2231a" />
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#e2231a" offset="- 1" stroke-width="1" />
+    <LineSymbolizer stroke="#e2231a" offset="- 1" stroke-width="1" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#e2231a" offset="- 2" stroke-width="2" />
+    <LineSymbolizer stroke="#e2231a" offset="- 2" stroke-width="2" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
-    <LineSymbolizer offset="- 1.5" stroke-width="1.5" />
+    <Filter>([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#005e83" stroke-opacity="1" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
-    <LineSymbolizer offset="- 1" stroke-width="1" />
+    <Filter>([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 1" stroke-width="1" stroke="#005e83" stroke-opacity="1" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
-    <LineSymbolizer offset="- 2" stroke-width="2" />
+    <Filter>([TF_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="- 2" stroke-width="2" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'buffered_lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'buffered_lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1" stroke-width="1" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'buffered_lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 2" stroke-width="2" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="- 1" stroke-width="1" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="- 2" stroke-width="2" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1" stroke-width="1" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 2" stroke-width="2" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="- 1" stroke-width="1" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([TF_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="- 2" stroke-width="2" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#006b3e" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 1" stroke-width="1" stroke="#006b3e" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="- 2" stroke-width="2" stroke="#006b3e" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke-opacity="0" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <LineSymbolizer offset="- 1" stroke-width="1" stroke-opacity="0" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <LineSymbolizer offset="- 2" stroke-width="2" stroke-opacity="0" />
   </Rule>
 </Style>
 <Layer name="neighborhood_waysTF"
   srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
-    <StyleName>neighborhood_waysTF</StyleName>  </Layer>
+    <StyleName>neighborhood_waysTF</StyleName>
+    <StyleName>neighborhood_waysTF-fill</StyleName>  </Layer>
 
 <Style name="neighborhood_census_blocks" filter-mode="first">
   <Rule>
@@ -130,7 +437,89 @@
   srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
     <StyleName>neighborhood_census_blocks</StyleName>  </Layer>
 
+<Style name="neighborhood_waysFT-fill" filter-mode="first">
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="3.75" stroke-width="2" stroke="#ffffff" stroke-dasharray="8, 4" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="2.5" stroke-width="2" stroke="#ffffff" stroke-dasharray="8, 4" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="5" stroke-width="2" stroke="#ffffff" stroke-dasharray="8, 4" />
+  </Rule>
+</Style>
 <Style name="neighborhood_waysFT" filter-mode="first">
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke-opacity="0" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="1" stroke-width="1" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="2" stroke-width="2" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke-opacity="0" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="1" stroke-width="1" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="2" stroke-width="2" stroke="#005e83" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke-opacity="0" stroke="#00aeef" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="1" stroke-width="1" stroke="#00aeef" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="2" stroke-width="2" stroke="#00aeef" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke-opacity="0" stroke="#006b3e" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="1" stroke-width="1" stroke="#006b3e" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] &lt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke-opacity="0" offset="2" stroke-width="2" stroke="#006b3e" />
+  </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
@@ -150,51 +539,292 @@
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] = 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke="#00aeef" offset="2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" />
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#00aeef" offset="1" stroke-width="1" />
+    <LineSymbolizer stroke="#00aeef" offset="1" stroke-width="1" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#00aeef" offset="2" stroke-width="2" />
+    <LineSymbolizer stroke="#00aeef" offset="2" stroke-width="2" stroke-opacity="0" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="2" stroke-width="2" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="1" stroke-width="1" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_SEG_STR] &gt; 1) and ([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer stroke="#e2231a" offset="2" stroke-width="2" stroke-opacity="1" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#e2231a" />
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#e2231a" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#e2231a" offset="1" stroke-width="1" />
+    <LineSymbolizer stroke="#e2231a" offset="1" stroke-width="1" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#e2231a" offset="2" stroke-width="2" />
+    <LineSymbolizer stroke="#e2231a" offset="2" stroke-width="2" stroke-opacity="0" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
-    <LineSymbolizer offset="1.5" stroke-width="1.5" />
+    <Filter>([FT_BIKE_IN] = 'track') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#005e83" stroke-opacity="1" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
-    <LineSymbolizer offset="1" stroke-width="1" />
+    <Filter>([FT_BIKE_IN] = 'track') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1" stroke-width="1" stroke="#005e83" stroke-opacity="1" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
-    <LineSymbolizer offset="2" stroke-width="2" />
+    <Filter>([FT_BIKE_IN] = 'track') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="2" stroke-width="2" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="1" stroke-width="1" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'track')</Filter>
+    <LineSymbolizer offset="2" stroke-width="2" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'buffered_lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'buffered_lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1" stroke-width="1" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'buffered_lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="2" stroke-width="2" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="1" stroke-width="1" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'buffered_lane')</Filter>
+    <LineSymbolizer offset="2" stroke-width="2" stroke="#005e83" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1" stroke-width="1" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'lane') and ([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="2" stroke-width="2" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="1" stroke-width="1" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FT_BIKE_IN] = 'lane')</Filter>
+    <LineSymbolizer offset="2" stroke-width="2" stroke="#00aeef" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <Filter>([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#006b3e" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <Filter>([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="1" stroke-width="1" stroke="#006b3e" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <Filter>([FUNCTIONAL] = 'path')</Filter>
+    <LineSymbolizer offset="2" stroke-width="2" stroke="#006b3e" stroke-opacity="1" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>750000</MaxScaleDenominator>
+    <MinScaleDenominator>50000</MinScaleDenominator>
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke-opacity="0" />
+  </Rule>
+  <Rule>
+    <MinScaleDenominator>750000</MinScaleDenominator>
+    <LineSymbolizer offset="1" stroke-width="1" stroke-opacity="0" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>50000</MaxScaleDenominator>
+    <LineSymbolizer offset="2" stroke-width="2" stroke-opacity="0" />
   </Rule>
 </Style>
 <Layer name="neighborhood_waysFT"
   srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
-    <StyleName>neighborhood_waysFT</StyleName>  </Layer>
+    <StyleName>neighborhood_waysFT</StyleName>
+    <StyleName>neighborhood_waysFT-fill</StyleName>  </Layer>
 
 </Map>
