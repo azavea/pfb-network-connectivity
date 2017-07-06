@@ -6,9 +6,9 @@
   <Parameter name="bounds">-180,-85.0511,180,85.0511</Parameter>
   <Parameter name="center">-111.0903,40.5177,11</Parameter>
   <Parameter name="format">png8:m=h</Parameter>
-  <Parameter name="maxzoom">22</Parameter>
-  <Parameter name="minzoom">0</Parameter>
-  <Parameter name="name"><![CDATA[Combined styles - Glendale]]></Parameter>
+  <Parameter name="maxzoom">17</Parameter>
+  <Parameter name="minzoom">8</Parameter>
+  <Parameter name="name"><![CDATA[Combined Styles - Fort Collins, CO]]></Parameter>
   <Parameter name="source"><![CDATA[tmsource:///Users/andrew/src/pfb-network-connectivity/src/tilemaker/working_files/combined_data.tm2source]]></Parameter>
 </Parameters>
 

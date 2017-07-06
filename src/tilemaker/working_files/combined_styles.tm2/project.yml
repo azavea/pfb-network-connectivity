@@ -17,9 +17,9 @@ description: ''
 format: "png8:m=h"
 interactivity_layer: ''
 layers: null
-maxzoom: 22
-minzoom: 0
-name: Combined styles - Glendale
+maxzoom: 17
+minzoom: 8
+name: Combined Styles - Fort Collins, CO
 source: "tmsource:///Users/andrew/src/pfb-network-connectivity/src/tilemaker/working_files/combined_data.tm2source"
 styles: 
   - census_blocks.mss
