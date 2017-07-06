@@ -6,8 +6,8 @@ _prefs:
   saveCenter: true
 attribution: ''
 center: 
-  - -111.056
-  - 40.3567
+  - -111.0567
+  - 40.501
   - 11
 description: Neighborhood ways and census blocks, run  June 2017
 Layer: 

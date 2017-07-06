@@ -1,8 +1,7 @@
 _prefs: 
+  mapid: ''
   saveCenter: true
-_properties: 
-  bridge: 
-    "group-by": layer
+_properties: {}
 attribution: ''
 bounds: 
   - -180
@@ -10,19 +9,17 @@ bounds:
   - 180
   - 85.0511
 center: 
-  - -111.0903
-  - 40.5177
-  - 11
-description: ''
+  - -111.0749
+  - 40.5158
+  - 12
+description: Show bike infrastructure of interest
 format: "png8:m=h"
 interactivity_layer: ''
 layers: null
-maxzoom: 17
+maxzoom: 16
 minzoom: 8
-name: Combined Styles - Fort Collins, CO
+name: Bike Infrastructure
 source: "tmsource:///Users/andrew/src/pfb-network-connectivity/src/tilemaker/working_files/combined_data.tm2source"
 styles: 
-  - census_blocks.mss
-  - ways.mss
   - bike_infrastructure.mss
 template: ''
