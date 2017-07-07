@@ -6,14 +6,14 @@ _prefs:
   saveCenter: true
 attribution: ''
 center: 
-  - -112.1704
-  - 33.5434
-  - 12
-description: Neighborhood ways and census blocks, run 4/18/17
+  - -111.0567
+  - 40.501
+  - 11
+description: Neighborhood ways and census blocks, run  June 2017
 Layer: 
   - id: neighborhood_waysTF
     Datasource: 
-      file: /home/local/AZVA-INT/khoekema/projects/pfb/pfb-network-connectivity/src/tilemaker/working_files/data/neighborhood_ways.shp
+      file: /Users/andrew/src/pfb-network-connectivity/src/tilemaker/working_files/data/neighborhood_ways.shp
       type: shape
     description: Glendale ways TF
     fields: 
@@ -49,7 +49,7 @@ Layer:
     srs: +proj=utm +zone=12 +datum=WGS84 +units=m +no_defs
   - id: neighborhood_census_blocks
     Datasource: 
-      file: /home/local/AZVA-INT/khoekema/projects/pfb/pfb-network-connectivity/src/tilemaker/working_files/data/neighborhood_census_blocks.shp
+      file: /Users/andrew/src/pfb-network-connectivity/src/tilemaker/working_files/data/neighborhood_census_blocks.shp
       type: shape
     description: Glendale census blocks
     fields: 
@@ -116,7 +116,7 @@ Layer:
     srs: +proj=utm +zone=12 +datum=WGS84 +units=m +no_defs
   - id: neighborhood_waysFT
     Datasource: 
-      file: /home/local/AZVA-INT/khoekema/projects/pfb/pfb-network-connectivity/src/tilemaker/working_files/data/neighborhood_ways.shp
+      file: /Users/andrew/src/pfb-network-connectivity/src/tilemaker/working_files/data/neighborhood_ways.shp
       type: shape
     description: Glendale ways FT
     fields: 
@@ -151,5 +151,5 @@ Layer:
       "buffer-size": 8
     srs: +proj=utm +zone=12 +datum=WGS84 +units=m +no_defs
 maxzoom: 16
-minzoom: 0
-name: Glendale combined
+minzoom: 8
+name: Fort Collins, CO

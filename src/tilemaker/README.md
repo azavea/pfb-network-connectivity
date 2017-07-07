@@ -40,17 +40,22 @@ account to use Classic.
 #### Open the project
 
 **Edit file paths**
-The project consists of both a data source (it uses the exports from Glendale, AZ, chosen
-arbitrarily) and a style.  There are absolute paths stored in some of the files that constitute
-the project, which will need to be changed to match your local directory structure.
+The project consists of both a data source (it uses the exports from Fort Collins, CO, chosen
+so that all of the styled features are represented) and a style.  There are absolute paths
+stored in some of the files that constitute the project, which will need to be changed to match
+your local directory structure.
 
-So before opening the project, modify all the hard-coded paths beginning with `/home/` in the
+So before opening the project, modify all the hard-coded absolute paths in the
 following files to point to the correct locations on your machine:
   ```
   working_files/combined_data.tm2source/data.yml
   working_files/combined_data.tm2source/data.xml
-  working_files/combined_styles.tm2/project.yml
-  working_files/combined_styles.tm2/project.xml
+  working_files/neighborhood_ways.tm2/project.yml
+  working_files/neighborhood_ways.tm2/project.xml
+  working_files/neighborhood_census_blocks.tm2/project.yml
+  working_files/neighborhood_census_blocks.tm2/project.xml
+  working_files/bike_infrastructure.tm2/project.yml
+  working_files/bike_infrastructure.tm2/project.xml
   ```
 (Since these files are tracked, this will cause a diff.  It's fine if they get changed in the repo
 to the right paths for whoever worked on them last.)
@@ -66,7 +71,7 @@ the bottom left then "Browse" in the panel that appears.
 
 ![Styles and Sources](images/styles_and_sources.png?raw=true)
 
-- Find the `working_files` directory in the file browser and select `combined_styles.tm2`, then
+- Find the `working_files` directory in the file browser and select `neighborhood_ways.tm2`, then
 click "Open".
 
 ![Open .tm2 project](images/open_tm2_project.png?raw=true)
@@ -79,6 +84,8 @@ Once you've opened the project once, the "New Style or Source" view will no long
 startup, you'll go straight to the edit view. Not necessarily to right to your last project, but
 it should now show up in the "Styles & Sources" panel, so you don't have to Browse for it again.
 
+If you're working on more than one style definition at a time, repeat this process for any of the other `.tm2` projects in the `working_files` directory.
+
 
 #### Edit and save
 
@@ -90,9 +97,10 @@ We're not generating tiles using the TM2 project directly.  We use stand-alone M
 that each define their styles and data sources.  Once you've saved changes to the Mapbox Studio
 project, you need to copy them by hand to the Mapnik style files.
 
-For example, to update the census blocks style, open `working_files/combined_styles.tm2/project.xml`
-and find the `<Style name="neighborhood_census_blocks">` element.  Copy the whole thing over top of
-the one in `styles/neighborhood_census_blocks_style.xml`.  The data source shouldn't need changing.
+For example, to update the neighborhood ways style opened above, open
+`working_files/neighborhood_Ways.tm2/project.xml` and find all `<Style>` elements. Copy them all
+over to `styles/neighborhood_census_blocks_style.xml`, overwriting any existing `<Style>` tags.
+The data source shouldn't need changing.
 
 Commit your changes to the TM2 project as well as to the XML styles, so that the project stays in
 sync and subsequent edits can start from it.
