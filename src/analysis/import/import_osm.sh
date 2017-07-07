@@ -20,6 +20,8 @@ echo 'Dropping old tables'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "DROP TABLE IF EXISTS received.neighborhood_ways;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+  -c "DROP TABLE IF EXISTS received.neighborhood_ways_carto;"
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "DROP TABLE IF EXISTS received.neighborhood_ways_intersections;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "DROP TABLE IF EXISTS received.neighborhood_relations_ways;"
@@ -244,3 +246,8 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
     -v tertiary_lanes=1 \
     -f ../stress/stress_lesser_ints.sql
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} -f ../stress/stress_link_ints.sql
+psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
+    -v nb_output_srid="${NB_OUTPUT_SRID}" \
+    -v min_length=50 \
+    -v int_length=15 \
+    -f ../features/ways_carto.sql
