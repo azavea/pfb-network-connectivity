@@ -35,33 +35,33 @@
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#00aeef" />
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#009fdf" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#00aeef" offset="- 1" stroke-width="1" />
+    <LineSymbolizer stroke="#009fdf" offset="- 1" stroke-width="1" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([TF_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#00aeef" offset="- 2" stroke-width="2" />
+    <LineSymbolizer stroke="#009fdf" offset="- 2" stroke-width="2" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#e2231a" />
+    <LineSymbolizer offset="- 1.5" stroke-width="1.5" stroke="#ff3300" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#e2231a" offset="- 1" stroke-width="1" />
+    <LineSymbolizer stroke="#ff3300" offset="- 1" stroke-width="1" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([TF_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#e2231a" offset="- 2" stroke-width="2" />
+    <LineSymbolizer stroke="#ff3300" offset="- 2" stroke-width="2" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
@@ -106,33 +106,33 @@
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#00aeef" />
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#009fdf" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#00aeef" offset="1" stroke-width="1" />
+    <LineSymbolizer stroke="#009fdf" offset="1" stroke-width="1" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([FT_SEG_STR] = 1)</Filter>
-    <LineSymbolizer stroke="#00aeef" offset="2" stroke-width="2" />
+    <LineSymbolizer stroke="#009fdf" offset="2" stroke-width="2" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>
     <MinScaleDenominator>50000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#e2231a" />
+    <LineSymbolizer offset="1.5" stroke-width="1.5" stroke="#ff3300" />
   </Rule>
   <Rule>
     <MinScaleDenominator>750000</MinScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#e2231a" offset="1" stroke-width="1" />
+    <LineSymbolizer stroke="#ff3300" offset="1" stroke-width="1" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>50000</MaxScaleDenominator>
     <Filter>([FT_SEG_STR] &gt; 1)</Filter>
-    <LineSymbolizer stroke="#e2231a" offset="2" stroke-width="2" />
+    <LineSymbolizer stroke="#ff3300" offset="2" stroke-width="2" />
   </Rule>
   <Rule>
     <MaxScaleDenominator>750000</MaxScaleDenominator>

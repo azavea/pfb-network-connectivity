@@ -9,8 +9,8 @@ bounds:
   - 180
   - 85.0511
 center: 
-  - -111.0635
-  - 40.5048
+  - -111.0659
+  - 40.5562
   - 12
 description: Color census blocks based on overall bike network score
 format: "png8:m=h"
