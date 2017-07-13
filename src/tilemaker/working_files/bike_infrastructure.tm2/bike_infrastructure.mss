@@ -1,11 +1,12 @@
 @width-tight: 2;
 @width-med: 1.5;
 @width-wide: 1;
-@width-multiplier: 5;
-@light-blue: #00aeef;
-@dark-blue: #005e83;
-@green: #006b3e;
-@white: #fff;
+@width-multiplier-medium: 1.5;
+@width-multiplier-large: 2;
+@color-path: #15bf50;
+@color-lane: #8c54de;
+@color-buffered-lane: #5072f5;
+@color-track: #44a3a6;
 
 #neighborhood_waysTF, #neighborhood_waysFT {
   [zoom > 13] { 
@@ -39,46 +40,44 @@
   }
   
   [FUNCTIONAL = "path"] {
-  	line-color: @green;
+  	line-color: @color-path;
   }
   
   [TF_BIKE_IN = "lane"] {
-    line-color: @light-blue;
+    line-color: @color-lane;
   }
   
-  [TF_BIKE_IN = "buffered_lane"],
-  [TF_BIKE_IN = "track"] {
-  	line-color: @dark-blue;
+  [TF_BIKE_IN = "buffered_lane"] {
+  	line-color: @color-buffered-lane;
     
-    [TF_BIKE_IN = "track"] {
-      ::fill {
-        line-width: @width-tight;
-        line-color: @white;
-        line-dasharray: 8, 4;
-        
-        [zoom > 13] { 
-          line-offset: -@width-tight * @width-multiplier / 2;
-        }
-        [zoom <= 13][zoom >= 10] {
-          line-offset: -@width-med * @width-multiplier / 2;
-        }
-        [zoom < 10] { 
-          line-offset: -@width-wide * @width-multiplier / 2;
-        }
-      }
-    }
-    
-    [zoom > 13] { 
-      line-width: @width-tight * @width-multiplier;
-      line-offset: -@width-tight * @width-multiplier / 2;
+    [zoom > 13] {
+      line-width: @width-tight * @width-multiplier-medium;
+      line-offset: -@width-tight * @width-multiplier-medium;
     }
     [zoom <= 13][zoom >= 10] {
-      line-width: @width-med * @width-multiplier;
-      line-offset: -@width-med * @width-multiplier / 2;
+      line-width: @width-med * @width-multiplier-medium;
+      line-offset: -@width-med * @width-multiplier-medium;
     }
-    [zoom < 10] { 
-      line-width: @width-wide * @width-multiplier;
-      line-offset: -@width-wide * @width-multiplier / 2;
+    [zoom < 10] {
+      line-width: @width-wide * @width-multiplier-medium;
+      line-offset: -@width-wide * @width-multiplier-medium;
+    }
+  }
+  
+  [TF_BIKE_IN = "track"] {
+    line-color: @color-track;
+    
+    [zoom > 13] {
+      line-width: @width-tight * @width-multiplier-large;
+      line-offset: -@width-tight * @width-multiplier-large;
+    }
+    [zoom <= 13][zoom >= 10] {
+      line-width: @width-med * @width-multiplier-large;
+      line-offset: -@width-med * @width-multiplier-large;
+    }
+    [zoom < 10] {
+      line-width: @width-wide * @width-multiplier-large;
+      line-offset: -@width-wide * @width-multiplier-large;
     }
   }
 }
@@ -102,46 +101,43 @@
   }
   
   [FUNCTIONAL = "path"] {
-  	line-color: @green;
+  	line-color: @color-path;
   }
   
   [FT_BIKE_IN = "lane"] {
-    line-color: @light-blue;
+    line-color: @color-lane;
   }
   
-  [FT_BIKE_IN = "buffered_lane"],
-  [FT_BIKE_IN = "track"] {
-  	line-color: @dark-blue;
+  [FT_BIKE_IN = "buffered_lane"] {
+  	line-color: @color-buffered-lane;
     
-    [FT_BIKE_IN = "track"] {
-      ::fill {
-        line-width: @width-tight;
-        line-color: @white;
-        line-dasharray: 8, 4;
-        
-        [zoom > 13] { 
-          line-offset: @width-tight * @width-multiplier / 2;
-        }
-        [zoom <= 13][zoom >= 10] {
-          line-offset: @width-med * @width-multiplier / 2;
-        }
-        [zoom < 10] { 
-          line-offset: @width-wide * @width-multiplier / 2;
-        }
-      }
-    }
-    
-    [zoom > 13] { 
-      line-width: @width-tight * @width-multiplier;
-      line-offset: @width-tight * @width-multiplier / 2;
+    [zoom > 13] {
+      line-width: @width-tight * @width-multiplier-medium;
+      line-offset: @width-tight * @width-multiplier-medium;
     }
     [zoom <= 13][zoom >= 10] {
-      line-width: @width-med * @width-multiplier;
-      line-offset: @width-med * @width-multiplier / 2;
+      line-width: @width-med * @width-multiplier-medium;
+      line-offset: @width-med * @width-multiplier-medium;
     }
-    [zoom < 10] { 
-      line-width: @width-wide * @width-multiplier;
-      line-offset: @width-wide * @width-multiplier / 2;
+    [zoom < 10] {
+      line-width: @width-wide * @width-multiplier-medium;
+      line-offset: @width-wide * @width-multiplier-medium;
+    }
+  }
+  [FT_BIKE_IN = "track"] {
+    line-color: @color-track;
+    
+    [zoom > 13] {
+      line-width: @width-tight * @width-multiplier-large;
+      line-offset: @width-tight * @width-multiplier-large;
+    }
+    [zoom <= 13][zoom >= 10] {
+      line-width: @width-med * @width-multiplier-large;
+      line-offset: @width-med * @width-multiplier-large;
+    }
+    [zoom < 10] {
+      line-width: @width-wide * @width-multiplier-large;
+      line-offset: @width-wide * @width-multiplier-large;
     }
   }
 }
