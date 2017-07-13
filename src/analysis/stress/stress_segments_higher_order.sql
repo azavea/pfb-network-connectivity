@@ -50,12 +50,12 @@ SET     ft_seg_stress =
                         WHEN COALESCE(speed_limit,:default_speed) > 30 THEN 3
                         WHEN COALESCE(speed_limit,:default_speed) = 30
                             THEN    CASE
-                                    WHEN COALESCE(ft_lanes,:default_lanes) > 2 THEN 3
+                                    WHEN COALESCE(ft_lanes,:default_lanes) > 1 THEN 3
                                     ELSE 1
                                     END
                         WHEN COALESCE(speed_limit,:default_speed) = 25
                             THEN    CASE
-                                    WHEN COALESCE(ft_lanes,:default_lanes) > 2 THEN 3
+                                    WHEN COALESCE(ft_lanes,:default_lanes) > 1 THEN 3
                                     ELSE 1
                                     END
                         WHEN COALESCE(speed_limit,:default_speed) <= 20
@@ -84,12 +84,12 @@ SET     ft_seg_stress =
                                     WHEN COALESCE(speed_limit,:default_speed) > 30 THEN 3
                                     WHEN COALESCE(speed_limit,:default_speed) = 30
                                         THEN    CASE
-                                                WHEN COALESCE(ft_lanes,:default_lanes) > 2 THEN 3
+                                                WHEN COALESCE(ft_lanes,:default_lanes) > 1 THEN 3
                                                 ELSE 1
                                                 END
                                     WHEN COALESCE(speed_limit,:default_speed) = 25
                                         THEN    CASE
-                                                WHEN COALESCE(ft_lanes,:default_lanes) > 2 THEN 3
+                                                WHEN COALESCE(ft_lanes,:default_lanes) > 1 THEN 3
                                                 ELSE 1
                                                 END
                                     WHEN COALESCE(speed_limit,:default_speed) <= 20
@@ -142,12 +142,12 @@ SET     ft_seg_stress =
                         WHEN COALESCE(speed_limit,:default_speed) > 30 THEN 3
                         WHEN COALESCE(speed_limit,:default_speed) = 30
                             THEN    CASE
-                                    WHEN COALESCE(tf_lanes,:default_lanes) > 2 THEN 3
+                                    WHEN COALESCE(tf_lanes,:default_lanes) > 1 THEN 3
                                     ELSE 1
                                     END
                         WHEN COALESCE(speed_limit,:default_speed) = 25
                             THEN    CASE
-                                    WHEN COALESCE(tf_lanes,:default_lanes) > 2 THEN 3
+                                    WHEN COALESCE(tf_lanes,:default_lanes) > 1 THEN 3
                                     ELSE 1
                                     END
                         WHEN COALESCE(speed_limit,:default_speed) <= 20
@@ -176,12 +176,12 @@ SET     ft_seg_stress =
                                     WHEN COALESCE(speed_limit,:default_speed) > 30 THEN 3
                                     WHEN COALESCE(speed_limit,:default_speed) = 30
                                         THEN    CASE
-                                                WHEN COALESCE(tf_lanes,:default_lanes) > 2 THEN 3
+                                                WHEN COALESCE(tf_lanes,:default_lanes) > 1 THEN 3
                                                 ELSE 1
                                                 END
                                     WHEN COALESCE(speed_limit,:default_speed) = 25
                                         THEN    CASE
-                                                WHEN COALESCE(tf_lanes,:default_lanes) > 2 THEN 3
+                                                WHEN COALESCE(tf_lanes,:default_lanes) > 1 THEN 3
                                                 ELSE 1
                                                 END
                                     WHEN COALESCE(speed_limit,:default_speed) <= 20
