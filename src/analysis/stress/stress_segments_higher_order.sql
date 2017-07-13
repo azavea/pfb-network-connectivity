@@ -101,7 +101,15 @@ SET     ft_seg_stress =
                                     END
                         ELSE 3
                         END
-            ELSE 3  -- shared lane
+            ELSE                -- shared lane
+                        CASE
+                        WHEN COALESCE(speed_limit,:default_speed) <= 20
+                            THEN    CASE
+                                    WHEN COALESCE(ft_lanes,:default_lanes) = 1 THEN 1
+                                    ELSE 3
+                                    END
+                        ELSE 3
+                        END
             END,
         tf_seg_stress =
             CASE
@@ -185,6 +193,14 @@ SET     ft_seg_stress =
                                     END
                         ELSE 3
                         END
-            ELSE 3  -- shared lane
+            ELSE                -- shared lane
+                        CASE
+                        WHEN COALESCE(speed_limit,:default_speed) <= 20
+                            THEN    CASE
+                                    WHEN COALESCE(tf_lanes,:default_lanes) = 1 THEN 1
+                                    ELSE 3
+                                    END
+                        ELSE 3
+                        END
             END
 WHERE   functional_class IN (:'class',:'class'||'_link');
