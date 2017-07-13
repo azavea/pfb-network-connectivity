@@ -37,6 +37,12 @@
             labels: ['0 - 6', '6 - 12', '12 - 18', '18 - 24', '24 - 30', '30 - 36', '36 - 42', '42 - 48', '48 - 54', '54 - 100'],
             title: 'BNA Score'
         },
+        bike_infrastructure: {
+            position: 'bottomright',
+            colors: ['#8c54de', '#5072f5', '#44a3a6', '#15bf50'],
+            labels: ['Lane', 'Buffered Lane', 'Track', 'Off-Street Paths'],
+            title: 'Bike Infrastructure'
+        },
         ways: {
             position: 'bottomright',
             colors: ['#00aeef', '#e2231a'],
