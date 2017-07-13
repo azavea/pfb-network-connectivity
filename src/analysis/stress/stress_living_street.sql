@@ -16,5 +16,4 @@ AND     osm.bicycle = 'no';
 UPDATE  neighborhood_ways
 SET     ft_seg_stress = COALESCE(ft_seg_stress,1),
         tf_seg_stress = COALESCE(tf_seg_stress,1)
-FROM    neighborhood_osm_full_line osm
 WHERE   functional_class = 'living_street';
