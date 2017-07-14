@@ -34,12 +34,12 @@
   
   [TF_BIKE_IN = "lane"],
   [TF_BIKE_IN = "buffered_lane"],
-  [TF_BIKE_IN = "track"],
-  [FUNCTIONAL = "path"] {
+  [TF_BIKE_IN = "track"] {
     line-opacity: 1;
   }
   
-  [FUNCTIONAL = "path"] {
+  [FUNCTIONAL = "path"][XWALK != 1] {
+    line-opacity: 1;
   	line-color: @color-path;
   }
   
@@ -95,12 +95,12 @@
   
   [FT_BIKE_IN = "lane"],
   [FT_BIKE_IN = "buffered_lane"],
-  [FT_BIKE_IN = "track"],
-  [FUNCTIONAL = "path"] {
+  [FT_BIKE_IN = "track"] {
     line-opacity: 1;
   }
   
-  [FUNCTIONAL = "path"] {
+  [FUNCTIONAL = "path"][XWALK != 1] {
+    line-opacity: 1;
   	line-color: @color-path;
   }
   

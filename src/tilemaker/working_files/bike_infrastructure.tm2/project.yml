@@ -9,9 +9,9 @@ bounds:
   - 180
   - 85.0511
 center: 
-  - -111.0922
-  - 40.5916
-  - 14
+  - -111.0677
+  - 40.5554
+  - 12
 description: Show bike infrastructure of interest
 format: "png8:m=h"
 interactivity_layer: ''
