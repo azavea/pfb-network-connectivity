@@ -32,22 +32,22 @@
     line-offset: -@width-wide;
   }
   
-  [TF_BIKE_IN = "lane"],
-  [TF_BIKE_IN = "buffered_lane"],
-  [TF_BIKE_IN = "track"] {
-    line-opacity: 1;
-  }
-  
-  [FUNCTIONAL = "path"][XWALK != 1] {
+  [FUNCTIONAL = "path"] {
     line-opacity: 1;
   	line-color: @color-path;
+    
+    [XWALK = 1] {
+      line-opacity: 0;
+    }
   }
   
   [TF_BIKE_IN = "lane"] {
+    line-opacity: 1;
     line-color: @color-lane;
   }
   
   [TF_BIKE_IN = "buffered_lane"] {
+    line-opacity: 1;
   	line-color: @color-buffered-lane;
     
     [zoom > 13] {
@@ -65,6 +65,7 @@
   }
   
   [TF_BIKE_IN = "track"] {
+    line-opacity: 1;
     line-color: @color-track;
     
     [zoom > 13] {
@@ -81,7 +82,7 @@
     }
   }
 }
-
+      
 #neighborhood_waysFT {
   [zoom > 13] {
     line-offset: @width-tight;
@@ -93,22 +94,22 @@
     line-offset: @width-wide;
   }
   
-  [FT_BIKE_IN = "lane"],
-  [FT_BIKE_IN = "buffered_lane"],
-  [FT_BIKE_IN = "track"] {
-    line-opacity: 1;
-  }
-  
-  [FUNCTIONAL = "path"][XWALK != 1] {
+  [FUNCTIONAL = "path"] {
     line-opacity: 1;
   	line-color: @color-path;
+    
+    [XWALK = 1] {
+      line-opacity: 0;
+    }
   }
   
   [FT_BIKE_IN = "lane"] {
+    line-opacity: 1;
     line-color: @color-lane;
   }
   
   [FT_BIKE_IN = "buffered_lane"] {
+    line-opacity: 1;
   	line-color: @color-buffered-lane;
     
     [zoom > 13] {
@@ -124,7 +125,9 @@
       line-offset: @width-wide * @width-multiplier-medium;
     }
   }
+  
   [FT_BIKE_IN = "track"] {
+    line-opacity: 1;
     line-color: @color-track;
     
     [zoom > 13] {
