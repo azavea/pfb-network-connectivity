@@ -392,7 +392,7 @@ class AnalysisJob(PFBModel):
             'name': layer,
             'url': self._s3_url_for_result_resource('tiles/neighborhood_{}'.format(layer) +
                                                     '/{z}/{x}/{y}.png')
-        } for layer in ['ways', 'census_blocks']]
+        } for layer in ['ways', 'census_blocks', 'bike_infrastructure']]
 
     @property
     def overall_scores_url(self):

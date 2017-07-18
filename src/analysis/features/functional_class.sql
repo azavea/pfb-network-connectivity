@@ -38,7 +38,8 @@ WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.highway IN ('cycleway','path');
 
 UPDATE  neighborhood_ways
-SET     functional_class = 'path'
+SET     functional_class = 'path',
+        xwalk = 1
 FROM    neighborhood_osm_full_line osm
 WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.highway = 'footway'

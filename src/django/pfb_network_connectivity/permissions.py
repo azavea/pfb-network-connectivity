@@ -114,14 +114,13 @@ class IsAdminOrSelfOnly(permissions.BasePermission):
         if is_admin(request.user):
             return True
 
-        # org admin users cannot modify full admin users
-        if (request.method not in self.ALLOWED_OBJECT_METHODS and
-                is_org_admin(request.user) and is_admin(obj)):
+        # org admin users cannot view or modify full admin users
+        if is_org_admin(request.user) and is_admin(obj):
             return False
 
-        # org admin users can only modify users within their own organization
-        if is_org_admin(request.user) and users_in_same_organization(request.user, obj):
-            return True
+        # org admin users can only view or modify users within their own organization
+        if is_org_admin(request.user):
+            return users_in_same_organization(request.user, obj)
 
         # read-write only access to one's own user object for non-admin users
         if request.method in self.ALLOWED_OBJECT_METHODS and request.user == obj:

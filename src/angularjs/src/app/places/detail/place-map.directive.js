@@ -102,7 +102,8 @@
                 // Get desired label
                 var label = {
                     'ways': 'Stress Network',
-                    'census_blocks': 'Census blocks with access'
+                    'census_blocks': 'Census blocks with access',
+                    'bike_infrastructure': 'Bike Infrastructure'
                 }[layerObj.name];
                 var layer = L.tileLayer(layerObj.url, {
                     maxZoom: MapConfig.conusMaxZoom
