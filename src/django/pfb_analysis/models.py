@@ -39,7 +39,10 @@ SIMPLIFICATION_TOLERANCE_LESS = 0.0001
 
 def get_neighborhood_file_upload_path(instance, filename):
     """ Upload each boundary file to its own directory """
-    return 'neighborhood_boundaries/{0}/{1}'.format(instance.name, os.path.basename(filename))
+    return 'neighborhood_boundaries/{0}/{1}/{2}{3}'.format(slugify(instance.organization.name),
+                                                           instance.state_abbrev,
+                                                           instance.name,
+                                                           os.path.splitext(filename)[1])
 
 
 def simplify_geom(geom):
