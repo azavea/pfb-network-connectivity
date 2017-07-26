@@ -1,16 +1,15 @@
 @media print {
   .navbar {
-    .navbar-right {
-      display: none;
-    }
+    display: none;
   }
 
   .preview-map {
+    top: 0;
     height: 320px;
     width: 100%;
     position: absolute;
-    left: initial;
-    right: initial;
+    left: 0;
+    right: 0;
     bottom: initial;
     display: block !important;
 
@@ -33,6 +32,10 @@
     }
   }
 
+  .location-timestamp {
+    opacity: 1;
+  }
+
   .metric-details {
 
     .column.text-right {
@@ -40,18 +43,23 @@
     }
 
     .network-score {
-      display: flex;
+      display: block;
       flex-direction: column;
       font-size: 30px;
+      margin: 5px;
+      text-align: center;
     }
   }
 
   .sidebar {
     position: relative;
-    top: 320px;
+    margin-top: 320px;
     bottom: initial;
     border: none;
     width: auto;
+    height: auto;
+    display: block;
+    overflow: visible;
 
     .sidebar-header {
       text-align: center;
@@ -73,11 +81,13 @@
     }
 
     .tooltip {
-      float: right;
-      width: 300px;
-      order: 2;
+      float: none;
+      width: 100%;
       height: auto;
-      margin: auto;
+      display: block;
+      margin: 5px auto;
+      text-align: center;
+      color: black;
 
       i {
         display: none;
@@ -100,17 +110,24 @@
       transform: none;
       text-align: center;
       font-style: italic;
+      margin: auto;
+      font-size: 14px;
     }
   }
 
+  .sidebar-scrollable {
+    display: block;
+    overflow: visible;
+    flex: initial;
+  }
+
   .metric-list {
-    display: flex;
+    display: block;
     flex-direction: row;
     flex-wrap: wrap;
 
     li {
-      display: flex;
-      flex-direction: column;
+      display: block;
       text-align: center;
       width: 100%;
       line-height: 1;
@@ -123,5 +140,9 @@
   .tooltip:after,
   .metric-list li {
     page-break-inside: avoid;
+  }
+
+  .row {
+    display: block;
   }
 }
