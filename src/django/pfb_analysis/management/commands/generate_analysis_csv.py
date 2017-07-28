@@ -16,6 +16,14 @@ from pfb_analysis.models import AnalysisJob, AnalysisScoreMetadata
 logger = logging.getLogger(__name__)
 
 
+def get_overall_scores_value(job, key, default=''):
+    try:
+        return job.overall_scores[key]['score_normalized']
+    except KeyError:
+        logger.warning('Job {} overall_scores missing key: {}'.format(str(job.uuid), key))
+        return default
+
+
 def export_job_details(job):
     return (['neighborhood_uuid', 'neighborhood_name', 'neighborhood_state', 'job_uuid'],
             [
@@ -32,17 +40,18 @@ def export_connectivity_metrics(job):
     # Iterate over AnalysisScoreMetadata so we can control the output order
     for score in AnalysisScoreMetadata.objects.exclude(pk='population_total').order_by('priority'):
         columns.append(score.name)
-        values.append(job.overall_scores[score.name]['score_normalized'])
+        values.append(get_overall_scores_value(job, score.name))
+
     return (columns, values,)
 
 
 def export_mileage_low_stress(job):
-    value = job.overall_scores['total_miles_low_stress']['score_normalized']
+    value = get_overall_scores_value(job, 'total_miles_low_stress')
     return (['total_low_stress_miles'], [value],)
 
 
 def export_mileage_high_stress(job):
-    value = job.overall_scores['total_miles_high_stress']['score_normalized']
+    value = get_overall_scores_value(job, 'total_miles_high_stress')
     return (['total_high_stress_miles'], [value],)
 
 
