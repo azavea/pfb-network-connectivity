@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 
 from datetime import datetime
-import logging
 import json
+import logging
+import math
 import os
 import shutil
 import tempfile
@@ -162,6 +163,33 @@ class Neighborhood(PFBModel):
             if boundary_file:
                 boundary_file.close()
             shutil.rmtree(tmpdir, ignore_errors=True)
+
+    @property
+    def geom_utm(self):
+        """Return the Neighborhood geometry, as a clone transformed to the appropriate UTM zone."""
+
+        def get_zone(coord):
+            """ Finds the UTM zone of a WGS84 coordinate """
+            # There are 60 longitudinal projection zones numbered 1 to 60 starting at 180W
+            # So that's -180 = 1, -174 = 2, -168 = 3
+            zone = ((coord - -180) / 6.0)
+            return int(math.ceil(zone))
+
+        bbox = self.geom.extent
+        avg_longitude = ((bbox[2] - bbox[0]) / 2) + bbox[0]
+        utm_zone = get_zone(avg_longitude)
+        avg_latitude = ((bbox[3] - bbox[1]) / 2) + bbox[1]
+
+        # convert UTM zone to SRID
+        # SRID for a given UTM ZONE: 32[6 if N|7 if S]<zone>
+        srid = '32'
+        if avg_latitude < 0:
+            srid += '7'
+        else:
+            srid += '6'
+
+        srid += str(utm_zone)
+        return self.geom.transform(srid, clone=True)
 
     @property
     def state(self):
