@@ -36,6 +36,7 @@ class AnalysisJobViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = AnalysisJob.objects.select_related('neighborhood').all()
+        queryset = queryset.exclude(neighborhood__visibility=Neighborhood.Visibility.HIDDEN)
         if isinstance(self.request.user, AnonymousUser):
             queryset = queryset.filter(neighborhood__visibility=Neighborhood.Visibility.PUBLIC)
         return queryset
@@ -97,6 +98,7 @@ class NeighborhoodViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = Neighborhood.objects.select_related('organization').all()
+        queryset = queryset.exclude(visibility=Neighborhood.Visibility.HIDDEN)
         if isinstance(self.request.user, AnonymousUser):
             queryset = queryset.filter(visibility=Neighborhood.Visibility.PUBLIC)
         return queryset
@@ -133,11 +135,11 @@ class NeighborhoodBoundsGeoJsonViewList(APIView):
                   row_to_json((SELECT p FROM (
                     SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
                     AS properties
-            FROM pfb_analysis_neighborhood AS g) AS f) AS fc;
+            FROM pfb_analysis_neighborhood AS g WHERE g.visibility <> %s) AS f) AS fc;
         """
 
         with connection.cursor() as cursor:
-            cursor.execute(query)
+            cursor.execute(query, [Neighborhood.Visibility.HIDDEN])
             json = cursor.fetchone()
             if not json or not len(json):
                 return Response({})
@@ -205,11 +207,11 @@ class NeighborhoodGeoJsonViewSet(APIView):
                   row_to_json((SELECT p FROM (
                     SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
                     AS properties
-            FROM pfb_analysis_neighborhood AS g) AS f)  AS fc;
+            FROM pfb_analysis_neighborhood AS g WHERE g.visibility <> %s) AS f)  AS fc;
         """
 
         with connection.cursor() as cursor:
-            cursor.execute(query)
+            cursor.execute(query, [Neighborhood.Visibility.HIDDEN])
             json = cursor.fetchone()
             if not json or not len(json):
                 return Response({})

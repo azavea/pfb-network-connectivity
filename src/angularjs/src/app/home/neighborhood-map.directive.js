@@ -19,7 +19,12 @@
         ctl.onMapReady = function (map) {
             ctl.map = map;
             Neighborhood.geojson().$promise.then(function (data) {
-                ctl.count = data && data.features ? data.features.length : '0';
+                if (data && data.features) {
+                    ctl.count = data.features.length;
+                } else {
+                    ctl.count = 0
+                    data.features = []
+                }
                 ctl.neighborhoodLayer = L.geoJSON(data, {
                     onEachFeature: onEachFeature
                 });
