@@ -40,7 +40,7 @@
         bike_infrastructure: {
             position: 'bottomright',
             colors: ['#8c54de', '#5072f5', '#44a3a6', '#15bf50'],
-            labels: ['Lane', 'Buffered Lane', 'Track', 'Off-Street Paths'],
+            labels: ['Conventional Lane', 'Buffered Lane', 'Protected Lane', 'Off-Street Path'],
             title: 'Bike Infrastructure'
         },
         ways: {
