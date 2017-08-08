@@ -85,10 +85,12 @@ class Neighborhood(PFBModel):
     class Visibility(object):
         PUBLIC = 'public'
         PRIVATE = 'private'
+        HIDDEN = 'hidden'
 
         CHOICES = (
             (PUBLIC, 'Public',),
             (PRIVATE, 'Private',),
+            (HIDDEN, 'Hidden',),
         )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

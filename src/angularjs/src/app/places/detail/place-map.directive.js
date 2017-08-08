@@ -138,6 +138,12 @@
             });
 
             $q.all(destLayerPromises).then(function (layers) {
+                if (!ctl.destinationsNoneLayer && layers && layers.length) {
+                    var noneLayer = L.geoJSON({type:'FeatureCollection', features: []});
+                    ctl.destinationsNoneLayer = noneLayer
+                    ctl.layerControl.addOverlay(ctl.destinationsNoneLayer, 'None', 'Destinations');
+                    ctl.map.addLayer(ctl.destinationsNoneLayer);
+                }
                 _.forEach(_.sortBy(layers, 'label'), function (layer) {
                     ctl.layerControl.addOverlay(layer.layer, layer.label, 'Destinations');
                 });
