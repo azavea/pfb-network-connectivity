@@ -12,7 +12,11 @@ if [[ -n "${PFB_DEBUG}" ]]; then
     set -x
 fi
 
-source "$(dirname $0)"/../scripts/utils.sh
+if [[ -n "${PFB_LOCAL}" ]]; then
+    source "$(dirname $0)"/../scripts/utils-local.sh
+else
+    source "$(dirname $0)"/../scripts/utils.sh
+fi
 
 function usage() {
     echo -n \

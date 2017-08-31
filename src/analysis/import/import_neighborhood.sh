@@ -8,7 +8,11 @@ NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 
-source "$(dirname $0)"/../scripts/utils.sh
+if [[ -n "${PFB_LOCAL}" ]]; then
+    source "$(dirname $0)"/../scripts/utils-local.sh
+else
+    source "$(dirname $0)"/../scripts/utils.sh
+fi
 
 set -e
 
