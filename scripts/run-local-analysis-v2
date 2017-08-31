@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -e
+
+cd $(dirname "${0}")
+
+if [[ -n "${PFB_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0") PFB_SHPFILE[_URL] PFB_STATE PFB_STATE_FIPS
+
+Run an analysis job in local development. Sets a bunch of the required
+arguments to useful defaults.
+
+The first argument can be either the path to a shapefile or a URL from
+which to download the zipped shapefile. Anything that starts with 'http' will be
+treated as a URL.
+
+Optional, set them in the environment to override:
+NB_POSTGRESQL_HOST (default: 127.0.0.1)
+NB_POSTGRESQL_DB (default: pfb)
+NB_POSTGRESQL_USER (default: gis)
+NB_POSTGRESQL_PASSWORD (default: gis)
+NB_INPUT_SRID (default: 4326)
+NB_MAX_TRIP_DISTANCE (in meters. default: 2680)
+NB_BOUNDARY_BUFFER (in meters. default: half of NB_MAX_TRIP_DISTANCE)
+PFB_OSM_FILE (default: none, downloaded by the analysis job)
+PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
+NB_OUTPUT_DIR (default: /data/output)
+
+EXAMPLES:
+A boulder run with local shapefile and all defaults:
+   $(basename "$0") /data/boulder.shp co 08
+
+Override the max trip distance and supply an OSM file:
+   PFB_OSM_FILE=/data/boulder.osm NB_MAX_TRIP_DISTANCE=2000 \\
+       $(basename "$0") /data/boulder.shp co 08
+"
+}
+
+if [ "${1:-}" = "--help" ] || [ -z "${3}" ]
+then
+    usage
+else
+    if [[ $1 =~ ^http ]]; then
+        PFB_SHPFILE_URL="${1}"
+    else
+        PFB_SHPFILE="${1}"
+    fi
+    PFB_STATE="${2}"
+    PFB_STATE_FIPS="${3}"
+
+    export NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
+    export NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
+    export NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
+    export NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
+    export NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
+    export NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
+    export NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
+    export PFB_LOCAL=1
+
+    # import
+    #eval "$(sed -e /update_status/echo/g ../src/analysis/scripts/import.sh)"
+    ../src/analysis/scripts/import.sh ${PFB_SHPFILE} ${PFB_STATE} ${PFB_STATE_FIPS}
+fi
