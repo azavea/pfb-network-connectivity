@@ -48,7 +48,7 @@ else
     if [[ $1 =~ ^http ]]; then
         PFB_SHPFILE_URL="${1}"
     else
-        PFB_SHPFILE="${1}"
+        PFB_SHPFILE=`readlink -f "${1}"`
     fi
     PFB_STATE="${2}"
     PFB_STATE_FIPS="${3}"
