@@ -3,8 +3,11 @@
 set -e
 
 cd `dirname $0`
-source ../scripts/utils.sh
-
+if [[ -n "${PFB_LOCAL}" ]]; then
+    source "$(dirname $0)"/../scripts/utils-local.sh
+else
+    source "$(dirname $0)"/../scripts/utils.sh
+fi
 
 NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-127.0.0.1}"
 NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
