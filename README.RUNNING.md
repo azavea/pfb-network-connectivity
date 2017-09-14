@@ -7,7 +7,7 @@ local machine:
 * [psql](https://www.postgresql.org/) (PostgreSQL client libraries)
 * [osm2pgsql](https://github.com/openstreetmap/osm2pgsql)
 * [osm2pgrouting](https://github.com/pgRouting/osm2pgrouting)
-* [shp2pgsql (part of the PostGIS project)](http://postgis.net/docs/manual-2.3/using_postgis_dbmanagement.html#shp2pgsql_usage)
+* [shp2pgsql](http://postgis.net/docs/manual-2.3/using_postgis_dbmanagement.html#shp2pgsql_usage) (part of the PostGIS project)
 
 In addition, a local analysis depends on having the following extensions
 installed on the target database:
