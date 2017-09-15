@@ -49,6 +49,8 @@ def isExecutable(execName):
     return isExe
 
 def main(argv):
+    localExecutables = ["psql","osm2pgsql","osm2pgrouting","shp2pgsql"]
+    pgExtensions = ["postgis","pgrouting","quantile"]
     parser = argparse.ArgumentParser(
         description='Downloads BNA input data and runs analysis without \
         starting up a VM. Instead takes an existing target DB as input. \
@@ -96,7 +98,7 @@ def main(argv):
     stateFips = args.state_fips
 
     # test for necessary local executables
-    for exe in ["psql","osm2pgsql","osm2pgrouting","shp2pgsql"]:
+    for exe in localExecutables:
         if not isExecutable(exe):
             raise Exception("Could not find %s. Please install or reconfigure." % exe)
 
@@ -108,7 +110,7 @@ def main(argv):
         raise Exception(e)
 
     # test for necessary db extensions
-    for ext in ["postgis","pgrouting","quantile"]:
+    for ext in pgExtensions:
         if not isDbExtension(conn, ext):
             raise Exception("Extension \"%s\" not enabled in database" % ext)
 
