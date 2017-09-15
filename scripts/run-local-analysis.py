@@ -87,7 +87,7 @@ def main(argv):
     dbPass = args.dbpass
     inSrid = args.insrid
     outSrid = args.outsrid
-    if args.osmfile is not None:
+    if args.osmfile:
         osmFile = os.path.abspath(args.osmfile)
     onlyConn = args.onlyconn
     onlyImport = args.onlyimport
@@ -127,7 +127,7 @@ def main(argv):
     os.environ['NB_POSTGRESQL_PASSWORD'] = dbPass
     os.environ['NB_INPUT_SRID'] = inSrid
     os.environ['NB_OUTPUT_SRID'] = outSrid
-    if osmFile is not None:
+    if args.osmfile:
         os.environ['PFB_OSM_FILE'] = osmFile
     os.environ['PFB_LOCAL'] = '1'
 
