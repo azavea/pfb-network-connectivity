@@ -22,6 +22,66 @@ import argparse
 import psycopg2
 from psycopg2.extensions import AsIs
 
+def showFipsCodes():
+    table = [
+        ["State","Abbrev","FIPS"],
+        ["------------------","------","----"],
+        ["Alabama","AL","01"],
+        ["Alaska","AK","02"],
+        ["Arizona","AZ","04"],
+        ["Arkansas","AR","05"],
+        ["California","CA","06"],
+        ["Colorado","CO","08"],
+        ["Connecticut","CT","09"],
+        ["Delaware","DE","10"],
+        ["District of Columbia","DC","11"],
+        ["Florida","FL","12"],
+        ["Georgia","GA","13"],
+        ["Hawaii","HI","15"],
+        ["Idaho","ID","16"],
+        ["Illinois","IL","17"],
+        ["Indiana","IN","18"],
+        ["Iowa","IA","19"],
+        ["Kansas","KS","20"],
+        ["Kentucky","KY","21"],
+        ["Louisiana","LA","22"],
+        ["Maine","ME","23"],
+        ["Maryland","MD","24"],
+        ["Massachusetts","MA","25"],
+        ["Michigan","MI","26"],
+        ["Minnesota","MN","27"],
+        ["Mississippi","MS","28"],
+        ["Missouri","MO","29"],
+        ["Montana","MT","30"],
+        ["Nebraska","NE","31"],
+        ["Nevada","NV","32"],
+        ["New Hampshire","NH","33"],
+        ["New Jersey","NJ","34"],
+        ["New Mexico","NM","35"],
+        ["New York","NY","36"],
+        ["North Carolina","NC","37"],
+        ["North Dakota","ND","38"],
+        ["Ohio","OH","39"],
+        ["Oklahoma","OK","40"],
+        ["Oregon","OR","41"],
+        ["Pennsylvania","PA","42"],
+        ["Rhode Island","RI","44"],
+        ["South Carolina","SC","45"],
+        ["South Dakota","SD","46"],
+        ["Tennessee","TN","47"],
+        ["Texas","TX","48"],
+        ["Utah","UT","49"],
+        ["Vermont","VT","50"],
+        ["Virginia","VA","51"],
+        ["Washington","WA","53"],
+        ["West Virginia","WV","54"],
+        ["Wisconsin","WI","55"],
+        ["Wyoming","WY","56"]
+    ]
+    widths = [max(map(len, col)) for col in zip(*table)]
+    for row in table:
+        print "  ".join((val.ljust(width) for val, width in zip(row, widths)))
+
 def isDbExtension(conn,extName):
     '''
     Tests the database at the given conn for whether the extension given
@@ -61,6 +121,7 @@ def main(argv):
           psql (postgresql client libraries)',
         usage='Use run-local-analysis.py -h for all options'
     )
+    parser.add_argument('--fips',dest='fips',action='store_true',default=False,help='Display FIPS codes and exit')
     parser.add_argument('-H','--host',dest='dbhost',default='127.0.0.1',help='Host address (default: 127.0.0.1)')
     parser.add_argument('-d','--database',dest='dbname',default='pfb',help='Host database name (default: pfb)')
     parser.add_argument('-U','--user',dest='dbuser',default='pfb',help='Database username (default: pfb)')
@@ -74,6 +135,10 @@ def main(argv):
     parser.add_argument('state_abbrev',help='Two letter state abbreviation')
     parser.add_argument('state_fips',help='Two digit state FIPS code')
     parser.add_argument('-v',dest='verbose',action='store_true',help='Verbose mode')
+    # need to check for fips option before parsing the rest
+    if "--fips" in sys.argv:
+        showFipsCodes()
+        sys.exit(0)
     args = parser.parse_args()
 
     # get scripts dir location
