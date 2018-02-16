@@ -91,7 +91,7 @@ def get_srid(filename):
     else:
         srid += '6'
 
-    srid += str(utm_zone)
+    srid += '%02d' % utm_zone
     print(srid)
 
 
