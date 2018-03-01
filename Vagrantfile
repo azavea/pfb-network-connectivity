@@ -56,7 +56,7 @@ Vagrant.configure("2") do |config|
     # Ubuntu trusty base box already has system python + pip installed, no need to reinstall here
     ansible.install = true
     ansible.install_mode = "pip"
-    ansible.version = "2.2.1"
+    ansible.version = "2.2.1.0"
   end
 
   config.vm.provider :virtualbox do |v|
