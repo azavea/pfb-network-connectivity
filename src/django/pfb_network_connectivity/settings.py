@@ -66,10 +66,10 @@ INSTALLED_APPS = [
 
     # 3rd party
     'django_extensions',
-    'django_filters',
     'localflavor',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'storages',
     'watchman',
 
@@ -223,7 +223,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_FILTER_BACKENDS': [
-        'rest_framework.filters.DjangoFilterBackend',
+        'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.OrderingFilter'
     ],
     'PAGE_SIZE': 20

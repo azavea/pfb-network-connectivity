@@ -8,10 +8,11 @@ from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import detail_route
 from rest_framework.exceptions import NotFound
-from rest_framework.filters import DjangoFilterBackend, OrderingFilter
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import (AllowAny, IsAuthenticatedOrReadOnly)
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
