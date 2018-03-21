@@ -8,11 +8,12 @@ from django.contrib.auth import (
 from django.core.mail import send_mail
 from django.core.signing import TimestampSigner, BadSignature
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route
 from rest_framework.exceptions import ValidationError
-from rest_framework.filters import DjangoFilterBackend, OrderingFilter
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
