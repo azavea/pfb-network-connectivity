@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 # https://docs.djangoproject.com/en/1.11/ref/contrib/gis/geos/#django.contrib.gis.geos.GEOSGeometry.simplify
 SIMPLIFICATION_TOLERANCE_MORE = 0.001
 SIMPLIFICATION_TOLERANCE_LESS = 0.0001
+SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
 
 
 def get_neighborhood_file_upload_path(instance, filename):
@@ -47,24 +48,45 @@ def get_neighborhood_file_upload_path(instance, filename):
 
 
 def simplify_geom(geom):
-    """Attempt to simplify a multipolygon, will fallback options
+    """Slightly more robust geometry simplification, only for polygons with srid=4326
 
-    Fall back to simplify less, or none at all.
+    Will attempt to simplify first without preserve topology at two different tolerances,
+    then fall back to the higher simplification tolerance, but with topology preserved
+
+    Returns original geom if not a polygon or multipolygon.
     """
+
+    def is_simple_polygon_valid(simple_geom, geom):
+        return (simple_geom and
+                not simple_geom.empty and
+                simple_geom.valid and
+                # Checking a min area ratio against the original ensure we didn't oversimplify
+                simple_geom.area / geom.area > SIMPLIFICATION_MIN_VALID_AREA_RATIO)
+
+    if not (geom.geom_type == 'Polygon' or geom.geom_type == 'MultiPolygon'):
+        return geom
     try:
         simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_MORE)])
-    except:
-        simple = None
+        if is_simple_polygon_valid(simple, geom):
+            logger.debug('Neighborhood.simplify_geom used ' +
+                         'geom.simplify(SIMPLIFICATION_TOLERANCE_MORE)')
+            return simple
+    except Exception:
+        pass
     try:
         # sometimes an empty geometry may result, likely due to
         # https://trac.osgeo.org/geos/ticket/741
-        if not simple or simple.empty or not simple.valid:
-            simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)])
-        if simple.empty or not simple.valid:
-            simple = geom
-    except:
-        simple = geom
-    return simple
+        simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)])
+        if is_simple_polygon_valid(simple, geom):
+            logger.debug('Neighborhood.simplify_geom used ' +
+                         'geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)')
+            return simple
+    except Exception:
+        pass
+    # If both simplifications fail, fallback to preserve topology, which should always succeed
+    logger.debug('Neighborhood.simplify_geom used ' +
+                 'geom.simplify(SIMPLIFICATION_TOLERANCE_MORE, preserve_topology=True)')
+    return geom.simplify(SIMPLIFICATION_TOLERANCE_MORE, preserve_topology=True)
 
 
 def create_environment(**kwargs):
