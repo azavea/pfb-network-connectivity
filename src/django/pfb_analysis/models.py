@@ -12,7 +12,7 @@ import zipfile
 
 from django.conf import settings
 from django.contrib.gis.db.models import MultiPolygonField, PointField
-from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
 from django.db import models
@@ -63,12 +63,12 @@ def simplify_geom(geom):
                 # Checking a min area ratio against the original ensure we didn't oversimplify
                 simple_geom.area / geom.area > SIMPLIFICATION_MIN_VALID_AREA_RATIO)
 
-    if not (geom.geom_type == 'Polygon' or geom.geom_type == 'MultiPolygon'):
+    if not (isinstance(geom, Polygon) or isinstance(geom, MultiPolygon)):
         return geom
     try:
         simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_MORE)])
         if is_simple_polygon_valid(simple, geom):
-            logger.debug('Neighborhood.simplify_geom used ' +
+            logger.debug('pfb_analysis.models.simplify_geom used ' +
                          'geom.simplify(SIMPLIFICATION_TOLERANCE_MORE)')
             return simple
     except Exception:
@@ -78,15 +78,22 @@ def simplify_geom(geom):
         # https://trac.osgeo.org/geos/ticket/741
         simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)])
         if is_simple_polygon_valid(simple, geom):
-            logger.debug('Neighborhood.simplify_geom used ' +
+            logger.debug('pfb_analysis.models.simplify_geom used ' +
                          'geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)')
             return simple
     except Exception:
         pass
     # If both simplifications fail, fallback to preserve topology, which should always succeed
-    logger.debug('Neighborhood.simplify_geom used ' +
+    logger.debug('pfb_analysis.models.simplify_geom used ' +
                  'geom.simplify(SIMPLIFICATION_TOLERANCE_MORE, preserve_topology=True)')
-    return geom.simplify(SIMPLIFICATION_TOLERANCE_MORE, preserve_topology=True)
+    simple = geom.simplify(SIMPLIFICATION_TOLERANCE_MORE, preserve_topology=True)
+    if isinstance(simple, MultiPolygon):
+        return simple
+    elif isinstance(simple, Polygon):
+        return MultiPolygon([simple])
+    else:
+        logger.warning('pfb_analysis.models.simplify_geom failed to simplify')
+        return geom
 
 
 def create_environment(**kwargs):
