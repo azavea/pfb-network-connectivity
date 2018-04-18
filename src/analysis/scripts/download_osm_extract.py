@@ -12,13 +12,22 @@ Given a local directory, a state, and an S3 bucket, it
 
 import argparse
 import datetime
+import logging
 import os
+import sys
 from time import sleep
 
 import boto3
 import requests
 import us
 
+
+logging.basicConfig(
+    stream=sys.stderr,
+    format='{} %(asctime)s %(levelname)-8s %(message)s'.format(os.path.basename(__file__)),
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__file__)
 
 GEOFABRIK_URL_TEMPLATE = "http://download.geofabrik.de/north-america/us/{}-latest.osm.pbf"
 S3_KEY_TEMPLATE = "osm-data-cache/{}"
@@ -48,10 +57,12 @@ def wait_for_lockfile(bucket, state_abbrev):
     Checks for a lockfile for the given state and, if there is one, waits until it's gone.
     If it doesn't disappear within the allotted time, assume something went wrong and bail out.
     """
+    logger.debug('Checking for OSM extract lockfile for {}'.format(state_abbrev))
     key = lockfile_key(state_abbrev)
     for attempt in xrange(LOCKFILE_POLLING_ATTEMPTS):
         if read_from_s3(bucket, key) is None:
             return None
+        logger.debug('Lockfile exists for {}, waiting'.format(state_abbrev))
         sleep(LOCKFILE_POLLING_INTERVAL)
     total_time = LOCKFILE_POLLING_INTERVAL * (LOCKFILE_POLLING_ATTEMPTS - 1) / 60
     raise Exception('Lockfile for {} not deleted after {} minutes'.format(state_abbrev, total_time))
@@ -66,6 +77,7 @@ def get_lockfile(bucket, state_abbrev):
     let that job do the download and get the file once it finishes.
     If the lockfile hasn't changed in 30 seconds, we can be confident that this job has the lock.
     """
+    logger.debug('Trying to acquire download lock for {}'.format(state_abbrev))
     key = lockfile_key(state_abbrev)
     lockfile_content = '{} {}'.format(os.getpid(), datetime.datetime.now())
     write_to_s3(bucket, key, lockfile_content)
@@ -73,6 +85,7 @@ def get_lockfile(bucket, state_abbrev):
     if read_from_s3(bucket, key) == lockfile_content:
         return key
     else:
+        logger.info('Another job got the download lock for {}'.format(state_abbrev))
         return None
 
 
@@ -84,6 +97,7 @@ def download_from_geofabrik(local_dir, state_abbrev):
     # Use state level extracts available at:
     #   http://download.geofabrik.de/north-america.html
     # We have to process the neighborhood state abbrev to a full name in format found in the url
+    logger.info('Downloading OSM extract from Geofabrik for {}'.format(state_abbrev))
     state_name = us.states.lookup(state_abbrev).name.lower().replace(' ', '-')
     osm_extract_url = GEOFABRIK_URL_TEMPLATE.format(state_name)
     filepath = local_filepath_for_state(local_dir, state_abbrev)
@@ -94,7 +108,9 @@ def download_from_geofabrik(local_dir, state_abbrev):
 
 
 def upload_to_s3(filepath, bucket):
-    key = S3_KEY_TEMPLATE.format(os.path.basename(filepath))
+    filename = os.path.basename(filepath)
+    logger.info('Uploading OSM extract {} to S3'.format(filename))
+    key = S3_KEY_TEMPLATE.format(filename)
     boto3.s3.transfer.S3Transfer(S3_CLIENT).upload_file(filepath, bucket, key)
 
 
@@ -102,10 +118,12 @@ def download_from_s3(local_dir, state_abbrev, bucket):
     """
     Download the state's extract file from S3, returning the file path if successful or None if not.
     """
+    logger.debug('Looking for OSM extract on S3 for {}'.format(state_abbrev))
     filepath = local_filepath_for_state(local_dir, state_abbrev)
     key = S3_KEY_TEMPLATE.format(os.path.basename(filepath))
     try:
         boto3.s3.transfer.S3Transfer(S3_CLIENT).download_file(bucket, key, filepath)
+        logger.info('Downloaded OSM extract from S3 for {}'.format(state_abbrev))
         return filepath
     except S3_CLIENT.exceptions.ClientError:
         return None
@@ -116,11 +134,16 @@ def main():
     parser.add_argument("local_dir", help="The directory to put downloaded OSM extract files in")
     parser.add_argument("state_abbrev", help="state abbreviation")
     parser.add_argument("storage_bucket", help="S3 storage bucket")
+    parser.add_argument('--verbose', '-v', action="store_true")
     args = parser.parse_args()
 
     local_dir = args.local_dir
     bucket = args.storage_bucket
     state_abbrev = args.state_abbrev.lower()
+    if args.verbose:
+        logger.setLevel('DEBUG')
+    else:
+        logger.setLevel('INFO')
 
     osm_extract_filepath = None
     while osm_extract_filepath is None:
