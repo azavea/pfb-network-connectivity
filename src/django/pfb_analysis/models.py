@@ -366,8 +366,8 @@ class AnalysisJob(PFBModel):
                                      related_name='analysis_jobs',
                                      on_delete=models.CASCADE)
     osm_extract_url = models.URLField(max_length=2048, null=True, blank=True,
-                                      help_text='Load OSM data for this neighborhood from ' +
-                                                'a URL rather than pulling from Overpass API. ' +
+                                      help_text='Load OSM data for this neighborhood from a URL ' +
+                                                'rather than pulling from Goefabrik extracts. ' +
                                                 'The url must have a .osm file extension and ' +
                                                 'may optionally be compressed via zip/bzip/gz, ' +
                                                 'e.g. http://a.com/foo.osm or ' +
