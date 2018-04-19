@@ -365,13 +365,12 @@ class AnalysisJob(PFBModel):
     neighborhood = models.ForeignKey(Neighborhood,
                                      related_name='analysis_jobs',
                                      on_delete=models.CASCADE)
-    osm_extract_url = models.URLField(max_length=2048, null=True, blank=True,
-                                      help_text='Load OSM data for this neighborhood from a URL ' +
-                                                'rather than pulling from Goefabrik extracts. ' +
-                                                'The url must have a .osm file extension and ' +
-                                                'may optionally be compressed via zip/bzip/gz, ' +
-                                                'e.g. http://a.com/foo.osm or ' +
-                                                'http://a.com/foo.osm.bz2')
+    osm_extract_url = models.URLField(max_length=2048, null=True, blank=True, help_text=(
+        'Load OSM data for this neighborhood from a URL rather than pulling from Goefabrik '
+        'extracts. The url must be to an uncompressed OSM file (with .osm extension) or a '
+        'compressed OSM file (with .osm.zip, .osm.gzip, .osm.bz2, or .osm.pbf extension). '
+        'e.g. http://a.com/foo.osm or http://a.com/foo.osm.bz2'
+    ))
     overall_scores = JSONField(db_index=True, default=dict)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
 
