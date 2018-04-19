@@ -17,6 +17,8 @@ source "$(dirname $0)"/utils.sh
 PFB_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}"
 mkdir -p "${PFB_TEMPDIR}"
 
+pushd /opt/pfb/analysis
+
 # If given a URL for the shapefile, dowload and unzip it. Overrides PFB_SHPFILE.
 if [ "${PFB_SHPFILE_URL}" ]
 then
@@ -50,10 +52,14 @@ then
     PFB_OSM_FILE="${PFB_TEMPDIR}/osm"/$(ls *.osm)  # Assumes there's exactly one .osm file
     echo "OSM file is ${PFB_OSM_FILE}"
     popd
+elif [ ! "${PFB_OSM_FILE}" ] || [ ! -f "${PFB_OSM_FILE}" ]
+then
+    echo "Downloading OSM extract"
+    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $PFB_TEMPDIR \
+                                                      $PFB_STATE $AWS_STORAGE_BUCKET_NAME)"
 fi
 
 # run job
-pushd /opt/pfb/analysis
 
 # determine coordinate reference system based on input shapefile UTM zone
 export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"

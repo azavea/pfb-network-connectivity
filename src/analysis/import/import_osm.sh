@@ -57,20 +57,12 @@ echo "CLIPPING OSM TO: ${BBOX}"
 OSM_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}/import_osm"
 mkdir -p "${OSM_TEMPDIR}"
 
-if [[ -f ${1} ]]; then
-  update_status "IMPORTING" "Clipping provided OSM file"
-  osmconvert "${1}" \
-    --drop-broken-refs \
-    -b="${BBOX}" \
-    -o="${OSM_TEMPDIR}/converted.osm"
-  OSM_DATA_FILE="${OSM_TEMPDIR}/converted.osm"
-else
-  update_status "IMPORTING" "Downloading OSM data"
-  # Download OSM data
-  OSM_API_URL="http://www.overpass-api.de/api/xapi?*[bbox=${BBOX}]"
-  OSM_DATA_FILE="${OSM_TEMPDIR}/overpass.osm"
-  wget -nv -O "${OSM_DATA_FILE}" "${OSM_API_URL}"
-fi
+update_status "IMPORTING" "Clipping provided OSM file"
+osmconvert "${1}" \
+  --drop-broken-refs \
+  -b="${BBOX}" \
+  -o="${OSM_TEMPDIR}/converted.osm"
+OSM_DATA_FILE="${OSM_TEMPDIR}/converted.osm"
 
 # import the osm with highways
 update_status "IMPORTING" "Importing OSM data"
