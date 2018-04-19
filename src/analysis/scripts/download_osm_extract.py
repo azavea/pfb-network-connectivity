@@ -156,7 +156,9 @@ def main():
     else:
         logger.setLevel('INFO')
 
-    osm_extract_filepath = None
+    # First try to download the file, since that's all we ultimately want to accomplish
+    osm_extract_filepath = download_from_s3(local_dir, state_abbrev, bucket)
+    # If the file isn't there already, do the lockfile/download/upload thing
     while osm_extract_filepath is None:
         # If lockfile exists, wait for it.
         # Returns immediately if there's no lockfile.
