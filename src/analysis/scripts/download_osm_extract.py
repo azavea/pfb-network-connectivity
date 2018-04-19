@@ -164,9 +164,12 @@ def main():
             if lockfile_key is None:
                 continue
 
-            osm_extract_filepath = download_from_geofabrik(local_dir, state_abbrev)
-            upload_to_s3(osm_extract_filepath, bucket)
-            S3_CLIENT.delete_object(Bucket=bucket, Key=lockfile_key)
+            try:
+                osm_extract_filepath = download_from_geofabrik(local_dir, state_abbrev)
+                upload_to_s3(osm_extract_filepath, bucket)
+            finally:
+                # If we have the lock, we want to make sure we release it even on error
+                S3_CLIENT.delete_object(Bucket=bucket, Key=lockfile_key)
 
     print osm_extract_filepath
 
