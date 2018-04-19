@@ -37,7 +37,7 @@ LOCKFILE_POLLING_ATTEMPTS = 21  # One is immediate, so total timeout is interval
 S3_CLIENT = boto3.client('s3')
 
 
-def lockfile_key(state_abbrev):
+def compose_lockfile_key(state_abbrev):
     return S3_KEY_TEMPLATE.format('{}.lock'.format(state_abbrev))
 
 
@@ -52,13 +52,17 @@ def write_to_s3(bucket, key, content):
     return S3_CLIENT.put_object(Bucket=bucket, Key=key, Body=content)
 
 
+def delete_from_s3(bucket, key):
+    S3_CLIENT.delete_object(Bucket=bucket, Key=key)
+
+
 def wait_for_lockfile(bucket, state_abbrev):
     """
     Checks for a lockfile for the given state and, if there is one, waits until it's gone.
     If it doesn't disappear within the allotted time, assume something went wrong and bail out.
     """
     logger.debug('Checking for OSM extract lockfile for {}'.format(state_abbrev))
-    key = lockfile_key(state_abbrev)
+    key = compose_lockfile_key(state_abbrev)
     for attempt in xrange(LOCKFILE_POLLING_ATTEMPTS):
         if read_from_s3(bucket, key) is None:
             return None
@@ -78,15 +82,22 @@ def get_lockfile(bucket, state_abbrev):
     If the lockfile hasn't changed in 30 seconds, we can be confident that this job has the lock.
     """
     logger.debug('Trying to acquire download lock for {}'.format(state_abbrev))
-    key = lockfile_key(state_abbrev)
+    key = compose_lockfile_key(state_abbrev)
     lockfile_content = '{} {}'.format(os.getpid(), datetime.datetime.now())
-    write_to_s3(bucket, key, lockfile_content)
-    sleep(30)  # The likely race condition window is probably <2 seconds, but caution doesn't hurt
-    if read_from_s3(bucket, key) == lockfile_content:
-        return key
-    else:
-        logger.info('Another job got the download lock for {}'.format(state_abbrev))
-        return None
+    try:
+        write_to_s3(bucket, key, lockfile_content)
+        sleep(30)  # The likely race condition window is probably <2 seconds, but caution doesn't hurt
+        if read_from_s3(bucket, key) == lockfile_content:
+            return key
+        else:
+            logger.info('Another job got the download lock for {}'.format(state_abbrev))
+            return None
+    except:
+        # If something goes wrong, we want to clear the lockfile rather than leave it.
+        # There's a chance that would mean we're clearing another job's lockfile, but the
+        # consequences of that are less bad than the consequences of an orphaned lockfile.
+        delete_from_s3(bucket, key)
+        raise
 
 
 def local_filepath_for_state(local_dir, state_abbrev):
@@ -169,7 +180,7 @@ def main():
                 upload_to_s3(osm_extract_filepath, bucket)
             finally:
                 # If we have the lock, we want to make sure we release it even on error
-                S3_CLIENT.delete_object(Bucket=bucket, Key=lockfile_key)
+                delete_from_s3(bucket, lockfile_key)
 
     print osm_extract_filepath
 
