@@ -66,7 +66,7 @@ def wait_for_lockfile(bucket, state_abbrev):
     for attempt in xrange(LOCKFILE_POLLING_ATTEMPTS):
         if read_from_s3(bucket, key) is None:
             return None
-        logger.debug('Lockfile exists for {}, waiting'.format(state_abbrev))
+        logger.info('Lockfile exists for {}, waiting'.format(state_abbrev))
         sleep(LOCKFILE_POLLING_INTERVAL)
     total_time = LOCKFILE_POLLING_INTERVAL * (LOCKFILE_POLLING_ATTEMPTS - 1) / 60
     raise Exception('Lockfile for {} not deleted after {} minutes'.format(state_abbrev, total_time))
