@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
 
 from pfb_analysis.models import AnalysisJob, Neighborhood
+from users.models import PFBUser
 
 
 class Command(BaseCommand):
@@ -14,11 +14,13 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # Positional arguments
         parser.add_argument('neighborhood')
-        parser.add_argument('--user', default='systems+pfb@azavea.com', type=str)
+        parser.add_argument('--user', default=None, type=str)
 
     def handle(self, *args, **options):
-        UserModel = get_user_model()
-        user = UserModel.objects.get(email=options['user'])
+        if options['user'] is not None:
+            user = PFBUser.objects.get(email=options['user'])
+        else:
+            user = PFBUser.objects.get_root_user()
         neighborhood = Neighborhood.objects.get(name=options['neighborhood'],
                                                 organization=user.organization)
         job = AnalysisJob.objects.create(neighborhood=neighborhood,

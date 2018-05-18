@@ -15,7 +15,7 @@ from django.contrib.gis.db.models import MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
-from django.db import models
+from django.db import models, transaction
 from django.utils.text import slugify
 
 import botocore
@@ -23,10 +23,11 @@ import boto3
 import fiona
 from fiona.crs import from_epsg
 from localflavor.us.models import USStateField
+import requests
 import us
 
 from pfb_network_connectivity.models import PFBModel
-from users.models import Organization
+from users.models import Organization, PFBUser
 from .functions import ObjectAtPath
 
 
@@ -37,6 +38,17 @@ logger = logging.getLogger(__name__)
 SIMPLIFICATION_TOLERANCE_MORE = 0.001
 SIMPLIFICATION_TOLERANCE_LESS = 0.0001
 SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
+
+
+def download_file(url, local_filename=None):
+    if not local_filename:
+        local_filename = os.path.join('.', url.split('/')[-1])
+    r = requests.get(url, stream=True)
+    with open(local_filename, 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk:  # filter out keep-alive new chunks
+                f.write(chunk)
+    return local_filename
 
 
 def get_neighborhood_file_upload_path(instance, filename):
@@ -269,6 +281,104 @@ class Neighborhood(PFBModel):
         unique_together = ('name', 'state_abbrev', 'organization',)
 
 
+class AnalysisBatchManager(models.Manager):
+
+    @transaction.atomic()
+    def create_from_shapefile(self, shapefile, submit=False, user=None, *args, **kwargs):
+        """ Create a new AnalysisBatch from a well-formatted shapfile.
+
+       shapefile can be one of:
+        - HTTP URL to remote, publicly accessible zip file
+        - local path to zipfile containing shapefile (must end with .zip extension)
+        - local path to unzipped shapefile (must end with .shp extension)
+          - will search for associated files in same dir as the shpfile
+        - file handle to an open shapefile
+
+        """
+        if not user:
+            user = PFBUser.objects.get_root_user()
+        batch = AnalysisBatch.objects.create(created_by=user, modified_by=user)
+        tmpdir = tempfile.mkdtemp()
+        source = None
+
+        shapefile_input = shapefile
+        try:
+            logger.debug('AnalysisBatch.create_from_shapefile using temp dir: {}'.format(tmpdir))
+
+            if isinstance(shapefile_input, basestring) and os.path.splitext(shapefile_input)[1] == '.zip':
+                if shapefile_input.startswith('http'):
+                    local_zipfile = os.path.join(tmpdir, 'boundary.zip')
+                    download_file(shapefile_input, local_zipfile)
+                    shapefile_input = local_zipfile
+
+                # Extract download zipfile and find shp filename
+                local_zipfile = shapefile_input
+                with zipfile.ZipFile(local_zipfile) as zip:
+                    files = zip.namelist()
+                    zip.extractall(tmpdir)
+                    local_shapefile = next(filename
+                                           for filename in files if filename.endswith('.shp'))
+                local_shapefile = os.path.join(tmpdir, local_shapefile)
+                shapefile_input = local_shapefile
+
+            if isinstance(shapefile_input, basestring) and os.path.splitext(shapefile_input)[1] == '.shp':
+                source = fiona.open(shapefile_input, 'r')
+            else:
+                raise TypeError('Must provide shapefile to AnalysisBatch.create_from_shapefile')
+
+            for feature in source:
+                city = feature['properties']['city']
+                state = feature['properties']['state']
+                osm_extract_url = feature['properties'].get('osm_url', None)
+                label = city
+                name = Neighborhood.name_for_label(label)
+
+                # Get or create neighborhood for feature
+                neighborhood_dict = {
+                    'name': name,
+                    'label': label,
+                    'state_abbrev': state,
+                    'organization': user.organization,
+                    'created_by': user,
+                    'modified_by': user,
+                }
+                geom = GEOSGeometry(json.dumps(feature['geometry']))
+                try:
+                    neighborhood = Neighborhood.objects.get(**neighborhood_dict)
+                except Neighborhood.DoesNotExist:
+                    neighborhood = Neighborhood(**neighborhood_dict)
+                    logger.info('AnalysisBatch.create_from_shapefile CREATED: {}'
+                                .format(neighborhood))
+
+                neighborhood.set_boundary_file(geom)
+                neighborhood.save()
+
+                # Create new job
+                job = AnalysisJob.objects.create(neighborhood=neighborhood,
+                                                 batch=batch,
+                                                 osm_extract_url=osm_extract_url,
+                                                 created_by=user,
+                                                 modified_by=user)
+                logger.info('AnalysisBatch.create_from_shapefile ID: {} -- {}'
+                            .format(str(job.uuid), str(job)))
+        except Exception:
+            # If job creation failed, delete the batch
+            batch.delete()
+            raise
+        finally:
+            logger.debug('AnalysisBatch.create_from_shapefile removing temporary files...')
+            shutil.rmtree(tmpdir, ignore_errors=True)
+            if isinstance(source, file):
+                source.close()
+
+        if submit:
+            logger.info('AnalysisBatch.create_from_shapefile starting all jobs...')
+            batch.submit()
+            logger.info('AnalysisBatch.create_from_shapefile started {} jobs.'
+                        .format(batch.jobs.count()))
+        return batch
+
+
 class AnalysisBatch(PFBModel):
     """ Container for a grouping of AnalysisJobs that are run together
 
@@ -277,6 +387,9 @@ class AnalysisBatch(PFBModel):
     An AnalysisJob does not need to belong to an AnalysisBatch
 
     """
+
+    objects = AnalysisBatchManager()
+
     def __str__(self):
         return '<AnalysisBatch: {} -- {}>'.format(str(self.uuid), self.created_at)
 
@@ -553,6 +666,7 @@ class AnalysisJob(PFBModel):
         # Workaround for not being able to run development jobs on the actual batch cluster:
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':
+            self.update_status(self.Status.QUEUED)
             logger.warn("Can't actually run development analysis jobs on AWS. Try this:"
                         "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
                         "./scripts/run-local-analysis "

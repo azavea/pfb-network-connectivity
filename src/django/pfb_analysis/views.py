@@ -1,28 +1,31 @@
 from collections import OrderedDict
 from datetime import datetime
 import logging
+import os
+import shutil
+import tempfile
 
-import us
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
-from rest_framework.decorators import detail_route
+from rest_framework import parsers, status
+from rest_framework.decorators import detail_route, parser_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import (AllowAny, IsAuthenticatedOrReadOnly)
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
 from rest_framework.response import Response
+import us
 
 from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
 from pfb_network_connectivity.filters import OrgAutoFilterBackend
 from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
 
-from .models import AnalysisJob, AnalysisScoreMetadata, Neighborhood
+from .models import AnalysisBatch, AnalysisJob, AnalysisScoreMetadata, Neighborhood
 from .serializers import (AnalysisJobSerializer,
                           AnalysisScoreMetadataSerializer,
                           NeighborhoodSerializer)
@@ -82,6 +85,48 @@ class AnalysisJobViewSet(ModelViewSet):
             return Response(results, status=status.HTTP_200_OK)
         else:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+
+class AnalysisBatchViewSet(ViewSet):
+
+    @parser_classes([parsers.MultiPartParser])
+    def create(self, request, *args, **kwargs):
+        """ Trigger a new analysis batch given a well-formatted shapefile
+
+        Upload file to the 'file' key in a multipart form.
+
+        Each polygon/multipolygon feature in the shapefile will have a neighborhood created
+        for it if it doesn't exist, and the job for each neighborhood will immediately be submitted.
+
+        Each feature in the shapefile should have a "city" and "state" attribute. The "city"
+        attribute maps to Neighborhood.label and "state" maps to Neighborhood.state_abbrev.
+
+        If the "city" and "state" of an uploaded feature matches an existing neighborhood,
+        the existing one will be used and its geom updated with the one in the upload.
+
+        """
+        file_obj = request.data['file']
+        tmpdir = tempfile.mkdtemp()
+        try:
+            # Awkward. create_from_shapefile opens with fiona, so we can't just directly pass
+            #   in the file-like upload object. First we have to write it to disk, then pass
+            #   the on-disk location to the create method instead.
+            # Alternatively we could manually write to disk here, unzip and pass the fiona handle
+            #   to create_from_shapefile, but that duplicates tested logic we do anyways within
+            #   that method.
+            upload_filename = os.path.join(tmpdir, 'upload.zip')
+            with open(upload_filename, 'wb') as upload_file:
+                upload_file.write(file_obj.read())
+
+            batch = AnalysisBatch.objects.create_from_shapefile(upload_filename,
+                                                                submit=True,
+                                                                user=request.user)
+            # Rather than return the AnalysisBatch object which doesn't really have any useful
+            #   info of its own, serialize and return the list of newly created jobs.
+            serializer = AnalysisJobSerializer(batch.jobs, many=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        finally:
+            shutil.rmtree(tmpdir, ignore_errors=True)
 
 
 class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):

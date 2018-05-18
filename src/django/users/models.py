@@ -116,6 +116,9 @@ class PFBUserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+    def get_root_user(self):
+        return self.get(email='systems+pfb@azavea.com')
+
 
 class PFBUser(AbstractBaseUser, PermissionsMixin, PFBModel):
     """User class for PFB application
