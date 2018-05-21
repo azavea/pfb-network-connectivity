@@ -7,6 +7,10 @@
         ui-sref="admin.analysis-jobs.create" class="btn btn-primary pull-right">
         Run Analysis
       </button>
+      <button ng-if="analysisJobList.isAdminUser"
+        ui-sref="admin.analysis-jobs.create-batch" class="btn btn-primary pull-right">
+        Run Batch
+      </button>
       <h1 class="no-margin-top">Analysis Jobs</h1>
       <table class="table">
         <thead pfb-analysis-job-filter filters="analysisJobList.filters"></thead>
