@@ -283,7 +283,6 @@ class Neighborhood(PFBModel):
 
 class AnalysisBatchManager(models.Manager):
 
-    @transaction.atomic()
     def create_from_shapefile(self, shapefile, submit=False, user=None, *args, **kwargs):
         """ Create a new AnalysisBatch from a well-formatted shapfile.
 
@@ -361,7 +360,8 @@ class AnalysisBatchManager(models.Manager):
                                                  modified_by=user)
                 logger.info('AnalysisBatch.create_from_shapefile ID: {} -- {}'
                             .format(str(job.uuid), str(job)))
-        except Exception:
+        except Exception as e:
+            logger.exception(e)
             # If job creation failed, delete the batch
             batch.delete()
             raise

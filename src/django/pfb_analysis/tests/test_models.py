@@ -3,7 +3,7 @@ import os
 
 from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import LineString
-from django.test import SimpleTestCase, TestCase
+from django.test import override_settings, SimpleTestCase, TestCase
 
 from pfb_analysis.models import (
     simplify_geom,
@@ -57,6 +57,7 @@ class SimplifyGeomTestCase(SimpleTestCase):
         self.assertEqual(geom, simplify_geom(geom))
 
 
+@override_settings(DEFAULT_FILE_STORAGE='django.core.files.storage.FileSystemStorage')
 class AnalysisBatchCreateFromShapefileTestCase(TestCase):
 
     def setUp(self):
