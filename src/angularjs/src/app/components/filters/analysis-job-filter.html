@@ -22,12 +22,23 @@
                    placeholder="Neighborhood"
                    ng-model="ctl.searchText"
                    ng-model-options="{ debounce: 400 }"
-                   ng-change="ctl.filterNeighborhoods()"
+                   ng-change="ctl.onTextFilterChanged()"
                    type="text"
                    class="form-control"/>
         </div>
     </th>
-    <th>Batch Job ID</th>
+    <th>
+        <div class="dropdown">
+            <input name="neighborhood-filter"
+                   title="Filter by Batch ID"
+                   placeholder="Batch ID"
+                   ng-model="ctl.batchId"
+                   ng-model-options="{ debounce: 400 }"
+                   ng-change="ctl.onTextFilterChanged()"
+                   type="text"
+                   class="form-control"/>
+        </div>
+    </th>
     <th>Created At</th>
     <th></th>
 </tr>

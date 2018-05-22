@@ -28,6 +28,7 @@
             getEmail: getEmail,
             isAdminUser: isAdminUser,
             isOrgAdminUser: isOrgAdminUser,
+            isViewerUser: isViewerUser,
             isAdminOrg: isAdminOrg,
             getUserName: getUserName
         };
@@ -106,6 +107,10 @@
 
         function isOrgAdminUser() {
             return $cookies.getObject(userRoleCookie) === 'ORGADMIN';
+        }
+
+        function isViewerUser() {
+            return $cookies.getObject(userRoleCookie) === 'VIEWER';
         }
 
         function isAdminOrg() {

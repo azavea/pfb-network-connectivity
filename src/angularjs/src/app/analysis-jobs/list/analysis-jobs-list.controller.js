@@ -49,6 +49,9 @@
             if (filters.status) {
                 params.status = filters.status;
             }
+            if (filters.batch) {
+                params.batch = filters.batch;
+            }
             getAnalysisJobs(params);
         }
 

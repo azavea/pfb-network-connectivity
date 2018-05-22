@@ -13,16 +13,18 @@
         initialize();
 
         function initialize() {
+            ctl.batchId = '';
             ctl.statusFilter = '';
             ctl.statuses = AnalysisJobStatuses.statuses;
-            ctl.filterNeighborhoods = filterNeighborhoods;
+            ctl.onTextFilterChanged = onTextFilterChanged;
             ctl.onStatusFilterChanged = onStatusFilterChanged;
         }
 
-        function filterNeighborhoods() {
+        function onTextFilterChanged() {
             ctl.filters = {
                 neighborhood: ctl.searchText,
-                status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
+                status: AnalysisJobStatuses.filterMap[ctl.statusFilter],
+                batch: ctl.batchId
             };
         }
 
@@ -30,7 +32,8 @@
             var status = AnalysisJobStatuses.filterMap[$item || ctl.statusFilter];
             ctl.filters = {
                 neighborhood: ctl.searchText,
-                status: status || ''
+                status: status || '',
+                batch: ctl.batchId
             };
         }
     }
