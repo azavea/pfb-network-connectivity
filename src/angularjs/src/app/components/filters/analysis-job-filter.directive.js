@@ -8,7 +8,7 @@
      * Controller for the analysis job filtering table header
      */
     /** @ngInject */
-    function AnalysisJobFilterController($log, $scope, AnalysisJobStatuses) {
+    function AnalysisJobFilterController($scope, AnalysisJobStatuses) {
         var ctl = this;
         initialize();
 
