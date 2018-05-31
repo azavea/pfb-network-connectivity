@@ -139,6 +139,12 @@
                 controllerAs: 'analysisJobDetail',
                 templateUrl: 'app/analysis-jobs/detail/analysis-jobs-detail.html'
             })
+            .state('admin.analysis-jobs.create-batch', {
+                url: 'create/batch/',
+                controller: 'AnalysisJobCreateBatchController',
+                controllerAs: 'analysisBatchCreate',
+                templateUrl: 'app/analysis-jobs/create/analysis-jobs-create-batch.html'
+            })
             .state('admin.neighborhoods', {
                 abstract: true,
                 url: 'neighborhoods/?limit&offset',

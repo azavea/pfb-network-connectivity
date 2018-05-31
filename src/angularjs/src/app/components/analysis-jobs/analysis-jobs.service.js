@@ -37,11 +37,11 @@
      * Resource for analysis job statuses
      */
     function AnalysisJobStatuses(JOB_STATUSES) {
-        var statuses = [];  // short labels
-        var filterMap = {}; // short label -> key
+        var statuses = [];  // labels
+        var filterMap = {}; // label -> key
         angular.forEach(JOB_STATUSES, function(labels, key) {
-            statuses.push(labels.short);
-            filterMap[labels.short] = key;
+            statuses.push(labels.long);
+            filterMap[labels.long] = key;
         });
 
         var module = {

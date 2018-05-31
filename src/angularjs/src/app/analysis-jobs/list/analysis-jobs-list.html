@@ -7,6 +7,10 @@
         ui-sref="admin.analysis-jobs.create" class="btn btn-primary pull-right">
         Run Analysis
       </button>
+      <button ng-if="analysisJobList.isAdminUser"
+        ui-sref="admin.analysis-jobs.create-batch" class="btn btn-primary pull-right">
+        Run Batch
+      </button>
       <h1 class="no-margin-top">Analysis Jobs</h1>
       <table class="table">
         <thead pfb-analysis-job-filter filters="analysisJobList.filters"></thead>
@@ -15,7 +19,7 @@
             <td><a ui-sref="admin.analysis-jobs.detail({uuid: analysisJob.uuid})">{{analysisJob.uuid | limitTo: 5}}</a></td>
             <td>{{analysisJob.status | displayStatus}}</td>
             <td>{{analysisJob.neighborhood.label}}</td>
-            <td>{{analysisJob.batch_job_id}}</td>
+            <td>{{analysisJob.batch}}</td>
             <td>{{analysisJob.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
             <td>
               <button ng-click="analysisJobList.deleteUpload(analysisJob)"

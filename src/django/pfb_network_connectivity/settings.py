@@ -250,6 +250,9 @@ AWS_QUERYSTRING_AUTH = False
 DEFAULT_FROM_EMAIL = 'noreply@bna.peopleforbikes.org'
 REPOSITORY_HELP_EMAIL = os.getenv('REPOSITORY_HELP_EMAIL', 'help@bna.peopleforbikes.org')
 
+# Root user email (the email address of the main admin user for the root org in the database)
+ROOT_USER_EMAIL = 'systems+pfb@azavea.com'
+
 if DJANGO_ENV in ['staging', 'production']:
     EMAIL_BACKEND = 'django_amazon_ses.backends.boto.EmailBackend'
 elif DJANGO_ENV in ['development', 'test']:
