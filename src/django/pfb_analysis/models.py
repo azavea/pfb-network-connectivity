@@ -284,14 +284,13 @@ class Neighborhood(PFBModel):
 class AnalysisBatchManager(models.Manager):
 
     def create_from_shapefile(self, shapefile, submit=False, user=None, *args, **kwargs):
-        """ Create a new AnalysisBatch from a well-formatted shapfile.
+        """ Create a new AnalysisBatch from a well-formatted shapefile.
 
        shapefile can be one of:
         - HTTP URL to remote, publicly accessible zip file
         - local path to zipfile containing shapefile (must end with .zip extension)
         - local path to unzipped shapefile (must end with .shp extension)
           - will search for associated files in same dir as the shpfile
-        - file handle to an open shapefile
 
         """
         if not user:
@@ -305,12 +304,13 @@ class AnalysisBatchManager(models.Manager):
             logger.debug('AnalysisBatch.create_from_shapefile using temp dir: {}'.format(tmpdir))
 
             if isinstance(shapefile_input, basestring) and os.path.splitext(shapefile_input)[1] == '.zip':
+                # If we need to download the zipped shapefile, so that and update the input path
                 if shapefile_input.startswith('http'):
                     local_zipfile = os.path.join(tmpdir, 'boundary.zip')
                     download_file(shapefile_input, local_zipfile)
                     shapefile_input = local_zipfile
 
-                # Extract download zipfile and find shp filename
+                # Extract the zipfile (whether downloaded or local) and find shp filename
                 local_zipfile = shapefile_input
                 with zipfile.ZipFile(local_zipfile) as zip:
                     files = zip.namelist()
@@ -320,6 +320,7 @@ class AnalysisBatchManager(models.Manager):
                 local_shapefile = os.path.join(tmpdir, local_shapefile)
                 shapefile_input = local_shapefile
 
+            # Open the shapefile
             if isinstance(shapefile_input, basestring) and os.path.splitext(shapefile_input)[1] == '.shp':
                 source = fiona.open(shapefile_input, 'r')
             else:
