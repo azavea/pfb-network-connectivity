@@ -8,31 +8,22 @@
      * Controller for the analysis job filtering table header
      */
     /** @ngInject */
-    function AnalysisJobFilterController($scope, AnalysisJobStatuses) {
+    function AnalysisJobFilterController($log, $scope, AnalysisJobStatuses) {
         var ctl = this;
         initialize();
 
         function initialize() {
+            ctl.filters = {}
             ctl.batchId = '';
             ctl.statusFilter = '';
             ctl.statuses = AnalysisJobStatuses.statuses;
-            ctl.onTextFilterChanged = onTextFilterChanged;
-            ctl.onStatusFilterChanged = onStatusFilterChanged;
+            ctl.onFilterChanged = onFilterChanged;
         }
 
-        function onTextFilterChanged() {
+        function onFilterChanged() {
             ctl.filters = {
                 neighborhood: ctl.searchText,
                 status: AnalysisJobStatuses.filterMap[ctl.statusFilter],
-                batch: ctl.batchId
-            };
-        }
-
-        function onStatusFilterChanged($item) {
-            var status = AnalysisJobStatuses.filterMap[$item || ctl.statusFilter];
-            ctl.filters = {
-                neighborhood: ctl.searchText,
-                status: status || '',
                 batch: ctl.batchId
             };
         }

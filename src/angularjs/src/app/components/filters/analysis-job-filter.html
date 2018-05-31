@@ -7,11 +7,11 @@
                placeholder="Status"
                ng-model="ctl.statusFilter"
                ng-model-options="{ debounce: 400 }"
-               ng-change="ctl.onStatusFilterChanged()"
+               ng-change="ctl.onFilterChanged()"
                type="text"
                uib-typeahead="status for status in ctl.statuses | filter: $viewValue | limitTo: 8"
                typeahead-wait-ms="400"
-               typeahead-on-select="ctl.onStatusFilterChanged($item)"
+               typeahead-on-select="ctl.onFilterChanged()"
                class="form-control">
         </div>
     </th>
@@ -22,7 +22,7 @@
                    placeholder="Neighborhood"
                    ng-model="ctl.searchText"
                    ng-model-options="{ debounce: 400 }"
-                   ng-change="ctl.onTextFilterChanged()"
+                   ng-change="ctl.onFilterChanged()"
                    type="text"
                    class="form-control"/>
         </div>
@@ -34,7 +34,7 @@
                    placeholder="Batch ID"
                    ng-model="ctl.batchId"
                    ng-model-options="{ debounce: 400 }"
-                   ng-change="ctl.onTextFilterChanged()"
+                   ng-change="ctl.onFilterChanged()"
                    type="text"
                    class="form-control"/>
         </div>
