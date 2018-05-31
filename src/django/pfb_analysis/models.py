@@ -15,7 +15,7 @@ from django.contrib.gis.db.models import MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
-from django.db import models, transaction
+from django.db import models
 from django.utils.text import slugify
 
 import botocore
@@ -23,10 +23,10 @@ import boto3
 import fiona
 from fiona.crs import from_epsg
 from localflavor.us.models import USStateField
-import requests
 import us
 
 from pfb_network_connectivity.models import PFBModel
+from pfb_network_connectivity.utils import download_file
 from users.models import Organization, PFBUser
 from .functions import ObjectAtPath
 
@@ -40,23 +40,17 @@ SIMPLIFICATION_TOLERANCE_LESS = 0.0001
 SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
 
 
-def download_file(url, local_filename=None):
-    if not local_filename:
-        local_filename = os.path.join('.', url.split('/')[-1])
-    r = requests.get(url, stream=True)
-    with open(local_filename, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024):
-            if chunk:  # filter out keep-alive new chunks
-                f.write(chunk)
-    return local_filename
-
-
 def get_neighborhood_file_upload_path(instance, filename):
     """ Upload each boundary file to its own directory """
     return 'neighborhood_boundaries/{0}/{1}/{2}{3}'.format(slugify(instance.organization.name),
                                                            instance.state_abbrev,
                                                            instance.name,
                                                            os.path.splitext(filename)[1])
+
+
+def get_batch_shapefile_upload_path(organization_name, filename):
+    """  """
+    return 'batch_shapefiles/{0}/{1}'.format(slugify(organization_name), filename)
 
 
 def simplify_geom(geom):
@@ -351,7 +345,6 @@ class AnalysisBatchManager(models.Manager):
                                 .format(neighborhood))
 
                 neighborhood.set_boundary_file(geom)
-                neighborhood.save()
 
                 # Create new job
                 job = AnalysisJob.objects.create(neighborhood=neighborhood,

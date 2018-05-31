@@ -1,16 +1,17 @@
 from collections import OrderedDict
 from datetime import datetime
 import logging
-import os
-import shutil
-import tempfile
+from uuid import uuid4
 
-
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
 
+import boto3
+from botocore.client import Config as BotocoreClientConfig
 from django_filters.rest_framework import DjangoFilterBackend
+from django_q.tasks import async
 from rest_framework import parsers, status
 from rest_framework.decorators import detail_route, parser_classes
 from rest_framework.exceptions import NotFound, APIException
@@ -25,10 +26,17 @@ from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
 from pfb_network_connectivity.filters import OrgAutoFilterBackend
 from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
 
-from .models import AnalysisBatch, AnalysisJob, AnalysisScoreMetadata, Neighborhood
-from .serializers import (AnalysisJobSerializer,
-                          AnalysisScoreMetadataSerializer,
-                          NeighborhoodSerializer)
+from .models import (
+    AnalysisJob,
+    AnalysisScoreMetadata,
+    Neighborhood,
+    get_batch_shapefile_upload_path,
+)
+from .serializers import (
+    AnalysisJobSerializer,
+    AnalysisScoreMetadataSerializer,
+    NeighborhoodSerializer,
+)
 from .filters import AnalysisJobFilterSet
 
 
@@ -106,33 +114,25 @@ class AnalysisBatchViewSet(ViewSet):
 
         """
         file_obj = request.data['file']
-        tmpdir = tempfile.mkdtemp()
-        try:
-            # Awkward. create_from_shapefile opens with fiona, so we can't just directly pass
-            #   in the file-like upload object. First we have to write it to disk, then pass
-            #   the on-disk location to the create method instead.
-            # Alternatively we could manually write to disk here, unzip and pass the fiona handle
-            #   to create_from_shapefile, but that duplicates tested logic we do anyways within
-            #   that method.
-            upload_filename = os.path.join(tmpdir, 'upload.zip')
-            with open(upload_filename, 'wb') as upload_file:
-                upload_file.write(file_obj.read())
 
-            try:
-                batch = AnalysisBatch.objects.create_from_shapefile(upload_filename,
-                                                                    submit=True,
-                                                                    user=request.user)
-            except Exception as e:
-                # Errors are likely to be from bad input files, so send the exception message
-                # back in an error response.
-                raise APIException(e)
+        client = boto3.client('s3', config=BotocoreClientConfig(signature_version='s3v4'))
 
-            # Rather than return the AnalysisBatch object which doesn't really have any useful
-            # info of its own, serialize and return the list of newly created jobs.
-            serializer = AnalysisJobSerializer(batch.jobs, many=True)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        finally:
-            shutil.rmtree(tmpdir, ignore_errors=True)
+        organization = request.user.organization
+        file_name = '{}.zip'.format(str(uuid4()))
+        key = get_batch_shapefile_upload_path(organization.name, file_name).lstrip('/')
+
+        response = client.upload_fileobj(file_obj, settings.AWS_STORAGE_BUCKET_NAME, key)
+        print(response)
+        url = client.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': key}
+        )
+        async('pfb_analysis.tasks.create_batch_from_remote_shapefile', url)
+
+        return Response({
+            'shapefile_url': url,
+            'status': 'STARTED'
+        }, status=status.HTTP_200_OK)
 
 
 class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):
