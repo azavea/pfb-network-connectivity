@@ -13,7 +13,7 @@ from django.utils.text import slugify
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import parsers, status
 from rest_framework.decorators import detail_route, parser_classes
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, APIException
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import (AllowAny, IsAuthenticatedOrReadOnly)
 from rest_framework.views import APIView
@@ -118,11 +118,17 @@ class AnalysisBatchViewSet(ViewSet):
             with open(upload_filename, 'wb') as upload_file:
                 upload_file.write(file_obj.read())
 
-            batch = AnalysisBatch.objects.create_from_shapefile(upload_filename,
-                                                                submit=True,
-                                                                user=request.user)
+            try:
+                batch = AnalysisBatch.objects.create_from_shapefile(upload_filename,
+                                                                    submit=True,
+                                                                    user=request.user)
+            except Exception as e:
+                # Errors are likely to be from bad input files, so send the exception message
+                # back in an error response.
+                raise APIException(e)
+
             # Rather than return the AnalysisBatch object which doesn't really have any useful
-            #   info of its own, serialize and return the list of newly created jobs.
+            # info of its own, serialize and return the list of newly created jobs.
             serializer = AnalysisJobSerializer(batch.jobs, many=True)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         finally:
