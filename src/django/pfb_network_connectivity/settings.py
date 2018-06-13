@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'django_filters',
     'storages',
     'watchman',
+    'django_q',
 
     # Application
     'pfb_network_connectivity',
@@ -245,6 +246,18 @@ AWS_STORAGE_BUCKET_NAME = os.getenv('PFB_S3_STORAGE_BUCKET',
                                     '{0}-pfb-storage-{1}'.format(DEV_USER, AWS_REGION))
 AWS_QUERYSTRING_AUTH = False
 
+# Django Q
+# https://django-q.readthedocs.io/en/latest/index.html
+
+Q_CLUSTER = {
+    'name': 'pfb-network-connectivity',
+    'workers': 1,
+    'recycle': 1,
+    'timeout': 600,
+    'orm': 'default',
+    'poll': 5,
+    'cpu_affinity': 1
+}
 
 # Email
 DEFAULT_FROM_EMAIL = 'noreply@bna.peopleforbikes.org'

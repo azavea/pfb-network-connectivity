@@ -1,7 +1,7 @@
 # Django and psycopg2 are included in the django base container but repeated here
 # so that the analysis container will know to install them. These should be kept
 # in sync with the versions in the base container.
-Django==1.11.11
+Django==1.11.13
 psycopg2==2.7.4
 
 boto3==1.6.7
@@ -9,9 +9,10 @@ django-amazon-ses==0.3.2
 django-extensions==2.0.5
 django-filter==1.1.0
 django-localflavor==2.0
-djangorestframework==3.7.7
+django-q==0.9.4
 django-storages==1.6.5
 django-watchman==0.15.0
+djangorestframework==3.7.7
 fiona==1.7.11
 requests==2.18.4
 us==1.0.0

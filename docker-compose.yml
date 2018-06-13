@@ -34,6 +34,20 @@ services:
     environment:
       - DEV_USER
 
+  django-q:
+    image: django-q
+    extends:
+      service: django
+      file: common.yml
+    entrypoint: ./manage.py
+    command: qcluster
+    links:
+      - database:database.service.pfb.internal
+    volumes:
+      - ./src/django:/usr/src
+    environment:
+      - DEV_USER
+
   angularjs:
     image: pfb-angularjs
     working_dir: /opt/pfb/angularjs
