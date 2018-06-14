@@ -13,24 +13,18 @@
         initialize();
 
         function initialize() {
+            ctl.filters = {}
+            ctl.batchId = '';
             ctl.statusFilter = '';
             ctl.statuses = AnalysisJobStatuses.statuses;
-            ctl.filterNeighborhoods = filterNeighborhoods;
-            ctl.onStatusFilterChanged = onStatusFilterChanged;
+            ctl.onFilterChanged = onFilterChanged;
         }
 
-        function filterNeighborhoods() {
+        function onFilterChanged() {
             ctl.filters = {
                 neighborhood: ctl.searchText,
-                status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
-            };
-        }
-
-        function onStatusFilterChanged($item) {
-            var status = AnalysisJobStatuses.filterMap[$item || ctl.statusFilter];
-            ctl.filters = {
-                neighborhood: ctl.searchText,
-                status: status || ''
+                status: AnalysisJobStatuses.filterMap[ctl.statusFilter],
+                batch: ctl.batchId
             };
         }
     }

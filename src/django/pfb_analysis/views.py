@@ -1,30 +1,42 @@
 from collections import OrderedDict
 from datetime import datetime
 import logging
+from uuid import uuid4
 
-import us
-
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
 
-from rest_framework import status
-from rest_framework.decorators import detail_route
-from rest_framework.exceptions import NotFound
-from rest_framework.filters import DjangoFilterBackend, OrderingFilter
+import boto3
+from botocore.client import Config as BotocoreClientConfig
+from django_filters.rest_framework import DjangoFilterBackend
+from django_q.tasks import async
+from rest_framework import parsers, status
+from rest_framework.decorators import detail_route, parser_classes
+from rest_framework.exceptions import NotFound, APIException
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import (AllowAny, IsAuthenticatedOrReadOnly)
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
 from rest_framework.response import Response
+import us
 
 from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
 from pfb_network_connectivity.filters import OrgAutoFilterBackend
 from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnly, RestrictedCreate
 
-from .models import AnalysisJob, AnalysisScoreMetadata, Neighborhood
-from .serializers import (AnalysisJobSerializer,
-                          AnalysisScoreMetadataSerializer,
-                          NeighborhoodSerializer)
+from .models import (
+    AnalysisJob,
+    AnalysisScoreMetadata,
+    Neighborhood,
+    get_batch_shapefile_upload_path,
+)
+from .serializers import (
+    AnalysisJobSerializer,
+    AnalysisScoreMetadataSerializer,
+    NeighborhoodSerializer,
+)
 from .filters import AnalysisJobFilterSet
 
 
@@ -81,6 +93,46 @@ class AnalysisJobViewSet(ModelViewSet):
             return Response(results, status=status.HTTP_200_OK)
         else:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+
+class AnalysisBatchViewSet(ViewSet):
+
+    @parser_classes([parsers.MultiPartParser])
+    def create(self, request, *args, **kwargs):
+        """ Trigger a new analysis batch given a well-formatted shapefile
+
+        Upload file to the 'file' key in a multipart form.
+
+        Each polygon/multipolygon feature in the shapefile will have a neighborhood created
+        for it if it doesn't exist, and the job for each neighborhood will immediately be submitted.
+
+        Each feature in the shapefile should have a "city" and "state" attribute. The "city"
+        attribute maps to Neighborhood.label and "state" maps to Neighborhood.state_abbrev.
+
+        If the "city" and "state" of an uploaded feature matches an existing neighborhood,
+        the existing one will be used and its geom updated with the one in the upload.
+
+        """
+        file_obj = request.data['file']
+
+        client = boto3.client('s3', config=BotocoreClientConfig(signature_version='s3v4'))
+
+        organization = request.user.organization
+        file_name = '{}.zip'.format(str(uuid4()))
+        key = get_batch_shapefile_upload_path(organization.name, file_name).lstrip('/')
+
+        response = client.upload_fileobj(file_obj, settings.AWS_STORAGE_BUCKET_NAME, key)
+        print(response)
+        url = client.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': key}
+        )
+        async('pfb_analysis.tasks.create_batch_from_remote_shapefile', url)
+
+        return Response({
+            'shapefile_url': url,
+            'status': 'STARTED'
+        }, status=status.HTTP_200_OK)
 
 
 class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):

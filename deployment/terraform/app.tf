@@ -176,6 +176,44 @@ resource "aws_ecs_service" "pfb_app_https" {
   }
 }
 
+data "template_file" "pfb_app_async_queue_ecs_task" {
+  template = "${file("task-definitions/django-q.json")}"
+
+  vars = {
+    djangoq_url                                  = "${var.aws_account_id}.dkr.ecr.us-east-1.amazonaws.com/pfb-app:${var.git_commit}"
+    django_env                                   = "${var.django_env}"
+    django_secret_key                            = "${var.django_secret_key}"
+    rds_host                                     = "${module.database.hostname}"
+    rds_password                                 = "${var.rds_password}"
+    rds_username                                 = "${var.rds_username}"
+    rds_database_name                            = "${var.rds_database_name}"
+    s3_static_bucket                             = "${aws_s3_bucket.static.id}"
+    s3_storage_bucket                            = "${aws_s3_bucket.storage.id}"
+    django_allowed_hosts                         = "${var.django_allowed_hosts}"
+    git_commit                                   = "${var.git_commit}"
+    pfb_app_papertrail_endpoint                  = "${var.papertrail_host}:${var.papertrail_port}"
+    aws_region                                   = "${var.aws_region}"
+    batch_analysis_job_queue_name                = "${var.batch_analysis_job_queue_name}"
+    batch_analysis_job_definition_name_revision  = "${var.batch_analysis_job_definition_name_revision}"
+    batch_tilemaker_job_queue_name               = "${var.batch_tilemaker_job_queue_name}"
+    batch_tilemaker_job_definition_name_revision = "${var.batch_tilemaker_job_definition_name_revision}"
+  }
+}
+
+resource "aws_ecs_task_definition" "pfb_app_async_queue" {
+  family                = "${var.environment}AsyncQueue"
+  container_definitions = "${data.template_file.pfb_app_async_queue_ecs_task.rendered}"
+}
+
+resource "aws_ecs_service" "pfb_app_async_queue" {
+  name                               = "${var.environment}AsyncQueue"
+  task_definition                    = "${aws_ecs_task_definition.pfb_app_async_queue.arn}"
+  cluster                            = "${aws_ecs_cluster.app_container_instance.id}"
+  desired_count                      = "${var.pfb_app_async_queue_ecs_desired_count}"
+  deployment_minimum_healthy_percent = "${var.pfb_app_async_queue_ecs_deployment_min_percent}"
+  deployment_maximum_percent         = "${var.pfb_app_async_queue_ecs_deployment_max_percent}"
+}
+
 data "template_file" "pfb_app_management_ecs_task" {
   template = "${file("task-definitions/management.json")}"
 

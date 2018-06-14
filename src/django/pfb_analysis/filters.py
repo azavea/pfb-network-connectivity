@@ -2,7 +2,7 @@ import logging
 
 from django.db.models import Q
 
-from rest_framework import filters
+from django_filters import rest_framework as filters
 import django_filters
 
 from .models import AnalysisJob, AnalysisJobStatusUpdate, Neighborhood

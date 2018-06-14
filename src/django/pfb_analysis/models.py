@@ -12,7 +12,7 @@ import zipfile
 
 from django.conf import settings
 from django.contrib.gis.db.models import MultiPolygonField, PointField
-from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
 from django.db import models
@@ -26,7 +26,8 @@ from localflavor.us.models import USStateField
 import us
 
 from pfb_network_connectivity.models import PFBModel
-from users.models import Organization
+from pfb_network_connectivity.utils import download_file
+from users.models import Organization, PFBUser
 from .functions import ObjectAtPath
 
 
@@ -36,6 +37,7 @@ logger = logging.getLogger(__name__)
 # https://docs.djangoproject.com/en/1.11/ref/contrib/gis/geos/#django.contrib.gis.geos.GEOSGeometry.simplify
 SIMPLIFICATION_TOLERANCE_MORE = 0.001
 SIMPLIFICATION_TOLERANCE_LESS = 0.0001
+SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
 
 
 def get_neighborhood_file_upload_path(instance, filename):
@@ -46,25 +48,58 @@ def get_neighborhood_file_upload_path(instance, filename):
                                                            os.path.splitext(filename)[1])
 
 
-def simplify_geom(geom):
-    """Attempt to simplify a multipolygon, will fallback options
+def get_batch_shapefile_upload_path(organization_name, filename):
+    """  """
+    return 'batch_shapefiles/{0}/{1}'.format(slugify(organization_name), filename)
 
-    Fall back to simplify less, or none at all.
+
+def simplify_geom(geom):
+    """Slightly more robust geometry simplification, only for polygons with srid=4326
+
+    Will attempt to simplify first without preserve topology at two different tolerances,
+    then fall back to the higher simplification tolerance, but with topology preserved
+
+    Returns original geom if not a polygon or multipolygon.
     """
+
+    def is_simple_polygon_valid(simple_geom, geom):
+        return (simple_geom and
+                not simple_geom.empty and
+                simple_geom.valid and
+                # Checking a min area ratio against the original ensure we didn't oversimplify
+                simple_geom.area / geom.area > SIMPLIFICATION_MIN_VALID_AREA_RATIO)
+
+    if not (isinstance(geom, Polygon) or isinstance(geom, MultiPolygon)):
+        return geom
     try:
         simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_MORE)])
-    except:
-        simple = None
+        if is_simple_polygon_valid(simple, geom):
+            logger.debug('pfb_analysis.models.simplify_geom used ' +
+                         'geom.simplify(SIMPLIFICATION_TOLERANCE_MORE)')
+            return simple
+    except Exception:
+        pass
     try:
         # sometimes an empty geometry may result, likely due to
         # https://trac.osgeo.org/geos/ticket/741
-        if not simple or simple.empty or not simple.valid:
-            simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)])
-        if simple.empty or not simple.valid:
-            simple = geom
-    except:
-        simple = geom
-    return simple
+        simple = MultiPolygon([geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)])
+        if is_simple_polygon_valid(simple, geom):
+            logger.debug('pfb_analysis.models.simplify_geom used ' +
+                         'geom.simplify(SIMPLIFICATION_TOLERANCE_LESS)')
+            return simple
+    except Exception:
+        pass
+    # If both simplifications fail, fallback to preserve topology, which should always succeed
+    logger.debug('pfb_analysis.models.simplify_geom used ' +
+                 'geom.simplify(SIMPLIFICATION_TOLERANCE_MORE, preserve_topology=True)')
+    simple = geom.simplify(SIMPLIFICATION_TOLERANCE_MORE, preserve_topology=True)
+    if isinstance(simple, MultiPolygon):
+        return simple
+    elif isinstance(simple, Polygon):
+        return MultiPolygon([simple])
+    else:
+        logger.warning('pfb_analysis.models.simplify_geom failed to simplify')
+        return geom
 
 
 def create_environment(**kwargs):
@@ -240,6 +275,104 @@ class Neighborhood(PFBModel):
         unique_together = ('name', 'state_abbrev', 'organization',)
 
 
+class AnalysisBatchManager(models.Manager):
+
+    def create_from_shapefile(self, shapefile, submit=False, user=None, *args, **kwargs):
+        """ Create a new AnalysisBatch from a well-formatted shapefile.
+
+       shapefile can be one of:
+        - HTTP URL to remote, publicly accessible zip file
+        - local path to zipfile containing shapefile (must end with .zip extension)
+        - local path to unzipped shapefile (must end with .shp extension)
+          - will search for associated files in same dir as the shpfile
+
+        """
+        if not user:
+            user = PFBUser.objects.get_root_user()
+        batch = AnalysisBatch.objects.create(created_by=user, modified_by=user)
+        tmpdir = tempfile.mkdtemp()
+        source = None
+
+        shapefile_input = shapefile
+        try:
+            logger.debug('AnalysisBatch.create_from_shapefile using temp dir: {}'.format(tmpdir))
+
+            if isinstance(shapefile_input, basestring) and os.path.splitext(shapefile_input)[1] == '.zip':
+                # If we need to download the zipped shapefile, do that and update the input path
+                if shapefile_input.startswith('http'):
+                    local_zipfile = os.path.join(tmpdir, 'boundary.zip')
+                    download_file(shapefile_input, local_zipfile)
+                    shapefile_input = local_zipfile
+
+                # Extract the zipfile (whether downloaded or local) and find shp filename
+                local_zipfile = shapefile_input
+                with zipfile.ZipFile(local_zipfile) as zip:
+                    files = zip.namelist()
+                    zip.extractall(tmpdir)
+                    local_shapefile = next(filename
+                                           for filename in files if filename.endswith('.shp'))
+                local_shapefile = os.path.join(tmpdir, local_shapefile)
+                shapefile_input = local_shapefile
+
+            # Open the shapefile
+            if isinstance(shapefile_input, basestring) and os.path.splitext(shapefile_input)[1] == '.shp':
+                source = fiona.open(shapefile_input, 'r')
+            else:
+                raise TypeError('Must provide shapefile to AnalysisBatch.create_from_shapefile')
+
+            for feature in source:
+                city = feature['properties']['city']
+                state = feature['properties']['state']
+                osm_extract_url = feature['properties'].get('osm_url', None)
+                label = city
+                name = Neighborhood.name_for_label(label)
+
+                # Get or create neighborhood for feature
+                neighborhood_dict = {
+                    'name': name,
+                    'label': label,
+                    'state_abbrev': state,
+                    'organization': user.organization,
+                    'created_by': user,
+                    'modified_by': user,
+                }
+                geom = GEOSGeometry(json.dumps(feature['geometry']))
+                try:
+                    neighborhood = Neighborhood.objects.get(**neighborhood_dict)
+                except Neighborhood.DoesNotExist:
+                    neighborhood = Neighborhood(**neighborhood_dict)
+                    logger.info('AnalysisBatch.create_from_shapefile CREATED: {}'
+                                .format(neighborhood))
+
+                neighborhood.set_boundary_file(geom)
+
+                # Create new job
+                job = AnalysisJob.objects.create(neighborhood=neighborhood,
+                                                 batch=batch,
+                                                 osm_extract_url=osm_extract_url,
+                                                 created_by=user,
+                                                 modified_by=user)
+                logger.info('AnalysisBatch.create_from_shapefile ID: {} -- {}'
+                            .format(str(job.uuid), str(job)))
+        except Exception as e:
+            logger.exception(e)
+            # If job creation failed, delete the batch
+            batch.delete()
+            raise
+        finally:
+            logger.debug('AnalysisBatch.create_from_shapefile removing temporary files...')
+            shutil.rmtree(tmpdir, ignore_errors=True)
+            if isinstance(source, file):
+                source.close()
+
+        if submit:
+            logger.info('AnalysisBatch.create_from_shapefile starting all jobs...')
+            batch.submit()
+            logger.info('AnalysisBatch.create_from_shapefile started {} jobs.'
+                        .format(batch.jobs.count()))
+        return batch
+
+
 class AnalysisBatch(PFBModel):
     """ Container for a grouping of AnalysisJobs that are run together
 
@@ -248,6 +381,9 @@ class AnalysisBatch(PFBModel):
     An AnalysisJob does not need to belong to an AnalysisBatch
 
     """
+
+    objects = AnalysisBatchManager()
+
     def __str__(self):
         return '<AnalysisBatch: {} -- {}>'.format(str(self.uuid), self.created_at)
 
@@ -336,13 +472,12 @@ class AnalysisJob(PFBModel):
     neighborhood = models.ForeignKey(Neighborhood,
                                      related_name='analysis_jobs',
                                      on_delete=models.CASCADE)
-    osm_extract_url = models.URLField(max_length=2048, null=True, blank=True,
-                                      help_text='Load OSM data for this neighborhood from ' +
-                                                'a URL rather than pulling from Overpass API. ' +
-                                                'The url must have a .osm file extension and ' +
-                                                'may optionally be compressed via zip/bzip/gz, ' +
-                                                'e.g. http://a.com/foo.osm or ' +
-                                                'http://a.com/foo.osm.bz2')
+    osm_extract_url = models.URLField(max_length=2048, null=True, blank=True, help_text=(
+        'Load OSM data for this neighborhood from a URL rather than pulling from Goefabrik '
+        'extracts. The url must be to an uncompressed OSM file (with .osm extension) or a '
+        'compressed OSM file (with .osm.zip, .osm.gzip, .osm.bz2, or .osm.pbf extension). '
+        'e.g. http://a.com/foo.osm or http://a.com/foo.osm.bz2'
+    ))
     overall_scores = JSONField(db_index=True, default=dict)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
 
@@ -525,6 +660,7 @@ class AnalysisJob(PFBModel):
         # Workaround for not being able to run development jobs on the actual batch cluster:
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':
+            self.update_status(self.Status.QUEUED)
             logger.warn("Can't actually run development analysis jobs on AWS. Try this:"
                         "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
                         "./scripts/run-local-analysis "
