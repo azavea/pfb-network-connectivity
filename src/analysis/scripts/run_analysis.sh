@@ -72,7 +72,11 @@ psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
 SELECT * FROM neighborhood_overall_scores;
 EOF
 
-NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR/output}"
+EXPORT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR/output}"
+if [ -n "${PFB_JOB_ID}" ]
+then
+    EXPORT_DIR="${EXPORT_DIR}/${PFB_JOB_ID}"
+fi
 ./scripts/export_connectivity.sh $NB_OUTPUT_DIR $PFB_JOB_ID
 
 rm -rf "${PFB_TEMPDIR}"
