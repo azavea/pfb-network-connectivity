@@ -58,20 +58,23 @@ else
     PFB_STATE_FIPS="${3}"
     EXTRA_ARGS="${4}"
 
+    AWS_PROFILE="${AWS_PROFILE:-pfb}"
     NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
     NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
     PFB_JOB_ID="${PFB_JOB_ID:-}"
-    PFB_S3_RESULTS_PATH="${PFB_S3_RESULTS_PATH:-results/${PFB_JOB_ID}}"
 
-    if [ "${AWS_PROFILE}" ] && [ "${DEV_USER}" ] && aws iam get-user > /dev/null 2>&1; then
-        AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME:-${DEV_USER}-pfb-storage-us-east-1}"
+    if [ -n "${PFB_JOB_ID}" ] && aws iam get-user > /dev/null 2>&1; then
+        AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME:-${DEV_USER:-dev-user}-pfb-storage-us-east-1}"
+        PFB_S3_RESULTS_PATH="${PFB_S3_RESULTS_PATH:-results/${PFB_JOB_ID}}"
     else
+        echo "WARNING: PFB_JOB_ID or AWS credentials not provided. Results available locally."
         AWS_STORAGE_BUCKET_NAME=""
+        PFB_S3_RESULTS_PATH=""
     fi
 
     docker-compose run $EXTRA_ARGS \
-        -e AWS_PROFILE=pfb \
+        -e AWS_PROFILE="${AWS_PROFILE}" \
         -e AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME}" \
         -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
         -e NB_INPUT_SRID=$NB_INPUT_SRID \
