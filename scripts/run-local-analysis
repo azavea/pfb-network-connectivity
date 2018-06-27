@@ -24,15 +24,15 @@ treated as a URL.
 command, e.g. '-T' to disable pseudo-TTY allocation.
 
 Optional, set them in the environment to override:
-NB_INPUT_SRID (default: 4326)
-NB_MAX_TRIP_DISTANCE (in meters. default: 2680)
-NB_BOUNDARY_BUFFER (in meters. default: half of NB_MAX_TRIP_DISTANCE)
-PFB_OSM_FILE (default: none, downloaded by the analysis job)
-PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
-NB_OUTPUT_DIR (default: /data/output)
 AWS_PROFILE (default: pfb)
 AWS_STORAGE_BUCKET_NAME (default: ${DEV_USER}-pfb-storage-us-east-1)
+NB_BOUNDARY_BUFFER (in meters. default: half of NB_MAX_TRIP_DISTANCE)
+NB_INPUT_SRID (default: 4326)
+NB_MAX_TRIP_DISTANCE (in meters. default: 2680)
+NB_OUTPUT_DIR (default: /data/output)
 PFB_JOB_ID (default: 'local-job-YYYY-MM-DD-HHMM')
+PFB_OSM_FILE (default: none, downloaded by the analysis job)
+PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
 
 EXAMPLES:
 A boulder run with local shapefile and all defaults:
@@ -61,22 +61,28 @@ else
     NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
     NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
-    PFB_JOB_ID="${PFB_JOB_ID:-local-job-`date +%F-%H%M`}"
+    PFB_JOB_ID="${PFB_JOB_ID:-}"
     PFB_S3_RESULTS_PATH="${PFB_S3_RESULTS_PATH:-results/${PFB_JOB_ID}}"
 
+    if [ "${AWS_PROFILE}" ] && [ "${DEV_USER}" ] && aws iam get-user > /dev/null 2>&1; then
+        AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME:-${DEV_USER}-pfb-storage-us-east-1}"
+    else
+        AWS_STORAGE_BUCKET_NAME=""
+    fi
+
     docker-compose run $EXTRA_ARGS \
-        -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
-        -e PFB_SHPFILE=$PFB_SHPFILE \
-        -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
-        -e PFB_OSM_FILE=$PFB_OSM_FILE \
-        -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
+        -e AWS_PROFILE=pfb \
+        -e AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME}" \
+        -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
         -e NB_INPUT_SRID=$NB_INPUT_SRID \
         -e NB_MAX_TRIP_DISTANCE=$NB_MAX_TRIP_DISTANCE \
-        -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
         -e NB_OUTPUT_DIR=$NB_OUTPUT_DIR \
         -e PFB_JOB_ID=$PFB_JOB_ID \
+        -e PFB_OSM_FILE=$PFB_OSM_FILE \
+        -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
         -e PFB_S3_RESULTS_PATH=$PFB_S3_RESULTS_PATH \
-        -e AWS_PROFILE=pfb \
-        -e AWS_STORAGE_BUCKET_NAME="${DEV_USER}-pfb-storage-us-east-1" \
+        -e PFB_SHPFILE=$PFB_SHPFILE \
+        -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
+        -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
         analysis
 fi
