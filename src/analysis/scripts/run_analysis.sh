@@ -2,9 +2,10 @@
 
 set -e
 
-export NB_POSTGRESQL_DB=pfb
-export NB_POSTGRESQL_USER=gis
-export NB_POSTGRESQL_PASSWORD=gis
+export NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-localhost}"
+export NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
+export NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
+export NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 
 # NB_MAX_TRIP_DISTANCE should be in the same units of the NB_OUTPUT_SRID projection
 # Typically meters because we autodetect and use UTM zones
@@ -73,7 +74,7 @@ export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
 ./scripts/run_connectivity.sh
 
 # print scores
-psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
 SELECT * FROM neighborhood_overall_scores;
 EOF
 

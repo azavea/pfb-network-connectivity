@@ -30,6 +30,10 @@ NB_BOUNDARY_BUFFER (in meters. default: half of NB_MAX_TRIP_DISTANCE)
 NB_INPUT_SRID (default: 4326)
 NB_MAX_TRIP_DISTANCE (in meters. default: 2680)
 NB_OUTPUT_DIR (default: /data/output)
+NB_POSTGRESQL_DB (default: pfb)
+NB_POSTGRESQL_HOST (default: localhost)
+NB_POSTGRESQL_PASSWORD (default: gis)
+NB_POSTGRESQL_USER (default: gis)
 PFB_JOB_ID (default: 'local-job-YYYY-MM-DD-HHMM')
 PFB_OSM_FILE (default: none, downloaded by the analysis job)
 PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
@@ -86,6 +90,10 @@ Results available locally at ${NB_OUTPUT_DIR}
         -e NB_INPUT_SRID=$NB_INPUT_SRID \
         -e NB_MAX_TRIP_DISTANCE=$NB_MAX_TRIP_DISTANCE \
         -e NB_OUTPUT_DIR=$NB_OUTPUT_DIR \
+        -e NB_POSTGRESQL_DB \
+        -e NB_POSTGRESQL_HOST \
+        -e NB_POSTGRESQL_PASSWORD \
+        -e NB_POSTGRESQL_USER \
         -e PFB_JOB_ID=$PFB_JOB_ID \
         -e PFB_OSM_FILE=$PFB_OSM_FILE \
         -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \

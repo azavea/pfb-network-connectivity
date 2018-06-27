@@ -2,9 +2,10 @@
 
 set -e
 
-export NB_POSTGRESQL_DB=pfb
-export NB_POSTGRESQL_USER=gis
-export NB_POSTGRESQL_PASSWORD=gis
+export NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-localhost}"
+export NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
+export NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
+export NB_POSTGRESQL_PASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
 
 source "$(dirname $0)"/utils.sh
 
@@ -24,7 +25,8 @@ do
     if grep 'PostgreSQL init process complete' /tmp/postgres_stdout.txt > /dev/null
     then
         set +e
-        psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" -c "SELECT 1" &> /dev/null
+        psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+            -c "SELECT 1" &> /dev/null
         postgresql_status=$?
         set -e
         if [ "$postgresql_status" == "0" ]
