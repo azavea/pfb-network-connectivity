@@ -55,8 +55,13 @@ then
 elif [ ! "${PFB_OSM_FILE}" ] || [ ! -f "${PFB_OSM_FILE}" ]
 then
     echo "Downloading OSM extract"
-    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $PFB_TEMPDIR \
-                                                      $PFB_STATE $AWS_STORAGE_BUCKET_NAME)"
+    if [ -n "${AWS_STORAGE_BUCKET_NAME}" ]
+    then
+        BUCKET_ARG="--storage_bucket ${AWS_STORAGE_BUCKET_NAME}"
+    else
+        BUCKET_ARG=""
+    fi
+    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $BUCKET_ARG $PFB_TEMPDIR $PFB_STATE)"
 fi
 
 # run job
@@ -77,7 +82,7 @@ if [ -n "${PFB_JOB_ID}" ]
 then
     EXPORT_DIR="${EXPORT_DIR}/${PFB_JOB_ID}"
 fi
-./scripts/export_connectivity.sh $NB_OUTPUT_DIR $PFB_JOB_ID
+./scripts/export_connectivity.sh $EXPORT_DIR
 
 rm -rf "${PFB_TEMPDIR}"
 
