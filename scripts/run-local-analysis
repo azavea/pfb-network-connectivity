@@ -83,7 +83,7 @@ Results available locally at ${NB_OUTPUT_DIR}
         PFB_S3_RESULTS_PATH=""
     fi
 
-    docker-compose run $EXTRA_ARGS \
+    docker run $EXTRA_ARGS \
         -e AWS_PROFILE="${AWS_PROFILE}" \
         -e AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME}" \
         -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
@@ -101,5 +101,5 @@ Results available locally at ${NB_OUTPUT_DIR}
         -e PFB_SHPFILE=$PFB_SHPFILE \
         -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
         -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
-        analysis
+        pfb-analysis
 fi
