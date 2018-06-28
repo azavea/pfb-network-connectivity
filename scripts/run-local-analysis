@@ -23,6 +23,10 @@ treated as a URL.
 'extra args' should be a string that will be fed through to the `docker-compose run`
 command, e.g. '-T' to disable pseudo-TTY allocation.
 
+The `NB_POSTGRESQL_*` variables can point to a remote DB instance. Be sure you've
+properly configured the remote DB as described in README.LOCAL-ANALYSIS.md. Use of a
+remote DB is not supported if PFB_JOB_ID is set.
+
 Optional, set them in the environment to override:
 AWS_PROFILE (default: pfb)
 AWS_STORAGE_BUCKET_NAME (default: ${DEV_USER}-pfb-storage-us-east-1)

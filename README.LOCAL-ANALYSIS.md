@@ -76,6 +76,42 @@ here's a table of the environment variables that can be set to affect the analyi
 | AWS_PROFILE | The name of the AWS profile, configured in `~/.aws` to use for uploading to S3. This can also be left unset, and the analysis run will ignore attempts to interface with AWS if no valid profile + credentials are found. | pfb |
 | PFB_JOB_ID | The job ID of an AnalysisJob triggered from Django. This should be left unset if you're running local jobs not managed by the Django dev stack. | '' |
 
+## Targeting a remote database
+
+`./scripts/run-local-analysis` supports running the analysis against a remote PostgreSQL database
+cluster, as long as the appropriate requirements are satisified. It is up to the user to ensure
+that this is the case.
+
+If the requirements below are satisified, a bike network analysis can be run against the remote DB
+using the `NB_POSTGRESQL_*` variables documented in `./scripts/run-local-analysis`. For example:
+```
+NB_OUTPUT_DIR=/data/output/germantown-remote-db \
+NB_POSTGRESQL_DB=remote_db_name \
+NB_POSTGRESQL_HOST=remote_db_host \
+NB_POSTGRESQL_USER=remote_db_user \
+NB_POSTGRESQL_PASSWORD=remote_db_password \
+    ./scripts/run-local-analysis \
+    'https://andrew-pfb-storage-us-east-1.s3.amazonaws.com/neighborhood_boundaries/root/PA/germantown-philadelphia.zip' PA 42
+```
+
+### Requirements
+
+- PostgreSQL 9.6+
+- PostGIS 2.3+
+- Extensions installed:
+  - [PostGIS](http://postgis.net/)
+  - [pgRouting](http://pgrouting.org/)
+  - [quantile](https://github.com/tvondra/quantile)
+  - uuid-ossp
+  - hstore
+  - plpythonu
+- Schemas created in NB_POSTGRESQL_DB with permission for NB_POSTGRESQL_USER to use them.
+  In addition, these schemas must be added to the user's `search_path`:
+  - `CREATE SCHEMA IF NOT EXISTS generated AUTHORIZATION ${NB_POSTGRESQL_USER};`
+  - `CREATE SCHEMA IF NOT EXISTS received AUTHORIZATION ${NB_POSTGRESQL_USER};`
+  - `CREATE SCHEMA IF NOT EXISTS scratch AUTHORIZATION ${NB_POSTGRESQL_USER};`
+  - `ALTER USER ${NB_POSTGRESQL_USER} SET search_path TO generated,received,scratch,"\$user",public;`
+
 ## Running sample neighborhoods
 
 Azavea/PFB created a few sample OSM and boundary files that can be used for testing.
