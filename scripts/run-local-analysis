@@ -38,7 +38,7 @@ NB_POSTGRESQL_DB (default: pfb)
 NB_POSTGRESQL_HOST (default: localhost)
 NB_POSTGRESQL_PASSWORD (default: gis)
 NB_POSTGRESQL_USER (default: gis)
-PFB_JOB_ID (default: 'local-job-YYYY-MM-DD-HHMM')
+PFB_JOB_ID (default: none, local-only results)
 PFB_OSM_FILE (default: none, downloaded by the analysis job)
 PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
 
