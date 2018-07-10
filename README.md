@@ -18,18 +18,17 @@ Requirements:
 
 #### Notes for non-Windows users
 
-1. An NFS daemon must be running on the host machine. This should be enabled by default on MacOS. Linux computers may require the installation of an additional
-package such as nfs-kernel-server on Ubuntu.
+1. An NFS daemon must be running on the host machine. This should be enabled by default on MacOS. Linux computers may require the installation of an additional package such as nfs-kernel-server on Ubuntu.
 
 ### Setting up AWS credentials
+
+**Note:** If you do not have AWS credentials, this step can be skipped if you just want to run local analyses.
+Continue below at [Provisioning the VM](#provisioning-the-vm)
 
 As noted above, ensure the AWS CLI is installed on your host machine. Once it is, you can configure your PFB account credentials by running:
 ```
 aws configure --profile pfb
 ```
-
-If you do not have AWS credentials, this step can be skipped but some application services may not
-work as intended.
 
 ### Provisioning the VM
 
@@ -37,16 +36,18 @@ First you'll need to copy the example ansible group_vars file:
 ```
 cp deployment/ansible/group_vars/all.example deployment/ansible/group_vars/all
 ```
-If you have access to the AWS console, copy the appropriate values at the links below into `deployment/ansible/group_vars/all`, choosing the resources with 'staging' in the name:
+
+If you want to run the full development application and you've configured AWS credentials, copy the appropriate values at the links below into `deployment/ansible/group_vars/all`, choosing the resources with 'staging' in the name:
 - [AWS Batch Job Queues](https://console.aws.amazon.com/batch/home?region=us-east-1#/queues): Copy the staging `analysis` and `tilemaker` job queue names to the appropriate equivalent group var setting.
-If you don't have access to the console, copying the values into `group_vars/all` can be skipped. Like above, some features of the application may fail unexpectedly.
+
+If you don't have access to the console, or just want to run a local analysis, copying the values into `group_vars/all` can be skipped.
 
 Run `./scripts/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
 ```
 vagrant ssh
 ```
 
-Once in the VM, with your AWS credentials configured, run the following commands to configure your development S3 buckets:
+Once in the VM, if you added AWS credentials above, run the following commands to configure your development S3 buckets:
 ```
 aws s3api create-bucket --bucket "${DEV_USER}-pfb-storage-us-east-1"
 aws s3api put-bucket-policy --bucket "${DEV_USER}-pfb-storage-us-east-1" --policy "{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::${DEV_USER}-pfb-storage-us-east-1/*\"}]}"
@@ -93,7 +94,7 @@ systems+pfb@azavea.com / root
 
 ## Running the Analysis
 
-See [Running the Analysis Locally](README.RUNNING.md).
+See [Running the Analysis Locally](README.LOCAL-ANALYSIS.md).
 
 
 ## Verifying the Analysis

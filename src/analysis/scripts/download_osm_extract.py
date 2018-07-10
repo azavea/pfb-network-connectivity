@@ -18,6 +18,7 @@ import sys
 from time import sleep
 
 import boto3
+from botocore.exceptions import ProfileNotFound
 import requests
 import us
 
@@ -34,7 +35,10 @@ S3_KEY_TEMPLATE = "osm-data-cache/{}"
 LOCKFILE_POLLING_INTERVAL = 60  # in seconds. File size ranges from 8.8MB (RI) to 822MB (CA)
 LOCKFILE_POLLING_ATTEMPTS = 21  # One is immediate, so total timeout is interval * (attempts - 1)
 
-S3_CLIENT = boto3.client('s3')
+try:
+    S3_CLIENT = boto3.client('s3')
+except ProfileNotFound as e:
+    S3_CLIENT = None
 
 
 def compose_lockfile_key(state_abbrev):
@@ -144,7 +148,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("local_dir", help="The directory to put downloaded OSM extract files in")
     parser.add_argument("state_abbrev", help="state abbreviation")
-    parser.add_argument("storage_bucket", help="S3 storage bucket")
+    parser.add_argument("--storage_bucket", default=None, help="S3 storage bucket")
     parser.add_argument('--verbose', '-v', action="store_true")
     args = parser.parse_args()
 
@@ -155,6 +159,15 @@ def main():
         logger.setLevel('DEBUG')
     else:
         logger.setLevel('INFO')
+
+    # Shortcut and do a direct geofabrik download if we don't have AWS configured
+    # or a bucket provided
+    if S3_CLIENT is None or bucket is None:
+        logger.debug('Shortcut direct Geofabrik download: S3_CLIENT={}, bucket={}'
+                     .format(str(S3_CLIENT), bucket))
+        osm_extract_filepath = download_from_geofabrik(local_dir, state_abbrev)
+        print osm_extract_filepath
+        return
 
     # First try to download the file, since that's all we ultimately want to accomplish
     osm_extract_filepath = download_from_s3(local_dir, state_abbrev, bucket)

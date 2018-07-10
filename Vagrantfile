@@ -44,6 +44,9 @@ Vagrant.configure("2") do |config|
     s.args = "'#{ROOT_VM_DIR}'"
   end
 
+  # Upgrade ssl-related packages so that Ansible will install
+  config.vm.provision "shell", inline: 'pip install urllib3 pyopenssl ndg-httpsclient pyasn1'
+
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "deployment/ansible/pfb.yml"
     ansible.galaxy_role_file = "deployment/ansible/roles.yml"

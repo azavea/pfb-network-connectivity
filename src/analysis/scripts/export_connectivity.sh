@@ -16,11 +16,11 @@ NB_POSTGRESQL_PORT="${NB_POSTGRESQL_PORT:-5432}"
 function ec_usage() {
     echo -n \
 "
-Usage: $(basename "$0") <local_directory> <job_id>
+Usage: $(basename "$0") <local_directory>
 
 Export data from a successful run of the PeopleForBikes Network Analysis.
-Writes to <local_directory> and, if AWS_STORAGE_BUCKET_NAME is set,
-uploads to S3 at {AWS_STORAGE_BUCKET_NAME}/{job_id}.
+Writes to <local_directory>, if AWS_STORAGE_BUCKET_NAME + PFB_S3_RESULTS_PATH is set,
+uploads to S3 at {AWS_STORAGE_BUCKET_NAME}/{PFB_S3_RESULTS_PATH}.
 
 <local_directory> must be an absolute path (pgsql COPY doesn't support relative paths)
 
@@ -35,6 +35,7 @@ Optional ENV vars:
 
 AWS_STORAGE_BUCKET_NAME
 AWS_PROFILE (necessary for using S3 in local development)
+PFB_S3_RESULTS_PATH
 
 NB_POSTGRESQL_HOST - Default: 127.0.0.1
 NB_POSTGRESQL_DB - Default: pfb
@@ -106,14 +107,13 @@ then
     if [ "${1}" = "--help" ]
     then
         ec_usage
-    elif [ -z "${1}" ] || [ -z "${2}" ]
+    elif [ -z "${1}" ]
     then
         ec_usage
         exit 1
     else
         NB_OUTPUT_DIR="${1}"
-        JOB_ID="${2}"
-        OUTPUT_DIR="${NB_OUTPUT_DIR}/${JOB_ID}"
+        OUTPUT_DIR="${NB_OUTPUT_DIR}"
         echo "Exporting analysis to ${OUTPUT_DIR}"
         update_status "EXPORTING" "Exporting results"
         mkdir -p "${OUTPUT_DIR}"
@@ -162,7 +162,7 @@ then
         # Send overall_scores to Django app
         update_overall_scores "${OUTPUT_DIR}/neighborhood_overall_scores.csv"
 
-        if [ -v AWS_STORAGE_BUCKET_NAME ]
+        if [ -n "${AWS_STORAGE_BUCKET_NAME}" ] && [ -n "${PFB_S3_RESULTS_PATH}" ]
         then
           sync  # Probably superfluous, but the s3 command said "file changed while reading" once
           update_status "EXPORTING" "Uploading results"
