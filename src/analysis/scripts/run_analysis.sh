@@ -81,6 +81,8 @@ EXPORT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR/output}"
 if [ -n "${PFB_JOB_ID}" ]
 then
     EXPORT_DIR="${EXPORT_DIR}/${PFB_JOB_ID}"
+else
+    EXPORT_DIR="${EXPORT_DIR}/local-analysis-`date +%F-%H%M`"
 fi
 ./scripts/export_connectivity.sh $EXPORT_DIR
 
