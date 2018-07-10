@@ -91,7 +91,7 @@ NB_POSTGRESQL_HOST=remote_db_host \
 NB_POSTGRESQL_USER=remote_db_user \
 NB_POSTGRESQL_PASSWORD=remote_db_password \
     ./scripts/run-local-analysis \
-    'https://andrew-pfb-storage-us-east-1.s3.amazonaws.com/neighborhood_boundaries/root/PA/germantown-philadelphia.zip' PA 42
+    'https://s3.amazonaws.com/test-pfb-inputs/germantown/gtown_westside.zip' PA 42
 ```
 
 ### Requirements
