@@ -45,6 +45,11 @@ Vagrant.configure("2") do |config|
   end
 
   # Upgrade ssl-related packages so that Ansible will install
+  # If this provisioner is no longer necessary, the install_pip.sh provisioner can be removed
+  # as well.
+  # We need to pre-install pip manually since it isn't installed until the ansible_local
+  # provisioner runs.
+  config.vm.provision "shell", path: 'deployment/vagrant/install_pip.sh'
   config.vm.provision "shell", inline: 'pip install urllib3 pyopenssl ndg-httpsclient pyasn1'
 
   config.vm.provision "ansible_local" do |ansible|
