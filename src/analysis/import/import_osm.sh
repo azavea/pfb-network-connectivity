@@ -14,6 +14,7 @@ NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
 NB_SIGCTL_SEARCH_DIST="${NB_SIGCTL_SEARCH_DIST:-25}"    # max search distance for intersection controls
 NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
+PFB_STATE_FIPS="${PFB_STATE_FIPS}"
 
 # drop old tables
 echo 'Dropping old tables'
@@ -145,6 +146,25 @@ osm2pgsql \
 # Delete downloaded temp OSM data
 rm -rf "${OSM_TEMPDIR}"
 
+# Create table from csv for state residential speeds
+echo 'START: Importing State Default Speed Table'
+psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
+     -c "CREATE TABLE IF NOT EXISTS \"state_speed\" (
+            state char(2),
+            fips_code_state smallint,
+            speed smallint
+        );"
+
+# Import state residential speeds file
+STATE_SPEED_FILENAME="/data/state_fips_speed"
+psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
+   -c "\copy state_speed FROM ${STATE_SPEED_FILENAME}.csv delimiter ',' csv header"
+
+# Set default residential speed for state
+STATE_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
+      -t -c "SELECT state_speed.speed FROM state_speed WHERE state_speed.fips_code_state = ${PFB_STATE_FIPS}" )
+echo "DONE: Importing state default residential speed"
+
 # move the full osm tables to the received schema
 echo 'Moving tables to received schema'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
@@ -205,9 +225,10 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
     -f ../stress/stress_segments_higher_order.sql
 # residential
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-    -v class=residential -v default_speed=25 -v default_lanes=1 \
+    -v class=residential -v default_lanes=1 \
     -v default_parking=1 -v default_roadway_width=27 \
-    -f ../stress/stress_segments_lower_order.sql
+    -v state_default="${STATE_DEFAULT}" \
+    -f ../stress/stress_segments_lower_order_res.sql
 # unclassified
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
     -v class=unclassified -v default_speed=25 -v default_lanes=1 \
