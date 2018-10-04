@@ -146,7 +146,7 @@ osm2pgsql \
 # Delete downloaded temp OSM data
 rm -rf "${OSM_TEMPDIR}"
 
-# Create table from csv for state residential speeds
+# Create table for state residential speeds
 echo 'START: Importing State Default Speed Table'
 psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
      -c "CREATE TABLE IF NOT EXISTS \"state_speed\" (
@@ -156,9 +156,11 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
         );"
 
 # Import state residential speeds file
-STATE_SPEED_FILENAME="/data/state_fips_speed"
+STATE_SPEED_FILENAME="state_fips_speed"
+STATE_SPEED_DOWNLOAD="/data/${STATE_SPEED_FILENAME}.csv"
+wget -nv -O "${STATE_SPEED_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/${STATE_SPEED_FILENAME}.csv"
 psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
-   -c "\copy state_speed FROM ${STATE_SPEED_FILENAME}.csv delimiter ',' csv header"
+   -c "\copy state_speed FROM ${STATE_SPEED_DOWNLOAD} delimiter ',' csv header"
 
 # Set default residential speed for state
 STATE_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \

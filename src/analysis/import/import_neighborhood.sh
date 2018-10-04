@@ -97,9 +97,10 @@ then
         );"
 
         # Import water file
-        WATER_FILENAME="censuswaterblocks2010"
-        WATER_ZIP="/data/censuswaterblocks2010.zip"
-        unzip "${WATER_ZIP}" -d "${NB_TEMPDIR}"
+        WATER_FILENAME="censuswaterblocks"
+        WATER_DOWNLOAD="${NB_TEMPDIR}/${WATER_FILENAME}.zip"
+        wget -nv -O "${WATER_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/censuswaterblocks.zip"
+        unzip "${WATER_DOWNLOAD}" -d "${NB_TEMPDIR}"
         psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
              -c "\copy water_blocks FROM ${NB_TEMPDIR}/${WATER_FILENAME}.csv delimiter ',' csv header"
         echo "DONE: Importing water blocks"
