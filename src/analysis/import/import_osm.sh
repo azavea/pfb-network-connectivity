@@ -15,6 +15,7 @@ NB_SIGCTL_SEARCH_DIST="${NB_SIGCTL_SEARCH_DIST:-25}"    # max search distance fo
 NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
 PFB_STATE_FIPS="${PFB_STATE_FIPS}"
+PFB_CITY_FIPS="${PFB_CITY_FIPS:-0}"
 
 # drop old tables
 echo 'Dropping old tables'
@@ -167,6 +168,35 @@ STATE_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTG
       -t -c "SELECT state_speed.speed FROM state_speed WHERE state_speed.fips_code_state = ${PFB_STATE_FIPS}" )
 echo "DONE: Importing state default residential speed"
 
+# Create table for city residential speeds
+echo 'START: Importing City Default Speed Table'
+psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
+     -c "CREATE TABLE IF NOT EXISTS \"city_speed\" (
+            city varchar,
+            state char(2),
+            fips_code_city integer,
+            speed smallint
+        );"
+
+# Import city residential speeds file
+CITY_SPEED_FILENAME="city_fips_speed"
+CITY_SPEED_DOWNLOAD="/data/${CITY_SPEED_FILENAME}.csv"
+wget -nv -O "${CITY_SPEED_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/${CITY_SPEED_FILENAME}.csv"
+psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
+   -c "\copy city_speed FROM ${CITY_SPEED_DOWNLOAD} delimiter ',' csv header"
+
+# Set default residential speed for city
+CITY_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
+      -t -c "SELECT city_speed.speed FROM city_speed WHERE city_speed.fips_code_city = ${PFB_CITY_FIPS}" )
+# Check if no value for city default, if so set to NULL
+echo "The city residential default speed is ${CITY_DEFAULT}."
+if [[ -z "$CITY_DEFAULT" ]];
+then
+  echo "No default residential speed in city"
+  CITY_DEFAULT=NULL
+fi
+echo "DONE: Importing city default residential speed"
+
 # move the full osm tables to the received schema
 echo 'Moving tables to received schema'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
@@ -229,7 +259,7 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
     -v class=residential -v default_lanes=1 \
     -v default_parking=1 -v default_roadway_width=27 \
-    -v state_default="${STATE_DEFAULT}" \
+    -v state_default="${STATE_DEFAULT}" -v city_default="${CITY_DEFAULT}" \
     -f ../stress/stress_segments_lower_order_res.sql
 # unclassified
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
