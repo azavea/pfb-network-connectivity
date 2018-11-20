@@ -94,7 +94,10 @@ systems+pfb@azavea.com / root
 
 ## Running the Analysis
 
-See [Running the Analysis Locally](README.LOCAL-ANALYSIS.md).
+On creating a local anaylsis job in the admin UI, the Django logs will print the appropriate commands
+to run in the VM console to actually run the analysis and tiling jobs locally.
+
+See [Running the Analysis Locally](README.LOCAL-ANALYSIS.md) for details.
 
 
 ## Verifying the Analysis
