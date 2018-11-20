@@ -11,7 +11,7 @@ import uuid
 import zipfile
 
 from django.conf import settings
-from django.contrib.gis.db.models import MultiPolygonField, PointField
+from django.contrib.gis.db.models import MultiLineStringField, MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
@@ -481,7 +481,7 @@ class AnalysisJob(PFBModel):
     overall_scores = JSONField(db_index=True, default=dict)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
 
-    neighborhood_ways_geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    neighborhood_ways_geom = MultiLineStringField(srid=4326, blank=True, null=True)
     census_blocks_geom = MultiPolygonField(srid=4326, blank=True, null=True)
 
     analysis_job_definition = models.CharField(max_length=50, default=generate_analysis_job_def)
@@ -493,7 +493,6 @@ class AnalysisJob(PFBModel):
     status = models.CharField(choices=Status.CHOICES, max_length=12, default=Status.CREATED)
 
     objects = AnalysisJobManager()
-
 
     @property
     def batch_job_status(self):

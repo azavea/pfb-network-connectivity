@@ -21,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='analysisjob',
             name='neighborhood_ways_geom',
-            field=django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=4326),
+            field=django.contrib.gis.db.models.fields.MultiLineStringField(blank=True, null=True, srid=4326),
         ),
     ]
