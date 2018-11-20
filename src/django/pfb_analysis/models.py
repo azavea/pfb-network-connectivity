@@ -481,6 +481,9 @@ class AnalysisJob(PFBModel):
     overall_scores = JSONField(db_index=True, default=dict)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
 
+    neighborhood_ways_geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    census_blocks_geom = MultiPolygonField(srid=4326, blank=True, null=True)
+
     analysis_job_definition = models.CharField(max_length=50, default=generate_analysis_job_def)
     _analysis_job_name = models.CharField(max_length=50, default='')
     tilemaker_job_definition = models.CharField(max_length=50, default=generate_tilemaker_job_def)
