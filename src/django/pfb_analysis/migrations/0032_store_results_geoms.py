@@ -57,11 +57,16 @@ def geom_from_tile_url(shapefile_key):
     return geom
 
 
+def s3_job_url(job, filename):
+    return 'results/{uuid}/{filename}'.format(uuid=job.uuid, filename=filename)
+
+
 def add_results_geoms(apps, schema_editor):
     AnalysisJob = apps.get_model('pfb_analysis', 'AnalysisJob')
     for job in AnalysisJob.objects.all():
-        job.neighborhood_ways_geom = geom_from_tile_url('neighborhood_ways.zip')
-        job.census_blocks_geom = geom_from_tile_url('neighborhood_census_blocks.zip')
+        job.neighborhood_ways_geom = geom_from_tile_url(s3_job_url(job, 'neighborhood_ways.zip'))
+        job.census_blocks_geom = geom_from_tile_url(s3_job_url(job,
+                                                               'neighborhood_census_blocks.zip'))
         job.save()
 
 
