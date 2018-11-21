@@ -57,11 +57,13 @@ def geom_from_results_url(shapefile_key):
                         polygons.append(gg)
 
             geom = geos.MultiPolygon(polygons)
-            if not geom.valid:
-                geom = geom.buffer(0)  # Fix any self-intersections
-                # In case simplification changed the type, make it multi again
-                if type(geom) == geos.Polygon:
-                    geom = geos.MultiPolygon([geom, ])
+            # FIXME: multipolygons are invalid due to self-intersection, but
+            # correcting results in geometry collection and not a multi type.
+            # if not geom.valid:
+            #     geom = geom.buffer(0)  # Fix any self-intersections
+            #     # In case simplification changed the type, make it multi again
+            #     if type(geom) == geos.Polygon:
+            #         geom = geos.MultiPolygon([geom, ])
     except:
         geom = None
         logger.exception('ERROR: {}'.format(str(shapefile_key)))
