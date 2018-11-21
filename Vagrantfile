@@ -8,9 +8,9 @@ PFB_SHARED_FOLDER_TYPE = ENV.fetch("PFB_SHARED_FOLDER_TYPE", "nfs")
 
 if PFB_SHARED_FOLDER_TYPE == "nfs"
   if Vagrant::Util::Platform.linux? then
-    PFB_MOUNT_OPTIONS = ['rw', 'vers=4', 'tcp', 'nolock']
+    PFB_MOUNT_OPTIONS = ['rw', 'vers=3', 'tcp', 'nolock', 'actimeo=1']
   else
-    PFB_MOUNT_OPTIONS = ['vers=3', 'udp']
+    PFB_MOUNT_OPTIONS = ['vers=3', 'udp', 'actimeo=1']
   end
 else
   if ENV.has_key?("PFB_MOUNT_OPTIONS")
