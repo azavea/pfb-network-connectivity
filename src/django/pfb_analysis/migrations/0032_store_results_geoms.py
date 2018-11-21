@@ -41,23 +41,24 @@ def geom_from_results_url(shapefile_key):
         shp_filename = os.path.join(tmpdir, shpfiles[0])
         datasource = DataSource(shp_filename)
         layer = datasource[0]
-        geoms = layer.get_geoms()
+        geoms = layer.get_geoms(geos=True)
 
         # Make multi type geometry from collection of simple types
-        if type(geoms[0]) == geometries.LineString:
-            geom = geos.MultiLineString([geos.LineString(g.coords) for g in geoms])
+        if type(geoms[0]) == geos.LineString:
+            geom = geos.MultiLineString(geoms)
         else:
             # Make a multipolygon from the collection of geometries provided.
-            multipolygons = []
-            polygons = [geos.GEOSGeometry(x.geojson) if type(x) == geometries.Polygon else
-                        multipolygons.append(x) for x in geoms]
-            # Explode the nested multipolygons in the collection of polygons and multipolygons.
-            polygons += [geos.GEOSGeometry(x.geojson) for polys in multipolygons for x in polys]
-            # Filter out any sub-polygons that failed to convert
-            polygons = [poly for poly in polygons if poly is not None]
+            polygons = []
+            for g in geoms:
+                if type(g) == geos.Polygon:
+                    polygons.append(g)
+                else:
+                    for gg in g:
+                        polygons.append(gg)
+
             geom = geos.MultiPolygon(polygons)
             if not geom.valid:
-                geom = geom.simplify()  # Fix any self-intersections
+                geom = geom.buffer(0)  # Fix any self-intersections
                 # In case simplification changed the type, make it multi again
                 if type(geom) == geos.Polygon:
                     geom = geos.MultiPolygon([geom, ])
