@@ -12,9 +12,7 @@ import boto3
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-# gdal importer geometries are gdal.geometries types; Django uses gis.geos types for models
-from django.contrib.gis.gdal import geometries
-from django.contrib.gis import geos
+from django.contrib.gis.geos import LineString, MultiLineString, MultiPolygon, Polygon
 from django.db import migrations
 
 logger = logging.getLogger(__name__)
@@ -44,19 +42,19 @@ def geom_from_results_url(shapefile_key):
         geoms = layer.get_geoms(geos=True)
 
         # Make multi type geometry from collection of simple types
-        if type(geoms[0]) == geos.LineString:
-            geom = geos.MultiLineString(geoms)
+        if type(geoms[0]) == LineString:
+            geom =MultiLineString(geoms)
         else:
             # Make a multipolygon from the collection of geometries provided.
             polygons = []
             for g in geoms:
-                if type(g) == geos.Polygon:
+                if type(g) == Polygon:
                     polygons.append(g)
                 else:
                     for gg in g:
                         polygons.append(gg)
 
-            geom = geos.MultiPolygon(polygons)
+            geom = MultiPolygon(polygons)
     except:
         geom = None
         logger.exception('ERROR: {}'.format(str(shapefile_key)))
