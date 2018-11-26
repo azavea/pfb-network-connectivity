@@ -11,7 +11,7 @@ import uuid
 import zipfile
 
 from django.conf import settings
-from django.contrib.gis.db.models import MultiLineStringField, MultiPolygonField, PointField
+from django.contrib.gis.db.models import LineStringField, MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
@@ -481,9 +481,6 @@ class AnalysisJob(PFBModel):
     overall_scores = JSONField(db_index=True, default=dict)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
 
-    neighborhood_ways_geom = MultiLineStringField(srid=4326, blank=True, null=True)
-    census_blocks_geom = MultiPolygonField(srid=4326, blank=True, null=True)
-
     analysis_job_definition = models.CharField(max_length=50, default=generate_analysis_job_def)
     _analysis_job_name = models.CharField(max_length=50, default='')
     tilemaker_job_definition = models.CharField(max_length=50, default=generate_tilemaker_job_def)
@@ -758,6 +755,29 @@ class AnalysisJob(PFBModel):
             path=self.s3_results_path,
             filename=filename,
         )
+
+
+class NeighborhoodWaysResults(PFBModel):
+    geom = LineStringField(srid=4326, blank=True, null=True)
+    job = models.ForeignKey(AnalysisJob,
+                            related_name='neighborhood_way_results',
+                            on_delete=models.CASCADE)
+
+    tf_seg_str = models.BooleanField(default=False)
+    ft_seg_str = models.BooleanField(default=False)
+    xwalk = models.BooleanField(default=False)
+    ft_bike_in = models.CharField(blank=True, null=True, max_length=20)
+    tf_bike_in = models.CharField(blank=True, null=True, max_length=20)
+    functional = models.CharField(blank=True, null=True, max_length=20)
+
+
+class CensusBlocksResults(PFBModel):
+    geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    job = models.ForeignKey(AnalysisJob,
+                            related_name='census_block_results',
+                            on_delete=models.CASCADE)
+
+    overall_score = models.FloatField(blank=True, null=True)
 
 
 class AnalysisJobStatusUpdate(models.Model):
