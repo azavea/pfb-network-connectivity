@@ -11,7 +11,7 @@ import uuid
 import zipfile
 
 from django.conf import settings
-from django.contrib.gis.db.models import MultiPolygonField, PointField
+from django.contrib.gis.db.models import LineStringField, MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
@@ -491,7 +491,6 @@ class AnalysisJob(PFBModel):
 
     objects = AnalysisJobManager()
 
-
     @property
     def batch_job_status(self):
         """ Return current AWS Batch job status for this job
@@ -756,6 +755,41 @@ class AnalysisJob(PFBModel):
             path=self.s3_results_path,
             filename=filename,
         )
+
+
+class NeighborhoodWaysResults(models.Model):
+    """ Stores geometries and results from the neighborhood ways shapefile.
+
+    """
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    geom = LineStringField(srid=4326, blank=True, null=True)
+    job = models.ForeignKey(AnalysisJob,
+                            related_name='neighborhood_way_results',
+                            on_delete=models.CASCADE,
+                            null=True,
+                            blank=True)
+
+    tf_seg_str = models.PositiveSmallIntegerField(blank=True, null=True)
+    ft_seg_str = models.PositiveSmallIntegerField(blank=True, null=True)
+    xwalk = models.PositiveSmallIntegerField(blank=True, null=True)
+    ft_bike_in = models.CharField(blank=True, null=True, max_length=20)
+    tf_bike_in = models.CharField(blank=True, null=True, max_length=20)
+    functional = models.CharField(blank=True, null=True, max_length=20)
+
+
+class CensusBlocksResults(models.Model):
+    """ Stores geometries and results from the Census blocks shapefile.
+
+    """
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    job = models.ForeignKey(AnalysisJob,
+                            related_name='census_block_results',
+                            on_delete=models.CASCADE,
+                            null=True,
+                            blank=True)
+
+    overall_score = models.FloatField(blank=True, null=True)
 
 
 class AnalysisJobStatusUpdate(models.Model):
