@@ -10,6 +10,7 @@ import boto3
 
 from django.conf import settings
 from django.contrib.gis.utils import LayerMapping
+from django.core.exceptions import ValidationError
 
 from pfb_analysis.models import AnalysisJob, CensusBlocksResults, NeighborhoodWaysResults
 
@@ -84,17 +85,26 @@ def add_results_geoms(job):
 
 
 class Command(BaseCommand):
-    help = "Import back results and geometries from exported shapefiles for an analysis job"
+    help = """Import back results and geometries from exported shapefiles for an analysis job.
+
+    If job UUID not specified, will run for all analysis jobs.
+    """
 
     def add_arguments(self, parser):
         # Positional arguments
-        parser.add_argument('job_id')
+        parser.add_argument('job_id', nargs='?')
 
     def handle(self, *args, **options):
         try:
-            job = AnalysisJob.objects.get(pk=options['job_id'])
-        except (AnalysisJob.DoesNotExist, ValueError, KeyError):
-            print('WARNING: Tried to re-import results for invalid job {job_id} '
-                  '(to {status} {step})'.format(**options))
-        else:
-            add_results_geoms(job)
+            job_id = options['job_id']
+            if job_id:
+                job = AnalysisJob.objects.get(pk=job_id)
+                logger.info('Running import for analysis job {job_id}.'.format(job_id=job.uuid))
+                add_results_geoms(job)
+            else:
+                logger.info('Running import for all analysis jobs.')
+                for job in AnalysisJob.objects.all():
+                    add_results_geoms(job)
+        except (AnalysisJob.DoesNotExist, ValueError, KeyError, ValidationError):
+            logger.exception('ERROR: Tried to re-import results for invalid job UUID '
+                             '{job_id}'.format(**options))
