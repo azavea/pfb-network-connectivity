@@ -13,14 +13,9 @@ fs.readFile(process.argv[2], 'utf-8', function (err, out) {
     else {
         const templated = out.replace(
             /\$\{([a-z0-9_]+)\}/gi,
-            (_, envName) => {
-                const varName = `${envPrefix}${envName}`
-                return `"${process.env[varName]}"`
-            },
+            (_, envName) => `"${process.env[envName]}"`
         )
 
         process.stdout.write(templated)
     }
 })
-
-
