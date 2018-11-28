@@ -9,7 +9,9 @@ const mapnik = require('mapnik')
 const path = require('path')
 const aws = require('aws-sdk')
 
-const { readFile } = require('./util/fs-promise')
+const { promisify } = require('util')
+const readFile = promisify(require('fs').readFile)
+
 const filterVisibleLayers = require('./util/layer-filter')
 const bbox = require('./util/bounding-box')
 const HTTPError = require('./util/error-builder')
