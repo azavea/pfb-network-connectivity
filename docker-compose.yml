@@ -99,3 +99,23 @@ services:
       - PFB_JOB_ID
       - PFB_S3_RESULTS_PATH
       - PFB_S3_TILES_PATH
+
+  tilegarden:
+    image: pfb-tilegarden
+    extends:
+      service: django
+      file: common.yml
+    build:
+      context: ./src/tilegarden
+      dockerfile: Dockerfile
+    links:
+      - database:database.service.pfb.internal
+    ports:
+      - "9400:3000"
+      - "9401:9229"
+    volumes:
+      # Can't just link src/tilegarden because that makes node_modules disappear
+      - ./src/tilegarden/src:/opt/pfb/tilegarden/src
+      - ./src/tilegarden/scripts:/opt/pfb/tilegarden/scripts
+      - ./src/tilegarden/tests:/opt/pfb/tilegarden/tests
+      - ./src/tilegarden/package.json:/opt/pfb/tilegarden/package.json
