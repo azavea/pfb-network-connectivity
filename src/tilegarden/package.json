@@ -37,7 +37,7 @@
   "devDependencies": {
     "bunyan": "^1.8.12",
     "claudia": "^5.0.1",
-    "claudia-local-api": "https://github.com/mattdelsordo/claudia-local-api.git",
+    "claudia-local-api": "https://github.com/azavea/claudia-local-api.git",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.12.0",
