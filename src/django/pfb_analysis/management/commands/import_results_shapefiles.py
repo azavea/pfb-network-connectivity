@@ -19,7 +19,8 @@ logger = logging.getLogger(__name__)
 
 CENSUS_BLOCK_LAYER_MAPPING = {
     'geom': 'POLYGON',
-    'overall_score': 'OVERALL_SC'
+    'overall_score': 'OVERALL_SC',
+    'job': { 'uuid': 'JOB_ID' },
 }
 
 NEIGHBORHOOD_WAYS_LAYER_MAPPING = {
@@ -29,7 +30,8 @@ NEIGHBORHOOD_WAYS_LAYER_MAPPING = {
     'xwalk': 'XWALK',
     'ft_bike_in': 'FT_BIKE_IN',
     'tf_bike_in': 'TF_BIKE_IN',
-    'functional': 'FUNCTIONAL'
+    'functional': 'FUNCTIONAL',
+    'job': { 'uuid': 'JOB_ID' },
 }
 
 

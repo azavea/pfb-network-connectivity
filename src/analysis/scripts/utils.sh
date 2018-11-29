@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function import_geometries_for_job() {
+    if [ -n "${PFB_JOB_ID}" ];
+    then
+        /opt/pfb/django/manage.py import_results_shapefiles "${PFB_JOB_ID}"
+    fi
+}
+
 function update_status() {
     # Usage:
     #    update_status STATUS [step [message]]
