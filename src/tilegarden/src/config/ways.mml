@@ -1,14 +1,13 @@
-name: Tilegarden Configuration
-description: Carto MML file to configure Tilegarden settings
+name: Neighborhood ways
 srs: +init=epsg:3857
 format: png
 
 Stylesheet:
-  - style.mss
+  - ways.mss
 
 Layer:
-- id: neighborhoodways
-  name: neighborhoodways
+- id: neighborhood_waysTF
+  name: neighborhood_waysTF
   geometry: line
   srs: "+init=epsg:4326"
   Datasource:
@@ -20,9 +19,9 @@ Layer:
     table: "pfb_analysis_neighborhoodwaysresults"
     key_field: ""
     geometry_field: "geom"
-- id: censusblocks
-  name: censusblocks
-  geometry: polygon
+- id: neighborhood_waysFT
+  name: neighborhood_waysFT
+  geometry: line
   srs: "+init=epsg:4326"
   Datasource:
     host: ${PFB_DB_HOST}
@@ -30,6 +29,6 @@ Layer:
     user: ${PFB_DB_USER}
     password: ${PFB_DB_PASSWORD}
     type: "postgis"
-    table: "pfb_analysis_censusblocksresults"
+    table: "pfb_analysis_neighborhoodwaysresults"
     key_field: ""
     geometry_field: "geom"
