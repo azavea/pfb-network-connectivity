@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 
+from copy import deepcopy
 import logging
 import os
 import shutil
@@ -9,7 +10,7 @@ import zipfile
 import boto3
 
 from django.conf import settings
-from django.contrib.gis.utils import LayerMapping
+from django.contrib.gis.utils import LayerMapping, LayerMapError
 from django.core.exceptions import ValidationError
 
 from pfb_analysis.models import AnalysisJob, CensusBlocksResults, NeighborhoodWaysResults
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 CENSUS_BLOCK_LAYER_MAPPING = {
     'geom': 'POLYGON',
     'overall_score': 'OVERALL_SC',
-    'job': { 'uuid': 'JOB_ID' },
+    'job': {'uuid': 'JOB_ID'},
 }
 
 NEIGHBORHOOD_WAYS_LAYER_MAPPING = {
@@ -31,7 +32,7 @@ NEIGHBORHOOD_WAYS_LAYER_MAPPING = {
     'ft_bike_in': 'FT_BIKE_IN',
     'tf_bike_in': 'TF_BIKE_IN',
     'functional': 'FUNCTIONAL',
-    'job': { 'uuid': 'JOB_ID' },
+    'job': {'uuid': 'JOB_ID'},
 }
 
 
@@ -55,35 +56,44 @@ def s3_job_url(job, filename):
 
 
 def add_results_geoms(job):
-    blocks_tmpdir = ''
-    ways_tmpdir = ''
-    try:
-        blocks_tmpdir = geom_from_results_url(s3_job_url(job, 'neighborhood_census_blocks.zip'))
-        block_shpfiles = [filename for filename in
-                          os.listdir(blocks_tmpdir) if filename.endswith('shp')]
-        blocks_file = os.path.join(blocks_tmpdir, block_shpfiles[0])
-        blocks_layer_map = LayerMapping(CensusBlocksResults,
-                                        blocks_file,
-                                        CENSUS_BLOCK_LAYER_MAPPING)
-        blocks_layer_map.save()
-        CensusBlocksResults.objects.filter(job=None).update(job=job)
 
-        ways_tmpdir = geom_from_results_url(s3_job_url(job, 'neighborhood_ways.zip'))
-        ways_shpfiles = [filename for filename in
-                         os.listdir(ways_tmpdir) if filename.endswith('shp')]
-        ways_file = os.path.join(ways_tmpdir, ways_shpfiles[0])
-        ways_layer_map = LayerMapping(NeighborhoodWaysResults,
-                                      ways_file,
-                                      NEIGHBORHOOD_WAYS_LAYER_MAPPING)
-        ways_layer_map.save()
-        NeighborhoodWaysResults.objects.filter(job=None).update(job=job)
-    except:
-        logger.exception('Error importing results shapefiles for job: {}'.format(str(job.uuid)))
-    finally:
-        if blocks_tmpdir:
-            shutil.rmtree(blocks_tmpdir, ignore_errors=True)
-        if ways_tmpdir:
-            shutil.rmtree(ways_tmpdir, ignore_errors=True)
+    def import_shapefile(job, shpfile_name, model, layer_mapping):
+        model.objects.filter(job=job).delete()
+        import_tmpdir = ''
+        try:
+            import_tmpdir = geom_from_results_url(s3_job_url(job, shpfile_name))
+            import_shpfiles = [filename for filename in
+                               os.listdir(import_tmpdir) if filename.endswith('shp')]
+            import_file = os.path.join(import_tmpdir, import_shpfiles[0])
+            import_layer_map = LayerMapping(model,
+                                            import_file,
+                                            layer_mapping)
+            import_layer_map.save()
+        except LayerMapError as e:
+            # If we failed with an error related to JOB_ID not found, it's because this is an
+            # old job that doesn't contain the column in the shapefile. So we try again with
+            # job removed from the layer mapping and manually add job_id after import completes.
+            if 'JOB_ID' in str(e):
+                new_mapping = deepcopy(layer_mapping)
+                new_mapping.pop('job')
+                import_layer_map = LayerMapping(model,
+                                                import_file,
+                                                new_mapping)
+                import_layer_map.save()
+                model.objects.filter(job=None).update(job=job)
+            else:
+                raise
+        except:
+            logger.exception('Error importing {} shapefile for job: {}'.format(str(model),
+                                                                               str(job.uuid)))
+        finally:
+            if import_tmpdir:
+                shutil.rmtree(import_tmpdir, ignore_errors=True)
+
+    import_shapefile(job, 'neighborhood_census_blocks.zip',
+                     CensusBlocksResults, CENSUS_BLOCK_LAYER_MAPPING)
+    import_shapefile(job, 'neighborhood_ways.zip',
+                     NeighborhoodWaysResults, NEIGHBORHOOD_WAYS_LAYER_MAPPING)
 
 
 class Command(BaseCommand):
@@ -105,7 +115,7 @@ class Command(BaseCommand):
                 add_results_geoms(job)
             else:
                 logger.info('Running import for all analysis jobs.')
-                for job in AnalysisJob.objects.all():
+                for job in AnalysisJob.objects.filter(status=AnalysisJob.Status.COMPLETE):
                     add_results_geoms(job)
         except (AnalysisJob.DoesNotExist, ValueError, KeyError, ValidationError):
             logger.exception('ERROR: Tried to re-import results for invalid job UUID '
