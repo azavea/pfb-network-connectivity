@@ -1,7 +1,6 @@
-import rewire from 'rewire'
-
-import filterLayers from '../bin/util/layer-filter'
-const filterer = rewire('../bin/util/layer-filter'),
+const rewire = require('rewire')
+const filterLayers = require('../src/util/layer-filter')
+const filterer = rewire('../src/util/layer-filter'),
     structureQuery = filterer.__get__('structureQuery')
 
 describe('structureQuery', () => {

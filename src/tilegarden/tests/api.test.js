@@ -1,7 +1,6 @@
-import rewire from 'rewire'
-const api = rewire('../bin/api'),
+const rewire = require('rewire')
+const api = rewire('../src/api'),
     processCoords = api.__get__('processCoords'),
-    processUTFQuery = api.__get__('processUTFQuery'),
     processLayers = api.__get__('processLayers')
 
 describe('processCoords', () => {
@@ -71,42 +70,6 @@ describe('processCoords', () => {
             }
         }
         expect(() => processCoords(req)).toThrow()
-    })
-})
-
-describe('processUTFQuery', () => {
-    test('properly parses list of fields', () => {
-        const req = {
-            queryString: {
-                utfFields: 'field1,field2,field3,field4'
-            }
-        }
-        expect(processUTFQuery(req)).toEqual(['field1','field2','field3','field4'])
-    })
-
-    test('properly parses just one field', () => {
-        const req = {
-            queryString: {
-                utfFields: 'field1'
-            }
-        }
-        expect(processUTFQuery(req)).toEqual(['field1'])
-    })
-
-    test('properly parses no fields', () => {
-        const req = {
-            queryString: {}
-        }
-        expect(() => processUTFQuery(req)).toThrow()
-    })
-
-    test('properly parses a blank field', () => {
-        const req = {
-            queryString: {
-                utfFields: ''
-            }
-        }
-        expect(() => processUTFQuery(req)).toThrow()
     })
 })
 
