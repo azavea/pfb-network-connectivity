@@ -16,12 +16,13 @@ Options:
     django     Django container
     angularjs  AngularJS container
     nginx      Nginx container
+    tilegarden Tilegarden container
     help       Display this help text
 "
 }
 
 case $1 in
-    django|nginx|angularjs) NORMAL_CONTAINER=1 ;;
+    django|nginx|angularjs|tilegarden) NORMAL_CONTAINER=1 ;;
     database)         DATABASE_CONTAINER=1 ;;
     help|*)           usage; exit 1 ;;
 esac

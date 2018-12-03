@@ -79,6 +79,8 @@ systems+pfb@azavea.com / root
 | 9214 | Postgresql | Allows direct connections to the database where an analysis run is stored |
 | 9301 | Gulp | Gulp server for analysis angular app |
 | 9302 | Browsersync | Browsersync for analysis angular app |
+| 9400 | Tilegarden | Tilegarden development server |
+| 9401 | Browsersync | Node debugger for Tilegarden development server |
 
 
 ## Scripts

@@ -1,0 +1,58 @@
+{
+  "name": "tilegarden-pfb",
+  "version": "1.0.0",
+  "description": "AWS Lambda mapnik renderer",
+  "contributors": [
+    {
+      "name": "Matt DelSordo"
+    },
+    {
+      "name": "Klaas Hoekema"
+    },
+    {
+      "name": "Matthew McFarland"
+    }
+  ],
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azavea/pfb-network-connectivity.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build-all-xml": "./scripts/build-all-xml.sh src/config src/config",
+    "deploy": "yarn compile && claudia update --no-optional-dependencies ${LAMBDA_TIMEOUT:+--timeout ${LAMBDA_TIMEOUT}} ${LAMBDA_MEMORY:+--memory ${LAMBDA_MEMORY}} ${LAMBDA_SECURITY_GROUPS:+--security-group-ids ${LAMBDA_SECURITY_GROUPS}} ${LAMBDA_SUBNETS:+--subnet-ids ${LAMBDA_SUBNETS}}",
+    "deploy-new": "yarn compile && claudia create --no-optional-dependencies --api-module dist/api --name ${PROJECT_NAME} --region ${LAMBDA_REGION} ${LAMBDA_ROLE:+--role ${LAMBDA_ROLE}} ${LAMBDA_TIMEOUT:+--timeout ${LAMBDA_TIMEOUT}} ${LAMBDA_MEMORY:+--memory ${LAMBDA_MEMORY}} ${LAMBDA_SECURITY_GROUPS:+--security-group-ids ${LAMBDA_SECURITY_GROUPS}} ${LAMBDA_SUBNETS:+--subnet-ids ${LAMBDA_SUBNETS}} && yarn parse-id",
+    "destroy": "claudia destroy",
+    "dev": "nodemon -e js,mss,json,mml,mss --ignore dist/ --ignore '*.temp.mml' --exec yarn local",
+    "lint": "eslint src",
+    "local": "yarn build-all-xml && node --inspect=0.0.0.0:9229 -- node_modules/claudia-local-api/bin/claudia-local-api --abbrev 300 --api-module src/api | bunyan -o short",
+    "parse-id": "jq -r '.api.id' claudia.json > .api-id",
+    "test": "eslint src && jest --coverage",
+    "compile": "yarn build-all-xml && ncc src -o dist && mkdir -p dist/xml && cp src/config/*.xml dist/xml/"
+  },
+  "devDependencies": {
+    "bunyan": "^1.8.12",
+    "claudia": "^5.0.1",
+    "claudia-local-api": "https://github.com/azavea/claudia-local-api.git",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "jest": "^23.2.0",
+    "@zeit/ncc": "^0.1.16",
+    "nodemon": "^1.17.5",
+    "rewire": "^4.0.1"
+  },
+  "dependencies": {
+    "claudia-api-builder": "^4.1.0",
+    "mapnik": "^3.7.2",
+    "sql-escape-string": "^1.1.0",
+    "xml2js": "^0.4.19"
+  },
+  "optionalDependencies": {
+    "aws-sdk": "^2.290.0"
+  }
+}

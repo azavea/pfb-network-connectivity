@@ -1,9 +1,6 @@
 version: '2'
 services:
-  django:
-    build:
-      context: ./src/django
-      dockerfile: Dockerfile
+  base:
     environment:
       - DJANGO_ENV=development
       - DJANGO_LOG_LEVEL=INFO
@@ -22,3 +19,10 @@ services:
       - PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME
     volumes:
       - $HOME/.aws:/root/.aws:ro
+
+  django:
+    extends:
+      service: base
+    build:
+      context: ./src/django
+      dockerfile: Dockerfile

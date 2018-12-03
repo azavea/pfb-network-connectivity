@@ -1,0 +1,34 @@
+name: Neighborhood ways
+srs: +init=epsg:3857
+format: png
+
+Stylesheet:
+  - ways.mss
+
+Layer:
+- id: neighborhood_waysTF
+  name: neighborhood_waysTF
+  geometry: line
+  srs: "+init=epsg:4326"
+  Datasource:
+    host: ${PFB_DB_HOST}
+    dbname: ${PFB_DB_DATABASE}
+    user: ${PFB_DB_USER}
+    password: ${PFB_DB_PASSWORD}
+    type: "postgis"
+    table: "pfb_analysis_neighborhoodwaysresults"
+    key_field: ""
+    geometry_field: "geom"
+- id: neighborhood_waysFT
+  name: neighborhood_waysFT
+  geometry: line
+  srs: "+init=epsg:4326"
+  Datasource:
+    host: ${PFB_DB_HOST}
+    dbname: ${PFB_DB_DATABASE}
+    user: ${PFB_DB_USER}
+    password: ${PFB_DB_PASSWORD}
+    type: "postgis"
+    table: "pfb_analysis_neighborhoodwaysresults"
+    key_field: ""
+    geometry_field: "geom"
