@@ -32,6 +32,7 @@ const processCoords = (req) => {
 }
 
 const getPositionalFilters = (req) => {
+    /* eslint-disable-next-line object-curly-newline */
     const { x, y, z, ...remainder } = req.pathParams
     return remainder
 }
