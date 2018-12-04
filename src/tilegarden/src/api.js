@@ -33,7 +33,7 @@ const processCoords = (req) => {
 
 const getPositionalFilters = (req) => {
     /* eslint-disable-next-line object-curly-newline */
-    const { x, y, z, ...remainder } = req.pathParams
+    const { x, y, z, config, ...remainder } = req.pathParams
     return remainder
 }
 
@@ -52,7 +52,7 @@ const processLayers = (req) => {
 // Parses out the configuration specifications
 const processConfig = req => ({
     s3bucket: req.queryString.s3bucket,
-    config: req.queryString.config,
+    config: req.pathParams.config,
 })
 
 // Create new lambda API
@@ -71,7 +71,7 @@ const handleError = (e) => {
 
 // Get tile for some zxy bounds
 api.get(
-    '/tile/{job_id}/{z}/{x}/{y}',
+    '/tile/{job_id}/{config}/{z}/{x}/{y}',
     (req) => {
         try {
             const { z, x, y } = processCoords(req)
