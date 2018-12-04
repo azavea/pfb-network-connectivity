@@ -557,7 +557,8 @@ class AnalysisJob(PFBModel):
     def tile_urls(self):
         return [{
             'name': layer,
-            'url': (settings.TILEGARDEN_ROOT + '/tile/{z}/{x}/{y}.png' +
+            'url': (settings.TILEGARDEN_ROOT + '/tile/{job_id}/'.format(job_id=self.uuid) +
+                    '{z}/{x}/{y}.png' +
                     '?config={layer}'.format(layer=layer))
         } for layer in ['ways', 'census_blocks', 'bike_infrastructure']]
 
