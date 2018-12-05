@@ -5,7 +5,7 @@ from django.db.models import Q
 from django_filters import rest_framework as filters
 import django_filters
 
-from .models import AnalysisJob, AnalysisJobStatusUpdate, Neighborhood
+from .models import AnalysisJob
 
 
 logger = logging.getLogger(__name__)
@@ -37,6 +37,7 @@ class AnalysisJobFilterSet(filters.FilterSet):
 
     def filter_search(self, queryset, name, value):
         return queryset.filter(Q(neighborhood__label__icontains=value) |
+                               Q(neighborhood__country__icontains=value) |
                                Q(neighborhood__state_abbrev__icontains=value))
 
     class Meta:
@@ -44,6 +45,7 @@ class AnalysisJobFilterSet(filters.FilterSet):
         fields = {'neighborhood': ['exact', 'in'],
                   'neighborhood__name': ['exact', 'contains'],
                   'neighborhood__label': ['exact', 'contains'],
+                  'neighborhood__country': ['exact'],
                   'neighborhood__state_abbrev': ['exact'],
                   'batch': ['exact', 'in'],
                   'status': ['exact'],
