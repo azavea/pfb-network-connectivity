@@ -139,8 +139,10 @@ class Neighborhood(PFBModel):
     organization = models.ForeignKey(Organization,
                                      related_name='neighborhoods',
                                      on_delete=models.CASCADE)
-    state_abbrev = USStateField(help_text='The US state of the uploaded neighborhood')
-    country = CountryField(help_text='The country of the uploaded neighborhood')
+    country = CountryField(default='US',
+                           help_text='The country of the uploaded neighborhood')
+    state_abbrev = USStateField(help_text='The state of the uploaded neighborhood, if in the US',
+                                blank=True, null=True)
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
@@ -153,7 +155,7 @@ class Neighborhood(PFBModel):
                                  on_delete=models.CASCADE, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        """ Override to do validation checks before saving, which disallows blank state_abbrev """
+        """ Override to do validation checks before saving """
         if not self.name:
             self.name = self.name_for_label(self.label)
         self.full_clean()
@@ -274,7 +276,7 @@ class Neighborhood(PFBModel):
                 shutil.rmtree(tmpdir, ignore_errors=True)
 
     class Meta:
-        unique_together = ('name', 'state_abbrev', 'organization',)
+        unique_together = ('name', 'country', 'state_abbrev', 'organization',)
 
 
 class AnalysisBatchManager(models.Manager):

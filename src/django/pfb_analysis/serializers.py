@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
 from pfb_analysis.models import AnalysisJob, AnalysisScoreMetadata, Neighborhood
@@ -56,10 +57,25 @@ class PrimaryKeyReferenceRelatedField(serializers.PrimaryKeyRelatedField):
 
 class NeighborhoodSerializer(PFBModelSerializer):
 
+    # Set default for country field, as serializers do not recognize model defaults
+    country = CountryField(initial='US')
+
+    def validate(self, data):
+        """Cross-field validation that US state is set or not based on country."""
+        if data['country'] == 'US':
+            if not data['state_abbrev']:
+                raise serializers.ValidationError('State must be provided for US neighborhoods')
+        else:
+            if data['state_abbrev']:
+                raise serializers.ValidationError('State can only be set for US neighborhoods')
+        return data
+
     class Meta:
         model = Neighborhood
-        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'geom', 'geom_simple',
-                   'geom_pt',)
+        # explicitly list fields (instead of using `exclude`) to control ordering
+        fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
+                  'name', 'label', 'organization', 'country', 'state_abbrev', 'boundary_file',
+                  'visibility', 'last_job')
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'last_job', 'name',)
 
@@ -73,7 +89,7 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
 
     class Meta:
         model = Neighborhood
-        fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom_pt')
+        fields = ('uuid', 'name', 'label', 'country', 'state_abbrev', 'organization', 'geom_pt')
         read_only_fields = fields
 
 
