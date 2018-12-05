@@ -58,7 +58,7 @@ class AnalysisJobViewSet(ModelViewSet):
     filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label',
-                       'neighborhood__state_abbrev', 'population_total')
+                       'neighborhood__country', 'neighborhood__state_abbrev', 'population_total')
     ordering = ('-created_at',)
 
     def perform_create(self, serializer):
@@ -156,7 +156,7 @@ class NeighborhoodViewSet(ModelViewSet):
         return queryset
 
     permission_classes = (IsAdminOrgAndAdminCreateEditOnly, IsAuthenticatedOrReadOnly)
-    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
+    filter_fields = ('organization', 'name', 'label', 'country', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
@@ -185,7 +185,7 @@ class NeighborhoodBoundsGeoJsonViewList(APIView):
                   ST_AsGeoJSON(g.geom_simple)::json AS geometry,
                   g.uuid AS id,
                   row_to_json((SELECT p FROM (
-                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    SELECT uuid AS id, name, label, country, state_abbrev, organization_id) AS p))
                     AS properties
             FROM pfb_analysis_neighborhood AS g WHERE g.visibility <> %s) AS f) AS fc;
         """
@@ -216,7 +216,7 @@ class NeighborhoodBoundsGeoJsonViewDetail(APIView):
                   ST_AsGeoJSON(g.geom_simple)::json AS geometry,
                   g.uuid AS id,
                   row_to_json((SELECT p FROM (
-                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    SELECT uuid AS id, name, label, country, state_abbrev, organization_id) AS p))
                     AS properties
             FROM pfb_analysis_neighborhood AS g WHERE g.uuid = %s) AS f) AS fc;
         """
@@ -257,7 +257,7 @@ class NeighborhoodGeoJsonViewSet(APIView):
                 array_to_json(array_agg(f)) AS features
             FROM (SELECT 'Feature' AS type, ST_AsGeoJSON(g.geom_pt)::json AS geometry, g.uuid AS id,
                   row_to_json((SELECT p FROM (
-                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    SELECT uuid AS id, name, label, country, state_abbrev, organization_id) AS p))
                     AS properties
             FROM pfb_analysis_neighborhood AS g WHERE g.visibility <> %s) AS f)  AS fc;
         """
