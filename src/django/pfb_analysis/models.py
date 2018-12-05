@@ -20,6 +20,7 @@ from django.utils.text import slugify
 
 import botocore
 import boto3
+from django_countries.fields import CountryField
 import fiona
 from fiona.crs import from_epsg
 from localflavor.us.models import USStateField
@@ -139,6 +140,7 @@ class Neighborhood(PFBModel):
                                      related_name='neighborhoods',
                                      on_delete=models.CASCADE)
     state_abbrev = USStateField(help_text='The US state of the uploaded neighborhood')
+    country = CountryField(help_text='The country of the uploaded neighborhood')
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
