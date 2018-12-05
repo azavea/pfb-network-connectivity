@@ -644,6 +644,13 @@ class AnalysisJob(PFBModel):
             logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
 
+        # TODO: #614 remove this check on adding support for running international jobs
+        if not self.neighborhood.state:
+            logger.warn('Running jobs outside the US is not supported yet. Skipping {}.'.format(
+                self.uuid))
+            self.update_status(self.Status.ERROR)
+            return
+
         # Provide the base environment to enable runnin Django commands in the container
         environment = self.base_environment()
         # Job-specific settings
