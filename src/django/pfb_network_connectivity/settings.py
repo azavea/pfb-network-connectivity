@@ -340,3 +340,8 @@ PFB_ANALYSIS_DESTINATIONS = [
 ]
 # Length of time in seconds that S3 pre-signed urls are valid for
 PFB_ANALYSIS_PRESIGNED_URL_EXPIRES = 3600
+
+# Root URL for tile server.
+# TODO (probably with issue #595): this is the development answer. For staging/production
+#      we'll have to supply the URL of the actual deployed CloudFront distribution.
+TILEGARDEN_ROOT = 'http://localhost:9400'

@@ -1,5 +1,6 @@
 const rewire = require('rewire')
 const filterLayers = require('../src/util/layer-filter')
+const { parseXml, buildXml } = require('../src/util/xml-tools')
 const filterer = rewire('../src/util/layer-filter'),
     structureQuery = filterer.__get__('structureQuery')
 
@@ -154,6 +155,12 @@ describe('structureQuery', () => {
     })
 })
 
+async function filterLayersWithParsing(xml, layers) {
+    return parseXml(xml)
+        .then(xmlJsObj => filterLayers(xmlJsObj, layers))
+        .then(buildXml)
+}
+
 describe('filterLayers', () => {
     test('Just a string name', () => {
         const layers = ['PWD']
@@ -175,7 +182,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT" status="false"/>
 </Map>`
 
-        return expect(filterLayers(xml, layers)).resolves.toBe(expected)
+        return expect(filterLayersWithParsing(xml, layers)).resolves.toBe(expected)
     })
 
     test('Several string names', () => {
@@ -198,7 +205,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT" status="false"/>
 </Map>`
 
-        return expect(filterLayers(xml, layers)).resolves.toBe(expected)
+        return expect(filterLayersWithParsing(xml, layers)).resolves.toBe(expected)
     })
 
     test('Just an object name', () => {
@@ -221,7 +228,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT" status="false"/>
 </Map>`
 
-        return expect(filterLayers(xml, layers)).resolves.toBe(expected)
+        return expect(filterLayersWithParsing(xml, layers)).resolves.toBe(expected)
     })
 
     test('Several object names', () => {
@@ -244,7 +251,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT" status="false"/>
 </Map>`
 
-        return expect(filterLayers(xml, layers)).resolves.toBe(expected)
+        return expect(filterLayersWithParsing(xml, layers)).resolves.toBe(expected)
     })
 
     test('Object name + 1 filter', () => {
@@ -275,7 +282,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT" status="false"/>
 </Map>`
 
-        return expect(filterLayers(xml, layers)).resolves.toBe(expected)
+        return expect(filterLayersWithParsing(xml, layers)).resolves.toBe(expected)
     })
 
     test('Object name + 2 filters', () => {
@@ -306,7 +313,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT" status="false"/>
 </Map>`
 
-        return expect(filterLayers(xml, layers)).resolves.toBe(expected)
+        return expect(filterLayersWithParsing(xml, layers)).resolves.toBe(expected)
     })
 
     test('dont filter if layer list is empty', () => {
@@ -319,7 +326,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT"/>
 </Map>`
         expect.assertions(1)
-        return expect(filterLayers(xml, layers)).resolves.toBe(xml)
+        return expect(filterLayersWithParsing(xml, layers)).resolves.toBe(xml)
     })
 
     test('dont filter if there is no layer list', () => {
@@ -331,7 +338,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT"/>
 </Map>`
         expect.assertions(1)
-        return expect(filterLayers(xml)).resolves.toBe(xml)
+        return expect(filterLayersWithParsing(xml)).resolves.toBe(xml)
     })
 
     test('Throw error if a layer doesn\'t exist', () => {
@@ -346,7 +353,7 @@ describe('filterLayers', () => {
   <Layer name="AIRPRT"/>
 </Map>`
 
-        return expect(filterLayers(xml, layers)).rejects.toBeInstanceOf(Error)
+        return expect(filterLayersWithParsing(xml, layers)).rejects.toBeInstanceOf(Error)
     })
 })
 

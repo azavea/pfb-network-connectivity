@@ -1,22 +1,12 @@
 /**
- * Specifies a promise that accepts a string of XML and resolves
- * to a string of XML where all layers not in the list of enabled
- * layers have their "status" property set to false, excluding them
- * from rendering.
+ * Defines a function that accepts a config XML converted to an object and returns the same
+ * object with the "status" property set to false for all layers not in the list of enabled
+ * layers, excluding them from rendering.
  */
 
-const xmlParser = require('xml2js')
 const sqlString = require('sql-escape-string')
 
 const HTTPError = require('./error-builder')
-
-// Promisified conversion of an xml string to a JSON object
-const parsePromise = xmlString => new Promise((resolve, reject) => {
-    xmlParser.parseString(xmlString, (err, result) => {
-        if (err) reject(err)
-        else resolve(result)
-    })
-})
 
 // Determine comparison mode (if more than one parameter)
 const processMode = (mode, i) => {
@@ -79,10 +69,10 @@ const structureQuery = (existingQuery, currentLayer) => {
 /**
  * Set the status of each layer NOT in the list to false to disable
  */
-const filter = (xmlJson, enabledLayers) => {
+const filter = (xmlJsObj, enabledLayers) => {
     let givenLayers = enabledLayers
 
-    xmlJson.Map.Layer.forEach((layer) => {
+    xmlJsObj.Map.Layer.forEach((layer) => {
         // Filter list of enabled layers by the name of the current layer
         const current = enabledLayers.filter(e => e === layer.$.name || e.name === layer.$.name)[0]
 
@@ -115,23 +105,15 @@ const filter = (xmlJson, enabledLayers) => {
         )
     }
 
-    return xmlJson
+    return xmlJsObj
 }
 
-// Convert json back to an xml string
-const returnToXml = (xmlJson) => {
-    const builder = new xmlParser.Builder()
-    return builder.buildObject(xmlJson)
-}
-
-module.exports = (xmlString, enabledLayers) => {
+module.exports = (xmlJsObj, enabledLayers) => {
     // skip entire process if no layers are to be parsed
     if (!enabledLayers || enabledLayers.length < 1) {
-        return new Promise(resolve => resolve(xmlString))
+        return xmlJsObj
     }
 
-    return parsePromise(xmlString)
-        .then(xmlJson => filter(xmlJson, enabledLayers))
-        .then(returnToXml)
+    return filter(xmlJsObj, enabledLayers)
 }
 

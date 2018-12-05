@@ -31,6 +31,12 @@ const processCoords = (req) => {
     return { z, x, y }
 }
 
+const getPositionalFilters = (req) => {
+    /* eslint-disable-next-line object-curly-newline */
+    const { x, y, z, config, ...remainder } = req.pathParams
+    return remainder
+}
+
 // Returns a properly formatted list of layers
 // or an empty list if there are none
 const processLayers = (req) => {
@@ -46,7 +52,7 @@ const processLayers = (req) => {
 // Parses out the configuration specifications
 const processConfig = req => ({
     s3bucket: req.queryString.s3bucket,
-    config: req.queryString.config,
+    config: req.pathParams.config,
 })
 
 // Create new lambda API
@@ -65,14 +71,15 @@ const handleError = (e) => {
 
 // Get tile for some zxy bounds
 api.get(
-    '/tile/{z}/{x}/{y}',
+    '/tile/{job_id}/{config}/{z}/{x}/{y}',
     (req) => {
         try {
             const { z, x, y } = processCoords(req)
+            const filters = getPositionalFilters(req)
             const layers = processLayers(req)
             const configOptions = processConfig(req)
 
-            return imageTile(createMap(z, x, y, layers, configOptions))
+            return imageTile(createMap(z, x, y, filters, layers, configOptions))
                 .then(img => new APIBuilder.ApiResponse(img, IMAGE_HEADERS, 200))
                 .catch(handleError)
         } catch (e) {

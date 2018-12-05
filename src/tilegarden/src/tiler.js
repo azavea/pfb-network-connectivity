@@ -12,9 +12,11 @@ const aws = require('aws-sdk')
 const { promisify } = require('util')
 const readFile = promisify(require('fs').readFile)
 
-const filterVisibleLayers = require('./util/layer-filter')
+const addParamFilters = require('./util/param-filter')
 const bbox = require('./util/bounding-box')
+const filterVisibleLayers = require('./util/layer-filter')
 const HTTPError = require('./util/error-builder')
+const { parseXml, buildXml } = require('./util/xml-tools')
 
 const TILE_HEIGHT = 256
 const TILE_WIDTH = 256
@@ -76,14 +78,17 @@ const fetchMapFile = (options) => {
  * @param y
  * @returns {Promise<mapnik.Map>}
  */
-module.exports.createMap = (z, x, y, layers, configOptions) => {
+module.exports.createMap = (z, x, y, filters, layers, configOptions) => {
     // Create a webmercator map with specified bounds
     const map = new mapnik.Map(TILE_WIDTH, TILE_HEIGHT)
     map.bufferSize = 64
 
     // Load map specification from xml string
     return fetchMapFile(configOptions)
-        .then(xml => filterVisibleLayers(xml, layers))
+        .then(parseXml)
+        .then(xmlJsObj => filterVisibleLayers(xmlJsObj, layers))
+        .then(xmlJsObj => addParamFilters(xmlJsObj, filters))
+        .then(buildXml)
         .then(xml => new Promise((resolve, reject) => {
             map.fromString(xml, (err, result) => {
                 if (err) {
