@@ -44,6 +44,8 @@ SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
 def get_neighborhood_file_upload_path(obj, filename):
     """Upload each boundary file to its own directory
 
+    Upload file path should be unique for the organization.
+
     Maintain backwards compatibility for previously-uploaded bounds with only state and no country
     by not adding country to file path, but instead supporting paths to bounds outside the US
     by using the three-letter country abbreviation instead of two-letter state abbreviation
@@ -285,6 +287,7 @@ class Neighborhood(PFBModel):
                 shutil.rmtree(tmpdir, ignore_errors=True)
 
     class Meta:
+        # Note that uniqueness fields should also be used in the upload file path
         unique_together = ('name', 'country', 'state_abbrev', 'organization',)
 
 
