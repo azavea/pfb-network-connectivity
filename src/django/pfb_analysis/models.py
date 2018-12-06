@@ -41,11 +41,20 @@ SIMPLIFICATION_TOLERANCE_LESS = 0.0001
 SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
 
 
-def get_neighborhood_file_upload_path(instance, filename):
-    """ Upload each boundary file to its own directory """
-    return 'neighborhood_boundaries/{0}/{1}/{2}{3}'.format(slugify(instance.organization.name),
-                                                           instance.state_abbrev,
-                                                           instance.name,
+def get_neighborhood_file_upload_path(obj, filename):
+    """Upload each boundary file to its own directory
+
+    Maintain backwards compatibility for previously-uploaded bounds with only state and no country
+    by not adding country to file path, but instead supporting paths to bounds outside the US
+    by using the three-letter country abbreviation instead of two-letter state abbreviation
+    in the file path.
+
+    Use three-letter country abbreviations instead of deafult two to avoid any conflicts with
+    two-letter state abbreviations (i.e., CA might be Canada or California.)
+    """
+    return 'neighborhood_boundaries/{0}/{1}/{2}{3}'.format(slugify(obj.organization.name),
+                                                           obj.state_abbrev or obj.country.alpha3,
+                                                           obj.name,
                                                            os.path.splitext(filename)[1])
 
 
