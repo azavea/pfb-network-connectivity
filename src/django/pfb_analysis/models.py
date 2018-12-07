@@ -20,6 +20,7 @@ from django.utils.text import slugify
 
 import botocore
 import boto3
+from django_countries.fields import CountryField
 import fiona
 from fiona.crs import from_epsg
 from localflavor.us.models import USStateField
@@ -40,11 +41,22 @@ SIMPLIFICATION_TOLERANCE_LESS = 0.0001
 SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
 
 
-def get_neighborhood_file_upload_path(instance, filename):
-    """ Upload each boundary file to its own directory """
-    return 'neighborhood_boundaries/{0}/{1}/{2}{3}'.format(slugify(instance.organization.name),
-                                                           instance.state_abbrev,
-                                                           instance.name,
+def get_neighborhood_file_upload_path(obj, filename):
+    """Upload each boundary file to its own directory
+
+    Upload file path should be unique for the organization.
+
+    Maintain backwards compatibility for previously-uploaded bounds with only state and no country
+    by not adding country to file path, but instead supporting paths to bounds outside the US
+    by using the three-letter country abbreviation instead of two-letter state abbreviation
+    in the file path.
+
+    Use three-letter country abbreviations instead of deafult two to avoid any conflicts with
+    two-letter state abbreviations (i.e., CA might be Canada or California.)
+    """
+    return 'neighborhood_boundaries/{0}/{1}/{2}{3}'.format(slugify(obj.organization.name),
+                                                           obj.state_abbrev or obj.country.alpha3,
+                                                           obj.name,
                                                            os.path.splitext(filename)[1])
 
 
@@ -138,7 +150,10 @@ class Neighborhood(PFBModel):
     organization = models.ForeignKey(Organization,
                                      related_name='neighborhoods',
                                      on_delete=models.CASCADE)
-    state_abbrev = USStateField(help_text='The US state of the uploaded neighborhood')
+    country = CountryField(default='US',
+                           help_text='The country of the uploaded neighborhood')
+    state_abbrev = USStateField(help_text='The state of the uploaded neighborhood, if in the US',
+                                blank=True, null=True)
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
@@ -151,7 +166,7 @@ class Neighborhood(PFBModel):
                                  on_delete=models.CASCADE, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        """ Override to do validation checks before saving, which disallows blank state_abbrev """
+        """ Override to do validation checks before saving """
         if not self.name:
             self.name = self.name_for_label(self.label)
         self.full_clean()
@@ -272,7 +287,8 @@ class Neighborhood(PFBModel):
                 shutil.rmtree(tmpdir, ignore_errors=True)
 
     class Meta:
-        unique_together = ('name', 'state_abbrev', 'organization',)
+        # Note that uniqueness fields should also be used in the upload file path
+        unique_together = ('name', 'country', 'state_abbrev', 'organization',)
 
 
 class AnalysisBatchManager(models.Manager):
@@ -642,6 +658,13 @@ class AnalysisJob(PFBModel):
         """ Run the analysis job, configuring ENV appropriately """
         if self.status != self.Status.CREATED:
             logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
+            return
+
+        # TODO: #614 remove this check on adding support for running international jobs
+        if not self.neighborhood.state:
+            logger.warn('Running jobs outside the US is not supported yet. Skipping {}.'.format(
+                self.uuid))
+            self.update_status(self.Status.ERROR)
             return
 
         # Provide the base environment to enable runnin Django commands in the container

@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'storages',
     'watchman',
     'django_q',
+    'django_countries',
 
     # Application
     'pfb_network_connectivity',
