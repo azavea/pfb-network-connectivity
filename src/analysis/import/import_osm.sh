@@ -161,7 +161,7 @@ STATE_SPEED_FILENAME="state_fips_speed"
 STATE_SPEED_DOWNLOAD="/data/${STATE_SPEED_FILENAME}.csv"
 wget -nv -O "${STATE_SPEED_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/${STATE_SPEED_FILENAME}.csv"
 psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
-   -c "\copy state_speed FROM ${STATE_SPEED_DOWNLOAD} delimiter ',' csv header"
+     -c "\copy state_speed FROM ${STATE_SPEED_DOWNLOAD} delimiter ',' csv header"
 
 # Set default residential speed for state
 STATE_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
@@ -192,7 +192,7 @@ CITY_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGR
 echo "The city residential default speed is ${CITY_DEFAULT}."
 if [[ -z "$CITY_DEFAULT" ]];
 then
-  echo "No default residential speed in city"
+    echo "No default residential speed in city"
   CITY_DEFAULT=NULL
 fi
 echo "DONE: Importing city default residential speed"
