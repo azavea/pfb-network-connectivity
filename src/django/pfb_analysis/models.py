@@ -864,3 +864,27 @@ class AnalysisScoreMetadata(models.Model):
 
     class Meta:
         ordering = ('name',)
+
+
+class AnalysisLocalUploadTask(PFBModel):
+
+    class Status(object):
+        CREATED = 'created'
+        QUEUED = 'queued'
+        IMPORTING = 'importing'
+        COMPLETE = 'complete'
+        ERROR = 'error'
+
+        CHOICES = (
+            (CREATED, 'Created',),
+            (QUEUED, 'Queued',),
+            (IMPORTING, 'Importing',),
+            (COMPLETE, 'Complete',),
+            (ERROR, 'Error',),
+        )
+
+    status = models.CharField(max_length=16, choices=Status.CHOICES, default=Status.CREATED)
+    error = models.CharField(max_length=8192, blank=True, null=True)
+    job = models.OneToOneField(AnalysisJob, related_name='local_upload_task',
+                               on_delete=models.CASCADE)
+    upload_results_url = models.URLField(max_length=8192)
