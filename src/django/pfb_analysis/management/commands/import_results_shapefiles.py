@@ -92,6 +92,14 @@ def add_results_geoms(job):
 
     import_shapefile(job, 'neighborhood_census_blocks.zip',
                      CensusBlocksResults, CENSUS_BLOCK_LAYER_MAPPING)
+
+    # Mask imported Census block results to neighborhood bounds to exclude null results
+    # out of bounds, as all nulls are read as zeroes from the shapefile, and so
+    # indistinguishable from actual zero scores.
+    CensusBlocksResults.objects.filter(job=job,
+                                       overall_score=0,
+                                       geom__disjoint=job.neighborhood.geom).delete()
+
     import_shapefile(job, 'neighborhood_ways.zip',
                      NeighborhoodWaysResults, NEIGHBORHOOD_WAYS_LAYER_MAPPING)
 
