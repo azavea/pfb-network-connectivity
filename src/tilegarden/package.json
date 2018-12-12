@@ -32,7 +32,7 @@
     "local": "yarn build-all-xml && node --inspect=0.0.0.0:9229 -- node_modules/claudia-local-api/bin/claudia-local-api --abbrev 300 --api-module src/api | bunyan -o short",
     "parse-id": "jq -r '.api.id' claudia.json > .api-id",
     "test": "eslint src && jest --coverage",
-    "compile": "yarn build-all-xml && ncc src -o dist && mkdir -p dist/xml && cp src/config/*.xml dist/xml/"
+    "compile": "yarn build-all-xml && mkdir -p dist && cp src/*.js dist && cp -R src/util dist/util && mkdir -p dist/xml && cp src/config/*.xml dist/xml/"
   },
   "devDependencies": {
     "bunyan": "^1.8.12",
@@ -42,7 +42,6 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.12.0",
     "jest": "^23.2.0",
-    "@zeit/ncc": "^0.1.16",
     "nodemon": "^1.17.5",
     "rewire": "^4.0.1"
   },
