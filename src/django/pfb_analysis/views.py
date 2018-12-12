@@ -12,13 +12,13 @@ import boto3
 from botocore.client import Config as BotocoreClientConfig
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async
-from rest_framework import parsers, status
+from rest_framework import mixins, parsers, status
 from rest_framework.decorators import detail_route, parser_classes
-from rest_framework.exceptions import NotFound, APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import (AllowAny, IsAuthenticatedOrReadOnly)
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, ViewSet
 from rest_framework.response import Response
 import us
 
@@ -28,12 +28,15 @@ from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnl
 
 from .models import (
     AnalysisJob,
+    AnalysisLocalUploadTask,
     AnalysisScoreMetadata,
     Neighborhood,
     get_batch_shapefile_upload_path,
 )
 from .serializers import (
     AnalysisJobSerializer,
+    AnalysisLocalUploadTaskCreateSerializer,
+    AnalysisLocalUploadTaskSerializer,
     AnalysisScoreMetadataSerializer,
     NeighborhoodSerializer,
 )
@@ -143,6 +146,30 @@ class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):
     pagination_class = None
     filter_class = None
     permission_classes = (AllowAny,)
+
+
+class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
+                                     mixins.ListModelMixin,
+                                     mixins.RetrieveModelMixin,
+                                     GenericViewSet):
+    queryset = AnalysisLocalUploadTask.objects.all()
+    pagination_class = OptionalLimitOffsetPagination
+    permission_classes = (RestrictedCreate, IsAuthenticatedOrReadOnly)
+    ordering_fields = ('created_at',)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return AnalysisLocalUploadTaskCreateSerializer
+        else:
+            return AnalysisLocalUploadTaskSerializer
+
+    def perform_create(self, serializer):
+        neighborhood_id = serializer.validated_data['neighborhood']
+        neighborhood = Neighborhood.objects.get(pk=neighborhood_id)
+        user = self.request.user
+        job = AnalysisJob.objects.create(neighborhood=neighborhood,
+                                         created_by=user, modified_by=user)
+        serializer.save(job=job, created_by=user, modified_by=user)
 
 
 class NeighborhoodViewSet(ModelViewSet):

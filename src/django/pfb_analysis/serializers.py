@@ -3,7 +3,12 @@ from collections import OrderedDict
 from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
-from pfb_analysis.models import AnalysisJob, AnalysisScoreMetadata, Neighborhood
+from pfb_analysis.models import (
+    AnalysisJob,
+    AnalysisLocalUploadTask,
+    AnalysisScoreMetadata,
+    Neighborhood,
+)
 from pfb_network_connectivity.serializers import PFBModelSerializer
 
 
@@ -131,3 +136,29 @@ class AnalysisScoreMetadataSerializer(serializers.ModelSerializer):
         model = AnalysisScoreMetadata
         fields = ('name', 'label', 'category', 'description',)
         read_only_fields = ('name', 'label', 'category', 'description',)
+
+
+class AnalysisLocalUploadTaskSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
+                  'error', 'job', 'status', 'upload_results_url',)
+        read_only_fields = ('uuid', 'created_at', 'modified_at', 'error', 'status',)
+
+
+class AnalysisLocalUploadTaskCreateSerializer(serializers.ModelSerializer):
+
+    neighborhood = serializers.UUIDField(write_only=True)
+
+    def create(self, validated_data):
+        validated_data.pop('neighborhood')
+        return super(AnalysisLocalUploadTaskCreateSerializer, self).create(validated_data)
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
+                  'error', 'job', 'status', 'upload_results_url',
+                  'neighborhood',)
+        read_only_fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
+                            'error', 'job', 'status',)
