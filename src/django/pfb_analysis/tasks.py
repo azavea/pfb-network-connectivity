@@ -18,3 +18,7 @@ def create_batch_from_remote_shapefile(shapefile_url):
         batch.submit()
     finally:
         shutil.rmtree(tmpdir)
+
+
+def upload_local_analysis(analysis_url):
+    pass
