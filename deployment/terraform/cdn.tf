@@ -49,5 +49,6 @@ resource "aws_cloudfront_distribution" "tilegarden" {
 
   viewer_certificate {
     cloudfront_default_certificate = true
+    minimum_protocol_version       = "TLSv1"
   }
 }
