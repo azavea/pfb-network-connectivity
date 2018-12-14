@@ -202,6 +202,10 @@ logging.config.dictConfig({
             'handlers': ['console'],
             'level': DJANGO_LOG_LEVEL,
         },
+        'django_q': {
+            'handlers': ['console'],
+            'level': DJANGO_LOG_LEVEL,
+        },
         'pfb_analysis': {
             'handlers': ['console'],
             'level': DJANGO_LOG_LEVEL,
