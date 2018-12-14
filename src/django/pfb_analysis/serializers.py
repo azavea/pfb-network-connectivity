@@ -155,6 +155,12 @@ class AnalysisLocalUploadTaskCreateSerializer(serializers.ModelSerializer):
         validated_data.pop('neighborhood')
         return super(AnalysisLocalUploadTaskCreateSerializer, self).create(validated_data)
 
+    def validate_neighborhood(self, obj):
+        if Neighborhood.objects.filter(uuid=obj).count() != 1:
+            raise serializers.ValidationError(
+                'No matching neighborhood found for UUID {uuid}'.format(uuid=obj))
+        return obj
+
     class Meta:
         model = AnalysisLocalUploadTask
         fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',

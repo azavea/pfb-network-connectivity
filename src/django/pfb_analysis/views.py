@@ -164,12 +164,16 @@ class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
             return AnalysisLocalUploadTaskSerializer
 
     def perform_create(self, serializer):
+        if not serializer.is_valid():
+            return
         neighborhood_id = serializer.validated_data['neighborhood']
         neighborhood = Neighborhood.objects.get(pk=neighborhood_id)
         user = self.request.user
         job = AnalysisJob.objects.create(neighborhood=neighborhood,
                                          created_by=user, modified_by=user)
-        serializer.save(job=job, created_by=user, modified_by=user)
+        obj = serializer.save(job=job, created_by=user, modified_by=user)
+
+        async('pfb_analysis.tasks.upload_local_analysis', obj.uuid)
 
 
 class NeighborhoodViewSet(ModelViewSet):
