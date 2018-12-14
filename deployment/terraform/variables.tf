@@ -157,3 +157,5 @@ variable "aws_cloudwatch_logs_policy_arn" {
 variable "pfb_app_alb_ingress_cidr_block" {
   type = "list"
 }
+
+variable "tilegarden_api_gateway_domain_name" {}

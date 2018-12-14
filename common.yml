@@ -17,6 +17,7 @@ services:
       - PFB_AWS_BATCH_TILEMAKER_JOB_QUEUE_NAME
       - PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME_REVISION
       - PFB_AWS_BATCH_TILEMAKER_JOB_DEFINITION_NAME
+      - PFB_TILEGARDEN_ROOT=http://localhost:9400
     volumes:
       - $HOME/.aws:/root/.aws:ro
 
