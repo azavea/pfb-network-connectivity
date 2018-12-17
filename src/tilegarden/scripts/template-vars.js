@@ -6,8 +6,6 @@
 
 const fs = require('fs')
 
-const envPrefix = process.env.NODE_ENV === 'production' ? 'PROD_' : 'DEV_'
-
 fs.readFile(process.argv[2], 'utf-8', function (err, out) {
     if (err) process.stderr.write(err)
     else {

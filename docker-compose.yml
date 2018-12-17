@@ -102,18 +102,17 @@ services:
 
   tilegarden:
     image: pfb-tilegarden
-    extends:
-      service: django
-      file: common.yml
     build:
       context: ./src/tilegarden
       dockerfile: Dockerfile
+    env_file: ./src/tilegarden/.env.dev
     links:
       - database:database.service.pfb.internal
     ports:
       - "9400:3000"
       - "9401:9229"
     volumes:
+      - $HOME/.aws:/root/.aws:ro
       # Can't just link src/tilegarden because that makes node_modules disappear
       - ./src/tilegarden/src:/opt/pfb/tilegarden/src
       - ./src/tilegarden/scripts:/opt/pfb/tilegarden/scripts

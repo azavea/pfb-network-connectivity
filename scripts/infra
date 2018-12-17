@@ -71,6 +71,17 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 ;;
             apply)
                 terraform apply "${PFB_SETTINGS_BUCKET}.tfplan"
+
+                popd
+                pushd "${DIR}/.."
+
+                aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/.env" "./src/tilegarden/.env"
+                aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/claudia.json" "./src/tilegarden/claudia.json"
+
+                docker-compose \
+                    -f docker-compose.yml \
+                    -f docker-compose.test.yml \
+                    run --rm --entrypoint yarn tilegarden deploy
                 ;;
             *)
                 echo "ERROR: I don't have support for that Terraform subcommand!"

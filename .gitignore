@@ -84,3 +84,7 @@ node_modules/
 npm-debug.log
 
 .sass-cache/
+
+# Tilegarden configs
+src/tilegarden/.env
+src/tilegarden/claudia.json
