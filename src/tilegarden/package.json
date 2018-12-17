@@ -32,7 +32,7 @@
     "local": "yarn build-all-xml && node --inspect=0.0.0.0:9229 -- node_modules/claudia-local-api/bin/claudia-local-api --abbrev 300 --api-module src/api | bunyan -o short",
     "parse-id": "jq -r '.api.id' claudia.json > .api-id",
     "test": "eslint src && jest --coverage",
-    "compile": "yarn build-all-xml && mkdir -p dist && cp src/*.js dist && cp -R src/util dist/util && mkdir -p dist/config && cp src/config/*.xml dist/config/"
+    "compile": "yarn build-all-xml && rsync -a src/*.js src/util src/config --exclude '*.mml' --exclude '*.mss' dist/"
   },
   "devDependencies": {
     "bunyan": "^1.8.12",
