@@ -197,7 +197,7 @@ CITY_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGR
 
 if [[ -z "$CITY_DEFAULT" ]];
 then
-    echo "No default residential speed in city"
+    echo "No default residential speed in city."
     CITY_DEFAULT=NULL
 else
     echo "The city residential default speed is ${CITY_DEFAULT}."
