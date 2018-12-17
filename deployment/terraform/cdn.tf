@@ -9,7 +9,7 @@ resource "aws_cloudfront_distribution" "tilegarden" {
 
     domain_name = "${var.tilegarden_api_gateway_domain_name}"
     origin_path = "/latest"
-    origin_id   = "tilegardenOrigin${title(var.environment)}EastId"
+    origin_id   = "tilegardenOriginEastId"
 
     custom_header {
       name  = "Accept"
@@ -17,7 +17,8 @@ resource "aws_cloudfront_distribution" "tilegarden" {
     }
   }
 
-  price_class     = "PriceClass_100"
+  aliases         = ["tiles.${var.r53_public_hosted_zone}"]
+  price_class     = "${var.cloudfront_price_class}"
   enabled         = true
   is_ipv6_enabled = true
   comment         = "${var.project} (${var.environment})"
@@ -25,7 +26,7 @@ resource "aws_cloudfront_distribution" "tilegarden" {
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "tilegardenOrigin${title(var.environment)}EastId"
+    target_origin_id = "tilegardenOriginEastId"
 
     forwarded_values {
       query_string = true
@@ -48,7 +49,8 @@ resource "aws_cloudfront_distribution" "tilegarden" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
-    minimum_protocol_version       = "TLSv1"
+    acm_certificate_arn      = "${var.ssl_certificate_arn}"
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1"
   }
 }
