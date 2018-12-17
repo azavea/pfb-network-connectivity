@@ -4,6 +4,9 @@ import shutil
 import tempfile
 import zipfile
 
+import boto3
+
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from pfb_analysis.models import AnalysisBatch, AnalysisJob, AnalysisLocalUploadTask
@@ -96,10 +99,24 @@ def upload_local_analysis(local_upload_task_uuid):
         return
 
     # If we got this far, the expected results files have been extracted successfully
-    # TODO: upload to the expected S3 locations for the job
     logging.info('Results files extracted for upload task {uuid}'.format(
                  uuid=local_upload_task_uuid))
 
+    s3_client = boto3.client('s3')
+
+    # upload to the expected S3 locations for the job
+
+    # Upload the geojson files
+    for d in task.job.destinations_urls:
+        dest_url = d['url']
+        path, filename = os.path.split(dest_url)
+        s3_key = '{results_path}/{filename}'.format(results_path=task.job.s3_results_path,
+                                                    filename=filename)
+        local_file = os.path.join(tmpdir, filename)
+        s3_client.upload_file(local_file, settings.AWS_STORAGE_BUCKET_NAME, s3_key)
+        logging.info('Uploaded results file {s3_key}'.format(s3_key=s3_key))
+
+    # Mark this upload task and its associated analysis job as completed.
     task.job.status = AnalysisJob.Status.COMPLETE
     task.job.save()
     task.status = AnalysisLocalUploadTask.Status.COMPLETE
