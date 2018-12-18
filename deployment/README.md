@@ -96,9 +96,7 @@ and an API Gateway.
 
 CI will deploy updates to existing Tilegarden instances automatically, but there are
 a few extra steps you'll need to take in order to stand up an entirely new
-instance of Tilegarden. Because Terraform expects a Tilegarden instance to
-exist before it creates infrastructure, **it's best to finish these steps before
-you deploy a new stack with Terraform**.
+instance of Tilegarden.
 
 ### 1. Create a remote state bucket for Claudia
 
@@ -168,3 +166,31 @@ You can locate this domain name in the Lambda console, or you can construct it
 by using the `api.id` and `lambda.region` values stored in the `claudia.json` file
 that Claudia created during deployment to format the example string in the
 code block above.
+
+### A note about Terraform resources
+
+Certain Terraform and Tilegarden resources are interdependent, in that they expect
+IDs of resources created by the other deployment tool as input variables. In particular,
+the CloudFront CDN managed by Terraform relies on the `tilegarden_api_gateway_domain_name`
+variable in order to point the CDN to the Tilegarden API Gateway endpoint, and the
+Tilegarden Claudia deployment tool relies on the `LAMBDA_SUBNETS` and
+`LAMBDA_SECURITY_GROUPS` variables in order to give the Tilegarden Lambda
+function access to database resources in the VPC.
+
+In order to manage this interdependence, we recommend that you first deploy
+Terraform resources using a dummy value for `tilegarden_api_gateway_endpoint`;
+this way, all of the Terraform infrastructure should build correctly, but the CDN will
+not serve tiles properly. Then, stand up a Tilegarden instance using the relevant
+input values from your Terraform-managed resources, and once you're done
+deploying Tilegarden you can update `tilegarden_api_gateway_endpoint` to point
+to the API Gateway that Claudia has created.
+
+In brief, the anticipated order of resource creation when deploying a new
+stack should be:
+
+1. Create Batch resources
+2. Create Terraform resources with dummy `tilegarden_api_gateway_domain_name`
+   variable
+3. Create Tilegarden resources
+4. Update Terraform resources with correct `tilegarden_api_gateway_domain_name`
+   variable
