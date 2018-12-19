@@ -9,6 +9,7 @@ import boto3
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
+from pfb_analysis.management.commands.import_results_shapefiles import add_results_geoms
 from pfb_analysis.models import AnalysisBatch, AnalysisJob, AnalysisLocalUploadTask
 from pfb_network_connectivity.utils import download_file
 from users.models import PFBUser
@@ -67,8 +68,6 @@ def upload_local_analysis(local_upload_task_uuid):
         with zipfile.ZipFile(local_filename, 'r') as zip_handle:
             zip_handle.extractall(tmpdir)
         results_files = [filename for filename in os.listdir(tmpdir)]
-        for rfile in results_files:
-            logging.info('Extracted results file: {rfile}'.format(rfile=rfile))
 
         # Verify all expected results files are in the upload
         missing = LOCAL_ANALYSIS_FILES.difference(set(results_files))
@@ -106,10 +105,13 @@ def upload_local_analysis(local_upload_task_uuid):
                                                     filename=results_file)
         local_file = os.path.join(tmpdir, results_file)
         s3_client.upload_file(local_file, settings.AWS_STORAGE_BUCKET_NAME, s3_key)
-        logging.info('Uploaded results file {s3_key}'.format(s3_key=s3_key))
+
+    logging.info('Uploaded results files to S3 in {directory}'.format(
+        directory=task.job.s3_results_path))
 
     # Store the neigborhood ways and Census block results back to models
-    # TODO:
+    logging.info('Importing neighborhood ways and Census blocks back to database')
+    add_results_geoms(task.job)
 
     # Mark this upload task and its associated analysis job as completed.
     task.job.status = AnalysisJob.Status.COMPLETE
