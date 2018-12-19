@@ -47,6 +47,38 @@ def create_batch_from_remote_shapefile(shapefile_url):
 def upload_local_analysis(local_upload_task_uuid):
     logging.info('Starting local analysis upload task {uuid}'.format(uuid=local_upload_task_uuid))
 
+    tmpdir = tempfile.mkdtemp()
+
+    def upload_and_insert_local_results(task):
+        logging.info('Results files extracted for upload task {uuid}'.format(
+                     uuid=local_upload_task_uuid))
+
+        s3_client = boto3.client('s3')
+
+        # upload to the expected S3 locations for the job
+
+        # Upload the files
+        for results_file in LOCAL_ANALYSIS_FILES:
+            s3_key = '{results_path}/{filename}'.format(results_path=task.job.s3_results_path,
+                                                        filename=results_file)
+            local_file = os.path.join(tmpdir, results_file)
+            s3_client.upload_file(local_file, settings.AWS_STORAGE_BUCKET_NAME, s3_key)
+
+        logging.info('Uploaded results files to S3 in {directory}'.format(
+            directory=task.job.s3_results_path))
+
+        # Store the neigborhood ways and Census block results back to models
+        logging.info('Importing neighborhood ways and Census blocks back to database')
+        add_results_geoms(task.job)
+
+        # Mark this upload task and its associated analysis job as completed.
+        task.job.status = AnalysisJob.Status.COMPLETE
+        task.job.save()
+        task.status = AnalysisLocalUploadTask.Status.COMPLETE
+        task.save()
+        logging.info('Successfully completed upload task {uuid}'.format(
+            uuid=local_upload_task_uuid))
+
     try:
         task = AnalysisLocalUploadTask.objects.get(uuid=local_upload_task_uuid)
     except (ObjectDoesNotExist, ValidationError):
@@ -61,7 +93,6 @@ def upload_local_analysis(local_upload_task_uuid):
                  uuid=local_upload_task_uuid, url=task.upload_results_url))
 
     # Download and extract zipfile of results from provided URL
-    tmpdir = tempfile.mkdtemp()
     try:
         local_filename = os.path.join(tmpdir, 'analysis_results.zip')
         download_file(task.upload_results_url, local_filename=local_filename)
@@ -80,6 +111,9 @@ def upload_local_analysis(local_upload_task_uuid):
             task.save()
             shutil.rmtree(tmpdir)
             return
+
+        # If we got this far, the expected results files have been extracted successfully
+        upload_and_insert_local_results(task)
     except Exception as ex:
         logging.error('Failed to fetch analysis results for task {uuid} from {url}: {msg}'.format(
                       uuid=local_upload_task_uuid,
@@ -90,32 +124,3 @@ def upload_local_analysis(local_upload_task_uuid):
         task.save()
         shutil.rmtree(tmpdir)
         return
-
-    # If we got this far, the expected results files have been extracted successfully
-    logging.info('Results files extracted for upload task {uuid}'.format(
-                 uuid=local_upload_task_uuid))
-
-    s3_client = boto3.client('s3')
-
-    # upload to the expected S3 locations for the job
-
-    # Upload the files
-    for results_file in LOCAL_ANALYSIS_FILES:
-        s3_key = '{results_path}/{filename}'.format(results_path=task.job.s3_results_path,
-                                                    filename=results_file)
-        local_file = os.path.join(tmpdir, results_file)
-        s3_client.upload_file(local_file, settings.AWS_STORAGE_BUCKET_NAME, s3_key)
-
-    logging.info('Uploaded results files to S3 in {directory}'.format(
-        directory=task.job.s3_results_path))
-
-    # Store the neigborhood ways and Census block results back to models
-    logging.info('Importing neighborhood ways and Census blocks back to database')
-    add_results_geoms(task.job)
-
-    # Mark this upload task and its associated analysis job as completed.
-    task.job.status = AnalysisJob.Status.COMPLETE
-    task.job.save()
-    task.status = AnalysisLocalUploadTask.Status.COMPLETE
-    task.save()
-    logging.info('Successfully completed upload task {uuid}'.format(uuid=local_upload_task_uuid))
