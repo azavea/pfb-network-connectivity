@@ -58,11 +58,13 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 popd
 
                 rm -rf .terraform/ terraform.tfstate*
-                terraform init \
+                docker-compose run --rm \
+                    terraform init \
                     -backend-config="bucket=${PFB_SETTINGS_BUCKET}" \
                     -backend-config="key=terraform/state"
 
-                terraform plan \
+                docker-compose run --rm \
+                    terraform plan \
                           -var-file="${PFB_SETTINGS_BUCKET}.tfvars" \
                           -var="git_commit=\"${GIT_COMMIT}\"" \
                           -var="batch_analysis_job_definition_name_revision=${BATCH_ANALYSIS_JOB_NAME_REVISION}" \
@@ -70,7 +72,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                           -out="${PFB_SETTINGS_BUCKET}.tfplan"
                 ;;
             apply)
-                terraform apply "${PFB_SETTINGS_BUCKET}.tfplan"
+                docker-compose run --rm terraform apply "${PFB_SETTINGS_BUCKET}.tfplan"
 
                 popd
                 pushd "${DIR}/.."
