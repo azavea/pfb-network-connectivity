@@ -15,27 +15,19 @@ from users.models import PFBUser
 
 logger = logging.getLogger(__name__)
 
-LOCAL_ANALYSIS_FILES = set((
+DESTINATION_ANALYSIS_FILES = set(['neighborhood_{}.geojson'.format(destination)
+                                 for destination in settings.PFB_ANALYSIS_DESTINATIONS])
+
+OTHER_RESULTS_FILES = set([
     'neighborhood_census_blocks.geojson',
-    'neighborhood_census_blocks.zip',
-    'neighborhood_colleges.geojson',
-    'neighborhood_community_centers.geojson',
-    'neighborhood_connected_census_blocks.csv.zip',
-    'neighborhood_dentists.geojson',
-    'neighborhood_doctors.geojson',
-    'neighborhood_hospitals.geojson',
-    'neighborhood_overall_scores.csv',
-    'neighborhood_parks.geojson',
-    'neighborhood_pharmacies.geojson',
-    'neighborhood_retail.geojson',
-    'neighborhood_schools.geojson',
     'neighborhood_score_inputs.csv',
-    'neighborhood_social_services.geojson',
-    'neighborhood_supermarkets.geojson',
-    'neighborhood_transit.geojson',
-    'neighborhood_universities.geojson',
     'neighborhood_ways.zip',
-))
+    'neighborhood_census_blocks.zip',
+    'neighborhood_overall_scores.csv',
+    'neighborhood_connected_census_blocks.csv.zip'])
+
+# The set of all the results files from a local analysis run to upload on import
+LOCAL_ANALYSIS_FILES = DESTINATION_ANALYSIS_FILES.union(OTHER_RESULTS_FILES)
 
 
 def create_batch_from_remote_shapefile(shapefile_url):
@@ -77,6 +69,8 @@ def upload_local_analysis(local_upload_task_uuid):
         results_files = [filename for filename in os.listdir(tmpdir)]
         for rfile in results_files:
             logging.info('Extracted results file: {rfile}'.format(rfile=rfile))
+
+        # Verify all expected results files are in the upload
         missing = LOCAL_ANALYSIS_FILES.difference(set(results_files))
         if missing:
             logging.error('Missing expected results files for task {uuid}: {files}'.format(
@@ -106,15 +100,16 @@ def upload_local_analysis(local_upload_task_uuid):
 
     # upload to the expected S3 locations for the job
 
-    # Upload the geojson files
-    for d in task.job.destinations_urls:
-        dest_url = d['url']
-        path, filename = os.path.split(dest_url)
+    # Upload the files
+    for results_file in LOCAL_ANALYSIS_FILES:
         s3_key = '{results_path}/{filename}'.format(results_path=task.job.s3_results_path,
-                                                    filename=filename)
-        local_file = os.path.join(tmpdir, filename)
+                                                    filename=results_file)
+        local_file = os.path.join(tmpdir, results_file)
         s3_client.upload_file(local_file, settings.AWS_STORAGE_BUCKET_NAME, s3_key)
         logging.info('Uploaded results file {s3_key}'.format(s3_key=s3_key))
+
+    # Store the neigborhood ways and Census block results back to models
+    # TODO:
 
     # Mark this upload task and its associated analysis job as completed.
     task.job.status = AnalysisJob.Status.COMPLETE
