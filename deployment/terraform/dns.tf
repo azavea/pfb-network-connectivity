@@ -46,3 +46,15 @@ resource "aws_route53_record" "pfb_app" {
     evaluate_target_health = true
   }
 }
+
+resource "aws_route53_record" "tilegarden" {
+  zone_id = "${aws_route53_zone.external.zone_id}"
+  name    = "tiles.${var.r53_public_hosted_zone}"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_cloudfront_distribution.tilegarden.domain_name}"
+    zone_id                = "${aws_cloudfront_distribution.tilegarden.hosted_zone_id}"
+    evaluate_target_health = true
+  }
+}

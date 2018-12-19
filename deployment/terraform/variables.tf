@@ -157,3 +157,9 @@ variable "aws_cloudwatch_logs_policy_arn" {
 variable "pfb_app_alb_ingress_cidr_block" {
   type = "list"
 }
+
+# CloudFront distribution
+variable "tilegarden_api_gateway_domain_name" {}
+variable "cloudfront_price_class" {
+  default = "PriceClass_100"
+}
