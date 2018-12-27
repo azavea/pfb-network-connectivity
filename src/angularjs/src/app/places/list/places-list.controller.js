@@ -183,6 +183,7 @@
             // Read out pre-set places to compare from the URL. Keep this state in the URL
             // so user can navigate between places list and comparison without losing selections.
             var uuidsToCompare = [$stateParams.place1, $stateParams.place2, $stateParams.place3];
+            _.remove(uuidsToCompare, function(placeId) { return placeId.length === 0; });
 
             AnalysisJob.query(params).$promise.then(function(data) {
 
@@ -192,11 +193,6 @@
                     neighborhood.modifiedAt = obj.modifiedAt;
                     neighborhood.overall_score = obj.overall_score;
                     neighborhood.population_total = obj.population_total;
-
-                    if (_.includes(uuidsToCompare, neighborhood.uuid)) {
-                        addPlaceToCompare(neighborhood);
-                    }
-
                     return neighborhood;
                 });
                 setMapPlaces(places);
@@ -219,6 +215,17 @@
                     ctl.hasPrev = false;
                     prevParams = {};
                 }
+
+                // Fetch places to compare; not all may be in the current page of `places`
+                _.map(uuidsToCompare, function(uuid) {
+                    Neighborhood.query({uuid: uuid}).$promise.then(function(obj) {
+                        var neighborhood = new Neighborhood(obj);
+                        neighborhood.modifiedAt = obj.modifiedAt;
+                        neighborhood.overall_score = obj.overall_score;
+                        neighborhood.population_total = obj.population_total;
+                        addPlaceToCompare(neighborhood);
+                    });
+                });
             });
         }
 
