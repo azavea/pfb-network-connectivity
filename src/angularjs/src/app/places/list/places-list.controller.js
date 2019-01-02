@@ -99,7 +99,7 @@
 
             ctl.getPlaces = getPlaces;
 
-            getPlaces();
+            getPlaces(true);
         }
 
         /**
@@ -117,6 +117,28 @@
                 updateComparisonsInUrl();
                 setMapPlaces(ctl.places);
             }
+        }
+
+        /**
+         * Helper to query separately for comparison places that may not be on the current page.
+         * Should only be invoked after full place list for page has been loaded.
+         */
+        function getComparisonPlaces() {
+            // Read out pre-set places to compare from the URL. Keep this state in the URL
+            // so user can navigate between places list and comparison without losing selections.
+            var uuidsToCompare = [$stateParams.place1, $stateParams.place2, $stateParams.place3];
+            _.remove(uuidsToCompare, function(placeId) { return placeId.length === 0; });
+
+             // Fetch places to compare; not all may be in the current page of `places`
+            _.map(uuidsToCompare, function(uuid) {
+                Neighborhood.query({uuid: uuid}).$promise.then(function(obj) {
+                    var neighborhood = new Neighborhood(obj);
+                    neighborhood.modifiedAt = obj.modifiedAt;
+                    neighborhood.overall_score = obj.overall_score;
+                    neighborhood.population_total = obj.population_total;
+                    addPlaceToCompare(neighborhood);
+                });
+            });
         }
 
         // Convenience method to transition to places comparison page.
@@ -170,20 +192,15 @@
         }
 
         function filterNeighborhoods() {
-            getPlaces();
+            getPlaces(false);
         }
 
-        function getPlaces(params) {
+        function getPlaces(fetchComparisonPlaces, params) {
             params = params || _.merge({}, defaultParams);
             params.ordering = ctl.sortBy.value;
             if (ctl.searchText) {
                 params.search = ctl.searchText;
             }
-
-            // Read out pre-set places to compare from the URL. Keep this state in the URL
-            // so user can navigate between places list and comparison without losing selections.
-            var uuidsToCompare = [$stateParams.place1, $stateParams.place2, $stateParams.place3];
-            _.remove(uuidsToCompare, function(placeId) { return placeId.length === 0; });
 
             AnalysisJob.query(params).$promise.then(function(data) {
 
@@ -216,29 +233,22 @@
                     prevParams = {};
                 }
 
-                // Fetch places to compare; not all may be in the current page of `places`
-                _.map(uuidsToCompare, function(uuid) {
-                    Neighborhood.query({uuid: uuid}).$promise.then(function(obj) {
-                        var neighborhood = new Neighborhood(obj);
-                        neighborhood.modifiedAt = obj.modifiedAt;
-                        neighborhood.overall_score = obj.overall_score;
-                        neighborhood.population_total = obj.population_total;
-                        addPlaceToCompare(neighborhood);
-                    });
-                });
+                if (fetchComparisonPlaces) {
+                    getComparisonPlaces();
+                }
             });
         }
 
         function getNext() {
             var params = _.merge({}, defaultParams, nextParams);
             $state.go('places.list', params, {notify: false});
-            getPlaces(params);
+            getPlaces(false, params);
         }
 
         function getPrev() {
             var params = _.merge({}, defaultParams, prevParams);
             $state.go('places.list', params, {notify: false});
-            getPlaces(params);
+            getPlaces(false, params);
         }
 
         // Must set ctl.mapPlaces via this so that the object ref gets updated
