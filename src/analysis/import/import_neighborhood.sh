@@ -74,6 +74,37 @@ then
         update_status "IMPORTING" "Importing boundary shapefile"
         import_and_transform_shapefile "${NB_BOUNDARY_FILE}" neighborhood_boundary "${NB_INPUT_SRID}"
 
+        update_status "IMPORTING" "Downloading water blocks"
+        # Create water blocks table
+        psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+            -c "
+        CREATE TABLE IF NOT EXISTS \"water_blocks\" (
+            \"STATEFP10\" integer,
+            \"COUNTYFP10\" integer,
+            \"TRACTCE10\" integer,
+            \"BLOCKCE10\" integer,
+            GEOID varchar(15),
+            \"NAME10\" char(10),
+            \"MTFCC10\" char(5),
+            \"UR10\" char(1),
+            \"UACE10\" integer,
+            \"UATYP10\" char(1),
+            \"FUNCSTAT10\" char(1),
+            \"ALAND10\" integer,
+            \"AWATER10\" bigint,
+            \"INTPTLAT10\" decimal,
+            \"INTPTLON10\" decimal
+        );"
+
+        # Import water file
+        WATER_FILENAME="censuswaterblocks"
+        WATER_DOWNLOAD="${NB_TEMPDIR}/${WATER_FILENAME}.zip"
+        wget -nv -O "${WATER_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/censuswaterblocks.zip"
+        unzip "${WATER_DOWNLOAD}" -d "${NB_TEMPDIR}"
+        psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+             -c "\copy water_blocks FROM ${NB_TEMPDIR}/${WATER_FILENAME}.csv delimiter ',' csv header"
+        echo "DONE: Importing water blocks"
+
         # Get blocks for the state requested
         update_status "IMPORTING" "Downloading census blocks"
         NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
@@ -102,6 +133,15 @@ then
                 AS boundary WHERE NOT ST_DWithin(blocks.geom, boundary.geom, \
                 ${NB_BOUNDARY_BUFFER});"
         echo "DONE: Finished removing blocks outside buffer"
+        
+        # Discard blocks that are all water / no land area
+        update_status "IMPORTING" "Removing water blocks"
+        echo "START: Removing blocks that are 100% water from analysis"
+        psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+            -c "DELETE FROM neighborhood_census_blocks AS blocks USING water_blocks \
+                AS water WHERE blocks.BLOCKID10 = water.geoid;"
+        echo "DONE: FINISHED removing blocks that are 100% water"
+
         BLOCK_COUNT=$(psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
             -t -c "SELECT count(*) as total_census_blocks FROM neighborhood_census_blocks;")
         echo "Census Blocks in analysis: ${BLOCK_COUNT}"
