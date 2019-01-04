@@ -57,7 +57,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 echo "Tilemaker Task Name:Revision -- ${BATCH_TILEMAKER_JOB_NAME_REVISION}"
                 popd
 
-                rm -rf .terraform/ terraform.tfstate*
+                docker-compose run --rm \
+                    --entrypoint rm \
+                    terraform -rf .terraform/ terraform.tfstate*
+
                 docker-compose run --rm \
                     terraform init \
                     -backend-config="bucket=${PFB_SETTINGS_BUCKET}" \
