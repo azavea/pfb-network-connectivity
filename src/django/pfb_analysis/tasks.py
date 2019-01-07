@@ -121,9 +121,11 @@ def upload_local_analysis(local_upload_task_uuid):
     except (ObjectDoesNotExist, ValidationError):
         logging.error('No local upload analysis task found for {uuid}.'.format(
                       uuid=local_upload_task_uuid))
+        raise
     except LocalAnalysisFetchException as ex:
         task.status = AnalysisLocalUploadTask.Status.ERROR
         task.error = ex.message
         task.save()
+        raise
     finally:
         shutil.rmtree(tmpdir)
