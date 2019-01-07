@@ -53,9 +53,6 @@ def upload_local_analysis(local_upload_task_uuid):
 
     def upload_and_insert_local_results(tmpdir, task):
         try:
-            logging.info('Results files extracted for upload task {uuid}'.format(
-                         uuid=local_upload_task_uuid))
-
             s3_client = boto3.client('s3')
 
             # Upload the files extracted to the tmp dir to the expected S3 locations for the job
@@ -71,14 +68,6 @@ def upload_local_analysis(local_upload_task_uuid):
             # Store the neigborhood ways and Census block results back to models
             logging.info('Importing neighborhood ways and Census blocks back to database')
             add_results_geoms(task.job)
-
-            # Mark this upload task and its associated analysis job as completed.
-            task.job.status = AnalysisJob.Status.COMPLETE
-            task.job.save()
-            task.status = AnalysisLocalUploadTask.Status.COMPLETE
-            task.save()
-            logging.info('Successfully completed upload task {uuid}'.format(
-                uuid=local_upload_task_uuid))
         except Exception as ex:
             logging.error('Failed to upload analysis results for task {uuid}'.format(
                 uuid=local_upload_task_uuid))
@@ -97,6 +86,8 @@ def upload_local_analysis(local_upload_task_uuid):
             if missing:
                 raise LocalAnalysisFetchException('Missing expected results files: {files}'.format(
                     files=', '.join(missing)))
+            logging.info('Results files extracted for upload task {uuid}'.format(
+                         uuid=local_upload_task_uuid))
         except Exception as ex:
             msg = 'Failed to fetch analysis results for task {uuid} from {url}: {msg}'.format(
                 uuid=local_upload_task_uuid, url=task.upload_results_url, msg=ex.message)
@@ -118,6 +109,13 @@ def upload_local_analysis(local_upload_task_uuid):
                      uuid=local_upload_task_uuid, url=task.upload_results_url))
         download_and_extract_local_results(tmpdir, task)
         upload_and_insert_local_results(tmpdir, task)
+
+        # Mark this upload task and its associated analysis job as completed.
+        task.job.update_status(AnalysisJob.Status.COMPLETE)
+        task.status = AnalysisLocalUploadTask.Status.COMPLETE
+        task.save()
+        logging.info('Successfully completed upload task {uuid}'.format(
+            uuid=local_upload_task_uuid))
     except (ObjectDoesNotExist, ValidationError):
         logging.error('No local upload analysis task found for {uuid}.'.format(
                       uuid=local_upload_task_uuid))
