@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from pfb_analysis.management.commands.import_results_shapefiles import add_results_geoms
+from pfb_analysis.management.commands.load_overall_scores import load_scores
 from pfb_analysis.models import AnalysisBatch, AnalysisJob, AnalysisLocalUploadTask
 from pfb_network_connectivity.utils import download_file
 from users.models import PFBUser
@@ -19,12 +20,14 @@ logger = logging.getLogger(__name__)
 DESTINATION_ANALYSIS_FILES = set(['neighborhood_{}.geojson'.format(destination)
                                  for destination in settings.PFB_ANALYSIS_DESTINATIONS])
 
+OVERALL_SCORES_FILE = 'neighborhood_overall_scores.csv'
+
 OTHER_RESULTS_FILES = set([
     'neighborhood_census_blocks.geojson',
     'neighborhood_score_inputs.csv',
     'neighborhood_ways.zip',
     'neighborhood_census_blocks.zip',
-    'neighborhood_overall_scores.csv',
+    OVERALL_SCORES_FILE,
     'neighborhood_connected_census_blocks.csv.zip'])
 
 # The set of all the results files from a local analysis run to upload on import
@@ -109,6 +112,9 @@ def upload_local_analysis(local_upload_task_uuid):
                      uuid=local_upload_task_uuid, url=task.upload_results_url))
         download_and_extract_local_results(tmpdir, task)
         upload_and_insert_local_results(tmpdir, task)
+        # set the overall scores on the job
+        local_scores_file = os.path.join(tmpdir, OVERALL_SCORES_FILE)
+        load_scores(task.job, local_scores_file, 'score_id', None)
 
         # Mark this upload task and its associated analysis job as completed.
         task.job.update_status(AnalysisJob.Status.COMPLETE)
@@ -120,7 +126,7 @@ def upload_local_analysis(local_upload_task_uuid):
         logging.error('No local upload analysis task found for {uuid}.'.format(
                       uuid=local_upload_task_uuid))
         raise
-    except LocalAnalysisFetchException as ex:
+    except Exception as ex:
         task.status = AnalysisLocalUploadTask.Status.ERROR
         task.error = ex.message
         task.save()
