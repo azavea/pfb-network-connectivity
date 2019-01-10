@@ -152,7 +152,7 @@ data "template_file" "pfb_app_https_ecs_task" {
     batch_analysis_job_definition_name_revision  = "${var.batch_analysis_job_definition_name_revision}"
     batch_tilemaker_job_queue_name               = "${var.batch_tilemaker_job_queue_name}"
     batch_tilemaker_job_definition_name_revision = "${var.batch_tilemaker_job_definition_name_revision}"
-    tilegarden_root                              = ""
+    tilegarden_root                              = "${var.tilegarden_root}"
   }
 }
 
@@ -198,7 +198,7 @@ data "template_file" "pfb_app_async_queue_ecs_task" {
     batch_analysis_job_definition_name_revision  = "${var.batch_analysis_job_definition_name_revision}"
     batch_tilemaker_job_queue_name               = "${var.batch_tilemaker_job_queue_name}"
     batch_tilemaker_job_definition_name_revision = "${var.batch_tilemaker_job_definition_name_revision}"
-    tilegarden_root                              = ""
+    tilegarden_root                              = "${var.tilegarden_root}"
   }
 }
 
@@ -237,7 +237,7 @@ data "template_file" "pfb_app_management_ecs_task" {
     batch_analysis_job_definition_name_revision  = "${var.batch_analysis_job_definition_name_revision}"
     batch_tilemaker_job_queue_name               = "${var.batch_tilemaker_job_queue_name}"
     batch_tilemaker_job_definition_name_revision = "${var.batch_tilemaker_job_definition_name_revision}"
-    tilegarden_root                              = ""
+    tilegarden_root                              = "${var.tilegarden_root}"
   }
 }
 
