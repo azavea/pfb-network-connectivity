@@ -135,6 +135,10 @@ variable "batch_ecs_image_minimum_cleanup_age" {
   default = "30m"
 }
 
+variable "tilegarden_root" {
+  default = ""
+}
+
 # Django
 variable "django_env" {}
 

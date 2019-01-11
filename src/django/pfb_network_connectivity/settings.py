@@ -346,7 +346,5 @@ PFB_ANALYSIS_DESTINATIONS = [
 # Length of time in seconds that S3 pre-signed urls are valid for
 PFB_ANALYSIS_PRESIGNED_URL_EXPIRES = 3600
 
-# Root URL for tile server.
+# Root URL for tile server. If unset, reverts to using uploaded S3 tile URLs
 TILEGARDEN_ROOT = os.getenv('PFB_TILEGARDEN_ROOT')
-if not TILEGARDEN_ROOT:
-    raise ImproperlyConfigured('env.PFB_TILEGARDEN_ROOT is required')

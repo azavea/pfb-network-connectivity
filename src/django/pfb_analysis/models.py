@@ -571,15 +571,25 @@ class AnalysisJob(PFBModel):
 
     @property
     def tile_urls(self):
-        return [{
-            'name': layer,
-            'url': '{root}/tile/{job_id}/{layer}/{tile_template}'.format(
-                root=settings.TILEGARDEN_ROOT,
-                job_id=self.uuid,
-                layer=layer,
-                tile_template='{z}/{x}/{y}.png',
-            )
-        } for layer in ['ways', 'census_blocks', 'bike_infrastructure']]
+        layers = ['ways', 'census_blocks', 'bike_infrastructure']
+        tile_template = '{z}/{x}/{y}.png'
+        if hasattr(settings, 'TILEGARDEN_ROOT') and settings.TILEGARDEN_ROOT:
+            return [{
+                'name': layer,
+                'url': '{root}/tile/{job_id}/{layer}/{tile_template}'.format(
+                    root=settings.TILEGARDEN_ROOT,
+                    job_id=self.uuid,
+                    layer=layer,
+                    tile_template=tile_template)
+            } for layer in layers]
+        else:
+            # pre-Tilegarden URL format
+            return [{
+                'name': layer,
+                'url': self._s3_url_for_result_resource(
+                    'tiles/neighborhood_{layer}/{tile_template}'.format(
+                        layer=layer, tile_template=tile_template))
+            } for layer in layers]
 
     @property
     def overall_scores_url(self):
