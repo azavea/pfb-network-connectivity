@@ -1,12 +1,12 @@
 footer {
   @extend %clearfix;
   display: block;
-  background-color: #002c40;	
+  background-color: $brand-navy;	
   padding-top: 4rem;
   padding-bottom: 4rem;
   color: #fff;
   position: relative;
-  border-top: 1px solid lighten(#002c40, 10%);
+  border-top: 1px solid lighten($brand-navy, 10%);
 
   .brand {
     max-width: 20rem;
