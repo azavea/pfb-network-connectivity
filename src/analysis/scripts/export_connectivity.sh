@@ -175,8 +175,6 @@ then
         ec_export_table_csv "${OUTPUT_DIR}" "neighborhood_overall_scores"
         # Send overall_scores to Django app
         update_overall_scores "${OUTPUT_DIR}/neighborhood_overall_scores.csv"
-        # Insert shapefile geometries into Django app DB if we have PFB_JOB_ID
-        PFB_S3_STORAGE_BUCKET="${AWS_STORAGE_BUCKET_NAME}" import_geometries_for_job
 
         if [ -n "${AWS_STORAGE_BUCKET_NAME}" ] && [ -n "${PFB_S3_RESULTS_PATH}" ]
         then
@@ -185,5 +183,8 @@ then
           aws s3 cp --quiet --recursive "${OUTPUT_DIR}" \
             "s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_RESULTS_PATH}"
         fi
+
+        # Insert shapefile geometries into Django app DB if we have PFB_JOB_ID
+        PFB_S3_STORAGE_BUCKET="${AWS_STORAGE_BUCKET_NAME}" import_geometries_for_job
     fi
 fi
