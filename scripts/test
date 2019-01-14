@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 function usage() {
     echo -n \
          "Usage: $(basename "$0")
@@ -18,6 +20,14 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         echo "running Tilegarden tests..."
         docker-compose run --rm --no-deps tilegarden yarn test
+
+        echo "running angularjs linter..."
+        docker-compose run --rm angularjs gulp lint
+
+        echo "running angularjs build..."
+        docker-compose run --rm angularjs gulp build
+
+        echo "tests finished"
     fi
 fi
 

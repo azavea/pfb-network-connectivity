@@ -9,6 +9,7 @@
 var gulp = require('gulp');
 var wrench = require('wrench');
 var Promise = require('es6-promise').Promise;
+var eslint = require('gulp-eslint');
 
 /**
  *  This will load all js or coffee files in the gulp directory
@@ -27,4 +28,11 @@ wrench.readdirSyncRecursive('./gulp').filter(function(file) {
  */
 gulp.task('default', ['clean'], function () {
     gulp.start('build');
+});
+
+gulp.task('lint', [], function () {
+    return gulp.src(['src/**/*.js'])
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError());
 });
