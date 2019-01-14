@@ -72,6 +72,7 @@ coverage.xml
 
 # Django stuff:
 *.log
+src/django/neighborhood_boundaries/*
 
 # Sphinx documentation
 docs/_build/

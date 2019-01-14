@@ -10,7 +10,6 @@ var gulp = require('gulp');
 var wrench = require('wrench');
 var Promise = require('es6-promise').Promise;
 var eslint = require('gulp-eslint');
-var sassLint = require('gulp-sass-lint');
 
 /**
  *  This will load all js or coffee files in the gulp directory
@@ -36,11 +35,4 @@ gulp.task('lint', [], function () {
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
-});
-
-gulp.task('sass-lint', function () {
-  return gulp.src('src/styles/**/*.s+(a|c)ss')
-    .pipe(sassLint({configFile: 'src/styles/.sass-lint.yml'}))
-    .pipe(sassLint.format())
-    .pipe(sassLint.failOnError())
 });
