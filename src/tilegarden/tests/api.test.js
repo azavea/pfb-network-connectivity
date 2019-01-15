@@ -6,7 +6,7 @@ const api = rewire('../src/api'),
 describe('processCoords', () => {
     test('properly parses properly formatted coords', () => {
         const req = {
-            pathParams: {
+            pathParameters: {
                 x: '2385',
                 y: '3103.png',
                 z: '13'
@@ -21,14 +21,14 @@ describe('processCoords', () => {
 
     test('parses extensions other than png', () => {
         const req = {
-            pathParams: {
+            pathParameters: {
                 x: '2385',
                 y: '3103.jpg',
                 z: '13'
             }
         }
         const req2 = {
-            pathParams: {
+            pathParameters: {
                 x: '2385',
                 y: '3103.pdf',
                 z: '13'
@@ -48,7 +48,7 @@ describe('processCoords', () => {
 
     test('properly parses coords with no file extension', () => {
         const req = {
-            pathParams: {
+            pathParameters: {
                 x: '2385',
                 y: '3103',
                 z: '13'
@@ -63,7 +63,7 @@ describe('processCoords', () => {
 
     test('throws an error for non-numeral coords', () => {
         const req = {
-            pathParams: {
+            pathParameters: {
                 x: 'eggs',
                 y: 'bacon',
                 z: 'orange_juice'
@@ -76,7 +76,7 @@ describe('processCoords', () => {
 describe('processLayers', () => {
     test('properly parses list of layer', () => {
         const req = {
-            queryString: {
+            queryStringParameters: {
                 layers: '["layer1","layer2","layer3","layer4"]'
             }
         }
@@ -85,7 +85,7 @@ describe('processLayers', () => {
 
     test('properly parses just one layer', () => {
         const req = {
-            queryString: {
+            queryStringParameters: {
                 layers: '["layer"]'
             }
         }
@@ -94,14 +94,14 @@ describe('processLayers', () => {
 
     test('properly parses no fields', () => {
         const req = {
-            queryString: {}
+            queryStringParameters: {}
         }
         expect(processLayers(req)).toEqual([])
     })
 
     test('properly parses a blank field', () => {
         const req = {
-            queryString: {
+            queryStringParameters: {
                 layers: ''
             }
         }
