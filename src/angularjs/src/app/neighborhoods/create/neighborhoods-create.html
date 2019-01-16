@@ -23,6 +23,14 @@
           <select ng-model="neighborhoodCreate.state"
                   ng-options="state as state.name for state in neighborhoodCreate.states
                   track by state.abbr"
+                  class="form-control" id="role" type="text">
+          </select>
+        </div>
+         <div class="form-group">
+          <label for="role">Country</label>
+          <select ng-model="neighborhoodCreate.country"
+                  ng-options="country as country.name for country in neighborhoodCreate.countries
+                  track by country.abbr"
                   class="form-control" id="role" type="text" required>
           </select>
         </div>

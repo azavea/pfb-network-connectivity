@@ -10,13 +10,21 @@
     'use strict';
 
     /** @ngInject */
-    function NeighborhoodCreateController($state, $filter, toastr, Upload, Neighborhood, State) {
+    function NeighborhoodCreateController($state, $filter, toastr, Upload, Neighborhood,
+                                          Country, State) {
         var ctl = this;
 
+        var DEFAULT_COUNTRY = {abbr: 'US', name: 'United States'};
+
         function initialize() {
+            ctl.country = DEFAULT_COUNTRY;
             ctl.states = State.query();
             ctl.states.$promise.then(function(response) {
                 ctl.states = response;
+            });
+            ctl.countries = Country.query();
+            ctl.countries.$promise.then(function(response) {
+                ctl.countries = response;
             });
             // TODO: De-dupe from API?
             ctl.visibilities = [
@@ -36,7 +44,8 @@
                 method: 'POST',
                 data: {
                     boundary_file: ctl.file,
-                    state_abbrev: ctl.state.abbr,
+                    state_abbrev: ctl.state ? ctl.state.abbr : '',
+                    country: ctl.country.abbr || DEFAULT_COUNTRY,
                     visibility: ctl.visibility,
                     label: ctl.label
                 }
