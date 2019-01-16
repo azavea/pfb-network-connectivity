@@ -45,6 +45,9 @@ urlpatterns = [
     # US States View
     url(r'^api/states/', analysis_views.USStateView.as_view()),
 
+    # Countries view
+    url(r'^api/countries/', analysis_views.CountriesView.as_view()),
+
     # Neighborhood points set
     url(r'^api/neighborhoods_geojson/', analysis_views.NeighborhoodGeoJsonViewSet.as_view()),
 
