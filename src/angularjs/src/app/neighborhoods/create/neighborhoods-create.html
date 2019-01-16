@@ -18,9 +18,10 @@
                  class="form-control" id="label"
                  type="text">
         </div>
-        <div class="form-group">
+        <div class="form-group" ng-if="neighborhoodCreate.isDefaultCountry()">
           <label for="role">State</label>
           <select ng-model="neighborhoodCreate.state"
+                  ng-required="neighborhoodCreate.isDefaultCountry()"
                   ng-options="state as state.name for state in neighborhoodCreate.states
                   track by state.abbr"
                   class="form-control" id="role" type="text">

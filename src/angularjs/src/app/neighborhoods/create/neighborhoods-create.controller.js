@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function NeighborhoodCreateController($state, $filter, toastr, Upload, Neighborhood,
+    function NeighborhoodCreateController($log, $state, $filter, toastr, Upload, Neighborhood,
                                           Country, State) {
         var ctl = this;
 
@@ -44,7 +44,7 @@
                 method: 'POST',
                 data: {
                     boundary_file: ctl.file,
-                    state_abbrev: ctl.state ? ctl.state.abbr : '',
+                    state_abbrev: ctl.state && ctl.isDefaultCountry() ? ctl.state.abbr : '',
                     country: ctl.country.abbr || DEFAULT_COUNTRY,
                     visibility: ctl.visibility,
                     label: ctl.label
@@ -55,9 +55,23 @@
                 $state.go('admin.neighborhoods.list');
             }).catch(function(error) {
                 toastr.clear(uploadToast);
-                toastr.error('Unable to create neighborhood: ' + error);
+                $log.error(error);
+                var msg = 'Unable to create neighborhood:';
+                if (error.data && error.data.non_field_errors) {
+                    $log.debug('found non_field_errors');
+                    for (var i in error.data.non_field_errors) {
+                        msg += ' ' + error.data.non_field_errors[i];
+                    }
+                } else {
+                    msg += ' ' + error;
+                }
+                toastr.error(msg);
             });
         };
+
+        ctl.isDefaultCountry = function() {
+            return ctl.country && ctl.country.abbr === 'US';
+        }
     }
     angular
         .module('pfb.neighborhoods.create')
