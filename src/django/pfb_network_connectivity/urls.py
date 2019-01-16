@@ -30,6 +30,8 @@ router.register(r'users', user_views.PFBUserViewSet, base_name='users')
 router.register(r'analysis_batches', analysis_views.AnalysisBatchViewSet,
                 base_name='analysis_batches')
 router.register(r'analysis_jobs', analysis_views.AnalysisJobViewSet, base_name='analysis_jobs')
+router.register(r'local_upload_tasks', analysis_views.AnalysisLocalUploadTaskViewSet,
+                base_name='local_upload_tasks')
 router.register(r'score_metadata', analysis_views.AnalysisScoreMetadataViewSet,
                 base_name='score_metadata')
 router.register(r'neighborhoods', analysis_views.NeighborhoodViewSet, base_name='neighborhoods')

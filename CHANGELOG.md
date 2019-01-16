@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## 0.8.0 - 2019-01-16
+
+- Preliminary back-end changes to enable dynamic tile server
+- Preliminary back-end changes to enable local analysis uploads
+
 ## [0.7.0] - 2018-06-14
 
 ### Added

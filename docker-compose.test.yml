@@ -23,3 +23,9 @@ services:
     build:
       context: ./src
       dockerfile: tilemaker/Dockerfile
+
+  tilegarden:
+    env_file: ./src/tilegarden/.env
+    volumes:
+      # scripts/infra will download this config file before mounting the volume.
+      - ./src/tilegarden/claudia.json:/opt/pfb/tilegarden/claudia.json

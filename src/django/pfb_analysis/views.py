@@ -12,13 +12,13 @@ import boto3
 from botocore.client import Config as BotocoreClientConfig
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async
-from rest_framework import parsers, status
+from rest_framework import mixins, parsers, status
 from rest_framework.decorators import detail_route, parser_classes
-from rest_framework.exceptions import NotFound, APIException
+from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import (AllowAny, IsAuthenticatedOrReadOnly)
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, ViewSet
 from rest_framework.response import Response
 import us
 
@@ -28,12 +28,15 @@ from pfb_network_connectivity.permissions import IsAdminOrgAndAdminCreateEditOnl
 
 from .models import (
     AnalysisJob,
+    AnalysisLocalUploadTask,
     AnalysisScoreMetadata,
     Neighborhood,
     get_batch_shapefile_upload_path,
 )
 from .serializers import (
     AnalysisJobSerializer,
+    AnalysisLocalUploadTaskCreateSerializer,
+    AnalysisLocalUploadTaskSerializer,
     AnalysisScoreMetadataSerializer,
     NeighborhoodSerializer,
 )
@@ -58,7 +61,7 @@ class AnalysisJobViewSet(ModelViewSet):
     filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label',
-                       'neighborhood__state_abbrev', 'population_total')
+                       'neighborhood__country', 'neighborhood__state_abbrev', 'population_total')
     ordering = ('-created_at',)
 
     def perform_create(self, serializer):
@@ -145,6 +148,34 @@ class AnalysisScoreMetadataViewSet(ReadOnlyModelViewSet):
     permission_classes = (AllowAny,)
 
 
+class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
+                                     mixins.ListModelMixin,
+                                     mixins.RetrieveModelMixin,
+                                     GenericViewSet):
+    queryset = AnalysisLocalUploadTask.objects.all()
+    pagination_class = OptionalLimitOffsetPagination
+    permission_classes = (RestrictedCreate, IsAuthenticatedOrReadOnly)
+    ordering_fields = ('created_at',)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return AnalysisLocalUploadTaskCreateSerializer
+        else:
+            return AnalysisLocalUploadTaskSerializer
+
+    def perform_create(self, serializer):
+        if not serializer.is_valid():
+            return
+        neighborhood_id = serializer.validated_data['neighborhood']
+        neighborhood = Neighborhood.objects.get(pk=neighborhood_id)
+        user = self.request.user
+        job = AnalysisJob.objects.create(neighborhood=neighborhood,
+                                         created_by=user, modified_by=user)
+        obj = serializer.save(job=job, created_by=user, modified_by=user)
+
+        async('pfb_analysis.tasks.upload_local_analysis', obj.uuid)
+
+
 class NeighborhoodViewSet(ModelViewSet):
     """For listing or retrieving neighborhoods."""
 
@@ -156,7 +187,7 @@ class NeighborhoodViewSet(ModelViewSet):
         return queryset
 
     permission_classes = (IsAdminOrgAndAdminCreateEditOnly, IsAuthenticatedOrReadOnly)
-    filter_fields = ('organization', 'name', 'label', 'state_abbrev')
+    filter_fields = ('organization', 'name', 'label', 'country', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
@@ -185,7 +216,7 @@ class NeighborhoodBoundsGeoJsonViewList(APIView):
                   ST_AsGeoJSON(g.geom_simple)::json AS geometry,
                   g.uuid AS id,
                   row_to_json((SELECT p FROM (
-                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    SELECT uuid AS id, name, label, country, state_abbrev, organization_id) AS p))
                     AS properties
             FROM pfb_analysis_neighborhood AS g WHERE g.visibility <> %s) AS f) AS fc;
         """
@@ -216,7 +247,7 @@ class NeighborhoodBoundsGeoJsonViewDetail(APIView):
                   ST_AsGeoJSON(g.geom_simple)::json AS geometry,
                   g.uuid AS id,
                   row_to_json((SELECT p FROM (
-                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    SELECT uuid AS id, name, label, country, state_abbrev, organization_id) AS p))
                     AS properties
             FROM pfb_analysis_neighborhood AS g WHERE g.uuid = %s) AS f) AS fc;
         """
@@ -257,7 +288,7 @@ class NeighborhoodGeoJsonViewSet(APIView):
                 array_to_json(array_agg(f)) AS features
             FROM (SELECT 'Feature' AS type, ST_AsGeoJSON(g.geom_pt)::json AS geometry, g.uuid AS id,
                   row_to_json((SELECT p FROM (
-                    SELECT uuid AS id, name, label, state_abbrev, organization_id) AS p))
+                    SELECT uuid AS id, name, label, country, state_abbrev, organization_id) AS p))
                     AS properties
             FROM pfb_analysis_neighborhood AS g WHERE g.visibility <> %s) AS f)  AS fc;
         """

@@ -2,9 +2,9 @@
 
 set -e
 
-export NB_POSTGRESQL_DB=pfb
-export NB_POSTGRESQL_USER=gis
-export NB_POSTGRESQL_PASSWORD=gis
+export NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-localhost}"
+export NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
+export NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 
 # NB_MAX_TRIP_DISTANCE should be in the same units of the NB_OUTPUT_SRID projection
 # Typically meters because we autodetect and use UTM zones
@@ -55,8 +55,13 @@ then
 elif [ ! "${PFB_OSM_FILE}" ] || [ ! -f "${PFB_OSM_FILE}" ]
 then
     echo "Downloading OSM extract"
-    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $PFB_TEMPDIR \
-                                                      $PFB_STATE $AWS_STORAGE_BUCKET_NAME)"
+    if [ -n "${AWS_STORAGE_BUCKET_NAME}" ]
+    then
+        BUCKET_ARG="--storage_bucket ${AWS_STORAGE_BUCKET_NAME}"
+    else
+        BUCKET_ARG=""
+    fi
+    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $BUCKET_ARG $PFB_TEMPDIR $PFB_STATE)"
 fi
 
 # run job
@@ -68,12 +73,18 @@ export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
 ./scripts/run_connectivity.sh
 
 # print scores
-psql -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
+psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" <<EOF
 SELECT * FROM neighborhood_overall_scores;
 EOF
 
-NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR/output}"
-./scripts/export_connectivity.sh $NB_OUTPUT_DIR $PFB_JOB_ID
+EXPORT_DIR="${NB_OUTPUT_DIR:-$PFB_TEMPDIR/output}"
+if [ -n "${PFB_JOB_ID}" ]
+then
+    EXPORT_DIR="${EXPORT_DIR}/${PFB_JOB_ID}"
+else
+    EXPORT_DIR="${EXPORT_DIR}/local-analysis-`date +%F-%H%M`"
+fi
+./scripts/export_connectivity.sh $EXPORT_DIR
 
 rm -rf "${PFB_TEMPDIR}"
 

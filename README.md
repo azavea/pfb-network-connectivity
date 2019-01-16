@@ -12,24 +12,23 @@ Requirements:
 #### Notes for Windows users
 
 1. Ensure all project files checkout with LF (unix) line endings. The easiest way is to run `git config --global core.autocrlf false` before checking out the project. Alternatively, you can checkout the project, then run `git config core.autocrlf false` within the project dir, then manually fix all remaining CRLF line endings before running `vagrant up`.
-2. Run all commands in a shell with administrator permissions. It's highly recommended to run all commands within the "Git for Windows" Git Bash shell, as that already includes an SSH client, and allows running the commands below as-is.
+2. Run all commands in a **shell with administrator permissions**. It's highly recommended to run all commands within the "Git for Windows" Git Bash shell, as that already includes an SSH client, and allows running the commands below as-is.
 3. Before starting the VM, ensure the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` is set. NFS is not supported on windows, so we need to ensure that Vagrant ignores our request for it.
 4. Do not use `vagrant reload`. In some cases it will create a new VM rather than autodetecting that the old one exists
 
 #### Notes for non-Windows users
 
-1. An NFS daemon must be running on the host machine. This should be enabled by default on MacOS. Linux computers may require the installation of an additional
-package such as nfs-kernel-server on Ubuntu.
+1. An NFS daemon must be running on the host machine. This should be enabled by default on MacOS. Linux computers may require the installation of an additional package such as nfs-kernel-server on Ubuntu.
 
 ### Setting up AWS credentials
+
+**Note:** If you do not have AWS credentials, this step can be skipped if you just want to run local analyses.
+Continue below at [Provisioning the VM](#provisioning-the-vm)
 
 As noted above, ensure the AWS CLI is installed on your host machine. Once it is, you can configure your PFB account credentials by running:
 ```
 aws configure --profile pfb
 ```
-
-If you do not have AWS credentials, this step can be skipped but some application services may not
-work as intended.
 
 ### Provisioning the VM
 
@@ -37,16 +36,18 @@ First you'll need to copy the example ansible group_vars file:
 ```
 cp deployment/ansible/group_vars/all.example deployment/ansible/group_vars/all
 ```
-If you have access to the AWS console, copy the appropriate values at the links below into `deployment/ansible/group_vars/all`, choosing the resources with 'staging' in the name:
+
+If you want to run the full development application and you've configured AWS credentials, copy the appropriate values at the links below into `deployment/ansible/group_vars/all`, choosing the resources with 'staging' in the name:
 - [AWS Batch Job Queues](https://console.aws.amazon.com/batch/home?region=us-east-1#/queues): Copy the staging `analysis` and `tilemaker` job queue names to the appropriate equivalent group var setting.
-If you don't have access to the console, copying the values into `group_vars/all` can be skipped. Like above, some features of the application may fail unexpectedly.
+
+If you don't have access to the console, or just want to run a local analysis, copying the values into `group_vars/all` can be skipped.
 
 Run `./scripts/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
 ```
 vagrant ssh
 ```
 
-Once in the VM, with your AWS credentials configured, run the following commands to configure your development S3 buckets:
+Once in the VM, if you added AWS credentials above, run the following commands to configure your development S3 buckets:
 ```
 aws s3api create-bucket --bucket "${DEV_USER}-pfb-storage-us-east-1"
 aws s3api put-bucket-policy --bucket "${DEV_USER}-pfb-storage-us-east-1" --policy "{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::${DEV_USER}-pfb-storage-us-east-1/*\"}]}"
@@ -78,6 +79,8 @@ systems+pfb@azavea.com / root
 | 9214 | Postgresql | Allows direct connections to the database where an analysis run is stored |
 | 9301 | Gulp | Gulp server for analysis angular app |
 | 9302 | Browsersync | Browsersync for analysis angular app |
+| 9400 | Tilegarden | Tilegarden development server |
+| 9401 | Browsersync | Node debugger for Tilegarden development server |
 
 
 ## Scripts
@@ -93,7 +96,10 @@ systems+pfb@azavea.com / root
 
 ## Running the Analysis
 
-See [Running the Analysis Locally](README.RUNNING.md).
+On creating a local anaylsis job in the admin UI, the Django logs will print the appropriate commands
+to run in the VM console to actually run the analysis and tiling jobs locally.
+
+See [Running the Analysis Locally](README.LOCAL-ANALYSIS.md) for details.
 
 
 ## Verifying the Analysis

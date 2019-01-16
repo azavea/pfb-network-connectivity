@@ -1,0 +1,21 @@
+name: Census blocks
+srs: +init=epsg:3857
+format: png
+
+Stylesheet:
+  - census_blocks.mss
+
+Layer:
+- id: neighborhood_census_blocks
+  name: neighborhood_census_blocks
+  geometry: polygon
+  srs: "+init=epsg:4326"
+  Datasource:
+    host: ${PFB_DB_HOST}
+    dbname: ${PFB_DB_DATABASE}
+    user: ${PFB_DB_USER}
+    password: ${PFB_DB_PASSWORD}
+    type: "postgis"
+    table: "pfb_analysis_censusblocksresults"
+    key_field: ""
+    geometry_field: "geom"

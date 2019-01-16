@@ -141,33 +141,25 @@
 }
 
 .calculation {
-  background-color: #000;
+  background-color: $brand-navy;
 
   .decor {
     color: #fff;
   }
 
   .card-details {
-    &:before,
-    &:after {
+    &:before {
       content: '';
+      right: 0;
       height: 6px;
-      transform: skew(45deg);
       display: inline-block;
       position: absolute;
       top: 0px;
-    }
-
-    &:before {
-      background: #00aaf6;
-      width: 25%;
-      left: 5px;
-    }
-
-    &:after {
-      background: red;
-      width: 35%;
-      left: 40%;
+      background-image: url("../assets/images/web-racing-stripe.png");
+      background-size: 80%;
+      background-repeat: no-repeat;
+      background-position: right;
+      width: 100%;
     }
   }
 }

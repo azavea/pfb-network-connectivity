@@ -12,6 +12,8 @@ services:
     build:
       context: ./src/nginx
       dockerfile: Dockerfile
+    depends_on:
+      - django
     ports:
       - "9200:443"
     links:
@@ -97,3 +99,22 @@ services:
       - PFB_JOB_ID
       - PFB_S3_RESULTS_PATH
       - PFB_S3_TILES_PATH
+
+  tilegarden:
+    image: pfb-tilegarden
+    build:
+      context: ./src/tilegarden
+      dockerfile: Dockerfile
+    env_file: ./src/tilegarden/.env.dev
+    links:
+      - database:database.service.pfb.internal
+    ports:
+      - "9400:3000"
+      - "9401:9229"
+    volumes:
+      - $HOME/.aws:/root/.aws:ro
+      # Can't just link src/tilegarden because that makes node_modules disappear
+      - ./src/tilegarden/src:/opt/pfb/tilegarden/src
+      - ./src/tilegarden/scripts:/opt/pfb/tilegarden/scripts
+      - ./src/tilegarden/tests:/opt/pfb/tilegarden/tests
+      - ./src/tilegarden/package.json:/opt/pfb/tilegarden/package.json
