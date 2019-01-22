@@ -133,6 +133,12 @@
                 controllerAs: 'analysisJobCreate',
                 templateUrl: 'app/analysis-jobs/create/analysis-jobs-create.html'
             })
+            .state('admin.analysis-jobs.import', {
+                url: 'import/',
+                controller: 'AnalysisJobImportController',
+                controllerAs: 'analysisJobImport',
+                templateUrl: 'app/analysis-jobs/import/analysis-jobs-import.html'
+            })
             .state('admin.analysis-jobs.detail', {
                 url: ':uuid/',
                 controller: 'AnalysisJobDetailController',

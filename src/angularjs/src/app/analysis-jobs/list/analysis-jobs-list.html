@@ -4,6 +4,10 @@
   <div class="row">
     <div class="column-12">
       <button ng-if="analysisJobList.isAdminUser"
+        ui-sref="admin.analysis-jobs.import" class="btn btn-primary pull-right">
+        Import Analysis
+      </button>
+      <button ng-if="analysisJobList.isAdminUser"
         ui-sref="admin.analysis-jobs.create" class="btn btn-primary pull-right">
         Run Analysis
       </button>

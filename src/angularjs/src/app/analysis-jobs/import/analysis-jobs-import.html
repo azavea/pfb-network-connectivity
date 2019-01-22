@@ -1,0 +1,39 @@
+<pfb-navbar></pfb-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="column-12">
+      <h1>Import Analysis Results</h1>
+      <form name="analysisJobImportForm" novalidate ng-submit="analysisJobImport.import()">
+        <div class="row">
+          <div class="column-12">
+            <div class="form-group">
+                <label for="neighborhood">Neighborhood</label>
+                <select ng-model="analysisJobImport.neighborhood"
+                        ng-options="neighborhood as neighborhood.label for neighborhood
+                        in analysisJobImport.neighborhoods track by neighborhood.uuid"
+                        class="form-control" id="neighborhood" type="text" required>
+                </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column-12">
+            <div class="form-group">
+                <label for="url">Results Zip File URL</label>
+                <input ng-model="analysisJobImport.url"
+                       ngf-pattern="'.zip'" class="column-12"
+                       type="url" name="url" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column-12">
+            <button type="submit" ng-disabled="analysisJobImportForm.$invalid"
+                    class="btn-primary btn">Submit Analysis Results Import</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
