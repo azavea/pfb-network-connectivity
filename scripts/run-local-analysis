@@ -23,16 +23,25 @@ treated as a URL.
 'extra args' should be a string that will be fed through to the `docker-compose run`
 command, e.g. '-T' to disable pseudo-TTY allocation.
 
+The `NB_POSTGRESQL_*` variables can point to a remote DB instance. Be sure you've
+properly configured the remote DB as described in README.LOCAL-ANALYSIS.md. Use of a
+remote DB is not supported if PFB_JOB_ID is set.
+
 Optional, set them in the environment to override:
-NB_INPUT_SRID (default: 4326)
-NB_MAX_TRIP_DISTANCE (in meters. default: 2680)
-NB_BOUNDARY_BUFFER (in meters. default: half of NB_MAX_TRIP_DISTANCE)
-PFB_OSM_FILE (default: none, downloaded by the analysis job)
-PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
-NB_OUTPUT_DIR (default: /data/output)
 AWS_PROFILE (default: pfb)
 AWS_STORAGE_BUCKET_NAME (default: ${DEV_USER}-pfb-storage-us-east-1)
-PFB_JOB_ID (default: 'local-job-YYYY-MM-DD-HHMM')
+NB_BOUNDARY_BUFFER (in meters. default: half of NB_MAX_TRIP_DISTANCE)
+NB_INPUT_SRID (default: 4326)
+NB_MAX_TRIP_DISTANCE (in meters. default: 2680)
+NB_OUTPUT_DIR (default: /data/output)
+NB_POSTGRESQL_DB (default: pfb)
+NB_POSTGRESQL_HOST (default: localhost)
+NB_POSTGRESQL_PASSWORD (default: gis)
+NB_POSTGRESQL_USER (default: gis)
+PFB_JOB_ID (default: none, local-only results)
+PFB_OSM_FILE (default: none, downloaded by the analysis job)
+PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
+PFB_CITY_FIPS (default: none, no adjustments to speed defaults)
 
 EXAMPLES:
 A boulder run with local shapefile and all defaults:
@@ -58,25 +67,45 @@ else
     PFB_STATE_FIPS="${3}"
     EXTRA_ARGS="${4}"
 
+    AWS_PROFILE="${AWS_PROFILE:-pfb}"
     NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
     NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
-    PFB_JOB_ID="${PFB_JOB_ID:-local-job-`date +%F-%H%M`}"
-    PFB_S3_RESULTS_PATH="${PFB_S3_RESULTS_PATH:-results/${PFB_JOB_ID}}"
+    PFB_JOB_ID="${PFB_JOB_ID:-}"
+
+    if [ -n "${PFB_JOB_ID}" ] && aws iam get-user > /dev/null 2>&1; then
+        AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME:-${DEV_USER:-dev-user}-pfb-storage-us-east-1}"
+        PFB_S3_RESULTS_PATH="${PFB_S3_RESULTS_PATH:-results/${PFB_JOB_ID}}"
+    else
+        echo -n \
+        "
+WARNING: PFB_JOB_ID or AWS credentials not provided.
+Results available locally at ${NB_OUTPUT_DIR}
+
+"
+        sleep 2
+        AWS_STORAGE_BUCKET_NAME=""
+        PFB_S3_RESULTS_PATH=""
+    fi
 
     docker-compose run $EXTRA_ARGS \
-        -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
-        -e PFB_SHPFILE=$PFB_SHPFILE \
-        -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
-        -e PFB_OSM_FILE=$PFB_OSM_FILE \
-        -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
+        -e AWS_PROFILE="${AWS_PROFILE}" \
+        -e AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME}" \
+        -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
         -e NB_INPUT_SRID=$NB_INPUT_SRID \
         -e NB_MAX_TRIP_DISTANCE=$NB_MAX_TRIP_DISTANCE \
-        -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
         -e NB_OUTPUT_DIR=$NB_OUTPUT_DIR \
+        -e NB_POSTGRESQL_DB \
+        -e NB_POSTGRESQL_HOST \
+        -e NB_POSTGRESQL_PASSWORD \
+        -e NB_POSTGRESQL_USER \
         -e PFB_JOB_ID=$PFB_JOB_ID \
+        -e PFB_OSM_FILE=$PFB_OSM_FILE \
+        -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
         -e PFB_S3_RESULTS_PATH=$PFB_S3_RESULTS_PATH \
-        -e AWS_PROFILE=pfb \
-        -e AWS_STORAGE_BUCKET_NAME="${DEV_USER}-pfb-storage-us-east-1" \
+        -e PFB_SHPFILE=$PFB_SHPFILE \
+        -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
+        -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
+        -e PFB_CITY_FIPS=$PFB_CITY_FIPS \
         analysis
 fi

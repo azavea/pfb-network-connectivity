@@ -44,6 +44,12 @@ variable "pfb_app_https_ecs_deployment_max_percent" {}
 variable "pfb_app_https_ecs_desired_count" {}
 variable "pfb_app_https_ecs_deployment_min_percent" {}
 
+## Async Queue
+variable "pfb_app_async_queue_ecs_desired_count" {}
+
+variable "pfb_app_async_queue_ecs_deployment_min_percent" {}
+variable "pfb_app_async_queue_ecs_deployment_max_percent" {}
+
 # IAM
 variable "aws_ecs_for_ec2_service_role_policy_arn" {
   default = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
@@ -129,6 +135,10 @@ variable "batch_ecs_image_minimum_cleanup_age" {
   default = "30m"
 }
 
+variable "tilegarden_root" {
+  default = ""
+}
+
 # Django
 variable "django_env" {}
 
@@ -150,4 +160,10 @@ variable "aws_cloudwatch_logs_policy_arn" {
 
 variable "pfb_app_alb_ingress_cidr_block" {
   type = "list"
+}
+
+# CloudFront distribution
+variable "tilegarden_api_gateway_domain_name" {}
+variable "cloudfront_price_class" {
+  default = "PriceClass_100"
 }

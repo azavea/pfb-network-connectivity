@@ -66,12 +66,14 @@ INSTALLED_APPS = [
 
     # 3rd party
     'django_extensions',
-    'django_filters',
     'localflavor',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'storages',
     'watchman',
+    'django_q',
+    'django_countries',
 
     # Application
     'pfb_network_connectivity',
@@ -200,6 +202,10 @@ logging.config.dictConfig({
             'handlers': ['console'],
             'level': DJANGO_LOG_LEVEL,
         },
+        'django_q': {
+            'handlers': ['console'],
+            'level': DJANGO_LOG_LEVEL,
+        },
         'pfb_analysis': {
             'handlers': ['console'],
             'level': DJANGO_LOG_LEVEL,
@@ -223,7 +229,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_FILTER_BACKENDS': [
-        'rest_framework.filters.DjangoFilterBackend',
+        'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.OrderingFilter'
     ],
     'PAGE_SIZE': 20
@@ -245,10 +251,25 @@ AWS_STORAGE_BUCKET_NAME = os.getenv('PFB_S3_STORAGE_BUCKET',
                                     '{0}-pfb-storage-{1}'.format(DEV_USER, AWS_REGION))
 AWS_QUERYSTRING_AUTH = False
 
+# Django Q
+# https://django-q.readthedocs.io/en/latest/index.html
+
+Q_CLUSTER = {
+    'name': 'pfb-network-connectivity',
+    'workers': 1,
+    'recycle': 1,
+    'timeout': 600,
+    'orm': 'default',
+    'poll': 5,
+    'cpu_affinity': 1
+}
 
 # Email
 DEFAULT_FROM_EMAIL = 'noreply@bna.peopleforbikes.org'
 REPOSITORY_HELP_EMAIL = os.getenv('REPOSITORY_HELP_EMAIL', 'help@bna.peopleforbikes.org')
+
+# Root user email (the email address of the main admin user for the root org in the database)
+ROOT_USER_EMAIL = 'systems+pfb@azavea.com'
 
 if DJANGO_ENV in ['staging', 'production']:
     EMAIL_BACKEND = 'django_amazon_ses.backends.boto.EmailBackend'
@@ -324,3 +345,6 @@ PFB_ANALYSIS_DESTINATIONS = [
 ]
 # Length of time in seconds that S3 pre-signed urls are valid for
 PFB_ANALYSIS_PRESIGNED_URL_EXPIRES = 3600
+
+# Root URL for tile server. If unset, reverts to using uploaded S3 tile URLs
+TILEGARDEN_ROOT = os.getenv('PFB_TILEGARDEN_ROOT')

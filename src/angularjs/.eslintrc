@@ -11,7 +11,8 @@
     "URI": true,
     "_": true,
     "L": true,
-    "inject": true
+    "inject": true,
+    "gtag": true
   },
   "rules": {
     "angular/controller-as-vm": [2, "ctl"],

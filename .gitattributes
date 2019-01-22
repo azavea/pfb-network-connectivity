@@ -2,4 +2,6 @@
 *.png binary
 *.jpg binary
 *.ttf binary
-
+*.shp binary
+*.shx binary
+*.zip binary

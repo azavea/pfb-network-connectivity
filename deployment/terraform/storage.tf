@@ -32,4 +32,13 @@ resource "aws_s3_bucket" "storage" {
     Environment = "${var.environment}"
     Project     = "${var.project}"
   }
+
+  lifecycle_rule {
+    id = "osm_extracts"
+    enabled = true
+    prefix = "/osm-data-cache"
+    expiration {
+      days = 7
+    }
+  }
 }

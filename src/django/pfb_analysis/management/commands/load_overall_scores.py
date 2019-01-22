@@ -5,6 +5,38 @@ from django.core.management.base import BaseCommand
 from pfb_analysis.models import AnalysisJob
 
 
+def load_scores(job, csv_filename, key_column, skip_columns):
+
+    def clean_metric_dict(metric, skip_columns=None):
+        """ Do some cleanup of the input row """
+        if skip_columns is None:
+            skip_columns = []
+        # Delete columns we don't want in output
+        for col in skip_columns:
+            metric.pop(col, None)
+        # Attempt to convert numeric values in row to float type
+        for k, v in metric.iteritems():
+            try:
+                metric[k] = float(v)
+            except ValueError:
+                pass
+        return metric
+
+    skip_columns = skip_columns.split(',') if skip_columns is not None else []
+    skip_columns.append('id')
+
+    with open(csv_filename, 'r') as csv_file:
+        reader = csv.DictReader(csv_file)
+        results = {}
+        for row in reader:
+            key_column_value = row.pop(key_column)
+            metric = clean_metric_dict(row.copy(), skip_columns=skip_columns)
+            results[key_column_value] = metric
+    job.overall_scores = results
+    job.save()
+    return job
+
+
 class Command(BaseCommand):
     help = """ Load CSV scores output by the analysis into AnalysisJob.overall_scores
 
@@ -40,38 +72,12 @@ class Command(BaseCommand):
         csv_filename = options['csv_file']
         key_column = options['key_column']
         skip_columns = options['skip_columns']
-        skip_columns = skip_columns.split(',') if skip_columns is not None else []
-        skip_columns.append('id')
 
         try:
             job = AnalysisJob.objects.get(pk=job_uuid)
+            load_scores(job, csv_filename, key_column, skip_columns)
+            self.stdout.write('{}: Loaded overall_scores from {}'.format(job, csv_filename))
         except (AnalysisJob.DoesNotExist, ValueError, KeyError):
             print('WARNING: Tried to update overall_scores for invalid job {} '
                   'from file {}'.format(job_uuid, csv_filename))
-            return
-
-        with open(csv_filename, 'r') as csv_file:
-            reader = csv.DictReader(csv_file)
-            results = {}
-            for row in reader:
-                key_column_value = row.pop(key_column)
-                metric = self.clean_metric_dict(row.copy(), skip_columns=skip_columns)
-                results[key_column_value] = metric
-        job.overall_scores = results
-        job.save()
-        self.stdout.write('{}: Loaded overall_scores from {}'.format(job, csv_filename))
-
-    def clean_metric_dict(self, metric, skip_columns=None):
-        """ Do some cleanup of the input row """
-        if skip_columns is None:
-            skip_columns = []
-        # Delete columns we don't want in output
-        for col in skip_columns:
-            metric.pop(col, None)
-        # Attempt to convert numeric values in row to float type
-        for k, v in metric.iteritems():
-            try:
-                metric[k] = float(v)
-            except ValueError:
-                pass
-        return metric
+            raise

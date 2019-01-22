@@ -1,0 +1,16 @@
+version: '2'
+services:
+  terraform:
+    image: quay.io/azavea/terraform:0.9.6
+    volumes:
+      - ./:/usr/local/src
+      - $HOME/.aws:/root/.aws:ro
+    environment:
+      - PFB_DEBUG=1
+      - AWS_PROFILE
+      - GIT_COMMIT
+      - PFB_SETTINGS_BUCKET
+      - BATCH_ANALYSIS_JOB_NAME_REVISION
+      - BATCH_TILEMAKER_JOB_NAME_REVISION
+    working_dir: /usr/local/src
+    entrypoint: terraform

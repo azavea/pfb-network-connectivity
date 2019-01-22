@@ -9,6 +9,7 @@ Amazon Web Services deployment is driven by [Terraform](https://terraform.io/) a
 * [AWS Credentials](#aws-credentials)
 * [Terraform](#terraform)
 * [AWS Batch](#aws-batch)
+* [Tilegarden](#tilegarden)
 
 ## AWS Credentials
 
@@ -82,3 +83,114 @@ Click 'Create queue' again and follow the same steps to create a second queue na
 Once the unmanaged compute environment has a 'VALID' status, navigate to [EC2 Container Service](https://console.aws.amazon.com/ecs/home?region=us-east-1) and copy the full name of the newly created ECS Cluster into the `batch_ecs_cluster_name` tfvar for the appropriate environment.
 
 Congratulations, the necessary resources for your environment are ready. The ECS instance configuration and autoscaling group attached to the compute environment are managed by Terraform.
+
+## Tilegarden
+
+We serve map tiles using [Tilegarden](https://github.com/azavea/tilegarden), a
+serverless tile generator that runs on AWS Lambda. Portions of Tilegarden
+are deployed separately from the Terraform stack because Tilegarden
+is tightly coupled with [Claudia](https://claudiajs.com/), an opinionated
+deployment tool for publishing Node code as Lambda functions. The main
+components of Tilegarden that are deployed this way include a Lambda function
+and an API Gateway.
+
+CI will deploy updates to existing Tilegarden instances automatically, but there are
+a few extra steps you'll need to take in order to stand up an entirely new
+instance of Tilegarden.
+
+### 1. Create a remote state bucket for Claudia
+
+Remote state for Claudia should exist in the same S3 bucket as Terraform remote
+state. For staging, this bucket should be something like `staging-pfb-config-us-east-1`.
+In that bucket, create a new folder (that is, an object prefix) for
+Tilegarden remote state called `tilegarden/`.
+
+### 2. Configure environment variables for your function
+
+Tilegarden uses an `.env` file in order to pass environment variables into
+the Lambda function. Copy over the example file to create a new one:
+
+```
+$ cp ./src/tilegarden/.env.example ./src/tilegarden/.env
+```
+
+The three required variables are `AWS_PROFILE`, `PROJECT_NAME`, and
+`LAMBDA_REGION`. Other optional variables can be uncommented and edited to
+reflect your configuration. If you need Tilegarden to access a database, for
+example, you'll likely want to set `LAMBDA_SUBNETS` and `LAMBDA_SECURITY_GROUPS` to point
+to the relevant resources in your VPC.
+
+If you have any additional environment variables (like database connection
+strings) that you need access to in your function, add them to `./src/tilegarden/.env`
+and they will be passed in during deployment.
+
+### 3. Deploy a new Tilegarden instance with Claudia
+
+Before deploying your instance, `touch` a file that Claudia can use to save
+deployment metadata:
+
+```
+$ touch ./src/tilegarden/claudia.json
+```
+
+Next, use the Tilegarden Node scripts in the VM to deploy a new Tilegarden instance:
+
+```
+vagrant@pfb-network-connectivity:/vagrant$ docker-compose \
+                                             -f docker-compose.yml \
+                                             -f docker-compose.test.yml \
+                                             run --rm --entrypoint yarn \
+                                             tilegarden deploy-new
+```
+
+### 4. Update remote state for Claudia and Terraform
+
+Once the deployment has completed, upload your `.env` file and Claudia metadata
+file to the remote state bucket so that CI can update Tilegarden automatically:
+
+```
+$ aws s3 cp ./src/tilegarden/.env s3://<remote-state-bucket>/tilegarden/.env
+$ aws s3 cp ./src/tilegarden/claudia.json s3://<remote-state-bucket>/tilegarden/claudia.json
+```
+
+In addition, edit the remote Terraform variables in `terraform.tfvars` for your
+deployment to point to the domain name for the new API Gateway that Claudia has created.
+The variable for the API Gateway should look something like this:
+
+```hcl
+# Tilegarden
+tilegarden_api_gateway_domain_name = "<api.id>.execute-api.<lambda.region>.amazonaws.com"
+```
+
+You can locate this domain name in the Lambda console, or you can construct it
+by using the `api.id` and `lambda.region` values stored in the `claudia.json` file
+that Claudia created during deployment to format the example string in the
+code block above.
+
+### A note about Terraform resources
+
+Certain Terraform and Tilegarden resources are interdependent, in that they expect
+IDs of resources created by the other deployment tool as input variables. In particular,
+the CloudFront CDN managed by Terraform relies on the `tilegarden_api_gateway_domain_name`
+variable in order to point the CDN to the Tilegarden API Gateway endpoint, and the
+Tilegarden Claudia deployment tool relies on the `LAMBDA_SUBNETS` and
+`LAMBDA_SECURITY_GROUPS` variables in order to give the Tilegarden Lambda
+function access to database resources in the VPC.
+
+In order to manage this interdependence, we recommend that you first deploy
+Terraform resources using a dummy value for `tilegarden_api_gateway_endpoint`;
+this way, all of the Terraform infrastructure should build correctly, but the CDN will
+not serve tiles properly. Then, stand up a Tilegarden instance using the relevant
+input values from your Terraform-managed resources, and once you're done
+deploying Tilegarden you can update `tilegarden_api_gateway_endpoint` to point
+to the API Gateway that Claudia has created.
+
+In brief, the anticipated order of resource creation when deploying a new
+stack should be:
+
+1. Create Batch resources
+2. Create Terraform resources with dummy `tilegarden_api_gateway_domain_name`
+   variable
+3. Create Tilegarden resources
+4. Update Terraform resources with correct `tilegarden_api_gateway_domain_name`
+   variable

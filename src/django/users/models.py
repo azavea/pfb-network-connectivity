@@ -7,6 +7,7 @@ system, organizations, and user permissions.
 
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
@@ -115,6 +116,16 @@ class PFBUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self._create_user(email, password, **extra_fields)
+
+    def get_root_user(self):
+        """Get the primary admin user for the root organization.
+
+        Draws from a value coded in settings. This would probably get the same user:
+          root_org = Organization.objects.filter(org_type=OrganizationTypes.ADMIN).first()
+          return self.filter(organization=root_org, role=UserRoles.ADMIN).first()
+        but isn't guaranteed to, so it's a setting.
+        """
+        return self.get(email=settings.ROOT_USER_EMAIL)
 
 
 class PFBUser(AbstractBaseUser, PermissionsMixin, PFBModel):

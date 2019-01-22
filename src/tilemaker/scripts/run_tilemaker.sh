@@ -13,8 +13,9 @@ source /opt/pfb/tilemaker/scripts/utils.sh
 
 function generate_tiles_from_shapefile() {
     TL_SHAPEFILE_NAME="$1"
+    TL_STYLE_NAME="${2:-$TL_SHAPEFILE_NAME}"
 
-    update_status "TILING" "Generating tiles for ${TL_SHAPEFILE_NAME}"
+    update_status "TILING" "Style ${TL_STYLE_NAME}" "Using shapefile ${TL_SHAPEFILE_NAME}"
 
     PFB_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}/tilemaker"
     mkdir -p "${PFB_TEMPDIR}"
@@ -45,10 +46,10 @@ function generate_tiles_from_shapefile() {
 
     # Define these once to save space below. They need to be exported because they'll be used
     # in the functions.
-    export TL_INPUT="mapnik:///opt/pfb/tilemaker/styles/${TL_SHAPEFILE_NAME}_style.xml"
-    export TL_OUTPUT="s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_TILES_PATH}/${TL_SHAPEFILE_NAME}/{z}/{x}/{y}.png"
+    export TL_INPUT="mapnik:///opt/pfb/tilemaker/styles/${TL_STYLE_NAME}_style.xml"
+    export TL_OUTPUT="s3://${AWS_STORAGE_BUCKET_NAME}/${PFB_S3_TILES_PATH}/${TL_STYLE_NAME}/{z}/{x}/{y}.png"
     # To generate locally instead of straight-to-S3, the destination param would be something like:
-    # export TL_OUTPUT="file:///data/tiles/${TL_SHAPEFILE_NAME}/"
+    # export TL_OUTPUT="file:///data/tiles/${TL_STYLE_NAME}/"
 
     # Function to generate tiles for the given zoomlevel for the whole area.
     # For low-zoom layers that run fast anyway, partitioning isn't much of a win because the
@@ -80,10 +81,10 @@ function generate_tiles_from_shapefile() {
     export -f run_tl_zoom
     export -f run_partitioned_tl
 
-    echo "Launching low-zoom ${TL_SHAPEFILE_NAME} tile generation commands"
+    echo "Launching low-zoom ${TL_SHAPEFILE_NAME}:${TL_STYLE_NAME} tile generation commands"
     parallel --no-notice run_tl_zoom ::: `seq ${TL_MIN_ZOOM} 12`
 
-    echo "Launching partitioned ${TL_SHAPEFILE_NAME} tile generation commands"
+    echo "Launching partitioned ${TL_SHAPEFILE_NAME}:${TL_STYLE_NAME} tile generation commands"
     parallel --no-notice run_partitioned_tl "${TL_NUM_PARTS}" {2} {1} \
         ::: `seq 13 ${TL_MAX_ZOOM}` \
         ::: `seq 1 ${TL_NUM_PARTS}`
@@ -96,4 +97,6 @@ if [ -n "${TL_SHAPEFILE_NAME}" ]; then
 else
     generate_tiles_from_shapefile "neighborhood_ways"
     generate_tiles_from_shapefile "neighborhood_census_blocks"
+    generate_tiles_from_shapefile "neighborhood_ways" \
+        "neighborhood_bike_infrastructure"
 fi

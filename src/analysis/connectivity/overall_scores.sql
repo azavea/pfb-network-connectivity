@@ -388,3 +388,43 @@ SELECT  'population_total',
                     )
         ),
         'Total population of boundary';
+
+
+-- high and low stress total mileage
+INSERT INTO generated.neighborhood_overall_scores (
+    score_id, score_original, human_explanation
+)
+SELECT 'total_miles_low_stress',
+    (
+        SELECT
+            ( 1 / 1609.34 ) * (
+                SUM(ST_Length(ST_Intersection(w.geom, b.geom)) *
+                    CASE ft_seg_stress WHEN 1 THEN 1 ELSE 0 END) +
+                SUM(ST_Length(ST_Intersection(w.geom, b.geom)) *
+                    CASE tf_seg_stress WHEN 1 THEN 1 ELSE 0 END)
+            ) as dist
+        FROM neighborhood_ways as w, neighborhood_boundary as b
+        WHERE ST_Intersects(w.geom, b.geom)
+    ),
+    'Total low-stress miles';
+
+INSERT INTO generated.neighborhood_overall_scores (
+    score_id, score_original, human_explanation
+)
+SELECT 'total_miles_high_stress',
+    (
+        SELECT
+            ( 1 / 1609.34 ) * (
+                SUM(ST_Length(ST_Intersection(w.geom, b.geom)) *
+                    CASE ft_seg_stress WHEN 3 THEN 1 ELSE 0 END) +
+                SUM(ST_Length(ST_Intersection(w.geom, b.geom)) *
+                    CASE tf_seg_stress WHEN 3 THEN 1 ELSE 0 END)
+            ) as dist
+        FROM neighborhood_ways as w, neighborhood_boundary as b
+        WHERE ST_Intersects(w.geom, b.geom)
+    ),
+    'Total high-stress miles';
+
+UPDATE generated.neighborhood_overall_scores
+SET    score_normalized = ROUND(score_original, 1)
+WHERE  score_id in ('total_miles_low_stress', 'total_miles_high_stress');

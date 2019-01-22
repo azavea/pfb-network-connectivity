@@ -1,8 +1,14 @@
 from collections import OrderedDict
 
+from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
-from pfb_analysis.models import AnalysisJob, AnalysisScoreMetadata, Neighborhood
+from pfb_analysis.models import (
+    AnalysisJob,
+    AnalysisLocalUploadTask,
+    AnalysisScoreMetadata,
+    Neighborhood,
+)
 from pfb_network_connectivity.serializers import PFBModelSerializer
 
 
@@ -56,10 +62,25 @@ class PrimaryKeyReferenceRelatedField(serializers.PrimaryKeyRelatedField):
 
 class NeighborhoodSerializer(PFBModelSerializer):
 
+    # Set default for country field, as serializers do not recognize model defaults
+    country = CountryField(initial='US')
+
+    def validate(self, data):
+        """Cross-field validation that US state is set or not based on country."""
+        if data['country'] == 'US':
+            if not data['state_abbrev']:
+                raise serializers.ValidationError('State must be provided for US neighborhoods')
+        else:
+            if data['state_abbrev']:
+                raise serializers.ValidationError('State can only be set for US neighborhoods')
+        return data
+
     class Meta:
         model = Neighborhood
-        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'geom', 'geom_simple',
-                   'geom_pt',)
+        # explicitly list fields (instead of using `exclude`) to control ordering
+        fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
+                  'name', 'label', 'organization', 'country', 'state_abbrev', 'boundary_file',
+                  'visibility', 'last_job')
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'last_job', 'name',)
 
@@ -73,7 +94,7 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
 
     class Meta:
         model = Neighborhood
-        fields = ('uuid', 'name', 'label', 'state_abbrev', 'organization', 'geom_pt')
+        fields = ('uuid', 'name', 'label', 'country', 'state_abbrev', 'organization', 'geom_pt')
         read_only_fields = fields
 
 
@@ -115,3 +136,35 @@ class AnalysisScoreMetadataSerializer(serializers.ModelSerializer):
         model = AnalysisScoreMetadata
         fields = ('name', 'label', 'category', 'description',)
         read_only_fields = ('name', 'label', 'category', 'description',)
+
+
+class AnalysisLocalUploadTaskSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
+                  'error', 'job', 'status', 'upload_results_url',)
+        read_only_fields = ('uuid', 'created_at', 'modified_at', 'error', 'status',)
+
+
+class AnalysisLocalUploadTaskCreateSerializer(serializers.ModelSerializer):
+
+    neighborhood = serializers.UUIDField(write_only=True)
+
+    def create(self, validated_data):
+        validated_data.pop('neighborhood')
+        return super(AnalysisLocalUploadTaskCreateSerializer, self).create(validated_data)
+
+    def validate_neighborhood(self, obj):
+        if Neighborhood.objects.filter(uuid=obj).count() != 1:
+            raise serializers.ValidationError(
+                'No matching neighborhood found for UUID {uuid}'.format(uuid=obj))
+        return obj
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
+                  'error', 'job', 'status', 'upload_results_url',
+                  'neighborhood',)
+        read_only_fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
+                            'error', 'job', 'status',)

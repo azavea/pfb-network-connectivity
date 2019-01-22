@@ -74,6 +74,7 @@ ALTER TABLE neighborhood_ways ADD COLUMN ft_seg_stress INT;
 ALTER TABLE neighborhood_ways ADD COLUMN ft_int_stress INT;
 ALTER TABLE neighborhood_ways ADD COLUMN tf_seg_stress INT;
 ALTER TABLE neighborhood_ways ADD COLUMN tf_int_stress INT;
+ALTER TABLE neighborhood_ways ADD COLUMN xwalk INT;
 
 -- indexes
 CREATE INDEX idx_neighborhood_ways_osm ON neighborhood_ways (osm_id);
