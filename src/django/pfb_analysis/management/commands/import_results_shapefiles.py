@@ -13,7 +13,12 @@ from django.conf import settings
 from django.contrib.gis.utils import LayerMapping, LayerMapError
 from django.core.exceptions import ValidationError
 
-from pfb_analysis.models import AnalysisJob, CensusBlocksResults, NeighborhoodWaysResults
+from pfb_analysis.models import (
+    AnalysisJob,
+    CensusBlocksResults,
+    Neighborhood,
+    NeighborhoodWaysResults
+)
 
 logger = logging.getLogger(__name__)
 
@@ -122,9 +127,24 @@ class Command(BaseCommand):
                 logger.info('Running import for analysis job {job_id}.'.format(job_id=job.uuid))
                 add_results_geoms(job)
             else:
-                logger.info('Running import for all analysis jobs.')
-                for job in AnalysisJob.objects.filter(status=AnalysisJob.Status.COMPLETE):
-                    add_results_geoms(job)
+                logger.info('Running import for all current analysis jobs.')
+                imported = 0
+                failed = 0
+                for neighborhood in Neighborhood.objects.all():
+                    job = neighborhood.last_job
+                    if not job or not job.status == AnalysisJob.Status.COMPLETE:
+                        continue
+                    try:
+                        add_results_geoms(job)
+                        imported += 1
+                    except Exception:
+                        logger.exception('ERROR: Failed re-importing results for job '
+                                         '{job_id}'.format(**options))
+                        failed += 1
+                logger.info('Successfully imported {imported} job(s)'.format(imported=imported))
+                if failed > 0:
+                    logger.error('Failed to import {failed} job(s)'.format(failed=failed))
+            logger.info('import_results_shapefiles completed')
         except (AnalysisJob.DoesNotExist, ValueError, KeyError, ValidationError):
             logger.exception('ERROR: Tried to re-import results for invalid job UUID '
                              '{job_id}'.format(**options))
