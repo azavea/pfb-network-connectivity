@@ -88,9 +88,10 @@ const writeToS3 = (tile, req) => {
         // API Gateway includes a 'path' property but claudia-local-api currently doesn't
         // (see https://github.com/azavea/claudia-local-api/issues/1), so this reconstructs it.
         if (!key) {
+            /* eslint-disable camelcase */
             const { z, x, y, job_id, config } = req.pathParameters
-            const tileType = req.requestContext.resourcePath.split('/')[1]
             key = `tile/${job_id}/${config}/${z}/${x}/${y}`
+            /* eslint-enable camelcase */
         }
 
         const upload = new aws.S3().putObject({
@@ -103,7 +104,7 @@ const writeToS3 = (tile, req) => {
             return tile
         })
     }
-    return new Promise((resolve, reject) => resolve(tile))
+    return new Promise(resolve => resolve(tile))
 }
 
 // Get tile for some zxy bounds
