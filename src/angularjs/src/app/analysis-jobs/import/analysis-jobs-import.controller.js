@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function AnalysisJobImportController($log, $state, $filter, toastr, Neighborhood, AnalysisJobImport) {
+    function AnalysisJobImportController($state, toastr, Neighborhood, AnalysisJobImport) {
         var ctl = this;
 
         function initialize() {
