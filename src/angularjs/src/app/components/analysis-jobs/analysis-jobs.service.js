@@ -51,7 +51,26 @@
         return module;
     }
 
+    /**
+     * @ngdoc service
+     * @name pfb.analysis-jobs.AnalysisJob:AnalysisJobImport
+     *
+     * @description
+     * Resource for import tasks for analysis jobs
+     */
+    /* @ngInject */
+    function AnalysisJobImport($resource) {
+
+        return $resource('/api/local_upload_tasks/', {uuid: '@uuid'}, {
+            'query': {
+                method: 'GET',
+                isArray: false
+            }
+        });
+    }
+
     angular.module('pfb.components.analysis-jobs')
         .factory('AnalysisJob', AnalysisJob)
-        .factory('AnalysisJobStatuses', AnalysisJobStatuses);
+        .factory('AnalysisJobStatuses', AnalysisJobStatuses)
+        .factory('AnalysisJobImport', AnalysisJobImport);
 })();
