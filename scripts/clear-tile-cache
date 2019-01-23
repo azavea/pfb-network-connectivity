@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+BUCKET_NAME=$(docker-compose run --rm tilegarden bash -c 'echo -n $PFB_TILEGARDEN_CACHE_BUCKET')
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0") [--list]
+
+Removes all cached tiles (that is, all files) from the configured S3 bucket:
+    $BUCKET_NAME
+
+With the --list option, lists and summarizes the contents before asking for confirmation.
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]
+then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+        exit
+    elif [ "${1:-}" = "--list" ]; then
+        aws s3 ls --recursive --summarize "s3://${BUCKET_NAME}"
+        echo ""
+    fi
+
+    echo "This will delete all files from the '$BUCKET_NAME' S3 bucket."
+
+    read -r -p "Are you sure? [y/N] " response
+    response=${response,,}    # tolower
+    if [[ "$response" =~ ^(yes|y)$ ]]
+    then
+        aws s3 rm --recursive "s3://${BUCKET_NAME}"
+    fi
+fi
