@@ -131,7 +131,10 @@ class AnalysisBatchViewSet(ViewSet):
             ClientMethod='get_object',
             Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': key}
         )
-        async('pfb_analysis.tasks.create_batch_from_remote_shapefile', url, ack_failure=True)
+        async('pfb_analysis.tasks.create_batch_from_remote_shapefile',
+            url,
+            group='create_analysis_batch',
+            ack_failure=True)
 
         return Response({
             'shapefile_url': url,
@@ -174,7 +177,10 @@ class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
                                          created_by=user, modified_by=user)
         obj = serializer.save(job=job, created_by=user, modified_by=user)
 
-        async('pfb_analysis.tasks.upload_local_analysis', obj.uuid, ack_failure=True)
+        async('pfb_analysis.tasks.upload_local_analysis',
+            obj.uuid,
+            group='import_analysis_job',
+            ack_failure=True)
 
 
 class NeighborhoodViewSet(ModelViewSet):
