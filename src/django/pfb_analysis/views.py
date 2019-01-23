@@ -10,6 +10,7 @@ from django.utils.text import slugify
 
 import boto3
 from botocore.client import Config as BotocoreClientConfig
+from django_countries import countries
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async
 from rest_framework import mixins, parsers, status
@@ -311,3 +312,15 @@ class USStateView(APIView):
 
     def get(self, request, format=None, *args, **kwargs):
         return Response([{'abbr': state.abbr, 'name': state.name} for state in us.STATES])
+
+
+class CountriesView(APIView):
+    """Convenience endpoint for Django countries."""
+
+    pagination_class = None
+    filter_class = None
+    permission_classes = (AllowAny,)
+
+    def get(self, request, format=None, *args, **kwargs):
+        return Response([{'abbr': abbr, 'name': countries.countries[abbr]}
+                        for abbr in countries.countries])

@@ -14,6 +14,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>State</th>
+            <th>Country</th>
             <th>Visibility</th>
             <th>Created</th>
             <th ng-if="neighborhoodList.isAdminUser"></th>
@@ -24,6 +25,7 @@
             <td>{{neighborhood.uuid}}</td>
             <td>{{neighborhood.label}}</td>
             <td>{{neighborhood.state_abbrev}}</td>
+            <td>{{neighborhood.country}}</td>
             <td>{{neighborhood.visibility}}</td>
             <td>{{neighborhood.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
             <td ng-if="neighborhoodList.isAdminUser">
