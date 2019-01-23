@@ -3,6 +3,7 @@
  */
 
 const APIBuilder = require('claudia-api-builder')
+const aws = require('aws-sdk')
 
 const { imageTile, createMap } = require('./tiler')
 const HTTPError = require('./util/error-builder')
@@ -71,6 +72,40 @@ const handleError = (e) => {
     )
 }
 
+/* Uploads a tile to the S3 cache, using its request path as a key
+ *
+ * Does nothing unless there's a CACHE_BUCKET set in the environment.
+ * Returns the Promise<tile> again for chaining.
+ *
+ * Theoretically it should be possible to run the upload in parallel and not make the request
+ * wait for it before returning the tile, but in fact the process gets killed when the main promise
+ * resolves so the upload doesn't manage to finish.
+ */
+const writeToS3 = (tile, req) => {
+    const s3CacheBucket = process.env.PFB_TILEGARDEN_CACHE_BUCKET
+    if (s3CacheBucket) {
+        let key = req.path
+        // API Gateway includes a 'path' property but claudia-local-api currently doesn't
+        // (see https://github.com/azavea/claudia-local-api/issues/1), so this reconstructs it.
+        if (!key) {
+            const { z, x, y, job_id, config } = req.pathParameters
+            const tileType = req.requestContext.resourcePath.split('/')[1]
+            key = `tile/${job_id}/${config}/${z}/${x}/${y}`
+        }
+
+        const upload = new aws.S3().putObject({
+            Bucket: s3CacheBucket,
+            Key: key,
+            Body: tile,
+        })
+        return upload.promise().then(() => {
+            console.debug(`Uploaded tile to S3: ${key}`)
+            return tile
+        })
+    }
+    return new Promise((resolve, reject) => resolve(tile))
+}
+
 // Get tile for some zxy bounds
 api.get(
     '/tile/{job_id}/{config}/{z}/{x}/{y}',
@@ -82,6 +117,7 @@ api.get(
             const configOptions = processConfig(req)
 
             return imageTile(createMap(z, x, y, filters, layers, configOptions))
+                .then(tile => writeToS3(tile, req))
                 .then(img => new APIBuilder.ApiResponse(img, IMAGE_HEADERS, 200))
                 .catch(handleError)
         } catch (e) {
