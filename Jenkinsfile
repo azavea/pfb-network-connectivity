@@ -1,5 +1,8 @@
 #!groovy
 node {
+
+  properties([disableConcurrentBuilds()])
+  
   try {
     // Checkout the proper revision into the workspace.
     stage('checkout') {
