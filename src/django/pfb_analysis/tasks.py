@@ -130,6 +130,9 @@ def upload_local_analysis(local_upload_task_uuid):
         task.status = AnalysisLocalUploadTask.Status.ERROR
         task.error = ex.message
         task.save()
+        if task.job:
+            task.job.update_status(AnalysisJob.Status.ERROR)
+            task.job.save()
         raise
     finally:
         shutil.rmtree(tmpdir)
