@@ -102,8 +102,17 @@ class AnalysisLocalUploadTaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AnalysisLocalUploadTask
-        fields = ('uuid', 'error', 'job', 'status', 'upload_results_url',)
-        read_only_fields = ('uuid', 'error', 'status',)
+        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by', 'job',
+                  'status', 'error', 'upload_results_url',)
+        read_only_fields = ('uuid', 'job', 'error', 'status', 'created_at', 'modified_at', 'created_by',)
+
+
+class AnalysisLocalUploadTaskSummarySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('status', 'error', 'upload_results_url',)
+        read_only_fields = ('error', 'status', 'upload_results_url',)
 
 
 class AnalysisLocalUploadTaskCreateSerializer(serializers.ModelSerializer):
@@ -140,7 +149,7 @@ class AnalysisJobSerializer(PFBModelSerializer):
     overall_score = serializers.FloatField(read_only=True)
     population_total = serializers.IntegerField(read_only=True)
     local_upload_task = PrimaryKeyReferenceRelatedField(queryset=AnalysisLocalUploadTask.objects.all(),
-                                                        serializer=AnalysisLocalUploadTaskSerializer)
+                                                        serializer=AnalysisLocalUploadTaskSummarySerializer)
 
     def get_logs_url(self, obj):
         return obj.logs_url
