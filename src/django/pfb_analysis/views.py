@@ -159,6 +159,9 @@ class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
     queryset = AnalysisLocalUploadTask.objects.all()
     pagination_class = OptionalLimitOffsetPagination
     permission_classes = (RestrictedCreate, IsAuthenticatedOrReadOnly)
+
+    filter_fields = ('job', 'upload_results_url')
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     ordering_fields = ('created_at',)
 
     def get_serializer_class(self):
