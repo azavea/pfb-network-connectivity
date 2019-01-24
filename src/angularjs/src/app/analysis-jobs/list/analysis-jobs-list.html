@@ -24,6 +24,7 @@
             <td>{{analysisJob.status | displayStatus}}</td>
             <td>{{analysisJob.neighborhood.label}}</td>
             <td>{{analysisJob.batch}}</td>
+            <td>{{analysisJob.local_upload_task.status | displayStatus}}</td>
             <td>{{analysisJob.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
             <td>
               <button ng-click="analysisJobList.deleteUpload(analysisJob)"
