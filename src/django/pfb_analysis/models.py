@@ -878,12 +878,13 @@ class AnalysisScoreMetadata(models.Model):
 
 class AnalysisLocalUploadTask(PFBModel):
 
+    # Front-end expects upload task status choicees to be a subest of analysis job statuses
     class Status(object):
-        CREATED = 'created'
-        QUEUED = 'queued'
-        IMPORTING = 'importing'
-        COMPLETE = 'complete'
-        ERROR = 'error'
+        CREATED = 'CREATED'
+        QUEUED = 'QUEUED'
+        IMPORTING = 'IMPORTING'
+        COMPLETE = 'COMPLETE'
+        ERROR = 'ERROR'
 
         CHOICES = (
             (CREATED, 'Created',),

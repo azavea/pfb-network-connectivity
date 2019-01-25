@@ -98,6 +98,46 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
         read_only_fields = fields
 
 
+class AnalysisLocalUploadTaskSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by', 'job',
+                  'status', 'error', 'upload_results_url',)
+        read_only_fields = ('uuid', 'job', 'error', 'status', 'created_at', 'modified_at', 'created_by',)
+
+
+class AnalysisLocalUploadTaskSummarySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('status', 'error', 'upload_results_url',)
+        read_only_fields = ('error', 'status', 'upload_results_url',)
+
+
+class AnalysisLocalUploadTaskCreateSerializer(serializers.ModelSerializer):
+
+    neighborhood = serializers.UUIDField(write_only=True)
+
+    def create(self, validated_data):
+        validated_data.pop('neighborhood')
+        return super(AnalysisLocalUploadTaskCreateSerializer, self).create(validated_data)
+
+    def validate_neighborhood(self, obj):
+        if Neighborhood.objects.filter(uuid=obj).count() != 1:
+            raise serializers.ValidationError(
+                'No matching neighborhood found for UUID {uuid}'.format(uuid=obj))
+        return obj
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
+                  'error', 'job', 'status', 'upload_results_url',
+                  'neighborhood',)
+        read_only_fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
+                            'error', 'job', 'status',)
+
+
 class AnalysisJobSerializer(PFBModelSerializer):
 
     logs_url = serializers.SerializerMethodField()
@@ -108,6 +148,8 @@ class AnalysisJobSerializer(PFBModelSerializer):
                                                    serializer=NeighborhoodSummarySerializer)
     overall_score = serializers.FloatField(read_only=True)
     population_total = serializers.IntegerField(read_only=True)
+    local_upload_task = PrimaryKeyReferenceRelatedField(queryset=AnalysisLocalUploadTask.objects.all(),
+                                                        serializer=AnalysisLocalUploadTaskSummarySerializer)
 
     def get_logs_url(self, obj):
         return obj.logs_url
@@ -136,35 +178,3 @@ class AnalysisScoreMetadataSerializer(serializers.ModelSerializer):
         model = AnalysisScoreMetadata
         fields = ('name', 'label', 'category', 'description',)
         read_only_fields = ('name', 'label', 'category', 'description',)
-
-
-class AnalysisLocalUploadTaskSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = AnalysisLocalUploadTask
-        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
-                  'error', 'job', 'status', 'upload_results_url',)
-        read_only_fields = ('uuid', 'created_at', 'modified_at', 'error', 'status',)
-
-
-class AnalysisLocalUploadTaskCreateSerializer(serializers.ModelSerializer):
-
-    neighborhood = serializers.UUIDField(write_only=True)
-
-    def create(self, validated_data):
-        validated_data.pop('neighborhood')
-        return super(AnalysisLocalUploadTaskCreateSerializer, self).create(validated_data)
-
-    def validate_neighborhood(self, obj):
-        if Neighborhood.objects.filter(uuid=obj).count() != 1:
-            raise serializers.ValidationError(
-                'No matching neighborhood found for UUID {uuid}'.format(uuid=obj))
-        return obj
-
-    class Meta:
-        model = AnalysisLocalUploadTask
-        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
-                  'error', 'job', 'status', 'upload_results_url',
-                  'neighborhood',)
-        read_only_fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
-                            'error', 'job', 'status',)
