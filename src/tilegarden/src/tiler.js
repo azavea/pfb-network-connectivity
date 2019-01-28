@@ -14,7 +14,6 @@ const readFile = promisify(require('fs').readFile)
 
 const addParamFilters = require('./util/param-filter')
 const bbox = require('./util/bounding-box')
-const filterVisibleLayers = require('./util/layer-filter')
 const HTTPError = require('./util/error-builder')
 const { parseXml, buildXml } = require('./util/xml-tools')
 
@@ -78,7 +77,7 @@ const fetchMapFile = (options) => {
  * @param y
  * @returns {Promise<mapnik.Map>}
  */
-module.exports.createMap = (z, x, y, filters, layers, configOptions) => {
+module.exports.createMap = (z, x, y, filters, configOptions) => {
     // Create a webmercator map with specified bounds
     const map = new mapnik.Map(TILE_WIDTH, TILE_HEIGHT)
     map.bufferSize = 64
@@ -86,7 +85,6 @@ module.exports.createMap = (z, x, y, filters, layers, configOptions) => {
     // Load map specification from xml string
     return fetchMapFile(configOptions)
         .then(parseXml)
-        .then(xmlJsObj => filterVisibleLayers(xmlJsObj, layers))
         .then(xmlJsObj => addParamFilters(xmlJsObj, filters))
         .then(buildXml)
         .then(xml => new Promise((resolve, reject) => {

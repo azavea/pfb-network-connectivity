@@ -1,7 +1,6 @@
 const rewire = require('rewire')
 const api = rewire('../src/api'),
-    processCoords = api.__get__('processCoords'),
-    processLayers = api.__get__('processLayers')
+    processCoords = api.__get__('processCoords')
 
 describe('processCoords', () => {
     test('properly parses properly formatted coords', () => {
@@ -73,38 +72,3 @@ describe('processCoords', () => {
     })
 })
 
-describe('processLayers', () => {
-    test('properly parses list of layer', () => {
-        const req = {
-            queryStringParameters: {
-                layers: '["layer1","layer2","layer3","layer4"]'
-            }
-        }
-        expect(processLayers(req)).toEqual(['layer1','layer2','layer3','layer4'])
-    })
-
-    test('properly parses just one layer', () => {
-        const req = {
-            queryStringParameters: {
-                layers: '["layer"]'
-            }
-        }
-        expect(processLayers(req)).toEqual(['layer'])
-    })
-
-    test('properly parses no fields', () => {
-        const req = {
-            queryStringParameters: {}
-        }
-        expect(processLayers(req)).toEqual([])
-    })
-
-    test('properly parses a blank field', () => {
-        const req = {
-            queryStringParameters: {
-                layers: ''
-            }
-        }
-        expect(processLayers(req)).toEqual([])
-    })
-})

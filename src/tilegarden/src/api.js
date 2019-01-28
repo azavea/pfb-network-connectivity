@@ -38,23 +38,8 @@ const getPositionalFilters = (req) => {
     return remainder
 }
 
-// Returns a properly formatted list of layers
-// or an empty list if there are none
-const processLayers = (req) => {
-    if (req.queryStringParameters.layers) return JSON.parse(req.queryStringParameters.layers)
-    else if (req.queryStringParameters.layer ||
-             req.queryStringParameters.filter ||
-             req.queryStringParameters.filters) {
-        /* eslint-disable-next-line quotes */
-        throw HTTPError("Invalid argument, did you mean '&layers='?", 400)
-    }
-
-    return []
-}
-
 // Parses out the configuration specifications
 const processConfig = req => ({
-    s3bucket: req.queryStringParameters.s3bucket,
     config: req.pathParameters.config,
 })
 
@@ -114,10 +99,9 @@ api.get(
         try {
             const { z, x, y } = processCoords(req)
             const filters = getPositionalFilters(req)
-            const layers = processLayers(req)
             const configOptions = processConfig(req)
 
-            return imageTile(createMap(z, x, y, filters, layers, configOptions))
+            return imageTile(createMap(z, x, y, filters, configOptions))
                 .then(tile => writeToS3(tile, req))
                 .then(img => new APIBuilder.ApiResponse(img, IMAGE_HEADERS, 200))
                 .catch(handleError)
