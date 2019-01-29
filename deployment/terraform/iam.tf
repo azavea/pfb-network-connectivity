@@ -79,6 +79,27 @@ data "aws_iam_policy_document" "anonymous_read_storage_bucket_policy" {
   }
 }
 
+data "aws_iam_policy_document" "anonymous_read_tile_cache_bucket_policy" {
+  policy_id = "S3TileCacheAnonymousReadPolicy"
+
+  statement {
+    sid = "S3ReadOnly"
+
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    actions = ["s3:GetObject"]
+
+    resources = [
+      "arn:aws:s3:::${lower(var.environment)}-pfb-tile-cache-${var.aws_region}/*",
+    ]
+  }
+}
+
 #
 # Custom policies
 #

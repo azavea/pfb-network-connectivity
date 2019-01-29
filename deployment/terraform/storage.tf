@@ -42,3 +42,39 @@ resource "aws_s3_bucket" "storage" {
     }
   }
 }
+
+resource "aws_s3_bucket" "tile_cache" {
+  bucket = "${lower(var.environment)}-pfb-tile-cache-${var.aws_region}"
+  acl    = "public-read"
+  policy = "${data.aws_iam_policy_document.anonymous_read_tile_cache_bucket_policy.json}"
+
+  cors_rule {
+    allowed_headers = ["Authorization"]
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+    expose_headers  = []
+    max_age_seconds = "3000"
+  }
+
+  website {
+    index_document = "index.html"
+    routing_rules  = <<EOF
+[{
+    "Condition": {
+        "HttpErrorCodeReturnedEquals": "404"
+    },
+    "Redirect": {
+        "HostName": "tiles.${var.r53_public_hosted_zone}",
+        "HttpRedirectCode": "302",
+        "Protocol": "https",
+        "ReplaceKeyPrefixWith": "latest/"
+    }
+}]
+EOF
+  }
+
+  tags {
+    Project     = "${var.project}"
+    Environment = "${var.environment}"
+  }
+}
