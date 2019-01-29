@@ -148,8 +148,8 @@ class AnalysisJobSerializer(PFBModelSerializer):
                                                    serializer=NeighborhoodSummarySerializer)
     overall_score = serializers.FloatField(read_only=True)
     population_total = serializers.IntegerField(read_only=True)
-    local_upload_task = PrimaryKeyReferenceRelatedField(queryset=AnalysisLocalUploadTask.objects.all(),
-                                                        serializer=AnalysisLocalUploadTaskSummarySerializer)
+    local_upload_task = PrimaryKeyReferenceRelatedField(serializer=AnalysisLocalUploadTaskSummarySerializer,
+                                                        read_only=True)
 
     def get_logs_url(self, obj):
         return obj.logs_url
@@ -169,7 +169,8 @@ class AnalysisJobSerializer(PFBModelSerializer):
                    'analysis_job_definition', 'tilemaker_job_definition',
                    '_analysis_job_name', '_tilemaker_job_name',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                            'batch_job_id', 'batch', 'census_block_count', 'final_runtime',)
+                            'batch_job_id', 'batch', 'census_block_count', 'final_runtime',
+                            'local_upload_task')
 
 
 class AnalysisScoreMetadataSerializer(serializers.ModelSerializer):
