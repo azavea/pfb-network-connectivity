@@ -77,6 +77,10 @@ const writeToS3 = (tile, req) => {
             const { z, x, y, job_id, config } = req.pathParameters
             key = `tile/${job_id}/${config}/${z}/${x}/${y}`
             /* eslint-enable camelcase */
+        } else if (key.startsWith('/')) {
+            // API Gateway request.path object starts with a leading slash,
+            // which would cause the uploaded object to have the wrong prefix.
+            key = key.slice(1)
         }
 
         const upload = new aws.S3().putObject({

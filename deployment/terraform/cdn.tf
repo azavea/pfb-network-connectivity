@@ -17,7 +17,15 @@ resource "aws_cloudfront_distribution" "tilegarden" {
   }
 
   origin {
-    domain_name = "${aws_s3_bucket.tile_cache.bucket_regional_domain_name}"
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      # S3 websites don't support TLS :/
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2", "TLSv1.1", "TLSv1"]
+    }
+
+    domain_name = "${aws_s3_bucket.tile_cache.website_endpoint}"
     origin_id   = "tilegardenCacheOriginEastId"
 
     custom_header {
