@@ -58,8 +58,8 @@ UPDATE  neighborhood_ways
 SET     functional_class = 'path'
 FROM    neighborhood_osm_full_line osm
 WHERE   neighborhood_ways.osm_id = osm.osm_id
-AND     osm.highway='service'
-AND     osm.bicycle='designated';
+AND     osm.highway = 'service'
+AND     osm.bicycle IN ('yes', 'designated');
 
 UPDATE  neighborhood_ways
 SET     functional_class = 'living_street'
