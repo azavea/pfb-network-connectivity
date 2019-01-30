@@ -34,9 +34,10 @@ resource "aws_s3_bucket" "storage" {
   }
 
   lifecycle_rule {
-    id = "osm_extracts"
+    id      = "osm_extracts"
     enabled = true
-    prefix = "/osm-data-cache"
+    prefix  = "/osm-data-cache"
+
     expiration {
       days = 7
     }
@@ -58,7 +59,8 @@ resource "aws_s3_bucket" "tile_cache" {
 
   website {
     index_document = "index.html"
-    routing_rules  = <<EOF
+
+    routing_rules = <<EOF
 [{
     "Condition": {
         "HttpErrorCodeReturnedEquals": "404"

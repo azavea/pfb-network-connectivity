@@ -5,6 +5,7 @@ resource "aws_cloudfront_distribution" "tilegarden" {
       https_port             = 443
       origin_protocol_policy = "https-only"
       origin_ssl_protocols   = ["TLSv1.2", "TLSv1.1", "TLSv1"]
+      origin_read_timeout    = 60
     }
 
     domain_name = "${var.tilegarden_api_gateway_domain_name}"
@@ -18,8 +19,9 @@ resource "aws_cloudfront_distribution" "tilegarden" {
 
   origin {
     custom_origin_config {
-      http_port              = 80
-      https_port             = 443
+      http_port  = 80
+      https_port = 443
+
       # S3 websites don't support TLS :/
       origin_protocol_policy = "http-only"
       origin_ssl_protocols   = ["TLSv1.2", "TLSv1.1", "TLSv1"]
