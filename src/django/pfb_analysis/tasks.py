@@ -116,9 +116,14 @@ def upload_local_analysis(local_upload_task_uuid):
         load_scores(task.job, local_scores_file, 'score_id', None)
 
         # Mark this upload task and its associated analysis job as completed.
-        task.job.update_status(AnalysisJob.Status.COMPLETE)
         task.status = AnalysisLocalUploadTask.Status.COMPLETE
         task.save()
+
+        if settings.USE_TILEGARDEN:
+            task.job.update_status(AnalysisJob.Status.COMPLETE)
+        else:
+            task.job.generate_tiles()
+
         logging.info('Successfully completed upload task {uuid}'.format(
             uuid=local_upload_task_uuid))
     except (ObjectDoesNotExist, ValidationError):
