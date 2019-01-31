@@ -569,27 +569,24 @@ class AnalysisJob(PFBModel):
             'url': self._s3_url_for_result_resource('neighborhood_{}.geojson'.format(destination))
         } for destination in settings.PFB_ANALYSIS_DESTINATIONS]
 
+    def tile_url_for_layer(self, layer):
+        tile_template = '{z}/{x}/{y}.png'
+        if settings.USE_TILEGARDEN:
+            return '{root}/tile/{job_id}/{layer}/{tile_template}'.format(
+                root=settings.TILEGARDEN_ROOT,
+                job_id=self.uuid,
+                layer=layer,
+                tile_template=tile_template
+            )
+        else:
+            return self._s3_url_for_result_resource(
+                'tiles/neighborhood_{layer}/{tile_template}'.format(layer=layer,
+                                                                    tile_template=tile_template))
+
     @property
     def tile_urls(self):
-        layers = ['ways', 'census_blocks', 'bike_infrastructure']
-        tile_template = '{z}/{x}/{y}.png'
-        if hasattr(settings, 'TILEGARDEN_ROOT') and settings.TILEGARDEN_ROOT:
-            return [{
-                'name': layer,
-                'url': '{root}/tile/{job_id}/{layer}/{tile_template}'.format(
-                    root=settings.TILEGARDEN_ROOT,
-                    job_id=self.uuid,
-                    layer=layer,
-                    tile_template=tile_template)
-            } for layer in layers]
-        else:
-            # pre-Tilegarden URL format
-            return [{
-                'name': layer,
-                'url': self._s3_url_for_result_resource(
-                    'tiles/neighborhood_{layer}/{tile_template}'.format(
-                        layer=layer, tile_template=tile_template))
-            } for layer in layers]
+        return [{'name': layer, 'url': self.tile_url_for_layer(layer)}
+                for layer in ('ways', 'census_blocks', 'bike_infrastructure')]
 
     @property
     def overall_scores_url(self):
