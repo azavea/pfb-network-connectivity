@@ -40,6 +40,8 @@ SIMPLIFICATION_TOLERANCE_MORE = 0.001
 SIMPLIFICATION_TOLERANCE_LESS = 0.0001
 SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
 
+CITY_FIPS_LENGTH = 7  # place FIPS codes size
+
 
 def get_neighborhood_file_upload_path(obj, filename):
     """Upload each boundary file to its own directory
@@ -154,7 +156,7 @@ class Neighborhood(PFBModel):
                            help_text='The country of the uploaded neighborhood')
     state_abbrev = USStateField(help_text='The state of the uploaded neighborhood, if in the US',
                                 blank=True, null=True)
-    city_fips = models.CharField(max_length=7, blank=True, default='')
+    city_fips = models.CharField(max_length=CITY_FIPS_LENGTH, blank=True, default='')
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
