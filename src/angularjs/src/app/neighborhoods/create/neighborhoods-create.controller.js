@@ -45,6 +45,7 @@
                 data: {
                     boundary_file: ctl.file,
                     state_abbrev: ctl.state && ctl.isDefaultCountry() ? ctl.state.abbr : '',
+                    city_fips: ctl.city_fips && ctl.isDefaultCountry() ? ctl.city_fips : '',
                     country: ctl.country.abbr || DEFAULT_COUNTRY,
                     visibility: ctl.visibility,
                     label: ctl.label
@@ -54,18 +55,25 @@
                 toastr.success('Successfully created neighborhood');
                 $state.go('admin.neighborhoods.list');
             }).catch(function(error) {
-                toastr.clear(uploadToast);
                 $log.error(error);
+                toastr.clear(uploadToast);
                 var msg = 'Unable to create neighborhood:';
                 if (error.data && error.data.non_field_errors) {
-                    $log.debug('found non_field_errors');
+                    // extract non-field errors
                     for (var i in error.data.non_field_errors) {
                         msg += ' ' + error.data.non_field_errors[i];
                     }
+                } else if (error.data) {
+                    // extract field errors
+                    for (var err in error.data) {
+                        msg += ' ' + err + ': ' + error.data[err];
+                    }
+                    $log.error(msg);
                 } else {
                     msg += ' ' + error;
                 }
                 toastr.error(msg);
+                $log.error(msg);
             });
         };
 

@@ -27,6 +27,14 @@
                   class="form-control" id="role" type="text">
           </select>
         </div>
+        <div class="form-group" ng-if="neighborhoodCreate.isDefaultCountry()">
+          <label for="label">City FIPS</label>
+          <input ng-model="neighborhoodCreate.city_fips" ng-pattern="/^[0-9]{7}$/"
+                 class="form-control" id="city_fips" type="text" name="city_fips">
+          <span ng-show="neighborhoodCreateForm.city_fips.$invalid" class="color-danger">
+            FIPS should be 7 digits, starting with the two-digit state FIPS.
+        </span>
+        </div>
          <div class="form-group">
           <label for="role">Country</label>
           <select ng-model="neighborhoodCreate.country"
