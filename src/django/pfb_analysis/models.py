@@ -154,6 +154,7 @@ class Neighborhood(PFBModel):
                            help_text='The country of the uploaded neighborhood')
     state_abbrev = USStateField(help_text='The state of the uploaded neighborhood, if in the US',
                                 blank=True, null=True)
+    city_fips = models.CharField(max_length=7, blank=True, default='')
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
@@ -339,6 +340,7 @@ class AnalysisBatchManager(models.Manager):
             for feature in source:
                 city = feature['properties']['city']
                 state = feature['properties']['state']
+                city_fips = feature['properties'].get('city_fips', '')
                 osm_extract_url = feature['properties'].get('osm_url', None)
                 label = city
                 name = Neighborhood.name_for_label(label)
@@ -348,6 +350,7 @@ class AnalysisBatchManager(models.Manager):
                     'name': name,
                     'label': label,
                     'state_abbrev': state,
+                    'city_fips': city_fips,
                     'organization': user.organization,
                     'created_by': user,
                     'modified_by': user,
@@ -683,10 +686,12 @@ class AnalysisJob(PFBModel):
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,
             'PFB_STATE_FIPS': self.neighborhood.state.fips,
+            'PFB_CITY_FIPS': self.neighborhood.city_fips,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
             'PFB_S3_RESULTS_PATH': self.s3_results_path
         })
+
         if self.osm_extract_url:
             environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
 
@@ -695,7 +700,7 @@ class AnalysisJob(PFBModel):
         if settings.DJANGO_ENV == 'development':
             self.update_status(self.Status.QUEUED)
             logger.warn("Can't actually run development analysis jobs on AWS. Try this:"
-                        "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
+                        "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_CITY_FIPS='{PFB_CITY_FIPS}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
                         "./scripts/run-local-analysis "
                         "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
             if not settings.USE_TILEGARDEN:

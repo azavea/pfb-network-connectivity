@@ -64,6 +64,9 @@ class NeighborhoodSerializer(PFBModelSerializer):
 
     # Set default for country field, as serializers do not recognize model defaults
     country = CountryField(initial='US')
+    # Use minimum length serializer in-built validator (model only defines max)
+    city_fips = serializers.CharField(max_length=7, min_length=7, default='',
+                                      allow_blank=True, trim_whitespace=True)
 
     def validate(self, data):
         """Cross-field validation that US state is set or not based on country."""
@@ -73,14 +76,16 @@ class NeighborhoodSerializer(PFBModelSerializer):
         else:
             if data['state_abbrev']:
                 raise serializers.ValidationError('State can only be set for US neighborhoods')
+            if data['city_fips']:
+                raise serializers.ValidationError('City FIPS can only be set for US neighborhoods')
         return data
 
     class Meta:
         model = Neighborhood
         # explicitly list fields (instead of using `exclude`) to control ordering
         fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                  'name', 'label', 'organization', 'country', 'state_abbrev', 'boundary_file',
-                  'visibility', 'last_job')
+                  'name', 'label', 'organization', 'country', 'state_abbrev', 'city_fips',
+                  'boundary_file', 'visibility', 'last_job',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'last_job', 'name',)
 
@@ -94,7 +99,7 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
 
     class Meta:
         model = Neighborhood
-        fields = ('uuid', 'name', 'label', 'country', 'state_abbrev', 'organization', 'geom_pt')
+        fields = ('uuid', 'name', 'label', 'country', 'state_abbrev', 'organization', 'geom_pt',)
         read_only_fields = fields
 
 
@@ -104,7 +109,8 @@ class AnalysisLocalUploadTaskSerializer(serializers.ModelSerializer):
         model = AnalysisLocalUploadTask
         fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by', 'job',
                   'status', 'error', 'upload_results_url',)
-        read_only_fields = ('uuid', 'job', 'error', 'status', 'created_at', 'modified_at', 'created_by',)
+        read_only_fields = ('uuid', 'job', 'error', 'status', 'created_at', 'modified_at',
+                            'created_by',)
 
 
 class AnalysisLocalUploadTaskSummarySerializer(serializers.ModelSerializer):
