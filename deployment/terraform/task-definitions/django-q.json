@@ -79,8 +79,12 @@
           "value": "${batch_tilemaker_job_definition_name_revision}"
         },
         {
-            "name": "PFB_TILEGARDEN_ROOT",
-            "value": "${tilegarden_root}"
+          "name": "PFB_TILEGARDEN_ROOT",
+          "value": "${tilegarden_root}"
+        },
+        {
+          "name": "PFB_TILEGARDEN_CACHE_BUCKET",
+          "value": "${tilegarden_cache_bucket}"
         }
       ],
       "logConfiguration": {
