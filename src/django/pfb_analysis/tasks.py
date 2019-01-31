@@ -23,7 +23,6 @@ DESTINATION_ANALYSIS_FILES = set(['neighborhood_{}.geojson'.format(destination)
 OVERALL_SCORES_FILE = 'neighborhood_overall_scores.csv'
 
 OTHER_RESULTS_FILES = set([
-    'neighborhood_census_blocks.geojson',
     'neighborhood_score_inputs.csv',
     'neighborhood_ways.zip',
     'neighborhood_census_blocks.zip',
