@@ -22,10 +22,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         docker-compose run --rm --no-deps tilegarden yarn test
 
         echo "running angularjs linter..."
-        docker-compose run --rm angularjs gulp lint
+        docker-compose run --rm --no-deps angularjs gulp lint
 
         echo "running angularjs build..."
-        docker-compose run --rm angularjs gulp build
+        docker-compose run --rm --no-deps angularjs gulp build
 
         echo "tests finished"
     fi
