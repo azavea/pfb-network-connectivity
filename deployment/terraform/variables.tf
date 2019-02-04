@@ -135,10 +135,6 @@ variable "batch_ecs_image_minimum_cleanup_age" {
   default = "30m"
 }
 
-variable "tilegarden_root" {
-  default = ""
-}
-
 # Django
 variable "django_env" {}
 
@@ -162,9 +158,12 @@ variable "pfb_app_alb_ingress_cidr_block" {
   type = "list"
 }
 
-# CloudFront distribution
+# Tilegarden tiler
 variable "tilegarden_api_gateway_domain_name" {}
 
 variable "cloudfront_price_class" {
   default = "PriceClass_100"
+}
+variable "use_tilegarden" {
+  default = true
 }
