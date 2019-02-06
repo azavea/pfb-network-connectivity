@@ -7,6 +7,7 @@ const aws = require('aws-sdk')
 
 const { imageTile, createMap } = require('./tiler')
 const HTTPError = require('./util/error-builder')
+const logger = require('./util/logger')
 
 const IMAGE_HEADERS = {
     'Content-Type': 'image/png',
@@ -16,6 +17,7 @@ const HTML_RESPONSE = { success: { contentType: 'text/html' } }
 
 // Converts a req object to a set of coordinates
 const processCoords = (req) => {
+    logger.debug('processCoords')
     // Handle url params
     const z = Number(req.pathParameters.z)
     const x = Number(req.pathParameters.x)
@@ -33,6 +35,7 @@ const processCoords = (req) => {
 }
 
 const getPositionalFilters = (req) => {
+    logger.debug('getPositionalFilters')
     /* eslint-disable-next-line object-curly-newline */
     const { x, y, z, config, ...remainder } = req.pathParameters
     return remainder
@@ -67,12 +70,14 @@ const handleError = (e) => {
  * resolves so the upload doesn't manage to finish.
  */
 const writeToS3 = (tile, req) => {
+    logger.debug('writeToS3 called')
     const s3CacheBucket = process.env.PFB_TILEGARDEN_CACHE_BUCKET
     if (s3CacheBucket) {
         let key = req.path
         // API Gateway includes a 'path' property but claudia-local-api currently doesn't
         // (see https://github.com/azavea/claudia-local-api/issues/1), so this reconstructs it.
         if (!key) {
+            logger.debug('writeToS3: recreating key from path params')
             /* eslint-disable camelcase */
             const { z, x, y, job_id, config } = req.pathParameters
             key = `tile/${job_id}/${config}/${z}/${x}/${y}`
@@ -83,13 +88,14 @@ const writeToS3 = (tile, req) => {
             key = key.slice(1)
         }
 
+        logger.debug('writeToS3: uploading')
         const upload = new aws.S3().putObject({
             Bucket: s3CacheBucket,
             Key: key,
             Body: tile,
         })
         return upload.promise().then(() => {
-            console.debug(`Uploaded tile to S3: ${key}`)
+            logger.info(`Uploaded tile to S3: ${key}`)
             return tile
         })
     }
@@ -105,6 +111,7 @@ api.get(
             const filters = getPositionalFilters(req)
             const configOptions = processConfig(req)
 
+            logger.debug('api.get: creating imageTile')
             return imageTile(createMap(z, x, y, filters, configOptions))
                 .then(tile => writeToS3(tile, req))
                 .then(img => new APIBuilder.ApiResponse(img, IMAGE_HEADERS, 200))
