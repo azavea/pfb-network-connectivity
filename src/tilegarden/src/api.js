@@ -43,6 +43,7 @@ const getPositionalFilters = (req) => {
 
 // Parses out the configuration specifications
 const processConfig = req => ({
+    s3bucket: req.queryStringParameters ? req.queryStringParameters.s3bucket : null,
     config: req.pathParameters.config,
 })
 
