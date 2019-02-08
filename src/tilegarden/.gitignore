@@ -1,2 +1,5 @@
 # Compiled config files
 src/config/*.xml
+
+# Claudia configs
+claudia/

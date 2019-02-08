@@ -126,14 +126,7 @@ and they will be passed in during deployment.
 
 ### 3. Deploy a new Tilegarden instance with Claudia
 
-Before deploying your instance, `touch` a file that Claudia can use to save
-deployment metadata:
-
-```
-$ touch ./src/tilegarden/claudia.json
-```
-
-Next, use the Tilegarden Node scripts in the VM to deploy a new Tilegarden instance:
+Use the Tilegarden Node scripts in the VM to deploy a new Tilegarden instance:
 
 ```
 vagrant@pfb-network-connectivity:/vagrant$ docker-compose \
@@ -150,7 +143,7 @@ file to the remote state bucket so that CI can update Tilegarden automatically:
 
 ```
 $ aws s3 cp ./src/tilegarden/.env s3://<remote-state-bucket>/tilegarden/.env
-$ aws s3 cp ./src/tilegarden/claudia.json s3://<remote-state-bucket>/tilegarden/claudia.json
+$ aws s3 cp ./src/tilegarden/claudia/claudia.json s3://<remote-state-bucket>/tilegarden/claudia.json
 ```
 
 In addition, edit the remote Terraform variables in `terraform.tfvars` for your

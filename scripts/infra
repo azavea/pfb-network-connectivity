@@ -81,7 +81,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 pushd "${DIR}/.."
 
                 aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/.env" "./src/tilegarden/.env"
-                aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/claudia.json" "./src/tilegarden/claudia.json"
+                aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/claudia.json" "./src/tilegarden/claudia/claudia.json"
 
                 docker-compose \
                     -f docker-compose.yml \
