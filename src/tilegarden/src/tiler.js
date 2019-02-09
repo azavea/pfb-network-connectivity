@@ -75,6 +75,17 @@ const fetchMapFile = (options) => {
     })
 }
 
+/* Substitutes environment variables into a string using a basic regex-driven template syntax.
+ *
+ * Any occurrence of ${ENV_VAR} will be replaced with the value of that environment variable.
+ */
+function fillVars(xmlString) {
+    return xmlString.replace(
+        /\$\{([A-Z0-9_]+)\}/g,
+        (_, envName) => `${process.env[envName]}`,
+    )
+}
+
 /**
  * Creates a map based on configured datasource and style information
  * @param z
@@ -90,6 +101,7 @@ module.exports.createMap = (z, x, y, filters, configOptions) => {
 
     // Load map specification from xml string
     return fetchMapFile(configOptions)
+        .then(fillVars)
         .then(parseXml)
         .then(xmlJsObj => addParamFilters(xmlJsObj, filters))
         .then(buildXml)

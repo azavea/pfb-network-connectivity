@@ -23,16 +23,15 @@
     "dist"
   ],
   "scripts": {
-    "build-all-xml": "./scripts/build-all-xml.sh src/config src/config",
-    "deploy": "yarn compile && claudia update --config claudia/claudia.json --no-optional-dependencies ${LAMBDA_TIMEOUT:+--timeout ${LAMBDA_TIMEOUT}} ${LAMBDA_MEMORY:+--memory ${LAMBDA_MEMORY}} ${LAMBDA_SECURITY_GROUPS:+--security-group-ids ${LAMBDA_SECURITY_GROUPS}} ${LAMBDA_SUBNETS:+--subnet-ids ${LAMBDA_SUBNETS}} ${PFB_TILEGARDEN_CACHE_BUCKET:+--set-env PFB_TILEGARDEN_CACHE_BUCKET=${PFB_TILEGARDEN_CACHE_BUCKET}}",
-    "deploy-new": "yarn compile && claudia create --config claudia/claudia.json --no-optional-dependencies --api-module dist/api --name ${PROJECT_NAME} --region ${LAMBDA_REGION} ${LAMBDA_ROLE:+--role ${LAMBDA_ROLE}} ${LAMBDA_TIMEOUT:+--timeout ${LAMBDA_TIMEOUT}} ${LAMBDA_MEMORY:+--memory ${LAMBDA_MEMORY}} ${LAMBDA_SECURITY_GROUPS:+--security-group-ids ${LAMBDA_SECURITY_GROUPS}} ${LAMBDA_SUBNETS:+--subnet-ids ${LAMBDA_SUBNETS}} ${PFB_TILEGARDEN_CACHE_BUCKET:+--set-env PFB_TILEGARDEN_CACHE_BUCKET=${PFB_TILEGARDEN_CACHE_BUCKET}} && yarn parse-id",
+    "build-all-xml": "./scripts/build-all-xml.sh src/config/mml src/config",
+    "deploy": "yarn compile && ./scripts/deploy",
+    "deploy-new": "yarn compile && ./scripts/deploy-new",
     "destroy": "claudia destroy --config claudia/claudia.json",
     "dev": "nodemon -e js,mss,json,mml,mss --ignore dist/ --ignore '*.temp.mml' --exec yarn local",
     "lint": "eslint src",
-    "local": "yarn build-all-xml && node --inspect=0.0.0.0:9229 -- node_modules/claudia-local-api/bin/claudia-local-api --abbrev 300 --api-module src/api | bunyan -o short",
-    "parse-id": "jq -r '.api.id' claudia.json > .api-id",
+    "local": "node --inspect=0.0.0.0:9229 -- node_modules/claudia-local-api/bin/claudia-local-api --abbrev 300 --api-module src/api | bunyan -o short",
     "test": "eslint src && jest --coverage",
-    "compile": "yarn build-all-xml && rsync -a src/*.js src/util src/config --exclude '*.mml' --exclude '*.mss' dist/"
+    "compile": "rsync -a src/*.js src/util src/config --exclude '*.mml' --exclude '*.mss' dist/"
   },
   "devDependencies": {
     "bunyan": "^1.8.12",
