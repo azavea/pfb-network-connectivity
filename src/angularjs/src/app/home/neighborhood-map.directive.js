@@ -29,6 +29,7 @@
                     onEachFeature: onEachFeature
                 });
                 map.addLayer(ctl.neighborhoodLayer);
+                map.fitBounds(ctl.neighborhoodLayer.getBounds());
             });
 
             function onEachFeature(feature, layer) {
