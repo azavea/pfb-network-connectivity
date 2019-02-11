@@ -7,43 +7,43 @@
   </Parameters>
   <Style filter-mode="first" name="neighborhood_census_blocks">
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 54) and ([overall_score] <= 100)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 90) and ([overall_score] <= 100)]]></Filter>
       <PolygonSymbolizer fill="#009fdf" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 48) and ([overall_score] < 54)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 80) and ([overall_score] < 90)]]></Filter>
       <PolygonSymbolizer fill="#2e8bb6" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 42) and ([overall_score] < 48)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 70) and ([overall_score] < 80)]]></Filter>
       <PolygonSymbolizer fill="#4581a2" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 36) and ([overall_score] < 42)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 60) and ([overall_score] < 70)]]></Filter>
       <PolygonSymbolizer fill="#5c778d" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 30) and ([overall_score] < 36)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 50) and ([overall_score] < 60)]]></Filter>
       <PolygonSymbolizer fill="#736d79" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 24) and ([overall_score] < 30)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 40) and ([overall_score] < 50)]]></Filter>
       <PolygonSymbolizer fill="#8b6465" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 18) and ([overall_score] < 24)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 30) and ([overall_score] < 40)]]></Filter>
       <PolygonSymbolizer fill="#a25a51" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 12) and ([overall_score] < 18)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 20) and ([overall_score] < 30)]]></Filter>
       <PolygonSymbolizer fill="#b9503c" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 6) and ([overall_score] < 12)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 10) and ([overall_score] < 20)]]></Filter>
       <PolygonSymbolizer fill="#d04628" fill-opacity="0.65" />
     </Rule>
     <Rule>
-      <Filter><![CDATA[([overall_score] >= 0) and ([overall_score] < 6)]]></Filter>
+      <Filter><![CDATA[([overall_score] >= 0) and ([overall_score] < 10)]]></Filter>
       <PolygonSymbolizer fill="#ff3300" fill-opacity="0.65" />
     </Rule>
     <Rule>
