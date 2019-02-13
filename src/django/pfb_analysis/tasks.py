@@ -11,7 +11,12 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from pfb_analysis.management.commands.import_results_shapefiles import add_results_geoms
 from pfb_analysis.management.commands.load_overall_scores import load_scores
-from pfb_analysis.models import AnalysisBatch, AnalysisJob, AnalysisLocalUploadTask
+from pfb_analysis.models import (
+    AnalysisBatch,
+    AnalysisJob,
+    AnalysisLocalUploadTask,
+    TilegardenWarmingEvent,
+)
 from pfb_network_connectivity.utils import download_file
 from users.models import PFBUser
 
@@ -140,3 +145,9 @@ def upload_local_analysis(local_upload_task_uuid):
         raise
     finally:
         shutil.rmtree(tmpdir)
+
+
+def warm_tilegarden_lambda():
+    last_task = TilegardenWarmingEvent.objects.filter(success=True).last()
+    if last_task is None or last_task.is_expired:
+        TilegardenWarmingEvent.objects.create()

@@ -98,6 +98,20 @@ class AnalysisJobViewSet(ModelViewSet):
         else:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
+    def list(self, request, *args, **kwargs):
+        """ Overridden to launch a Lambda-warming task.
+
+        Activity on this endpoint makes a decent proxy for "Someone is interacting with the site
+        and might want to generate tiles soon."
+        """
+        if settings.USE_TILEGARDEN:
+            async(
+                'pfb_analysis.tasks.warm_tilegarden_lambda',
+                group='warm_tilegarden',
+                ack_failure=True
+            )
+        return super(AnalysisJobViewSet, self).list(request, *args, **kwargs)
+
 
 class AnalysisBatchViewSet(ViewSet):
 
