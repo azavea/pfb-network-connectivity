@@ -1,10 +1,11 @@
 from __future__ import unicode_literals
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import logging
 import math
 import os
+import requests
 import shutil
 import tempfile
 import uuid
@@ -912,3 +913,42 @@ class AnalysisLocalUploadTask(PFBModel):
     job = models.OneToOneField(AnalysisJob, related_name='local_upload_task',
                                on_delete=models.CASCADE)
     upload_results_url = models.URLField(max_length=8192)
+
+
+class TilegardenWarmingEvent(models.Model):
+    """ A model to keep track of when we last sent a warming request to Tilegarden. """
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    success = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('created_at',)
+
+    @property
+    def is_expired(self):
+        expiration_time = (self.created_at + timedelta(minutes=settings.TILEGARDEN_WARMING_TIMEOUT))
+        # The datetime on the model is timezone-aware, so 'now' needs to be as well.
+        now = datetime.now(expiration_time.tzinfo)
+        return now > expiration_time
+
+    def send_request(self):
+        if settings.DJANGO_ENV == 'development':
+            logger.info("Would be sending a Tilegarden warming request, but this is local dev.")
+            # Fake success rather than failure, to simulate normal operation more closely.
+            self.success = True
+            return
+        try:
+            logger.info("Sending Tilegarden warming request.")
+            response = requests.post('{root}/latest/warm'.format(root=settings.TILEGARDEN_ROOT))
+            if response.status_code == 200:
+                self.success = True
+            else:
+                logger.error('Tilegarden warming failed: {}'.format(response.status_code))
+        except requests.exceptions.ConnectionError as e:
+            logger.error('Error posting to Tilegarden warming endpoint: {}'.format(e))
+
+    def save(self, *args, **kwargs):
+        """ Send a request on creation """
+        if not self.pk:
+            self.send_request()
+        super(TilegardenWarmingEvent, self).save(*args, **kwargs)

@@ -354,3 +354,6 @@ USE_TILEGARDEN = os.getenv('PFB_USE_TILEGARDEN', 'false').lower() in ('true', '1
 TILEGARDEN_ROOT = os.getenv('PFB_TILEGARDEN_ROOT')
 if USE_TILEGARDEN and not TILEGARDEN_ROOT:
     raise ImproperlyConfigured('env.PFB_TILEGARDEN_ROOT is required when USE_TILEGARDEN is true')
+
+# Minimum time since the last warming even to wait before sending another (in minutes)
+TILEGARDEN_WARMING_TIMEOUT = 15
