@@ -15,6 +15,7 @@ const IMAGE_HEADERS = {
 }
 
 const HTML_RESPONSE = { success: { contentType: 'text/html' } }
+const WARMER_CONCURRENCY = 10
 
 // Converts a req object to a set of coordinates
 const processCoords = (req) => {
@@ -144,8 +145,38 @@ api.get(
     HTML_RESPONSE,
 )
 
-// 404 response
-// This works in production but breaks the dev server just by existing
+/* Warming endpoint.
+ *
+ * Triggers a 'lambda-warmer' invocation, which will in turn trigger multiple concurrent
+ * invocations to warm multiple instances.
+ * If the payload contains a 'concurrency' value, that number will be used. Otherwise it will
+ * use the default concurrency count defined at the top.
+ */
+api.post(
+    '/warm',
+    (req) => {
+        let concurrency = WARMER_CONCURRENCY
+        const body = JSON.parse(req.body)
+        if (body && body.concurrency) {
+            /* eslint-disable-next-line prefer-destructuring */
+            concurrency = body.concurrency
+        }
+        logger.info(`Warming endpoint called. Triggering warming with concurrency ${concurrency}`)
+        const lambda = new aws.Lambda()
+        const params = {
+            FunctionName: process.env.AWS_LAMBDA_FUNCTION_NAME,
+            InvocationType: 'RequestResponse',
+            LogType: 'None',
+            Payload: Buffer.from(JSON.stringify({
+                warmer: true,
+                concurrency,
+            })),
+        }
+        return lambda.invoke(params).promise()
+    },
+    { success: { contentType: 'application/json' } },
+)
+
 api.get(
     '/{wildcard+}',
     () => new APIBuilder.ApiResponse(
