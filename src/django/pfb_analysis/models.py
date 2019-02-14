@@ -40,6 +40,8 @@ SIMPLIFICATION_TOLERANCE_MORE = 0.001
 SIMPLIFICATION_TOLERANCE_LESS = 0.0001
 SIMPLIFICATION_MIN_VALID_AREA_RATIO = 0.95
 
+CITY_FIPS_LENGTH = 7  # place FIPS codes size
+
 
 def get_neighborhood_file_upload_path(obj, filename):
     """Upload each boundary file to its own directory
@@ -154,6 +156,7 @@ class Neighborhood(PFBModel):
                            help_text='The country of the uploaded neighborhood')
     state_abbrev = USStateField(help_text='The state of the uploaded neighborhood, if in the US',
                                 blank=True, null=True)
+    city_fips = models.CharField(max_length=CITY_FIPS_LENGTH, blank=True, default='')
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the ' +
@@ -339,6 +342,7 @@ class AnalysisBatchManager(models.Manager):
             for feature in source:
                 city = feature['properties']['city']
                 state = feature['properties']['state']
+                city_fips = feature['properties'].get('city_fips', '')
                 osm_extract_url = feature['properties'].get('osm_url', None)
                 label = city
                 name = Neighborhood.name_for_label(label)
@@ -348,6 +352,7 @@ class AnalysisBatchManager(models.Manager):
                     'name': name,
                     'label': label,
                     'state_abbrev': state,
+                    'city_fips': city_fips,
                     'organization': user.organization,
                     'created_by': user,
                     'modified_by': user,
@@ -569,27 +574,24 @@ class AnalysisJob(PFBModel):
             'url': self._s3_url_for_result_resource('neighborhood_{}.geojson'.format(destination))
         } for destination in settings.PFB_ANALYSIS_DESTINATIONS]
 
+    def tile_url_for_layer(self, layer):
+        tile_template = '{z}/{x}/{y}.png'
+        if settings.USE_TILEGARDEN:
+            return '{root}/tile/{job_id}/{layer}/{tile_template}'.format(
+                root=settings.TILEGARDEN_ROOT,
+                job_id=self.uuid,
+                layer=layer,
+                tile_template=tile_template
+            )
+        else:
+            return self._s3_url_for_result_resource(
+                'tiles/neighborhood_{layer}/{tile_template}'.format(layer=layer,
+                                                                    tile_template=tile_template))
+
     @property
     def tile_urls(self):
-        layers = ['ways', 'census_blocks', 'bike_infrastructure']
-        tile_template = '{z}/{x}/{y}.png'
-        if hasattr(settings, 'TILEGARDEN_ROOT') and settings.TILEGARDEN_ROOT:
-            return [{
-                'name': layer,
-                'url': '{root}/tile/{job_id}/{layer}/{tile_template}'.format(
-                    root=settings.TILEGARDEN_ROOT,
-                    job_id=self.uuid,
-                    layer=layer,
-                    tile_template=tile_template)
-            } for layer in layers]
-        else:
-            # pre-Tilegarden URL format
-            return [{
-                'name': layer,
-                'url': self._s3_url_for_result_resource(
-                    'tiles/neighborhood_{layer}/{tile_template}'.format(
-                        layer=layer, tile_template=tile_template))
-            } for layer in layers]
+        return [{'name': layer, 'url': self.tile_url_for_layer(layer)}
+                for layer in ('ways', 'census_blocks', 'bike_infrastructure')]
 
     @property
     def overall_scores_url(self):
@@ -686,10 +688,12 @@ class AnalysisJob(PFBModel):
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,
             'PFB_STATE_FIPS': self.neighborhood.state.fips,
+            'PFB_CITY_FIPS': self.neighborhood.city_fips,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
             'PFB_S3_RESULTS_PATH': self.s3_results_path
         })
+
         if self.osm_extract_url:
             environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
 
@@ -698,10 +702,11 @@ class AnalysisJob(PFBModel):
         if settings.DJANGO_ENV == 'development':
             self.update_status(self.Status.QUEUED)
             logger.warn("Can't actually run development analysis jobs on AWS. Try this:"
-                        "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
+                        "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_CITY_FIPS='{PFB_CITY_FIPS}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
                         "./scripts/run-local-analysis "
                         "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
-            self.generate_tiles()
+            if not settings.USE_TILEGARDEN:
+                self.generate_tiles()
             return
 
         client = boto3.client('batch')
@@ -720,7 +725,9 @@ class AnalysisJob(PFBModel):
         except (botocore.exceptions.BotoCoreError, KeyError):
             logger.exception('Error starting AnalysisJob {}'.format(self.uuid))
         else:
-            self.generate_tiles()
+            # Schedule the tilemaker job, but only if Tilegarden isn't enabled.
+            if not settings.USE_TILEGARDEN:
+                self.generate_tiles()
 
     def generate_tiles(self):
         environment = self.base_environment()
@@ -763,6 +770,12 @@ class AnalysisJob(PFBModel):
     def update_status(self, status, step='', message=''):
         if self.status == self.Status.CANCELLED:
             return
+
+        # Special case to distinguish whether there's a tilemaker step or not.
+        # The analysis doesn't know, so it sends EXPORTED and if Tilegarden is enabled we rewrite
+        # it here to COMPLETE, since the geometry used by Tilegarden is exported by the analysis.
+        if status == self.Status.EXPORTED and settings.USE_TILEGARDEN:
+            status = self.Status.COMPLETE
 
         update = self.status_updates.create(job=self, status=status, step=step, message=message)
         self.status = status
@@ -878,12 +891,13 @@ class AnalysisScoreMetadata(models.Model):
 
 class AnalysisLocalUploadTask(PFBModel):
 
+    # Front-end expects upload task status choicees to be a subest of analysis job statuses
     class Status(object):
-        CREATED = 'created'
-        QUEUED = 'queued'
-        IMPORTING = 'importing'
-        COMPLETE = 'complete'
-        ERROR = 'error'
+        CREATED = 'CREATED'
+        QUEUED = 'QUEUED'
+        IMPORTING = 'IMPORTING'
+        COMPLETE = 'COMPLETE'
+        ERROR = 'ERROR'
 
         CHOICES = (
             (CREATED, 'Created',),

@@ -27,5 +27,4 @@ services:
   tilegarden:
     env_file: ./src/tilegarden/.env
     volumes:
-      # scripts/infra will download this config file before mounting the volume.
-      - ./src/tilegarden/claudia.json:/opt/pfb/tilegarden/claudia.json
+      - ./src/tilegarden/claudia:/opt/pfb/tilegarden/claudia

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Map[]>
+<Map srs="+init=epsg:3857">
+  <Parameters>
+    <Parameter name="name"><![CDATA[Census blocks]]></Parameter>
+    <Parameter name="format"><![CDATA[png]]></Parameter>
+  </Parameters>
+  <Style filter-mode="first" name="neighborhood_census_blocks">
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 90) and ([overall_score] <= 100)]]></Filter>
+      <PolygonSymbolizer fill="#009fdf" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 80) and ([overall_score] < 90)]]></Filter>
+      <PolygonSymbolizer fill="#2e8bb6" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 70) and ([overall_score] < 80)]]></Filter>
+      <PolygonSymbolizer fill="#4581a2" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 60) and ([overall_score] < 70)]]></Filter>
+      <PolygonSymbolizer fill="#5c778d" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 50) and ([overall_score] < 60)]]></Filter>
+      <PolygonSymbolizer fill="#736d79" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 40) and ([overall_score] < 50)]]></Filter>
+      <PolygonSymbolizer fill="#8b6465" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 30) and ([overall_score] < 40)]]></Filter>
+      <PolygonSymbolizer fill="#a25a51" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 20) and ([overall_score] < 30)]]></Filter>
+      <PolygonSymbolizer fill="#b9503c" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 10) and ([overall_score] < 20)]]></Filter>
+      <PolygonSymbolizer fill="#d04628" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] >= 0) and ([overall_score] < 10)]]></Filter>
+      <PolygonSymbolizer fill="#ff3300" fill-opacity="0.65" />
+    </Rule>
+    <Rule>
+      <Filter><![CDATA[([overall_score] != null)]]></Filter>
+      <PolygonSymbolizer fill-opacity="0.65" />
+    </Rule>
+  </Style>
+  <Layer name="neighborhood_census_blocks" srs="+init=epsg:4326">
+    <StyleName><![CDATA[neighborhood_census_blocks]]></StyleName>
+    <Datasource>
+      <Parameter name="host"><![CDATA[${PFB_DB_HOST}]]></Parameter>
+      <Parameter name="dbname"><![CDATA[${PFB_DB_DATABASE}]]></Parameter>
+      <Parameter name="user"><![CDATA[${PFB_DB_USER}]]></Parameter>
+      <Parameter name="password"><![CDATA[${PFB_DB_PASSWORD}]]></Parameter>
+      <Parameter name="type"><![CDATA[postgis]]></Parameter>
+      <Parameter name="table"><![CDATA[pfb_analysis_censusblocksresults]]></Parameter>
+      <Parameter name="key_field"><![CDATA[]]></Parameter>
+      <Parameter name="geometry_field"><![CDATA[geom]]></Parameter>
+      <Parameter name="extent_from_subquery"><![CDATA[true]]></Parameter>
+      <Parameter name="srid"><![CDATA[4326]]></Parameter>
+      <Parameter name="persist_connection"><![CDATA[false]]></Parameter>
+    </Datasource>
+  </Layer>
+</Map>
+

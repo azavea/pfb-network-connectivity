@@ -4,6 +4,10 @@
   <div class="row">
     <div class="column-12">
       <button ng-if="analysisJobList.isAdminUser"
+        ui-sref="admin.analysis-jobs.import" class="btn btn-primary pull-right">
+        Import Analysis
+      </button>
+      <button ng-if="analysisJobList.isAdminUser"
         ui-sref="admin.analysis-jobs.create" class="btn btn-primary pull-right">
         Run Analysis
       </button>
@@ -20,6 +24,7 @@
             <td>{{analysisJob.status | displayStatus}}</td>
             <td>{{analysisJob.neighborhood.label}}</td>
             <td>{{analysisJob.batch}}</td>
+            <td>{{analysisJob.local_upload_task.status | displayStatus}}</td>
             <td>{{analysisJob.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
             <td>
               <button ng-click="analysisJobList.deleteUpload(analysisJob)"
@@ -30,12 +35,12 @@
         </tbody>
       </table>
       <div class="buttons-pagination">
-        <button class="btn-success btn" ng-click="analysisJobList.getPrev()"
+        <button class="btn-default btn" ng-click="analysisJobList.getPrev()"
                 ng-disabled="!analysisJobList.hasPrev">
 
           Newer
         </button>
-        <button class="btn-success btn" ng-click="analysisJobList.getNext()"
+        <button class="btn-default btn" ng-click="analysisJobList.getNext()"
                 ng-disabled="!analysisJobList.hasNext">
           Older
         </button>

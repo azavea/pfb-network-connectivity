@@ -5,5 +5,6 @@
                    ['pfb.analysisJobs.constants',
                     'pfb.analysisJobs.list',
                     'pfb.analysisJobs.create',
-                    'pfb.analysisJobs.detail']);
+                    'pfb.analysisJobs.detail',
+                    'pfb.analysisJobs.import']);
 })();

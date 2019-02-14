@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Map[]>
+<Map srs="+init=epsg:3857">
+  <Parameters>
+    <Parameter name="name"><![CDATA[Neighborhood ways]]></Parameter>
+    <Parameter name="format"><![CDATA[png]]></Parameter>
+  </Parameters>
+  <Style filter-mode="first" name="neighborhood_waysTF">
+    <Rule>
+      <MaxScaleDenominator>750000</MaxScaleDenominator>
+      <MinScaleDenominator>50000</MinScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] < 1)]]></Filter>
+      <LineSymbolizer offset="- 1.5" stroke-opacity="0" stroke-width="1.5" />
+    </Rule>
+    <Rule>
+      <MinScaleDenominator>750000</MinScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] < 1)]]></Filter>
+      <LineSymbolizer offset="- 1" stroke-opacity="0" stroke-width="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>50000</MaxScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] < 1)]]></Filter>
+      <LineSymbolizer offset="- 2" stroke-opacity="0" stroke-width="2" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>750000</MaxScaleDenominator>
+      <MinScaleDenominator>50000</MinScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] = 1)]]></Filter>
+      <LineSymbolizer offset="- 1.5" stroke="#009fdf" stroke-width="1.5" />
+    </Rule>
+    <Rule>
+      <MinScaleDenominator>750000</MinScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] = 1)]]></Filter>
+      <LineSymbolizer offset="- 1" stroke="#009fdf" stroke-width="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>50000</MaxScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] = 1)]]></Filter>
+      <LineSymbolizer offset="- 2" stroke="#009fdf" stroke-width="2" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>750000</MaxScaleDenominator>
+      <MinScaleDenominator>50000</MinScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] > 1)]]></Filter>
+      <LineSymbolizer offset="- 1.5" stroke="#ff3300" stroke-width="1.5" />
+    </Rule>
+    <Rule>
+      <MinScaleDenominator>750000</MinScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] > 1)]]></Filter>
+      <LineSymbolizer offset="- 1" stroke="#ff3300" stroke-width="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>50000</MaxScaleDenominator>
+      <Filter><![CDATA[([tf_seg_str] > 1)]]></Filter>
+      <LineSymbolizer offset="- 2" stroke="#ff3300" stroke-width="2" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>750000</MaxScaleDenominator>
+      <MinScaleDenominator>50000</MinScaleDenominator>
+      <LineSymbolizer offset="- 1.5" stroke-width="1.5" />
+    </Rule>
+    <Rule>
+      <MinScaleDenominator>750000</MinScaleDenominator>
+      <LineSymbolizer offset="- 1" stroke-width="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>50000</MaxScaleDenominator>
+      <LineSymbolizer offset="- 2" stroke-width="2" />
+    </Rule>
+  </Style>
+  <Layer name="neighborhood_waysTF" srs="+init=epsg:4326">
+    <StyleName><![CDATA[neighborhood_waysTF]]></StyleName>
+    <Datasource>
+      <Parameter name="host"><![CDATA[${PFB_DB_HOST}]]></Parameter>
+      <Parameter name="dbname"><![CDATA[${PFB_DB_DATABASE}]]></Parameter>
+      <Parameter name="user"><![CDATA[${PFB_DB_USER}]]></Parameter>
+      <Parameter name="password"><![CDATA[${PFB_DB_PASSWORD}]]></Parameter>
+      <Parameter name="type"><![CDATA[postgis]]></Parameter>
+      <Parameter name="table"><![CDATA[pfb_analysis_neighborhoodwaysresults]]></Parameter>
+      <Parameter name="key_field"><![CDATA[]]></Parameter>
+      <Parameter name="geometry_field"><![CDATA[geom]]></Parameter>
+      <Parameter name="extent_from_subquery"><![CDATA[true]]></Parameter>
+      <Parameter name="srid"><![CDATA[4326]]></Parameter>
+      <Parameter name="persist_connection"><![CDATA[false]]></Parameter>
+    </Datasource>
+  </Layer>
+  <Style filter-mode="first" name="neighborhood_waysFT">
+    <Rule>
+      <MaxScaleDenominator>750000</MaxScaleDenominator>
+      <MinScaleDenominator>50000</MinScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] < 1)]]></Filter>
+      <LineSymbolizer offset="1.5" stroke-opacity="0" stroke-width="1.5" />
+    </Rule>
+    <Rule>
+      <MinScaleDenominator>750000</MinScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] < 1)]]></Filter>
+      <LineSymbolizer offset="1" stroke-opacity="0" stroke-width="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>50000</MaxScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] < 1)]]></Filter>
+      <LineSymbolizer offset="2" stroke-opacity="0" stroke-width="2" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>750000</MaxScaleDenominator>
+      <MinScaleDenominator>50000</MinScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] = 1)]]></Filter>
+      <LineSymbolizer offset="1.5" stroke="#009fdf" stroke-width="1.5" />
+    </Rule>
+    <Rule>
+      <MinScaleDenominator>750000</MinScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] = 1)]]></Filter>
+      <LineSymbolizer offset="1" stroke="#009fdf" stroke-width="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>50000</MaxScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] = 1)]]></Filter>
+      <LineSymbolizer offset="2" stroke="#009fdf" stroke-width="2" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>750000</MaxScaleDenominator>
+      <MinScaleDenominator>50000</MinScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] > 1)]]></Filter>
+      <LineSymbolizer offset="1.5" stroke="#ff3300" stroke-width="1.5" />
+    </Rule>
+    <Rule>
+      <MinScaleDenominator>750000</MinScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] > 1)]]></Filter>
+      <LineSymbolizer offset="1" stroke="#ff3300" stroke-width="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>50000</MaxScaleDenominator>
+      <Filter><![CDATA[([ft_seg_str] > 1)]]></Filter>
+      <LineSymbolizer offset="2" stroke="#ff3300" stroke-width="2" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>750000</MaxScaleDenominator>
+      <MinScaleDenominator>50000</MinScaleDenominator>
+      <LineSymbolizer offset="1.5" stroke-width="1.5" />
+    </Rule>
+    <Rule>
+      <MinScaleDenominator>750000</MinScaleDenominator>
+      <LineSymbolizer offset="1" stroke-width="1" />
+    </Rule>
+    <Rule>
+      <MaxScaleDenominator>50000</MaxScaleDenominator>
+      <LineSymbolizer offset="2" stroke-width="2" />
+    </Rule>
+  </Style>
+  <Layer name="neighborhood_waysFT" srs="+init=epsg:4326">
+    <StyleName><![CDATA[neighborhood_waysFT]]></StyleName>
+    <Datasource>
+      <Parameter name="host"><![CDATA[${PFB_DB_HOST}]]></Parameter>
+      <Parameter name="dbname"><![CDATA[${PFB_DB_DATABASE}]]></Parameter>
+      <Parameter name="user"><![CDATA[${PFB_DB_USER}]]></Parameter>
+      <Parameter name="password"><![CDATA[${PFB_DB_PASSWORD}]]></Parameter>
+      <Parameter name="type"><![CDATA[postgis]]></Parameter>
+      <Parameter name="table"><![CDATA[pfb_analysis_neighborhoodwaysresults]]></Parameter>
+      <Parameter name="key_field"><![CDATA[]]></Parameter>
+      <Parameter name="geometry_field"><![CDATA[geom]]></Parameter>
+      <Parameter name="extent_from_subquery"><![CDATA[true]]></Parameter>
+      <Parameter name="srid"><![CDATA[4326]]></Parameter>
+      <Parameter name="persist_connection"><![CDATA[false]]></Parameter>
+    </Datasource>
+  </Layer>
+</Map>
+

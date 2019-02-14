@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
+
+## 0.9.0 - 2019-02-14
+
+- Enable local analysis uploads
+- Analysis: state/city speed limit defaults
+- Analysis: improve handling of pedestrian paths and one-way street segments
+- Activate dynamic tile server
+- Update census block tile styling
+
+## 0.8.1 - 2019-01-22
+
+- Only import geometries for each neighborhood's latest analysis job
 
 ## 0.8.0 - 2019-01-16
 

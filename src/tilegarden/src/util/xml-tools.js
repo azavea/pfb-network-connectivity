@@ -7,14 +7,18 @@
 const { promisify } = require('util')
 const xml2js = require('xml2js')
 
+const logger = require('./logger')
+
 // Make an async-friendly version of the parser
 const parsePromise = promisify(xml2js.parseString)
 
 async function parseXml(xmlString) {
+    logger.debug('parseXml')
     return parsePromise(xmlString)
 }
 
 function buildXml(xmlJsObj) {
+    logger.debug('buildXml')
     const builder = new xml2js.Builder()
     return builder.buildObject(xmlJsObj)
 }

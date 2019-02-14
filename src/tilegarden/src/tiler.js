@@ -14,8 +14,8 @@ const readFile = promisify(require('fs').readFile)
 
 const addParamFilters = require('./util/param-filter')
 const bbox = require('./util/bounding-box')
-const filterVisibleLayers = require('./util/layer-filter')
 const HTTPError = require('./util/error-builder')
+const logger = require('./util/logger')
 const { parseXml, buildXml } = require('./util/xml-tools')
 
 const TILE_HEIGHT = 256
@@ -42,15 +42,18 @@ const postgisFilter = (e) => {
  * @returns {Promise<any>}
  */
 const fetchMapFile = (options) => {
+    logger.debug('Loading map config')
     const { s3bucket, config = DEFAULT_CONFIG_FILENAME } = options
 
     // If an s3 bucket is specified, treat config as an object key and attempt to fetch
     if (s3bucket) {
         return new Promise((resolve, reject) => {
+            logger.debug(`Loading map config ${config} from S3 bucket ${s3bucket}`)
             new aws.S3().getObject({
                 Bucket: s3bucket,
                 Key: config,
             }, (err, data) => {
+                logger.debug('Returning map config from S3')
                 if (err) reject(err)
                 else resolve(data.Body.toString())
             })
@@ -62,6 +65,7 @@ const fetchMapFile = (options) => {
         __dirname,
         `config/${config}${path.extname(config) !== '.xml' ? '.xml' : ''}`,
     )
+    logger.debug('Returning local map config')
     return readFile(configName, 'utf-8').catch((err) => {
         if (err.code === 'ENOENT' && config === DEFAULT_CONFIG_FILENAME) {
             /* eslint-disable-next-line no-param-reassign */
@@ -71,6 +75,17 @@ const fetchMapFile = (options) => {
     })
 }
 
+/* Substitutes environment variables into a string using a basic regex-driven template syntax.
+ *
+ * Any occurrence of ${ENV_VAR} will be replaced with the value of that environment variable.
+ */
+function fillVars(xmlString) {
+    return xmlString.replace(
+        /\$\{([A-Z0-9_]+)\}/g,
+        (_, envName) => `${process.env[envName]}`,
+    )
+}
+
 /**
  * Creates a map based on configured datasource and style information
  * @param z
@@ -78,24 +93,27 @@ const fetchMapFile = (options) => {
  * @param y
  * @returns {Promise<mapnik.Map>}
  */
-module.exports.createMap = (z, x, y, filters, layers, configOptions) => {
+module.exports.createMap = (z, x, y, filters, configOptions) => {
+    logger.debug(`createMap called: ${z}/${x}/${y}`)
     // Create a webmercator map with specified bounds
     const map = new mapnik.Map(TILE_WIDTH, TILE_HEIGHT)
     map.bufferSize = 64
 
     // Load map specification from xml string
     return fetchMapFile(configOptions)
+        .then(fillVars)
         .then(parseXml)
-        .then(xmlJsObj => filterVisibleLayers(xmlJsObj, layers))
         .then(xmlJsObj => addParamFilters(xmlJsObj, filters))
         .then(buildXml)
         .then(xml => new Promise((resolve, reject) => {
+            logger.debug('createMap: calling map.FromString')
             map.fromString(xml, (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
                     /* eslint-disable-next-line no-param-reassign */
                     result.extent = bbox(z, x, y, TILE_HEIGHT, result.srs)
+                    logger.debug('createMap: resolving promise')
                     resolve(result)
                 }
             })
@@ -111,6 +129,7 @@ module.exports.createMap = (z, x, y, filters, layers, configOptions) => {
  * @returns {Promise<any>}
  */
 module.exports.imageTile = (map) => {
+    logger.debug('imageTile')
     // create mapnik image
     const img = new mapnik.Image(TILE_WIDTH, TILE_HEIGHT)
 
@@ -118,15 +137,20 @@ module.exports.imageTile = (map) => {
     // return asynchronous rendering method as a promise
     return map
         .then(m => new Promise((resolve, reject) => {
+            logger.debug('imageTile: rendering')
             m.render(img, {}, (err, result) => {
                 if (err) reject(err)
                 else resolve(result)
             })
         }))
         .then(renderedTile => new Promise((resolve, reject) => {
+            logger.debug('imageTile: encoding')
             renderedTile.encode('png', {}, (err, result) => {
                 if (err) reject(err)
-                else resolve(result)
+                else {
+                    logger.debug('imageTile: resolving with encoded tile')
+                    resolve(result)
+                }
             })
         }))
         .catch(postgisFilter)

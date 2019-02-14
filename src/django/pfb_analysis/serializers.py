@@ -2,12 +2,14 @@ from collections import OrderedDict
 
 from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
+import us
 
 from pfb_analysis.models import (
     AnalysisJob,
     AnalysisLocalUploadTask,
     AnalysisScoreMetadata,
     Neighborhood,
+    CITY_FIPS_LENGTH,
 )
 from pfb_network_connectivity.serializers import PFBModelSerializer
 
@@ -64,23 +66,39 @@ class NeighborhoodSerializer(PFBModelSerializer):
 
     # Set default for country field, as serializers do not recognize model defaults
     country = CountryField(initial='US')
+    # Use minimum length serializer in-built validator (model only defines max)
+    city_fips = serializers.CharField(max_length=CITY_FIPS_LENGTH, min_length=CITY_FIPS_LENGTH,
+                                      default='', allow_blank=True, trim_whitespace=True)
 
     def validate(self, data):
         """Cross-field validation that US state is set or not based on country."""
         if data['country'] == 'US':
             if not data['state_abbrev']:
                 raise serializers.ValidationError('State must be provided for US neighborhoods')
+            fips = data['city_fips']
+            if fips:
+                if not fips.isdigit():
+                    raise serializers.ValidationError(
+                        'City FIPS must be a string of {fips_len} digits'
+                        .format(fips_len=CITY_FIPS_LENGTH))
+                us_state = us.states.lookup(data['state_abbrev'])
+                if us_state and not fips.startswith(us_state.fips):
+                    raise serializers.ValidationError(
+                        'City FIPS must start with state FIPS: {state_fips}'
+                        .format(state_fips=us_state.fips))
         else:
             if data['state_abbrev']:
                 raise serializers.ValidationError('State can only be set for US neighborhoods')
+            if data['city_fips']:
+                raise serializers.ValidationError('City FIPS can only be set for US neighborhoods')
         return data
 
     class Meta:
         model = Neighborhood
         # explicitly list fields (instead of using `exclude`) to control ordering
         fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                  'name', 'label', 'organization', 'country', 'state_abbrev', 'boundary_file',
-                  'visibility', 'last_job')
+                  'name', 'label', 'organization', 'country', 'state_abbrev', 'city_fips',
+                  'boundary_file', 'visibility', 'last_job',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'last_job', 'name',)
 
@@ -94,57 +112,26 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
 
     class Meta:
         model = Neighborhood
-        fields = ('uuid', 'name', 'label', 'country', 'state_abbrev', 'organization', 'geom_pt')
+        fields = ('uuid', 'name', 'label', 'country', 'state_abbrev', 'organization', 'geom_pt',)
         read_only_fields = fields
-
-
-class AnalysisJobSerializer(PFBModelSerializer):
-
-    logs_url = serializers.SerializerMethodField()
-    running_time = serializers.SerializerMethodField()
-    start_time = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
-    neighborhood = PrimaryKeyReferenceRelatedField(queryset=Neighborhood.objects.all(),
-                                                   serializer=NeighborhoodSummarySerializer)
-    overall_score = serializers.FloatField(read_only=True)
-    population_total = serializers.IntegerField(read_only=True)
-
-    def get_logs_url(self, obj):
-        return obj.logs_url
-
-    def get_running_time(self, obj):
-        return obj.running_time
-
-    def get_start_time(self, obj):
-        return obj.start_time
-
-    def get_status(self, obj):
-        return obj.status
-
-    class Meta:
-        model = AnalysisJob
-        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'overall_scores',
-                   'analysis_job_definition', 'tilemaker_job_definition',
-                   '_analysis_job_name', '_tilemaker_job_name',)
-        read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                            'batch_job_id', 'batch', 'census_block_count', 'final_runtime',)
-
-
-class AnalysisScoreMetadataSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = AnalysisScoreMetadata
-        fields = ('name', 'label', 'category', 'description',)
-        read_only_fields = ('name', 'label', 'category', 'description',)
 
 
 class AnalysisLocalUploadTaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AnalysisLocalUploadTask
-        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
-                  'error', 'job', 'status', 'upload_results_url',)
-        read_only_fields = ('uuid', 'created_at', 'modified_at', 'error', 'status',)
+        fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by', 'job',
+                  'status', 'error', 'upload_results_url',)
+        read_only_fields = ('uuid', 'job', 'error', 'status', 'created_at', 'modified_at',
+                            'created_by',)
+
+
+class AnalysisLocalUploadTaskSummarySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnalysisLocalUploadTask
+        fields = ('status', 'error', 'upload_results_url',)
+        read_only_fields = ('error', 'status', 'upload_results_url',)
 
 
 class AnalysisLocalUploadTaskCreateSerializer(serializers.ModelSerializer):
@@ -168,3 +155,46 @@ class AnalysisLocalUploadTaskCreateSerializer(serializers.ModelSerializer):
                   'neighborhood',)
         read_only_fields = ('uuid', 'created_at', 'modified_at', 'created_by', 'modified_by',
                             'error', 'job', 'status',)
+
+
+class AnalysisJobSerializer(PFBModelSerializer):
+
+    logs_url = serializers.SerializerMethodField()
+    running_time = serializers.SerializerMethodField()
+    start_time = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    neighborhood = PrimaryKeyReferenceRelatedField(queryset=Neighborhood.objects.all(),
+                                                   serializer=NeighborhoodSummarySerializer)
+    overall_score = serializers.FloatField(read_only=True)
+    population_total = serializers.IntegerField(read_only=True)
+    local_upload_task = PrimaryKeyReferenceRelatedField(serializer=AnalysisLocalUploadTaskSummarySerializer,
+                                                        read_only=True)
+
+    def get_logs_url(self, obj):
+        return obj.logs_url
+
+    def get_running_time(self, obj):
+        return obj.running_time
+
+    def get_start_time(self, obj):
+        return obj.start_time
+
+    def get_status(self, obj):
+        return obj.status
+
+    class Meta:
+        model = AnalysisJob
+        exclude = ('created_at', 'modified_at', 'created_by', 'modified_by', 'overall_scores',
+                   'analysis_job_definition', 'tilemaker_job_definition',
+                   '_analysis_job_name', '_tilemaker_job_name',)
+        read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
+                            'batch_job_id', 'batch', 'census_block_count', 'final_runtime',
+                            'local_upload_task')
+
+
+class AnalysisScoreMetadataSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AnalysisScoreMetadata
+        fields = ('name', 'label', 'category', 'description',)
+        read_only_fields = ('name', 'label', 'category', 'description',)

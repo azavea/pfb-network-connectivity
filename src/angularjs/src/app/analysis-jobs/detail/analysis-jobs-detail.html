@@ -14,16 +14,21 @@
         Refresh
       </button>
 
-        <a class="btn btn-default" ui-sref="admin.analysis-jobs.list">Go back</a>
+      <a class="btn btn-default" ui-sref="admin.analysis-jobs.list">Go back</a>
       <h1 class="no-margin-top">
         Analysis Job
       </h1>
       <table class="table" ng-if="analysisJobDetail.job">
         <tbody>
-          <tr ng-repeat="(k, v) in analysisJobDetail.job">
+          <tr ng-repeat="(k, v) in analysisJobDetail.job" ng-if="k !== 'local_upload_task'">
             <td>{{ k }}</td>
             <td ng-if="k === 'neighborhood'">{{ v.label }}</td>
             <td ng-if="k !== 'neighborhood'">{{ v }}</td>
+          </tr>
+          <tr ng-if="analysisJobDetail.job.local_upload_task"
+              ng-repeat="(upload_key, upload_value) in analysisJobDetail.job.local_upload_task">
+            <td>local upload task {{ upload_key }}</td>
+            <td>{{ upload_value }}</td>
           </tr>
         </tbody>
       </table>

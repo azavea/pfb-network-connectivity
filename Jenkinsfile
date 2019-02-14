@@ -1,5 +1,8 @@
 #!groovy
 node {
+
+  properties([disableConcurrentBuilds()])
+  
   try {
     // Checkout the proper revision into the workspace.
     stage('checkout') {
@@ -29,7 +32,7 @@ node {
       }
     }
 
-    if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('release/')) {
+    if (env.BRANCH_NAME == 'develop' || env.BRANCH_NAME.startsWith('release/') || env.BRANCH_NAME.startsWith('test/')) {
       env.AWS_DEFAULT_REGION = 'us-east-1'
       env.PFB_SETTINGS_BUCKET = 'staging-pfb-config-us-east-1'
       env.PFB_S3STORAGE_BUCKET = 'staging-pfb-static-us-east-1'

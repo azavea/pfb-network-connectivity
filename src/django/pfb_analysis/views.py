@@ -10,6 +10,7 @@ from django.utils.text import slugify
 
 import boto3
 from botocore.client import Config as BotocoreClientConfig
+from django_countries import countries
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async
 from rest_framework import mixins, parsers, status
@@ -130,7 +131,10 @@ class AnalysisBatchViewSet(ViewSet):
             ClientMethod='get_object',
             Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': key}
         )
-        async('pfb_analysis.tasks.create_batch_from_remote_shapefile', url)
+        async('pfb_analysis.tasks.create_batch_from_remote_shapefile',
+            url,
+            group='create_analysis_batch',
+            ack_failure=True)
 
         return Response({
             'shapefile_url': url,
@@ -155,6 +159,9 @@ class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
     queryset = AnalysisLocalUploadTask.objects.all()
     pagination_class = OptionalLimitOffsetPagination
     permission_classes = (RestrictedCreate, IsAuthenticatedOrReadOnly)
+
+    filter_fields = ('job', 'upload_results_url')
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     ordering_fields = ('created_at',)
 
     def get_serializer_class(self):
@@ -173,7 +180,10 @@ class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
                                          created_by=user, modified_by=user)
         obj = serializer.save(job=job, created_by=user, modified_by=user)
 
-        async('pfb_analysis.tasks.upload_local_analysis', obj.uuid)
+        async('pfb_analysis.tasks.upload_local_analysis',
+            obj.uuid,
+            group='import_analysis_job',
+            ack_failure=True)
 
 
 class NeighborhoodViewSet(ModelViewSet):
@@ -311,3 +321,15 @@ class USStateView(APIView):
 
     def get(self, request, format=None, *args, **kwargs):
         return Response([{'abbr': state.abbr, 'name': state.name} for state in us.STATES])
+
+
+class CountriesView(APIView):
+    """Convenience endpoint for Django countries."""
+
+    pagination_class = None
+    filter_class = None
+    permission_classes = (AllowAny,)
+
+    def get(self, request, format=None, *args, **kwargs):
+        return Response([{'abbr': abbr, 'name': countries.countries[abbr]}
+                        for abbr in countries.countries])

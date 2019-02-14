@@ -23,7 +23,6 @@ DESTINATION_ANALYSIS_FILES = set(['neighborhood_{}.geojson'.format(destination)
 OVERALL_SCORES_FILE = 'neighborhood_overall_scores.csv'
 
 OTHER_RESULTS_FILES = set([
-    'neighborhood_census_blocks.geojson',
     'neighborhood_score_inputs.csv',
     'neighborhood_ways.zip',
     'neighborhood_census_blocks.zip',
@@ -117,9 +116,14 @@ def upload_local_analysis(local_upload_task_uuid):
         load_scores(task.job, local_scores_file, 'score_id', None)
 
         # Mark this upload task and its associated analysis job as completed.
-        task.job.update_status(AnalysisJob.Status.COMPLETE)
         task.status = AnalysisLocalUploadTask.Status.COMPLETE
         task.save()
+
+        if settings.USE_TILEGARDEN:
+            task.job.update_status(AnalysisJob.Status.COMPLETE)
+        else:
+            task.job.generate_tiles()
+
         logging.info('Successfully completed upload task {uuid}'.format(
             uuid=local_upload_task_uuid))
     except (ObjectDoesNotExist, ValidationError):
@@ -130,6 +134,9 @@ def upload_local_analysis(local_upload_task_uuid):
         task.status = AnalysisLocalUploadTask.Status.ERROR
         task.error = ex.message
         task.save()
+        if task.job:
+            task.job.update_status(AnalysisJob.Status.ERROR)
+            task.job.save()
         raise
     finally:
         shutil.rmtree(tmpdir)
