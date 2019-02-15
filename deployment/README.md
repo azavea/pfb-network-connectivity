@@ -136,7 +136,27 @@ vagrant@pfb-network-connectivity:/vagrant$ docker-compose \
                                              tilegarden deploy-new
 ```
 
-### 4. Update remote state for Claudia and Terraform
+### 4. Manually add permissions
+
+The Tilegarden Lambda function needs certain permissions to work. Some are set automatically by
+Claudia, but the ones related to caching and warming aren't (see [issue #710](https://github.com/azavea/pfb-network-connectivity/issues/710)).
+
+After both Terraform and the Tilegarden deploy have run (the former to create the cache bucket,
+the latter to create the executor role), find the IAM role corresponding to your Tilegarden deployment
+(it will be the `PROJECT_NAME` you sent in the `.env` file plus `-executor`) and add two permissions:
+- An S3 policy to allow writing to the cache bucket (currently it just blindly writes, so read
+permissions aren't required, though as long as the policy is restricted to the bucket there's not
+much harm in it granting extra permissions.)
+- A Lambda policy to grant `InvokeFunction`, so that the Lambda function can trigger itself to
+generate concurrent warming invocations.
+
+### 5. Manually add a scheduled warming event
+
+In the [CloudWatch Rules console](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#rules:),
+add a scheduled event to generate warming invocations to prevent users from being subjected to cold starts.
+See [issue #714](https://github.com/azavea/pfb-network-connectivity/issues/714).
+
+### 6. Update remote state for Claudia and Terraform
 
 Once the deployment has completed, upload your `.env` file and Claudia metadata
 file to the remote state bucket so that CI can update Tilegarden automatically:
