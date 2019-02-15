@@ -11,10 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.9.0] - 2019-02-14
 
+#### Added
 - Enable local analysis uploads
-- Analysis: state/city speed limit defaults
+- Add support for non-US neighborhoods
+- Dynamic tile server
+
+#### Changed
+- Analysis: add support for state/city speed limit defaults
 - Analysis: improve handling of pedestrian paths and one-way street segments
-- Activate dynamic tile server
 - Update census block tile styling
 
 ## [0.8.1] - 2019-01-22
@@ -28,21 +32,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.7.0] - 2018-06-14
 
-### Added
-
+#### Added
 - Async Batch job creation via Admin UI using Django Q running as an ECS task
 - S3 caching for state OSM downloads from Geofabrik to reduce chance of throttling
 - Google Analytics for basic site hit tracking
 
-### Changed
-
+#### Changed
 - Upgrade Django to 1.11.13 LTS
 - Upgrade application third-party Django dependencies
 - Improve robustness of Neighborhood boundary simplification algorithm by checking simplified
   geom area against original geom area
 
-### Fixed
-
+#### Fixed
 - Improper handling of AWS_REGION variable in development environments
 - Invalid string formatting of single-digit UTM zones
 
