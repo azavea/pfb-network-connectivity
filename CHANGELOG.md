@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
-- Add Lambda warming for Tilegarden
+#### Added
+- Lambda warming support for Tilegarden
+
+#### Changed
+- Replace logo and icon with new BNA ones
 
 ## [0.9.0] - 2019-02-14
 
