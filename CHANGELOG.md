@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.9.1] - 2019-02-20
+
 #### Added
 - Lambda warming support for Tilegarden
 
@@ -73,7 +75,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.0...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.1...HEAD
+[0.9.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.0...0.9.1
 [0.9.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.8.1...0.9.0
 [0.8.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.7.0...0.8.0
