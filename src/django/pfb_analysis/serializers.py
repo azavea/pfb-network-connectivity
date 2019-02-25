@@ -65,7 +65,7 @@ class PrimaryKeyReferenceRelatedField(serializers.PrimaryKeyRelatedField):
 class NeighborhoodSerializer(PFBModelSerializer):
 
     # Set default for country field, as serializers do not recognize model defaults
-    country = CountryField(initial='US')
+    country = CountryField(initial='US', country_dict=True)
     # Use minimum length serializer in-built validator (model only defines max)
     city_fips = serializers.CharField(max_length=CITY_FIPS_LENGTH, min_length=CITY_FIPS_LENGTH,
                                       default='', allow_blank=True, trim_whitespace=True)
@@ -109,6 +109,7 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
     All the fields are read-only. Any changes to neighborhoods should happen through the
     neighborhoods endpoint, which uses the regular serializer.
     """
+    country = CountryField(country_dict=True)
 
     class Meta:
         model = Neighborhood
