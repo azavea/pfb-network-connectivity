@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+#### Changed
+- Use Terraform to create and configure the Tilegarden executor role
+
 ## [0.9.1] - 2019-02-20
 
 #### Added
