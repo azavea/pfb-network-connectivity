@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Changed
 - Use Terraform to create and configure the Tilegarden executor role
 
+#### Removed
+- Removed 'tilemaker' container and all code and config related to static tiling
+
 ## [0.9.1] - 2019-02-20
 
 #### Added
