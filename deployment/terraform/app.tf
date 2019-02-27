@@ -152,7 +152,6 @@ data "template_file" "pfb_app_https_ecs_task" {
     batch_analysis_job_definition_name_revision  = "${var.batch_analysis_job_definition_name_revision}"
     tilegarden_root                              = "https://${aws_route53_record.tilegarden.fqdn}"
     tilegarden_cache_bucket                      = "${lower(var.environment)}-pfb-tile-cache-${var.aws_region}}"
-    use_tilegarden                               = "${var.use_tilegarden}"
   }
 }
 
@@ -198,7 +197,6 @@ data "template_file" "pfb_app_async_queue_ecs_task" {
     batch_analysis_job_definition_name_revision  = "${var.batch_analysis_job_definition_name_revision}"
     tilegarden_root                              = "https://${aws_route53_record.tilegarden.fqdn}"
     tilegarden_cache_bucket                      = "${lower(var.environment)}-pfb-tile-cache-${var.aws_region}}"
-    use_tilegarden                               = "${var.use_tilegarden}"
   }
 }
 
@@ -237,7 +235,6 @@ data "template_file" "pfb_app_management_ecs_task" {
     batch_analysis_job_definition_name_revision  = "${var.batch_analysis_job_definition_name_revision}"
     tilegarden_root                              = "https://${aws_route53_record.tilegarden.fqdn}"
     tilegarden_cache_bucket                      = "${lower(var.environment)}-pfb-tile-cache-${var.aws_region}}"
-    use_tilegarden                               = "${var.use_tilegarden}"
   }
 }
 

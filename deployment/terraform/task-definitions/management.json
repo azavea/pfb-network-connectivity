@@ -76,10 +76,6 @@
       {
         "name": "PFB_TILEGARDEN_CACHE_BUCKET",
         "value": "${tilegarden_cache_bucket}"
-      },
-      {
-        "name": "PFB_USE_TILEGARDEN",
-        "value": "${use_tilegarden}"
       }
     ],
     "logConfiguration": {

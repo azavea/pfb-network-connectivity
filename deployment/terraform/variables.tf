@@ -162,6 +162,3 @@ variable "tilegarden_api_gateway_domain_name" {}
 variable "cloudfront_price_class" {
   default = "PriceClass_100"
 }
-variable "use_tilegarden" {
-  default = true
-}

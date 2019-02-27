@@ -554,17 +554,12 @@ class AnalysisJob(PFBModel):
 
     def tile_url_for_layer(self, layer):
         tile_template = '{z}/{x}/{y}.png'
-        if settings.USE_TILEGARDEN:
-            return '{root}/tile/{job_id}/{layer}/{tile_template}'.format(
-                root=settings.TILEGARDEN_ROOT,
-                job_id=self.uuid,
-                layer=layer,
-                tile_template=tile_template
-            )
-        else:
-            return self._s3_url_for_result_resource(
-                'tiles/neighborhood_{layer}/{tile_template}'.format(layer=layer,
-                                                                    tile_template=tile_template))
+        return '{root}/tile/{job_id}/{layer}/{tile_template}'.format(
+            root=settings.TILEGARDEN_ROOT,
+            job_id=self.uuid,
+            layer=layer,
+            tile_template=tile_template
+        )
 
     @property
     def tile_urls(self):
@@ -683,8 +678,6 @@ class AnalysisJob(PFBModel):
                         "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_CITY_FIPS='{PFB_CITY_FIPS}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
                         "./scripts/run-local-analysis "
                         "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
-            if not settings.USE_TILEGARDEN:
-                self.generate_tiles()
             return
 
         client = boto3.client('batch')

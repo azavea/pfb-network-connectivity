@@ -330,11 +330,7 @@ PFB_ANALYSIS_DESTINATIONS = [
 # Length of time in seconds that S3 pre-signed urls are valid for
 PFB_ANALYSIS_PRESIGNED_URL_EXPIRES = 3600
 
-# Toggle for whether to use the dynamic tileserver or the S3 tiles. Terraform casts to integer
-# but not always (https://www.terraform.io/docs/configuration/variables.html#booleans) and
-# in development it'll be a string.
-USE_TILEGARDEN = os.getenv('PFB_USE_TILEGARDEN', 'false').lower() in ('true', '1')
 # Root URL for tile server.
 TILEGARDEN_ROOT = os.getenv('PFB_TILEGARDEN_ROOT')
-if USE_TILEGARDEN and not TILEGARDEN_ROOT:
-    raise ImproperlyConfigured('env.PFB_TILEGARDEN_ROOT is required when USE_TILEGARDEN is true')
+if not TILEGARDEN_ROOT:
+    raise ImproperlyConfigured('env.PFB_TILEGARDEN_ROOT is required')
