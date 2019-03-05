@@ -28,6 +28,23 @@ You will be prompted to enter your AWS credentials, along with a default region.
 
 ## Terraform
 
+### Setup
+
+Make sure there is a `terraform/terraform.tfvars` file in the project config bucket on S3 for the
+environment you're deploying (i.e. `s3://{environment}-pfb-config-us-east-1/terraform/terraform.tfvars`).
+If you're creating a new environment, make a new file via copy/paste/modify or by defining all the
+variables specified in [terraform/variables.tf](terraform/variables.tf).  If you're updating an environment and need to
+add or change variables, download the file:
+```
+export ENVIRONMENT="staging|production"
+aws s3 cp "s3://${ENVIRONMENT}-pfb-config-us-east-1/terraform/terraform.tfvars" "${ENVIRONMENT}.tfvars"
+```
+Then edit the file and upload the modified copy, using default server-side encryption:
+```
+aws s3 cp "${ENVIRONMENT}.tfvars" "s3://${ENVIRONMENT}-pfb-config-us-east-1/terraform/terraform.tfvars" --sse
+```
+
+### Deploying
 If you're deploying new application code, first set the commit to deploy, then build and push containers:
 ```bash
 vagrant@vagrant-ubuntu-trusty-64:~$ export GIT_COMMIT="<short-commit-to-deploy>"
