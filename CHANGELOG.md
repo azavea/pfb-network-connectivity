@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Changed
 - Use Terraform to create and configure the Tilegarden executor role
+- Show country name in neighborhood labe for non-US places
+- Treat US territories as states, not countries
 
 #### Removed
 - Removed 'tilemaker' container and all code and config related to static tiling
