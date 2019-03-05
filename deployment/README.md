@@ -78,8 +78,6 @@ Next, go to 'Job queues' -> 'Create queue' then edit the form with the inputs be
 - Select a compute environment: Choose the name of the environment you just created
 Click create. The job queue should be ready pretty much immediately.
 
-Click 'Create queue' again and follow the same steps to create a second queue named `<environment>-pfb-tilemaker-job-queue`.
-
 Once the unmanaged compute environment has a 'VALID' status, navigate to [EC2 Container Service](https://console.aws.amazon.com/ecs/home?region=us-east-1) and copy the full name of the newly created ECS Cluster into the `batch_ecs_cluster_name` tfvar for the appropriate environment.
 
 Congratulations, the necessary resources for your environment are ready. The ECS instance configuration and autoscaling group attached to the compute environment are managed by Terraform.
