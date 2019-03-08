@@ -131,7 +131,7 @@ $ cp ./src/tilegarden/.env.example ./src/tilegarden/.env
 
 Edit the new file to fill in or adjust variables.  The required variables are:
 - `AWS_PROFILE`: the name of the AWS credentials profile you created above, e.g. "pfb"
-- `PROJECT_NAME`: a name to identify this deployment, which should include the environment name
+- `LAMBDA_FUNCTION_NAME`: a name to identify this deployment, which should include the environment name
 - `LAMBDA_REGION`
 - `LAMBDA_ROLE`: the role the Lambda function should run under. Use the one created by Terraform, e.g. "pfbStagingTilegardenExecutor"
 
