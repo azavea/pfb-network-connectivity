@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.9.2] - 2019-03-11
+
 #### Changed
 - Use Terraform to create and configure the Tilegarden executor role
-- Show country name in neighborhood labe for non-US places
+- Show country name in neighborhood label for non-US places
 - Treat US territories as states, not countries
 - Add management-only deployment command for applying migrations before deployment
 
@@ -84,7 +86,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.1...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.2...HEAD
+[0.9.2]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.1...0.9.2
 [0.9.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.0...0.9.1
 [0.9.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.8.1...0.9.0
 [0.8.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.8.0...0.8.1
