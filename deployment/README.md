@@ -28,6 +28,40 @@ You will be prompted to enter your AWS credentials, along with a default region.
 
 ## Terraform
 
+### Setup
+
+Make sure there is a `terraform/terraform.tfvars` file in the project config bucket on S3 for the
+environment you're deploying (i.e. `s3://{environment}-pfb-config-us-east-1/terraform/terraform.tfvars`).
+If you're creating a new environment, make a new file via copy/paste/modify or by defining all the
+variables specified in [terraform/variables.tf](terraform/variables.tf).  If you're updating an environment and need to
+add or change variables, download the file:
+```
+export ENVIRONMENT="staging|production"
+aws s3 cp "s3://${ENVIRONMENT}-pfb-config-us-east-1/terraform/terraform.tfvars" "${ENVIRONMENT}.tfvars"
+```
+Then edit the file and upload the modified copy, using default server-side encryption:
+```
+aws s3 cp "${ENVIRONMENT}.tfvars" "s3://${ENVIRONMENT}-pfb-config-us-east-1/terraform/terraform.tfvars" --sse
+```
+
+### Migrations
+In some circumstances, there are availability considerations around when migrations are applied relative to the Django service getting updated.  The new definition of the Management task is normally created by `infra apply` at the same time as the new definition of the API service task.  If the new API code is compatible with the pre-migration database state (e.g. an optional field is being removed, so the new code will just ignore it), you can run migrations at any time after the new tasks have been created.
+
+If the new code is incompatible with the pre-migration database schema (e.g. a new field is being added), migrations need to be applied before the API service definitions are updated with the new code.  To do this, follow the "Deploying" instructions from the next section but instead of `./scripts/infra plan` and `./scripts/infra apply`, run `./scripts/infra plan-mgmt` and `./scripts/infra apply-mgmt`.  Then after applying migrations, run the normal `plan` and `apply` commands to deploy the rest of the services.
+
+To apply migrations, once the task has been updated:
+- Open the [Elastic Container Service](https://console.aws.amazon.com/ecs/home?region=us-east-1) console
+- Select the cluster for your target environment
+- Under the "Tasks" tab, click "Run New Task"
+- Choose the "Management" task that matches the environment
+- Under "Advanced Options > Container Overrides" set the "Command override" to `migrate`.
+- Click "Run Task"
+It will show either a green "Created tasks successfully" or a red "Run tasks failed" message at the top
+of the page.  If it fails with "Reasons : ["RESOURCE:MEMORY"].", you might need to spin up a new EC2 instance or temporarily reduce the task count to enable the migration task to run.
+
+Note: if there's no cross-compatibility at all (old code only works with old schema, new code only works with new schema), the migration will have to be modified to break it into steps that are each compatible in one direction or the other.
+
+### Deploying
 If you're deploying new application code, first set the commit to deploy, then build and push containers:
 ```bash
 vagrant@vagrant-ubuntu-trusty-64:~$ export GIT_COMMIT="<short-commit-to-deploy>"
@@ -49,6 +83,8 @@ Once the plan has been assembled, and you agree with the changes, apply it:
 vagrant@vagrant-ubuntu-trusty-64:~$ ./scripts/infra apply
 ```
 This will attempt to apply the plan assembled in the previous step using Amazon's APIs. In order to change specific attributes of the infrastructure, inspect the contents of the environment's configuration file in Amazon S3.
+
+
 
 ## AWS Batch
 
@@ -78,9 +114,7 @@ Next, go to 'Job queues' -> 'Create queue' then edit the form with the inputs be
 - Select a compute environment: Choose the name of the environment you just created
 Click create. The job queue should be ready pretty much immediately.
 
-Click 'Create queue' again and follow the same steps to create a second queue named `<environment>-pfb-tilemaker-job-queue`.
-
-Once the unmanaged compute environment has a 'VALID' status, navigate to [EC2 Container Service](https://console.aws.amazon.com/ecs/home?region=us-east-1) and copy the full name of the newly created ECS Cluster into the `batch_ecs_cluster_name` tfvar for the appropriate environment.
+Once the unmanaged compute environment has a 'VALID' status, navigate to [Elastic Container Service](https://console.aws.amazon.com/ecs/home?region=us-east-1) and copy the full name of the newly created ECS Cluster into the `batch_ecs_cluster_name` tfvar for the appropriate environment.
 
 Congratulations, the necessary resources for your environment are ready. The ECS instance configuration and autoscaling group attached to the compute environment are managed by Terraform.
 
@@ -114,11 +148,14 @@ the Lambda function. Copy over the example file to create a new one:
 $ cp ./src/tilegarden/.env.example ./src/tilegarden/.env
 ```
 
-The three required variables are `AWS_PROFILE`, `PROJECT_NAME`, and
-`LAMBDA_REGION`. Other optional variables can be uncommented and edited to
-reflect your configuration. If you need Tilegarden to access a database, for
-example, you'll likely want to set `LAMBDA_SUBNETS` and `LAMBDA_SECURITY_GROUPS` to point
-to the relevant resources in your VPC.
+Edit the new file to fill in or adjust variables.  The required variables are:
+- `AWS_PROFILE`: the name of the AWS credentials profile you created above, e.g. "pfb"
+- `LAMBDA_FUNCTION_NAME`: a name to identify this deployment, which should include the environment name
+- `LAMBDA_REGION`
+- `LAMBDA_ROLE`: the role the Lambda function should run under. Use the one created by Terraform, e.g. "pfbStagingTilegardenExecutor"
+
+Other optional variables can be uncommented and edited to reflect your configuration. If you
+need Tilegarden to access a database, for example, you'll likely want to set `LAMBDA_SUBNETS` and `LAMBDA_SECURITY_GROUPS` to point to the relevant resources in your VPC.
 
 If you have any additional environment variables (like database connection
 strings) that you need access to in your function, add them to `./src/tilegarden/.env`
@@ -136,27 +173,13 @@ vagrant@pfb-network-connectivity:/vagrant$ docker-compose \
                                              tilegarden deploy-new
 ```
 
-### 4. Manually add permissions
-
-The Tilegarden Lambda function needs certain permissions to work. Some are set automatically by
-Claudia, but the ones related to caching and warming aren't (see [issue #710](https://github.com/azavea/pfb-network-connectivity/issues/710)).
-
-After both Terraform and the Tilegarden deploy have run (the former to create the cache bucket,
-the latter to create the executor role), find the IAM role corresponding to your Tilegarden deployment
-(it will be the `PROJECT_NAME` you sent in the `.env` file plus `-executor`) and add two permissions:
-- An S3 policy to allow writing to the cache bucket (currently it just blindly writes, so read
-permissions aren't required, though as long as the policy is restricted to the bucket there's not
-much harm in it granting extra permissions.)
-- A Lambda policy to grant `InvokeFunction`, so that the Lambda function can trigger itself to
-generate concurrent warming invocations.
-
-### 5. Manually add a scheduled warming event
+### 4. Manually add a scheduled warming event
 
 In the [CloudWatch Rules console](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#rules:),
 add a scheduled event to generate warming invocations to prevent users from being subjected to cold starts.
 See [issue #714](https://github.com/azavea/pfb-network-connectivity/issues/714).
 
-### 6. Update remote state for Claudia and Terraform
+### 5. Update remote state for Claudia and Terraform
 
 Once the deployment has completed, upload your `.env` file and Claudia metadata
 file to the remote state bucket so that CI can update Tilegarden automatically:
