@@ -1,4 +1,4 @@
-FROM quay.io/azavea/postgis:postgres9.6-postgis2.3
+FROM quay.io/azavea/postgis:2.3-postgres9.6-slim
 MAINTAINER Azavea
 LABEL type=pfb-analysis
 
