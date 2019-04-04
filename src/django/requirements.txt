@@ -15,6 +15,7 @@ django-storages==1.6.5
 django-watchman==0.15.0
 djangorestframework==3.7.7
 fiona==1.7.11
+pycountry==18.12.8
 pyuca==1.2
 requests==2.18.4
 us==1.0.0
