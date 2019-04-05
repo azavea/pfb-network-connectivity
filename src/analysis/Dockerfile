@@ -10,6 +10,11 @@ ENV GIT_BRANCH_QUANTILE master
 # the code doesn't trigger re-running the whole provisioning step)
 COPY ./django/requirements.txt /opt/pfb/django/requirements.txt
 
+# Install apt and pip packages
+# Installs everything then removes the build dependencies all in one gigantic command to
+# avoid making a build layer that includes the dependencies that we don't need to keep permanently.
+# The 'hash -r' after upgrading pip is because otherwise the subsequent 'pip install' command will
+# still use the old version.
 RUN set -xe && \
     BUILD_DEPS=" \
         postgresql-server-dev-$PG_MAJOR \
@@ -53,7 +58,8 @@ RUN set -xe && \
       git clone --branch $GIT_BRANCH_QUANTILE https://github.com/tvondra/quantile.git && \
         (cd quantile && make install) && \
     \
-    pip install --upgrade pip && \
+    pip install --upgrade pip setuptools && \
+    hash -r && \
     pip install -r /opt/pfb/django/requirements.txt && \
     \
     cd /tmp/ && rm -rf /tmp/build/ /var/lib/apt/lists/* && \
