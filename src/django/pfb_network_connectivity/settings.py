@@ -66,7 +66,6 @@ INSTALLED_APPS = [
 
     # 3rd party
     'django_extensions',
-    'localflavor',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
