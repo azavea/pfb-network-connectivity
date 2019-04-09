@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+#### Changed
+- Updated containers based on Debian Jessie to Stretch
+
 ## [0.9.2] - 2019-03-11
 
 #### Changed
