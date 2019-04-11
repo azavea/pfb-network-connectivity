@@ -14,22 +14,12 @@
                                  Pagination, AuthService, Neighborhood, AnalysisJob) {
         var ctl = this;
 
-        var defaultGroupFn = function () {
-            return 'SKIPHEADER';
-        }
-
         var sortingOptions = [
             {
                 // string that gets passed to the /api/analysis_jobs/?ordering param
-                value: 'neighborhood__state_abbrev,neighborhood__label',
+                value: 'neighborhood__label',
                 // Human readable label to show in dropdown UI
-                label: 'Alphabetical by State',
-                // A bit hacky. The value for the groupFn key corresponds to the 'iteratee' param
-                //  of https://lodash.com/docs/4.17.4#groupBy
-                // The _.groupBy keys will be used as the section headers in the list UI.
-                // If you don't want section headers, groupFn blank, the
-                // defaultGroupFn above will be used.
-                groupFn: 'state_abbrev'
+                label: 'Place name'
             }, {
                 value: '-overall_score',
                 label: 'Highest Rated'
@@ -42,6 +32,10 @@
             }, {
                 value: '-population_total',
                 label: 'Population',
+                // The value for the groupFn key corresponds to the 'iteratee' param
+                //  of https://lodash.com/docs/4.17.4#groupBy
+                // The _.groupBy keys will be used as the section headers in the list UI.
+                // If you don't want section headers, omit groupFn.
                 groupFn: function (n) {
                     var pop = n.population_total;
                     if (pop >= 500000) {
@@ -53,7 +47,6 @@
                     } else {
                         return 'Unknown';
                     }
-
                 }
             }
         ];
@@ -213,7 +206,12 @@
                     return neighborhood;
                 });
                 setMapPlaces(places);
-                var groupedPlaces = _.groupBy(places, ctl.sortBy.groupFn || defaultGroupFn);
+
+                // Get the grouping function, or fall back to using a keyword that groups
+                // everything together and tells the template to omit sections labels.
+                var groupFn = ctl.sortBy.groupFn || function () { return 'SKIPHEADER'; };
+
+                var groupedPlaces = _.groupBy(places, groupFn);
                 ctl.sections = _.keys(groupedPlaces).sort();
                 ctl.places = groupedPlaces;
 
