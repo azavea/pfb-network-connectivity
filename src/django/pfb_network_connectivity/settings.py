@@ -338,14 +338,14 @@ if not TILEGARDEN_ROOT:
 COUNTRY_CONFIG = {
     'US': {
         'subdivisions': True,
-        'label_template': "{name}, {subdivision_code}, {country_alpha_2}",
+        'label_suffix_template': u"{subdivision_code}, {country_alpha_2}",
     },
     'CA': {
         'subdivisions': True,
-        'label_template': "{name}, {subdivision_code}, {country_alpha_2}",
+        'label_suffix_template': u"{subdivision_code}, {country_alpha_2}",
     },
     'default': {
         'subdivisions': False,
-        'label_template': "{name}, {country_alpha_2}",
+        'label_suffix_template': u"{country_alpha_2}",
     }
 }

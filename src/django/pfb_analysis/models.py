@@ -28,6 +28,7 @@ import us
 from pfb_network_connectivity.models import PFBModel
 from pfb_network_connectivity.utils import download_file
 from users.models import Organization, PFBUser
+from .countries import get_country_config
 from .functions import ObjectAtPath
 
 
@@ -268,6 +269,14 @@ class Neighborhood(PFBModel):
 
         """
         return us.states.lookup(self.state_abbrev)
+
+    @property
+    def label_suffix(self):
+        """ State/province and country, formatted per the country config. """
+        return get_country_config(self.country)['label_suffix_template'].format(
+            subdivision_code=self.state_abbrev,
+            country_alpha_2=self.country.code,
+        )
 
     @classmethod
     def name_for_label(cls, label):

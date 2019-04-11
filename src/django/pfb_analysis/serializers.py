@@ -105,8 +105,8 @@ class NeighborhoodSerializer(PFBModelSerializer):
         model = Neighborhood
         # explicitly list fields (instead of using `exclude`) to control ordering
         fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                  'name', 'label', 'organization', 'country', 'state_abbrev', 'city_fips',
-                  'boundary_file', 'visibility', 'last_job',)
+                  'name', 'label', 'label_suffix', 'organization', 'country', 'state_abbrev',
+                  'city_fips', 'boundary_file', 'visibility', 'last_job',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'last_job', 'name',)
 
@@ -121,7 +121,8 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
 
     class Meta:
         model = Neighborhood
-        fields = ('uuid', 'name', 'label', 'country', 'state_abbrev', 'organization', 'geom_pt',)
+        fields = ('uuid', 'name', 'label', 'label_suffix', 'country', 'state_abbrev',
+                  'organization', 'geom_pt',)
         read_only_fields = fields
 
 
