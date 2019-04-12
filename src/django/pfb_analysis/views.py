@@ -3,21 +3,19 @@ from datetime import datetime
 import logging
 from uuid import uuid4
 
+import boto3
+from botocore.client import Config as BotocoreClientConfig
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
-
-import boto3
-from botocore.client import Config as BotocoreClientConfig
-from django_countries import countries
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async
 from rest_framework import mixins, parsers, status
 from rest_framework.decorators import detail_route, parser_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import (AllowAny, IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, ViewSet
 from rest_framework.response import Response
@@ -42,6 +40,7 @@ from .serializers import (
     NeighborhoodSerializer,
 )
 from .filters import AnalysisJobFilterSet
+from .countries import build_country_list
 
 
 logger = logging.getLogger(__name__)
@@ -325,15 +324,14 @@ class USStateView(APIView):
 
 
 class CountriesView(APIView):
-    """Convenience endpoint for Django countries."""
+    """Convenience endpoint for countries."""
 
     pagination_class = None
     filter_class = None
     permission_classes = (AllowAny,)
 
-    # Make a list of countries with US territories excluded, since we'll treat them as states
-    COUNTRIES_MINUS_TERRITORIES = [{'abbr': abbr, 'name': name} for (abbr, name) in list(countries)
-                                   if abbr not in [t.abbr for t in us.TERRITORIES]]
+    # Generate this once and keep it on the object rather than generating it for every request
+    COUNTRIES_LIST = build_country_list()
 
     def get(self, request, format=None, *args, **kwargs):
-        return Response(self.COUNTRIES_MINUS_TERRITORIES)
+        return Response(self.COUNTRIES_LIST)

@@ -334,3 +334,19 @@ PFB_ANALYSIS_PRESIGNED_URL_EXPIRES = 3600
 TILEGARDEN_ROOT = os.getenv('PFB_TILEGARDEN_ROOT')
 if not TILEGARDEN_ROOT:
     raise ImproperlyConfigured('env.PFB_TILEGARDEN_ROOT is required')
+
+# Configuration object for whether to collect state/province and how to display labels by country
+COUNTRY_CONFIG = {
+    'US': {
+        'subdivisions': True,
+        'label_template': "{name}, {subdivision_code}, {country_alpha_2}",
+    },
+    'CA': {
+        'subdivisions': True,
+        'label_template': "{name}, {subdivision_code}, {country_alpha_2}",
+    },
+    'default': {
+        'subdivisions': False,
+        'label_template': "{name}, {country_alpha_2}",
+    }
+}

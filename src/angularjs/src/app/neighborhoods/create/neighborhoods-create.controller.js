@@ -14,7 +14,7 @@
                                           Country, State) {
         var ctl = this;
 
-        var DEFAULT_COUNTRY = {abbr: 'US', name: 'United States'};
+        var DEFAULT_COUNTRY = {alpha_2: 'US', name: 'United States'};
 
         function initialize() {
             ctl.country = DEFAULT_COUNTRY;
@@ -46,7 +46,7 @@
                     boundary_file: ctl.file,
                     state_abbrev: ctl.state && ctl.isDefaultCountry() ? ctl.state.abbr : '',
                     city_fips: ctl.city_fips && ctl.isDefaultCountry() ? ctl.city_fips : '',
-                    country: ctl.country.abbr || DEFAULT_COUNTRY,
+                    country: ctl.country.alpha_2 || DEFAULT_COUNTRY.alpha_2,
                     visibility: ctl.visibility,
                     label: ctl.label
                 }
@@ -78,7 +78,7 @@
         };
 
         ctl.isDefaultCountry = function() {
-            return ctl.country && ctl.country.abbr === 'US';
+            return ctl.country && ctl.country.alpha_2 === 'US';
         }
     }
     angular
