@@ -79,7 +79,7 @@ class NeighborhoodSerializer(PFBModelSerializer):
         if state_abbrev:
             if not use_subdivisions(country):
                 raise serializers.ValidationError(
-                    'State should not be set for {} neighborhoods'.format(country))
+                    'State/Province should not be set for {} neighborhoods'.format(country))
             if state_abbrev not in [s['code'] for s in subdivisions_for_country(country)]:
                 raise serializers.ValidationError(
                     "State/Province '{}' not valid for country '{}'".format(state_abbrev, country))

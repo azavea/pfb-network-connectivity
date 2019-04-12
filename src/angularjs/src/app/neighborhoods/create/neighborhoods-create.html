@@ -28,7 +28,7 @@
         </div>
         <div class="form-group animationIf" ng-if="neighborhoodCreate.isDefaultCountry() ||
           (neighborhoodCreate.country && neighborhoodCreate.country.subdivisions)">
-          <label for="role">State</label>
+          <label for="role">State/Province</label>
           <select ng-model="neighborhoodCreate.state"
                   ng-options="state as state.name for state
                     in neighborhoodCreate.country.subdivisions track by state.code"
