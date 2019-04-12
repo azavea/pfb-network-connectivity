@@ -19,7 +19,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, ViewSet
 from rest_framework.response import Response
-import us
 
 from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
 from pfb_network_connectivity.filters import OrgAutoFilterBackend
@@ -309,18 +308,6 @@ class NeighborhoodGeoJsonViewSet(APIView):
                 return Response({})
 
         return Response(json[0])
-
-
-class USStateView(APIView):
-    """Convenience endpoint for available U.S. state options."""
-
-    pagination_class = None
-    filter_class = None
-    permission_classes = (AllowAny,)
-
-    def get(self, request, format=None, *args, **kwargs):
-        return Response([{'abbr': state.abbr, 'name': state.name} for state in
-                         us.STATES_AND_TERRITORIES])
 
 
 class CountriesView(APIView):

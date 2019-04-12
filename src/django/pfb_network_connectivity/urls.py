@@ -42,9 +42,6 @@ urlpatterns = [
     url(r'^api/', include(router.urls, namespace='api')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-    # US States View
-    url(r'^api/states/', analysis_views.USStateView.as_view()),
-
     # Countries view
     url(r'^api/countries/', analysis_views.CountriesView.as_view()),
 
