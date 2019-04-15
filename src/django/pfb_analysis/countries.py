@@ -7,7 +7,11 @@ def get_country_config(alpha_2):
 
 
 def use_subdivisions(alpha_2):
-    return settings.COUNTRY_CONFIG.get(alpha_2, settings.COUNTRY_CONFIG['default'])['subdivisions']
+    return get_country_config(alpha_2)['use_subdivisions']
+
+
+def require_subdivisions(alpha_2):
+    return use_subdivisions(alpha_2) and get_country_config(alpha_2)['subdivisions_required']
 
 
 def subdivisions_for_country(alpha_2):
@@ -17,17 +21,28 @@ def subdivisions_for_country(alpha_2):
     only if the country config in settings says to track subdivisions for the country. Otherwise
     returns None.
     """
-    if use_subdivisions(alpha_2):
-        return sorted(
-            # Note: pycountry's subdivision codes all start with the alpha_2 country code and
-            # a hyphen. Since we're attaching them to the country and don't expect to be
-            # mingling subdivisions from different countries, this strips off the prefix and
-            # keeps only the actual subdivision code.
-            [{'name': s.name, 'code': s.code[3:], 'type': s.type} for s in
-             pycountry.subdivisions.get(country_code=alpha_2)],
-            key=lambda s: s['name']
-        )
-    return None
+    if not use_subdivisions(alpha_2):
+        return None
+
+    # If they're hand-coded because 'pycountry' doesn't have what we need, use them
+    if 'subdivisions' in get_country_config(alpha_2):
+        return get_country_config(alpha_2)['subdivisions']
+
+    # If not, extract them from 'pycountry'
+    # Note: pycountry's subdivision codes all start with the alpha_2 country code and
+    # a hyphen. Since we're attaching them to the country and don't expect to be
+    # mingling subdivisions from different countries, this strips off the prefix and
+    # keeps only the actual subdivision code.
+    subdivisions = [{'name': s.name, 'code': s.code[3:], 'type': s.type} for s in
+                    pycountry.subdivisions.get(country_code=alpha_2)]
+
+    # If there's a whitelist of desired types, filter to that (otherwise use all types)
+    types = get_country_config(alpha_2).get('subdivision_types')
+    if types is not None:
+        subdivisions = filter(lambda s: s['type'] in types, subdivisions)
+
+    subdivisions.sort(key=lambda s: s['name'])
+    return subdivisions
 
 
 def build_country_list():
@@ -50,6 +65,7 @@ def build_country_list():
         subdivisions = subdivisions_for_country(country.alpha_2)
         if subdivisions is not None:
             country_dict['subdivisions'] = subdivisions
+            country_dict['subdivisions_required'] = require_subdivisions(country.alpha_2)
         countries.append(country_dict)
     countries.sort(key=lambda c: c['name'])
     return countries

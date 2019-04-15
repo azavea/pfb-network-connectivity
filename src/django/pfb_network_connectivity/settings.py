@@ -335,14 +335,45 @@ if not TILEGARDEN_ROOT:
     raise ImproperlyConfigured('env.PFB_TILEGARDEN_ROOT is required')
 
 # Configuration object for whether to collect state/province by country
+# 'subdivision_types' is used to filter the subdivisions returned by 'pycountry' in cases where
+# there are ones we don't want.
 COUNTRY_CONFIG = {
-    'US': {
-        'subdivisions': True,
+    'default': {
+        'use_subdivisions': False,
+    },
+    'AU': {
+        'use_subdivisions': True,
+        'subdivisions_required': True,
     },
     'CA': {
-        'subdivisions': True,
+        'use_subdivisions': True,
+        'subdivisions_required': True,
     },
-    'default': {
-        'subdivisions': False,
-    }
+    'DK': {
+        'use_subdivisions': False,
+        # Regions don't have abbreviations in 'pycountry'. Will need to define by hand.
+    },
+    'FR': {
+        'use_subdivisions': True,
+        'subdivisions_required': False,
+        'subdivision_types': ['Metropolitan region'],
+    },
+    'GB': {
+        'use_subdivisions': True,
+        'subdivisions_required': False,
+        'subdivision_types': ['Country', 'Province'],  # just England, Wales, Scotland, N Ireland
+    },
+    'NL': {
+        'use_subdivisions': True,
+        'subdivisions_required': False,
+        'subdivision_types': ['Province'],  # exclude 'Country' and 'Special Municipality'
+    },
+    'NO': {
+        'use_subdivisions': False,
+        # Regions are not defined in 'pycountry'. Will need to define by hand if we want them.
+    },
+    'US': {
+        'use_subdivisions': True,
+        'subdivisions_required': True,
+    },
 }
