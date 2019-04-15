@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated containers based on Debian Jessie to Stretch
 - Support entering state/province for non-US neighborhoods
 - Default to sorting places list by name and remove order-by-state option
+- Adjust label formatting to show state/province and country
 
 ## [0.9.2] - 2019-03-11
 

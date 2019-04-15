@@ -334,18 +334,15 @@ TILEGARDEN_ROOT = os.getenv('PFB_TILEGARDEN_ROOT')
 if not TILEGARDEN_ROOT:
     raise ImproperlyConfigured('env.PFB_TILEGARDEN_ROOT is required')
 
-# Configuration object for whether to collect state/province and how to display labels by country
+# Configuration object for whether to collect state/province by country
 COUNTRY_CONFIG = {
     'US': {
         'subdivisions': True,
-        'label_suffix_template': u"{subdivision_code}, {country_alpha_2}",
     },
     'CA': {
         'subdivisions': True,
-        'label_suffix_template': u"{subdivision_code}, {country_alpha_2}",
     },
     'default': {
         'subdivisions': False,
-        'label_suffix_template': u"{country_alpha_2}",
     }
 }
