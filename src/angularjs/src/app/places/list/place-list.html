@@ -17,7 +17,33 @@
                            ng-change="placeList.filterNeighborhoods()"
                            type="text"
                            class="form-control"/>
-
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column-6">
+                <div class="form-group">
+                    <label for="country-filter">Filter by country</label>
+                    <select name="country-filter" class="form-control"
+                        ng-options="country.alpha_2 as country.name for country in placeList.countries"
+                        ng-model="placeList.countryFilter"
+                        ng-change="placeList.filterByCountry()">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+            <div class="column-6">
+                <div class="form-group">
+                    <label for="country-filter">Filter by state/province</label>
+                    <select name="country-filter" class="form-control"
+                        ng-options="state.code as state.name for state in placeList.states[placeList.countryFilter]"
+                        ng-model="placeList.stateFilter"
+                        ng-change="placeList.filterNeighborhoods()"
+                        ng-disabled="!placeList.countryFilter ||
+                                     !placeList.states[placeList.countryFilter] ||
+                                     placeList.states[placeList.countryFilter].length === 0">
+                        <option></option>
+                    </select>
                 </div>
             </div>
         </div>

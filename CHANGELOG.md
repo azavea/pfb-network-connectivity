@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+#### Added
+- Places list filtering by country and state/province
+
 #### Changed
 - Updated containers based on Debian Jessie to Stretch
 - Support entering state/province for non-US neighborhoods

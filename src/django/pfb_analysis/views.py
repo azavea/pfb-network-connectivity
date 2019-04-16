@@ -318,8 +318,31 @@ class CountriesView(APIView):
     filter_class = None
     permission_classes = (AllowAny,)
 
-    # Generate this once and keep it on the object rather than generating it for every request
+    # Generate the full list once and keep it on the object rather than doing it for every request
     COUNTRIES_LIST = build_country_list()
 
     def get(self, request, format=None, *args, **kwargs):
-        return Response(self.COUNTRIES_LIST)
+        if not request.GET.get('has_jobs'):
+            return Response(self.COUNTRIES_LIST)
+
+        neighborhoods = Neighborhood.objects.filter(last_job__status=AnalysisJob.Status.COMPLETE)
+        if isinstance(self.request.user, AnonymousUser):
+            neighborhoods = neighborhoods.filter(visibility=Neighborhood.Visibility.PUBLIC)
+        else:
+            neighborhoods = neighborhoods.exclude(visibility=Neighborhood.Visibility.HIDDEN)
+
+        # Generate a new list, since we'll be modifying some pieces
+        countries = build_country_list()
+        countries_with_jobs = neighborhoods.distinct('country').values_list('country', flat=True)
+        countries = ([c for c in countries if c['alpha_2'] in countries_with_jobs])
+        for country in countries:
+            if 'subdivisions' in country:
+                states_with_jobs = (
+                    neighborhoods.filter(country=country['alpha_2'])
+                                 .distinct('state_abbrev')
+                                 .values_list('state_abbrev', flat=True)
+                )
+                country['subdivisions'] = [sub for sub in country['subdivisions']
+                                           if sub['code'] in states_with_jobs]
+
+        return Response(countries)
