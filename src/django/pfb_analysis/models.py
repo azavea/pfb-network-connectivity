@@ -269,6 +269,18 @@ class Neighborhood(PFBModel):
         """
         return us.states.lookup(self.state_abbrev)
 
+    @property
+    def label_suffix(self):
+        """ State/province (if applicable) and country suffix for display label.
+
+        State/province isn't collected for some countries, and is optional for others, so
+        sometimes this is just the country.
+        """
+        elements = [self.country.code]
+        if self.state_abbrev:
+            elements.insert(0, self.state_abbrev)
+        return ', '.join(elements)
+
     @classmethod
     def name_for_label(cls, label):
         return slugify(label)

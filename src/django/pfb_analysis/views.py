@@ -199,7 +199,8 @@ class NeighborhoodViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
-    ordering_fields = ('created_at',)
+    ordering_fields = ('created_at', 'label')
+    ordering = ('-created_at',)
 
     def perform_create(self, serializer):
         if serializer.is_valid():

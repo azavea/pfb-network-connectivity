@@ -334,18 +334,46 @@ TILEGARDEN_ROOT = os.getenv('PFB_TILEGARDEN_ROOT')
 if not TILEGARDEN_ROOT:
     raise ImproperlyConfigured('env.PFB_TILEGARDEN_ROOT is required')
 
-# Configuration object for whether to collect state/province and how to display labels by country
+# Configuration object for whether to collect state/province by country
+# 'subdivision_types' is used to filter the subdivisions returned by 'pycountry' in cases where
+# there are ones we don't want.
 COUNTRY_CONFIG = {
-    'US': {
-        'subdivisions': True,
-        'label_template': "{name}, {subdivision_code}, {country_alpha_2}",
+    'default': {
+        'use_subdivisions': False,
+    },
+    'AU': {
+        'use_subdivisions': True,
+        'subdivisions_required': True,
     },
     'CA': {
-        'subdivisions': True,
-        'label_template': "{name}, {subdivision_code}, {country_alpha_2}",
+        'use_subdivisions': True,
+        'subdivisions_required': True,
     },
-    'default': {
-        'subdivisions': False,
-        'label_template': "{name}, {country_alpha_2}",
-    }
+    'DK': {
+        'use_subdivisions': False,
+        # Regions don't have abbreviations in 'pycountry'. Will need to define by hand.
+    },
+    'FR': {
+        'use_subdivisions': True,
+        'subdivisions_required': False,
+        'subdivision_types': ['Metropolitan region'],
+    },
+    'GB': {
+        'use_subdivisions': True,
+        'subdivisions_required': False,
+        'subdivision_types': ['Country', 'Province'],  # just England, Wales, Scotland, N Ireland
+    },
+    'NL': {
+        'use_subdivisions': True,
+        'subdivisions_required': False,
+        'subdivision_types': ['Province'],  # exclude 'Country' and 'Special Municipality'
+    },
+    'NO': {
+        'use_subdivisions': False,
+        # Regions are not defined in 'pycountry'. Will need to define by hand if we want them.
+    },
+    'US': {
+        'use_subdivisions': True,
+        'subdivisions_required': True,
+    },
 }

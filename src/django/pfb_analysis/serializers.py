@@ -79,7 +79,7 @@ class NeighborhoodSerializer(PFBModelSerializer):
         if state_abbrev:
             if not use_subdivisions(country):
                 raise serializers.ValidationError(
-                    'State should not be set for {} neighborhoods'.format(country))
+                    'State/Province should not be set for {} neighborhoods'.format(country))
             if state_abbrev not in [s['code'] for s in subdivisions_for_country(country)]:
                 raise serializers.ValidationError(
                     "State/Province '{}' not valid for country '{}'".format(state_abbrev, country))
@@ -105,8 +105,8 @@ class NeighborhoodSerializer(PFBModelSerializer):
         model = Neighborhood
         # explicitly list fields (instead of using `exclude`) to control ordering
         fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
-                  'name', 'label', 'organization', 'country', 'state_abbrev', 'city_fips',
-                  'boundary_file', 'visibility', 'last_job',)
+                  'name', 'label', 'label_suffix', 'organization', 'country', 'state_abbrev',
+                  'city_fips', 'boundary_file', 'visibility', 'last_job',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'last_job', 'name',)
 
@@ -121,7 +121,8 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
 
     class Meta:
         model = Neighborhood
-        fields = ('uuid', 'name', 'label', 'country', 'state_abbrev', 'organization', 'geom_pt',)
+        fields = ('uuid', 'name', 'label', 'label_suffix', 'country', 'state_abbrev',
+                  'organization', 'geom_pt',)
         read_only_fields = fields
 
 

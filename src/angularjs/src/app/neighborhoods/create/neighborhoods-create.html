@@ -26,13 +26,19 @@
                   class="form-control" id="role" type="text" required>
           </select>
         </div>
-        <div class="form-group animationIf" ng-if="neighborhoodCreate.isDefaultCountry() ||
-          (neighborhoodCreate.country && neighborhoodCreate.country.subdivisions)">
-          <label for="role">State</label>
+        <div class="form-group animationIf"
+             ng-if="neighborhoodCreate.isDefaultCountry() ||
+                    (neighborhoodCreate.country &&
+                     neighborhoodCreate.country.subdivisions &&
+                     neighborhoodCreate.country.subdivisions.length > 0)">
+          <label for="role">State/Province
+            <span ng-if="!neighborhoodCreate.country.subdivisions_required">(optional)</span></label>
           <select ng-model="neighborhoodCreate.state"
                   ng-options="state as state.name for state
                     in neighborhoodCreate.country.subdivisions track by state.code"
-                  class="form-control" id="role" type="text" required>
+                  ng-required="neighborhoodCreate.country.subdivisions_required"
+                  class="form-control" id="role" type="text">
+                  <option></option>
           </select>
         </div>
         <div class="form-group animationIf" ng-if="neighborhoodCreate.isDefaultCountry()">
