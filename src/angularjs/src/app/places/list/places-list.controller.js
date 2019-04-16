@@ -10,8 +10,8 @@
     'use strict';
 
     /** @ngInject */
-    function PlaceListController($log, $state, $stateParams, $scope,
-                                 Pagination, AuthService, Neighborhood, AnalysisJob) {
+    function PlaceListController($log, $state, $stateParams, $scope, Pagination, AuthService,
+                                 Neighborhood, AnalysisJob, Country) {
         var ctl = this;
 
         var sortingOptions = [
@@ -78,6 +78,7 @@
             ctl.addPlaceToCompare = addPlaceToCompare;
             ctl.removeComparePlace = removeComparePlace;
             ctl.filterNeighborhoods = filterNeighborhoods;
+            ctl.filterByCountry = filterByCountry;
             ctl.goComparePlaces = goComparePlaces;
             ctl.isInPlaceCompare = isInPlaceCompare;
             ctl.isPlaceCompareFull = isPlaceCompareFull;
@@ -86,6 +87,18 @@
             ctl.sortingOptions = sortingOptions;
 
             ctl.getPlaces = getPlaces;
+
+            ctl.countryFilter = null;
+            ctl.stateFilter = null;
+            ctl.countries = [];
+            Country.query({has_jobs: true}).$promise.then(function(response) {
+                ctl.countries = response;
+                // Build a {country: [subdivisions]} object for countries that have them
+                ctl.states = _(ctl.countries)
+                    .filter(function (c) { return c.subdivisions; })
+                    .map(function (c) { return [c.alpha_2, c.subdivisions]; })
+                    .fromPairs().value();
+            });
 
             getPlaces(true);
         }
@@ -183,11 +196,22 @@
             getPlaces(false);
         }
 
+        function filterByCountry() {
+            ctl.stateFilter = null;
+            filterNeighborhoods();
+        }
+
         function getPlaces(fetchComparisonPlaces, params) {
             params = params || _.merge({}, defaultParams);
             params.ordering = ctl.sortBy.value;
             if (ctl.searchText) {
                 params.search = ctl.searchText;
+            }
+            if (ctl.countryFilter) {
+                params.neighborhood__country=ctl.countryFilter;
+            }
+            if (ctl.stateFilter) {
+                params.neighborhood__state_abbrev=ctl.stateFilter;
             }
 
             AnalysisJob.query(params).$promise.then(function(data) {
