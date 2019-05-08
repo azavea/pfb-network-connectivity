@@ -11,20 +11,21 @@
 
     /** @ngInject */
     function NeighborhoodCreateController($log, $state, $filter, toastr, Upload, Neighborhood,
-                                          Country, State) {
+                                          Country) {
         var ctl = this;
 
-        var DEFAULT_COUNTRY = {abbr: 'US', name: 'United States'};
+        var DEFAULT_COUNTRY = {alpha_2: 'US', name: 'United States'};
 
         function initialize() {
             ctl.country = DEFAULT_COUNTRY;
-            ctl.states = State.query();
-            ctl.states.$promise.then(function(response) {
-                ctl.states = response;
-            });
             ctl.countries = Country.query();
             ctl.countries.$promise.then(function(response) {
                 ctl.countries = response;
+                // Use the countries response to fill in states
+                if (ctl.country === DEFAULT_COUNTRY) {
+                    ctl.country = _.find(ctl.countries,
+                        function (c) { return c.alpha_2 === DEFAULT_COUNTRY.alpha_2; });
+                }
             });
             // TODO: De-dupe from API?
             ctl.visibilities = [
@@ -44,9 +45,11 @@
                 method: 'POST',
                 data: {
                     boundary_file: ctl.file,
-                    state_abbrev: ctl.state && ctl.isDefaultCountry() ? ctl.state.abbr : '',
+                    // Only send state if it's supported (i.e. if the country has subdivisions)
+                    state_abbrev: ctl.state && ctl.country.subdivisions ? ctl.state.code : '',
+                    // Only send city FIPS if it's supported (i.e. only for US)
                     city_fips: ctl.city_fips && ctl.isDefaultCountry() ? ctl.city_fips : '',
-                    country: ctl.country.abbr || DEFAULT_COUNTRY,
+                    country: ctl.country.alpha_2,
                     visibility: ctl.visibility,
                     label: ctl.label
                 }
@@ -78,7 +81,7 @@
         };
 
         ctl.isDefaultCountry = function() {
-            return ctl.country && ctl.country.abbr === 'US';
+            return ctl.country && ctl.country.alpha_2 === 'US';
         }
     }
     angular

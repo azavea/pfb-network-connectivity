@@ -3,25 +3,22 @@ from datetime import datetime
 import logging
 from uuid import uuid4
 
+import boto3
+from botocore.client import Config as BotocoreClientConfig
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
-
-import boto3
-from botocore.client import Config as BotocoreClientConfig
-from django_countries import countries
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async
 from rest_framework import mixins, parsers, status
 from rest_framework.decorators import detail_route, parser_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import (AllowAny, IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, ViewSet
 from rest_framework.response import Response
-import us
 
 from pfb_network_connectivity.pagination import OptionalLimitOffsetPagination
 from pfb_network_connectivity.filters import OrgAutoFilterBackend
@@ -42,6 +39,7 @@ from .serializers import (
     NeighborhoodSerializer,
 )
 from .filters import AnalysisJobFilterSet
+from .countries import build_country_list
 
 
 logger = logging.getLogger(__name__)
@@ -201,7 +199,8 @@ class NeighborhoodViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
-    ordering_fields = ('created_at',)
+    ordering_fields = ('created_at', 'label')
+    ordering = ('-created_at',)
 
     def perform_create(self, serializer):
         if serializer.is_valid():
@@ -312,28 +311,38 @@ class NeighborhoodGeoJsonViewSet(APIView):
         return Response(json[0])
 
 
-class USStateView(APIView):
-    """Convenience endpoint for available U.S. state options."""
-
-    pagination_class = None
-    filter_class = None
-    permission_classes = (AllowAny,)
-
-    def get(self, request, format=None, *args, **kwargs):
-        return Response([{'abbr': state.abbr, 'name': state.name} for state in
-                         us.STATES_AND_TERRITORIES])
-
-
 class CountriesView(APIView):
-    """Convenience endpoint for Django countries."""
+    """Convenience endpoint for countries."""
 
     pagination_class = None
     filter_class = None
     permission_classes = (AllowAny,)
 
-    # Make a list of countries with US territories excluded, since we'll treat them as states
-    COUNTRIES_MINUS_TERRITORIES = [{'abbr': abbr, 'name': name} for (abbr, name) in list(countries)
-                                   if abbr not in [t.abbr for t in us.TERRITORIES]]
+    # Generate the full list once and keep it on the object rather than doing it for every request
+    COUNTRIES_LIST = build_country_list()
 
     def get(self, request, format=None, *args, **kwargs):
-        return Response(self.COUNTRIES_MINUS_TERRITORIES)
+        if not request.GET.get('has_jobs'):
+            return Response(self.COUNTRIES_LIST)
+
+        neighborhoods = Neighborhood.objects.filter(last_job__status=AnalysisJob.Status.COMPLETE)
+        if isinstance(self.request.user, AnonymousUser):
+            neighborhoods = neighborhoods.filter(visibility=Neighborhood.Visibility.PUBLIC)
+        else:
+            neighborhoods = neighborhoods.exclude(visibility=Neighborhood.Visibility.HIDDEN)
+
+        # Generate a new list, since we'll be modifying some pieces
+        countries = build_country_list()
+        countries_with_jobs = neighborhoods.distinct('country').values_list('country', flat=True)
+        countries = ([c for c in countries if c['alpha_2'] in countries_with_jobs])
+        for country in countries:
+            if 'subdivisions' in country:
+                states_with_jobs = (
+                    neighborhoods.filter(country=country['alpha_2'])
+                                 .distinct('state_abbrev')
+                                 .values_list('state_abbrev', flat=True)
+                )
+                country['subdivisions'] = [sub for sub in country['subdivisions']
+                                           if sub['code'] in states_with_jobs]
+
+        return Response(countries)

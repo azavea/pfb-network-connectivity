@@ -23,7 +23,6 @@ import boto3
 from django_countries.fields import CountryField
 import fiona
 from fiona.crs import from_epsg
-from localflavor.us.models import USStateField
 import us
 
 from pfb_network_connectivity.models import PFBModel
@@ -48,18 +47,33 @@ def get_neighborhood_file_upload_path(obj, filename):
 
     Upload file path should be unique for the organization.
 
-    Maintain backwards compatibility for previously-uploaded bounds with only state and no country
-    by not adding country to file path, but instead supporting paths to bounds outside the US
-    by using the three-letter country abbreviation instead of two-letter state abbreviation
-    in the file path.
+    To maintain backwards compatibility for previously-uploaded bounds when there was no country
+    field, US cities are under their two-letter state abbreviations and non-US cities are under
+    their 3-letter country codes (to avoid conflicts like CA being both Canada and California).
 
-    Use three-letter country abbreviations instead of deafult two to avoid any conflicts with
-    two-letter state abbreviations (i.e., CA might be Canada or California.)
+    For non-US neighborhoods with state/province set, both country and state go in the path,
+    with country still the 3-letter code.
+
+    So the formats will be:
+    US neighborhoods: org/ST/name.zip
+    Non-US with no state: org/CRY/name.zip  (pretend that's the alpha_3 for "Country")
+    Non-US with state: org/CRY/ST/name.zip
     """
-    return 'neighborhood_boundaries/{0}/{1}/{2}{3}'.format(slugify(obj.organization.name),
-                                                           obj.state_abbrev or obj.country.alpha3,
-                                                           obj.name,
-                                                           os.path.splitext(filename)[1])
+    if obj.country == 'US' or not obj.state_abbrev:
+        return 'neighborhood_boundaries/{0}/{1}/{2}{3}'.format(
+            slugify(obj.organization.name),
+            obj.state_abbrev or obj.country.alpha3,
+            obj.name,
+            os.path.splitext(filename)[1]
+        )
+    else:
+        return 'neighborhood_boundaries/{0}/{1}/{2}/{3}{4}'.format(
+            slugify(obj.organization.name),
+            obj.country.alpha3,
+            obj.state_abbrev,
+            obj.name,
+            os.path.splitext(filename)[1]
+        )
 
 
 def get_batch_shapefile_upload_path(organization_name, filename):
@@ -154,12 +168,12 @@ class Neighborhood(PFBModel):
                                      on_delete=models.CASCADE)
     country = CountryField(default='US',
                            help_text='The country of the uploaded neighborhood')
-    state_abbrev = USStateField(help_text='The state of the uploaded neighborhood, if in the US',
-                                blank=True, null=True)
+    state_abbrev = models.CharField(help_text='The state/province of the uploaded neighborhood',
+                                    blank=True, null=True, max_length=10)
     city_fips = models.CharField(max_length=CITY_FIPS_LENGTH, blank=True, default='')
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
-                                     help_text='A zipped shapefile boundary to run the ' +
+                                     help_text='A zipped shapefile boundary to run the '
                                                'bike network analysis on')
     visibility = models.CharField(max_length=10,
                                   choices=Visibility.CHOICES,
@@ -254,6 +268,18 @@ class Neighborhood(PFBModel):
 
         """
         return us.states.lookup(self.state_abbrev)
+
+    @property
+    def label_suffix(self):
+        """ State/province (if applicable) and country suffix for display label.
+
+        State/province isn't collected for some countries, and is optional for others, so
+        sometimes this is just the country.
+        """
+        elements = [self.country.code]
+        if self.state_abbrev:
+            elements.insert(0, self.state_abbrev)
+        return ', '.join(elements)
 
     @classmethod
     def name_for_label(cls, label):

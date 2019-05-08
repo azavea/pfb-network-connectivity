@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+
+## [0.10.0] - 2019-05-08
+
+#### Added
+- Places list filtering by country and state/province
+
+#### Changed
+- Updated containers based on Debian Jessie to Stretch
+- Support entering state/province for non-US neighborhoods
+- Default to sorting places list by name and remove order-by-state option
+- Adjust label formatting to show state/province and country
+
 ## [0.9.2] - 2019-03-11
 
 #### Changed
@@ -86,7 +98,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.2...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.2...0.10.0
 [0.9.2]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.1...0.9.2
 [0.9.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.9.0...0.9.1
 [0.9.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.8.1...0.9.0
