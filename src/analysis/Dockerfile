@@ -41,13 +41,13 @@ RUN set -xe && \
         parallel \
         postgresql-plpython-$PG_MAJOR \
         postgresql-$PG_MAJOR-pgrouting \
-        python-gdal \
+        python3-gdal \
         gdal-bin \
         unzip \
         zip \
         postgis \
-        python-dev \
-        python-pip" && \
+        python3-dev \
+        python3-pip" && \
     apt-get update && apt-get install -y ${BUILD_DEPS} ${DEPS} --no-install-recommends && \
     \
     mkdir /tmp/build/ && cd /tmp/build && \
@@ -58,9 +58,9 @@ RUN set -xe && \
       git clone --branch $GIT_BRANCH_QUANTILE https://github.com/tvondra/quantile.git && \
         (cd quantile && make install) && \
     \
-    pip install --upgrade pip setuptools && \
+    pip3 install --upgrade pip setuptools && \
     hash -r && \
-    pip install -r /opt/pfb/django/requirements.txt && \
+    pip3 install -r /opt/pfb/django/requirements.txt && \
     \
     cd /tmp/ && rm -rf /tmp/build/ /var/lib/apt/lists/* && \
     apt-get purge -y --auto-remove ${BUILD_DEPS}
