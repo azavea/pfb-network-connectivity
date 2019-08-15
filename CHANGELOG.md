@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Support entering state/province for non-US neighborhoods
 - Default to sorting places list by name and remove order-by-state option
 - Adjust label formatting to show state/province and country
+- Upgraded analysis scripts to run under Python 3
 
 ## [0.9.2] - 2019-03-11
 
