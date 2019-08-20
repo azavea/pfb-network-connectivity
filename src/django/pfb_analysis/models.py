@@ -6,6 +6,7 @@ from builtins import str
 from builtins import range
 from past.builtins import basestring
 from datetime import datetime
+import io
 import json
 import logging
 import math
@@ -225,7 +226,7 @@ class Neighborhood(PFBModel):
                 for shpfile in shpfiles:
                     if shpfile.startswith(file_name):
                         zip_handle.write(os.path.join(tmpdir, shpfile), shpfile)
-            boundary_file = File(open(zip_filename))
+            boundary_file = File(open(zip_filename, 'rb'))
             self.boundary_file = boundary_file
             self.geom = geom
             self.geom_simple = simplify_geom(geom)
@@ -414,7 +415,7 @@ class AnalysisBatchManager(models.Manager):
         finally:
             logger.debug('AnalysisBatch.create_from_shapefile removing temporary files...')
             shutil.rmtree(tmpdir, ignore_errors=True)
-            if isinstance(source, file):
+            if isinstance(source, io.IOBase):
                 source.close()
 
         if submit:
