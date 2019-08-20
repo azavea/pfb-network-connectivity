@@ -5,7 +5,6 @@ from builtins import next
 from builtins import str
 from builtins import range
 from past.builtins import basestring
-from builtins import object
 from past.utils import old_div
 from datetime import datetime
 import json
@@ -152,7 +151,7 @@ class Neighborhood(PFBModel):
     def __str__(self):
         return "<Neighborhood: {} ({})>".format(self.name, self.organization.name)
 
-    class Visibility(object):
+    class Visibility:
         PUBLIC = 'public'
         PRIVATE = 'private'
         HIDDEN = 'hidden'
@@ -484,7 +483,7 @@ class AnalysisJob(PFBModel):
         return "<AnalysisJob: {status} {neighborhood}>".format(status=self.status,
                                                                neighborhood=self.neighborhood.label)
 
-    class Status(object):
+    class Status:
         CREATED = 'CREATED'
         QUEUED = 'QUEUED'
         IMPORTING = 'IMPORTING'
@@ -848,7 +847,7 @@ class AnalysisScoreMetadata(models.Model):
 class AnalysisLocalUploadTask(PFBModel):
 
     # Front-end expects upload task status choicees to be a subest of analysis job statuses
-    class Status(object):
+    class Status:
         CREATED = 'CREATED'
         QUEUED = 'QUEUED'
         IMPORTING = 'IMPORTING'

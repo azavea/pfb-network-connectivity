@@ -7,7 +7,6 @@ system, organizations, and user permissions.
 
 from __future__ import unicode_literals
 
-from builtins import object
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
@@ -21,7 +20,7 @@ from rest_framework.authtoken.models import Token
 from pfb_network_connectivity.models import PFBModel
 
 
-class OrganizationTypes(object):
+class OrganizationTypes:
     """Enum-like object to track organization types"""
 
     ADMIN = 'ADMIN'
@@ -72,7 +71,7 @@ class Organization(PFBModel):
         super(Organization, self).save(*args, **kwargs)
 
 
-class UserRoles(object):
+class UserRoles:
     """Enum-like object to track acceptable user roles"""
     ADMIN = 'ADMIN'
     ORGADMIN = 'ORGADMIN'
