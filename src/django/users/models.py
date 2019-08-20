@@ -7,6 +7,7 @@ system, organizations, and user permissions.
 
 from __future__ import unicode_literals
 
+from builtins import object
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager

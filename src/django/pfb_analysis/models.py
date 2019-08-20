@@ -1,5 +1,12 @@
 from __future__ import unicode_literals
+from __future__ import division
 
+from builtins import next
+from builtins import str
+from builtins import range
+from past.builtins import basestring
+from builtins import object
+from past.utils import old_div
 from datetime import datetime
 import json
 import logging
@@ -95,7 +102,7 @@ def simplify_geom(geom):
                 not simple_geom.empty and
                 simple_geom.valid and
                 # Checking a min area ratio against the original ensure we didn't oversimplify
-                simple_geom.area / geom.area > SIMPLIFICATION_MIN_VALID_AREA_RATIO)
+                old_div(simple_geom.area, geom.area) > SIMPLIFICATION_MIN_VALID_AREA_RATIO)
 
     if not (isinstance(geom, Polygon) or isinstance(geom, MultiPolygon)):
         return geom
@@ -136,7 +143,7 @@ def create_environment(**kwargs):
     Writes argument pairs to an array {name, value} objects, which is what AWS wants for
     environment overrides.
     """
-    return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
+    return [{'name': k, 'value': v} for k, v in kwargs.items()]
 
 
 class Neighborhood(PFBModel):
@@ -245,9 +252,9 @@ class Neighborhood(PFBModel):
             return int(math.ceil(zone))
 
         bbox = self.geom.extent
-        avg_longitude = ((bbox[2] - bbox[0]) / 2) + bbox[0]
+        avg_longitude = (old_div((bbox[2] - bbox[0]), 2)) + bbox[0]
         utm_zone = get_zone(avg_longitude)
-        avg_latitude = ((bbox[3] - bbox[1]) / 2) + bbox[1]
+        avg_latitude = (old_div((bbox[3] - bbox[1]), 2)) + bbox[1]
 
         # convert UTM zone to SRID
         # SRID for a given UTM ZONE: 32[6 if N|7 if S]<zone>
@@ -652,7 +659,7 @@ class AnalysisJob(PFBModel):
         # all the environment variables that this app needs, most of which are conveniently
         # prefixed with 'PFB_'
         # Set these first so they can be overridden by job specific settings below
-        environment = {key: val for (key, val) in os.environ.items()
+        environment = {key: val for (key, val) in list(os.environ.items())
                        if key.startswith('PFB_') and val is not None}
         # For the ones without the 'PFB_' prefix, send the settings rather than the original
         # environment variables because the environment variables might be None, which is not

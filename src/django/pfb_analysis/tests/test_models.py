@@ -1,3 +1,5 @@
+from __future__ import division
+from past.utils import old_div
 import logging
 import os
 
@@ -31,7 +33,7 @@ class SimplifyGeomTestCase(SimpleTestCase):
     def _test_simplify_geom(self, geom):
         simple = simplify_geom(geom)
         self.assertLess(simple.num_coords, geom.num_coords)
-        self.assertGreater(simple.area / geom.area, SIMPLIFICATION_MIN_VALID_AREA_RATIO)
+        self.assertGreater(old_div(simple.area, geom.area), SIMPLIFICATION_MIN_VALID_AREA_RATIO)
 
     def test_polygon_geom_simplify_tolerance_more(self):
         """This tests a basic boundary, with a single, simple polygon.

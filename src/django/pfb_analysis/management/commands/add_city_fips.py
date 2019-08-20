@@ -52,7 +52,7 @@ def add_city_fips(input_path, output_path, fips_csv):
             for feature in shp:
                 prop = feature.get('properties')
                 city = prop['city'].upper()
-                state_places = lookup.get(prop['state']).keys()
+                state_places = list(lookup.get(prop['state']).keys())
                 found_fips = None
                 if state_places:
                     for place in state_places:
