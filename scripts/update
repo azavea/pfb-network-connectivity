@@ -49,15 +49,15 @@ function check_database() {
 function run_database_migrations() {
     docker-compose up -d database
     check_database
-    docker-compose run --rm --entrypoint python django manage.py migrate --noinput
-    docker-compose run --rm --entrypoint python django manage.py collectstatic --noinput
+    docker-compose run --rm --entrypoint python3 django manage.py migrate --noinput
+    docker-compose run --rm --entrypoint python3 django manage.py collectstatic --noinput
     docker-compose stop database
 }
 
 function run_data_fixtures() {
     docker-compose up -d database
     check_database
-    docker-compose run --rm --entrypoint python django manage.py loaddata analysis-score-metadata
+    docker-compose run --rm --entrypoint python3 django manage.py loaddata analysis-score-metadata
     docker-compose stop database
 }
 
