@@ -5,7 +5,6 @@ from builtins import next
 from builtins import str
 from builtins import range
 from past.builtins import basestring
-from past.utils import old_div
 from datetime import datetime
 import json
 import logging
@@ -101,7 +100,7 @@ def simplify_geom(geom):
                 not simple_geom.empty and
                 simple_geom.valid and
                 # Checking a min area ratio against the original ensure we didn't oversimplify
-                old_div(simple_geom.area, geom.area) > SIMPLIFICATION_MIN_VALID_AREA_RATIO)
+                simple_geom.area / geom.area > SIMPLIFICATION_MIN_VALID_AREA_RATIO)
 
     if not (isinstance(geom, Polygon) or isinstance(geom, MultiPolygon)):
         return geom
@@ -251,9 +250,9 @@ class Neighborhood(PFBModel):
             return int(math.ceil(zone))
 
         bbox = self.geom.extent
-        avg_longitude = (old_div((bbox[2] - bbox[0]), 2)) + bbox[0]
+        avg_longitude = ((bbox[2] - bbox[0]) / 2) + bbox[0]
         utm_zone = get_zone(avg_longitude)
-        avg_latitude = (old_div((bbox[3] - bbox[1]), 2)) + bbox[1]
+        avg_latitude = ((bbox[3] - bbox[1]) / 2) + bbox[1]
 
         # convert UTM zone to SRID
         # SRID for a given UTM ZONE: 32[6 if N|7 if S]<zone>
