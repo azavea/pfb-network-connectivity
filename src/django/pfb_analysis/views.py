@@ -1,3 +1,4 @@
+from builtins import str
 from collections import OrderedDict
 from datetime import datetime
 import logging

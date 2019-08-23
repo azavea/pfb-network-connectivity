@@ -50,7 +50,9 @@ def compose_lockfile_key(state_abbrev):
 
 def read_from_s3(bucket, key):
     try:
-        return S3_CLIENT.get_object(Bucket=bucket, Key=key)['Body'].read()
+        # botocore.response.StreamingBody.read() returns a bytestring, so it needs decoding
+        # to make it a proper Python 3 string
+        return S3_CLIENT.get_object(Bucket=bucket, Key=key)['Body'].read().decode('utf-8')
     except S3_CLIENT.exceptions.NoSuchKey:
         return None
 

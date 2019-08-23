@@ -1,6 +1,12 @@
 from __future__ import unicode_literals
+from __future__ import division
 
+from builtins import next
+from builtins import str
+from builtins import range
+from past.builtins import basestring
 from datetime import datetime
+import io
 import json
 import logging
 import math
@@ -136,7 +142,7 @@ def create_environment(**kwargs):
     Writes argument pairs to an array {name, value} objects, which is what AWS wants for
     environment overrides.
     """
-    return [{'name': k, 'value': v} for k, v in kwargs.iteritems()]
+    return [{'name': k, 'value': v} for k, v in kwargs.items()]
 
 
 class Neighborhood(PFBModel):
@@ -145,7 +151,7 @@ class Neighborhood(PFBModel):
     def __str__(self):
         return "<Neighborhood: {} ({})>".format(self.name, self.organization.name)
 
-    class Visibility(object):
+    class Visibility:
         PUBLIC = 'public'
         PRIVATE = 'private'
         HIDDEN = 'hidden'
@@ -220,7 +226,7 @@ class Neighborhood(PFBModel):
                 for shpfile in shpfiles:
                     if shpfile.startswith(file_name):
                         zip_handle.write(os.path.join(tmpdir, shpfile), shpfile)
-            boundary_file = File(open(zip_filename))
+            boundary_file = File(open(zip_filename, 'rb'))
             self.boundary_file = boundary_file
             self.geom = geom
             self.geom_simple = simplify_geom(geom)
@@ -409,7 +415,7 @@ class AnalysisBatchManager(models.Manager):
         finally:
             logger.debug('AnalysisBatch.create_from_shapefile removing temporary files...')
             shutil.rmtree(tmpdir, ignore_errors=True)
-            if isinstance(source, file):
+            if isinstance(source, io.IOBase):
                 source.close()
 
         if submit:
@@ -477,7 +483,7 @@ class AnalysisJob(PFBModel):
         return "<AnalysisJob: {status} {neighborhood}>".format(status=self.status,
                                                                neighborhood=self.neighborhood.label)
 
-    class Status(object):
+    class Status:
         CREATED = 'CREATED'
         QUEUED = 'QUEUED'
         IMPORTING = 'IMPORTING'
@@ -652,7 +658,7 @@ class AnalysisJob(PFBModel):
         # all the environment variables that this app needs, most of which are conveniently
         # prefixed with 'PFB_'
         # Set these first so they can be overridden by job specific settings below
-        environment = {key: val for (key, val) in os.environ.items()
+        environment = {key: val for (key, val) in list(os.environ.items())
                        if key.startswith('PFB_') and val is not None}
         # For the ones without the 'PFB_' prefix, send the settings rather than the original
         # environment variables because the environment variables might be None, which is not
@@ -841,7 +847,7 @@ class AnalysisScoreMetadata(models.Model):
 class AnalysisLocalUploadTask(PFBModel):
 
     # Front-end expects upload task status choicees to be a subest of analysis job statuses
-    class Status(object):
+    class Status:
         CREATED = 'CREATED'
         QUEUED = 'QUEUED'
         IMPORTING = 'IMPORTING'
