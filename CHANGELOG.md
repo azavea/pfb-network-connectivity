@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Changed
 - Upgraded Django app to run under Python 3
+- Upgraded Django app to Django 2.2
 
 ## [0.10.0] - 2019-05-08
 
