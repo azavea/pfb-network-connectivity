@@ -11,7 +11,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.db import connection, DataError
 from django.utils.text import slugify
 from django_filters.rest_framework import DjangoFilterBackend
-from django_q.tasks import async
+from django_q.tasks import async_task
 from rest_framework import mixins, parsers, status
 from rest_framework.decorators import action, parser_classes
 from rest_framework.exceptions import NotFound
@@ -130,7 +130,7 @@ class AnalysisBatchViewSet(ViewSet):
             ClientMethod='get_object',
             Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': key}
         )
-        async('pfb_analysis.tasks.create_batch_from_remote_shapefile',
+        async_task('pfb_analysis.tasks.create_batch_from_remote_shapefile',
             url,
             group='create_analysis_batch',
             ack_failure=True)
@@ -179,7 +179,7 @@ class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
                                          created_by=user, modified_by=user)
         obj = serializer.save(job=job, created_by=user, modified_by=user)
 
-        async('pfb_analysis.tasks.upload_local_analysis',
+        async_task('pfb_analysis.tasks.upload_local_analysis',
             obj.uuid,
             group='import_analysis_job',
             ack_failure=True)
