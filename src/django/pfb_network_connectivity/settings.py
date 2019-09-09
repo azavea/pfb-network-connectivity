@@ -238,6 +238,7 @@ WATCHMAN_CHECKS = (
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = os.getenv('PFB_S3_STORAGE_BUCKET',
                                     '{0}-pfb-storage-{1}'.format(DEV_USER, AWS_REGION))
+AWS_DEFAULT_ACL = None  # Override the insecure default behavior to silence the warning about it.
 AWS_QUERYSTRING_AUTH = False
 
 # Django Q
