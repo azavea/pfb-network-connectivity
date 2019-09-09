@@ -13,7 +13,7 @@ from django.utils.text import slugify
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async
 from rest_framework import mixins, parsers, status
-from rest_framework.decorators import detail_route, parser_classes
+from rest_framework.decorators import action, parser_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
@@ -69,7 +69,7 @@ class AnalysisJobViewSet(ModelViewSet):
         instance = serializer.save()
         instance.run()
 
-    @detail_route(methods=['post'])
+    @action(detail=True, methods=['post'])
     def cancel(self, request, pk=None):
         job = self.get_object()
         job.cancel(reason='AnalysisJob terminated via API by {} at {}'
@@ -77,7 +77,7 @@ class AnalysisJobViewSet(ModelViewSet):
         serializer = AnalysisJobSerializer(job)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @detail_route(methods=['GET'])
+    @action(detail=True, methods=['GET'])
     def results(self, request, pk=None):
         job = self.get_object()
 
