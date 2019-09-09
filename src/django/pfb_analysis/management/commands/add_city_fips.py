@@ -63,13 +63,13 @@ def add_city_fips(input_path, output_path, fips_csv):
                                                                   state=prop['state'], fips=fips))
                             if found_fips:
                                 if found_fips != fips:
-                                    logger.warn("""FIPS mismatch. Expected: {fips}
+                                    logger.warning("""FIPS mismatch. Expected: {fips}
                                         Got: {found} for {place}, {state}""".format(
                                         fips=fips, found=found_fips, place=place,
                                         state=prop['state']))
                             found_fips = fips
                 if not found_fips:
-                    logger.warn('Could not find FIPS for {city}, {state}'.format(city=city,
+                    logger.warning('Could not find FIPS for {city}, {state}'.format(city=city,
                                 state=prop['state']))
                 else:
                     found += 1
