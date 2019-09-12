@@ -674,12 +674,12 @@ class AnalysisJob(PFBModel):
     def run(self):
         """ Run the analysis job, configuring ENV appropriately """
         if self.status != self.Status.CREATED:
-            logger.warn('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
+            logger.warning('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
 
         # TODO: #614 remove this check on adding support for running international jobs
         if not self.neighborhood.state:
-            logger.warn('Running jobs outside the US is not supported yet. Skipping {}.'.format(
+            logger.warning('Running jobs outside the US is not supported yet. Skipping {}.'.format(
                 self.uuid))
             self.update_status(self.Status.ERROR)
             return
@@ -706,7 +706,7 @@ class AnalysisJob(PFBModel):
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':
             self.update_status(self.Status.QUEUED)
-            logger.warn("Can't actually run development analysis jobs on AWS. Try this:"
+            logger.warning("Can't actually run development analysis jobs on AWS. Try this:"
                         "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_CITY_FIPS='{PFB_CITY_FIPS}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
                         "./scripts/run-local-analysis "
                         "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
