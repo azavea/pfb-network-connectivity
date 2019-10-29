@@ -2,10 +2,6 @@ FROM quay.io/azavea/postgis:2.3-postgres9.6-slim
 MAINTAINER Azavea
 LABEL type=pfb-analysis
 
-ENV GIT_BRANCH_OSM2PGROUTING osm2pgrouting-2.1.0
-ENV GIT_BRANCH_OSM2PGSQL 0.90.1
-ENV GIT_BRANCH_QUANTILE master
-
 # Copy django requirements (will copy the rest later, so that any change to
 # the code doesn't trigger re-running the whole provisioning step)
 COPY ./django/requirements.txt /opt/pfb/django/requirements.txt
@@ -46,17 +42,16 @@ RUN set -xe && \
         unzip \
         zip \
         postgis \
+        python \
         python3-dev \
-        python3-pip" && \
+        python3-pip \
+        osm2pgrouting \
+        osm2pgsql" && \
     apt-get update && apt-get install -y ${BUILD_DEPS} ${DEPS} --no-install-recommends && \
     \
     mkdir /tmp/build/ && cd /tmp/build && \
-      git clone --branch $GIT_BRANCH_OSM2PGROUTING https://github.com/pgRouting/osm2pgrouting.git && \
-        (cd osm2pgrouting && mkdir build && cmake -H. -Bbuild && cd build && make install) && \
-      git clone --branch $GIT_BRANCH_OSM2PGSQL https://github.com/openstreetmap/osm2pgsql.git && \
-        (cd osm2pgsql && mkdir build && cd build && cmake ../ && make install) && \
-      git clone --branch $GIT_BRANCH_QUANTILE https://github.com/tvondra/quantile.git && \
-        (cd quantile && make install) && \
+    git clone --branch master https://github.com/tvondra/quantile.git && \
+      (cd quantile && make install) && \
     \
     pip3 install --upgrade pip setuptools && \
     hash -r && \
