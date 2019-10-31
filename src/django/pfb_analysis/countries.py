@@ -39,7 +39,7 @@ def subdivisions_for_country(alpha_2):
     # If there's a whitelist of desired types, filter to that (otherwise use all types)
     types = get_country_config(alpha_2).get('subdivision_types')
     if types is not None:
-        subdivisions = filter(lambda s: s['type'] in types, subdivisions)
+        subdivisions = [s for s in subdivisions if s['type'] in types]
 
     subdivisions.sort(key=lambda s: s['name'])
     return subdivisions
