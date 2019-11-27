@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+#### Added
+- A delete button for neighborhoods, with a confirmation modal
+
 ## [0.11.0] - 2019-10-31
 
 #### Changed
