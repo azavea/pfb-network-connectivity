@@ -18,7 +18,7 @@
             <th>Country</th>
             <th>Visibility</th>
             <th>Created</th>
-            <th ng-if="neighborhoodList.isAdminUser"></th>
+            <th ng-if="neighborhoodList.isAdminUser">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -32,8 +32,8 @@
             <td>{{neighborhood.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
             <td ng-if="neighborhoodList.isAdminUser">
               <button ng-click="neighborhoodList.deleteUpload(neighborhood)"
-                      uib-tooltip="Delete"
-                      class="btn-link glyphicon glyphicon-trash"></button>
+                      title="Delete"
+                      class="btn-link icon-trash"></button>
             </td>
           </tr>
         </tbody>
