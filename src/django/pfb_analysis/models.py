@@ -22,6 +22,8 @@ from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.utils.text import slugify
 
 import botocore
@@ -324,6 +326,12 @@ class Neighborhood(PFBModel):
     class Meta:
         # Note that uniqueness fields should also be used in the upload file path
         unique_together = ('name', 'country', 'state_abbrev', 'organization',)
+
+
+@receiver(post_delete, sender=Neighborhood)
+def delete_boundary_file(sender, instance, **kwargs):
+    instance.boundary_file.delete(save=False)
+    logger.info("Deleted boundary file for {}, {}".format(instance.label, instance.label_suffix))
 
 
 class AnalysisBatchManager(models.Manager):
@@ -760,6 +768,22 @@ class AnalysisJob(PFBModel):
             path=self.s3_results_path,
             filename=filename,
         )
+
+
+@receiver(post_delete, sender=AnalysisJob)
+def delete_analysisjob_s3_results(sender, instance, **kwargs):
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME)
+    path = instance.s3_results_path
+    delete_result = bucket.objects.filter(Prefix=path).delete()
+    try:
+        logger.info("Deleted {} results files from {}".format(
+            sum(len(batch['Deleted']) for batch in delete_result),
+            path,
+        ))
+    except KeyError:
+        # If the delete_result isn't as expected, still log a message
+        logger.info("Deleted S3 files from {}".format(path))
 
 
 class NeighborhoodWaysResults(models.Model):
