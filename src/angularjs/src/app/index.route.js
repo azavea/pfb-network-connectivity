@@ -158,9 +158,9 @@
             })
             .state('admin.neighborhoods.create', {
                 url: 'create/',
-                controller: 'NeighborhoodCreateController',
-                controllerAs: 'neighborhoodCreate',
-                templateUrl: 'app/neighborhoods/create/neighborhoods-create.html'
+                controller: 'NeighborhoodDetailController',
+                controllerAs: 'neighborhoodDetail',
+                templateUrl: 'app/neighborhoods/detail/neighborhoods-detail.html'
             })
             .state('admin.neighborhoods.list', {
                 url: '',

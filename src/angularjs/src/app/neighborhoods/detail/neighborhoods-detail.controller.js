@@ -1,6 +1,6 @@
 /**
  * @ngdoc controller
- * @name pfb.neighborhoods.create.controller:NeighborhoodCreateController
+ * @name pfb.neighborhoods.detail.controller:NeighborhoodDetailController
  *
  * @description
  * Controller for creating a neighborhood upload
@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function NeighborhoodCreateController($log, $state, $filter, toastr, Upload, Neighborhood,
+    function NeighborhoodDetailController($log, $state, toastr, Upload, Neighborhood,
                                           Country) {
         var ctl = this;
 
@@ -85,6 +85,6 @@
         }
     }
     angular
-        .module('pfb.neighborhoods.create')
-        .controller('NeighborhoodCreateController', NeighborhoodCreateController);
+        .module('pfb.neighborhoods.detail')
+        .controller('NeighborhoodDetailController', NeighborhoodDetailController);
 })();
