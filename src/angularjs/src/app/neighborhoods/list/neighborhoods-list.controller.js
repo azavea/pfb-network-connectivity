@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function NeighborhoodListController($state, $stateParams, $scope, Pagination, AuthService,
+    function NeighborhoodListController($state, $stateParams, toastr, Pagination, AuthService,
                                         Neighborhood, ConfirmationModal) {
         var ctl = this;
 
@@ -88,7 +88,13 @@
             })
             .result
             .then(function () { return neighborhood.$delete(); })
-            .then(function () { getNeighborhoods(); });
+            .then(function () {
+                toastr.success('Successfully deleted neighborhood');
+                getNeighborhoods();
+            })
+            .catch(function() {
+                toastr.error('Error deleting neighborhood');
+            });
         }
 
     }
