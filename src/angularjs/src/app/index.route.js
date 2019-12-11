@@ -162,6 +162,12 @@
                 controllerAs: 'neighborhoodDetail',
                 templateUrl: 'app/neighborhoods/detail/neighborhoods-detail.html'
             })
+            .state('admin.neighborhoods.edit', {
+                url: 'edit/:uuid',
+                controller: 'NeighborhoodDetailController',
+                controllerAs: 'neighborhoodDetail',
+                templateUrl: 'app/neighborhoods/detail/neighborhoods-detail.html'
+            })
             .state('admin.neighborhoods.list', {
                 url: '',
                 controller: 'NeighborhoodListController',

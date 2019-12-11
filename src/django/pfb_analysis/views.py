@@ -16,6 +16,7 @@ from rest_framework import mixins, parsers, status
 from rest_framework.decorators import action, parser_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, ViewSet
@@ -185,7 +186,7 @@ class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
             ack_failure=True)
 
 
-class NeighborhoodViewSet(ModelViewSet):
+class NeighborhoodViewSet(ModelViewSet, UpdateModelMixin):
     """For listing or retrieving neighborhoods."""
 
     def get_queryset(self):

@@ -3,18 +3,20 @@
 <div class="container">
   <div class="row align-center">
     <div class="column-10">
-      <h1>Create Neighborhood</h1>
-      <form name="neighborhoodForm" novalidate ng-submit="neighborhoodDetail.create()" class="panel">
+      <h1 ng-if="!neighborhoodDetail.editing">Create Neighborhood</h1>
+      <h1 ng-if="neighborhoodDetail.editing">Edit Neighborhood Details</h1>
+      <form name="neighborhoodForm" novalidate
+            ng-submit="neighborhoodDetail.saveNeighborhood()" class="panel">
         <div class="panel-body">
-        <div class="form-group">
+        <div class="form-group" ng-if="!neighborhoodDetail.editing">
           <label for="file">File</label>
           <input ngf-select ng-model="neighborhoodDetail.file"
                  ngf-pattern="'.zip'" ngf-accept="'.zip'"
-                 type="file" name="file" required>
+                 type="file" name="file" ng-required="!neighborhoodDetail.editing">
         </div>
         <div class="form-group">
           <label for="label">Label</label>
-          <input ng-model="neighborhoodDetail.label"
+          <input ng-model="neighborhoodDetail.neighborhood.label"
                  class="form-control" id="label"
                  type="text">
         </div>
@@ -43,7 +45,7 @@
         </div>
         <div class="form-group animationIf" ng-if="neighborhoodDetail.isDefaultCountry()">
           <label for="label">City FIPS</label>
-          <input ng-model="neighborhoodDetail.city_fips" ng-pattern="/^[0-9]{7}$/"
+          <input ng-model="neighborhoodDetail.neighborhood.city_fips" ng-pattern="/^[0-9]{7}$/"
                  class="form-control" id="city_fips" type="text" name="city_fips">
           <span ng-show="neighborhoodForm.city_fips.$invalid" class="color-danger">
             FIPS should be 7 digits, starting with the two-digit state FIPS.
@@ -51,8 +53,8 @@
         </div>
         <div class="form-group">
           <label for="role">Visibility</label>
-          <select ng-init="neighborhoodDetail.visibility = 'public'"
-                  ng-model="neighborhoodDetail.visibility"
+          <select ng-init="neighborhoodDetail.neighborhood.visibility = 'public'"
+                  ng-model="neighborhoodDetail.neighborhood.visibility"
                   ng-options="v[0] as v[1] for v in neighborhoodDetail.visibilities"
                   class="form-control" id="role" type="text">
           </select>
@@ -60,7 +62,10 @@
         <div class="row">
           <div class="column-12">
             <button type="submit" ng-disabled="neighborhoodForm.$invalid"
-                    class="btn-primary btn">Create Neighborhood</button>
+                    class="btn-primary btn">
+              <span ng-if="!neighborhoodDetail.editing">Create Neighborhood</span>
+              <span ng-if="neighborhoodDetail.editing">Save Changes</span>
+            </button>
           </div>
         </div>
         </div>
