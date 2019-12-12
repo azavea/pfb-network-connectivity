@@ -73,7 +73,7 @@
                 // Only send state if it's supported (i.e. if the country has subdivisions)
                 state_abbrev: ctl.state && ctl.country.subdivisions ? ctl.state.code : '',
                 // Only send city FIPS if it's supported (i.e. only for US)
-                city_fips: ctl.isDefaultCountry() && (ctl.neighborhood.city_fips || ''),
+                city_fips: ctl.isDefaultCountry() ? (ctl.neighborhood.city_fips || '') : '',
                 country: ctl.country.alpha_2,
                 visibility: ctl.neighborhood.visibility,
                 label: ctl.neighborhood.label
