@@ -249,19 +249,23 @@ class NeighborhoodBoundsGeoJsonViewDetail(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None, *args, **kwargs):
+        # Look for a 'detailed' query param and return the full geometry if it's truthy
+        detailed = request.GET.get('detailed', False)
+        table = 'geom' if detailed else 'geom_simple'
+
         query = """
         SELECT row_to_json(fc)
         FROM (
             SELECT 'FeatureCollection' AS type,
                 array_to_json(array_agg(f)) AS features
             FROM (SELECT 'Feature' AS type,
-                  ST_AsGeoJSON(g.geom_simple)::json AS geometry,
+                  ST_AsGeoJSON(g.{table})::json AS geometry,
                   g.uuid AS id,
                   row_to_json((SELECT p FROM (
                     SELECT uuid AS id, name, label, country, state_abbrev, organization_id) AS p))
                     AS properties
             FROM pfb_analysis_neighborhood AS g WHERE g.uuid = %s) AS f) AS fc;
-        """
+        """.format(table=table)
 
         # get the neighborhood ID from the request
         uuid = kwargs.get('neighborhood', '')
