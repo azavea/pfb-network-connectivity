@@ -70,6 +70,12 @@
         </div>
         </div>
       </form>
+      <div ng-if="neighborhoodDetail.editing">
+        <h4>Geometry preview</h4>
+        <div class="neighborhood-detail-map">
+          <pfb-neighborhood-detail-map pfb-neighborhood-id="neighborhoodDetail.neighborhood.uuid"></pfb-neighborhood-detail-map>
+        </div>
+      </div>
     </div>
   </div>
 </div>
