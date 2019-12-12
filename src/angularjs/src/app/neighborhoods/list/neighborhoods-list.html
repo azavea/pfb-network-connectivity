@@ -18,6 +18,7 @@
             <th>Country</th>
             <th>Visibility</th>
             <th>Created</th>
+            <th ng-if="neighborhoodList.isAdminUser">Edit</th>
             <th ng-if="neighborhoodList.isAdminUser">Delete</th>
           </tr>
         </thead>
@@ -30,6 +31,10 @@
             <td>{{neighborhood.country.code}}</td>
             <td>{{neighborhood.visibility}}</td>
             <td>{{neighborhood.createdAt | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+            <td ng-if="neighborhoodList.isAdminUser">
+              <a ui-sref="admin.neighborhoods.edit({uuid: neighborhood.uuid})">
+                <button class="btn-link icon-edit"></button></a>
+            </td>
             <td ng-if="neighborhoodList.isAdminUser">
               <button ng-click="neighborhoodList.deleteUpload(neighborhood)"
                       title="Delete"
