@@ -18,7 +18,7 @@
 
             // will set center and zoom level by zooming to fit geojson polygon bounds when loaded
             ctl.boundsConus = MapConfig.conusBounds;
-            ctl.baselayer = L.tileLayer(
+            ctl.baseLayer = L.tileLayer(
                 MapConfig.baseLayers.Positron.url, {
                     attribution: MapConfig.baseLayers.Positron.attribution,
                     maxZoom: MapConfig.conusMaxZoom
