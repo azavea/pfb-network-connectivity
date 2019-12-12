@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Clean up S3 assets when deleting neighborhoods and analysis jobs
 - Editing of neighborhood details
 
+#### Changed
+- Fixed garbled error messages and improved error formatting
+
 ## [0.11.0] - 2019-10-31
 
 #### Changed

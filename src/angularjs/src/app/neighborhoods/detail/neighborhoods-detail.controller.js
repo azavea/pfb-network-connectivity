@@ -11,7 +11,7 @@
 
     /** @ngInject */
     function NeighborhoodDetailController($log, $state, $stateParams, toastr, Upload, Neighborhood,
-                                          Country) {
+                                          Country, parseErrorFilter) {
         var ctl = this;
 
         var DEFAULT_COUNTRY = {alpha_2: 'US', name: 'United States'};
@@ -90,23 +90,10 @@
             }).catch(function(error) {
                 $log.error(error);
                 toastr.clear(uploadToast);
-                var msg = 'Unable to ' + verb + ' neighborhood:';
-                if (error.data && error.data.non_field_errors) {
-                    // extract non-field errors
-                    for (var i in error.data.non_field_errors) {
-                        msg += ' ' + error.data.non_field_errors[i];
-                    }
-                } else if (error.data) {
-                    // extract field errors
-                    for (var err in error.data) {
-                        msg += ' ' + err + ': ' + error.data[err];
-                    }
-                    $log.error(msg);
-                } else {
-                    msg += ' ' + error;
-                }
+                var errorDetails = parseErrorFilter(error);
+                var msg = 'Unable to ' + verb + ' neighborhood' +
+                          (errorDetails ? ': <br/>' + errorDetails : '');
                 toastr.error(msg);
-                $log.error(msg);
             });
         };
 
