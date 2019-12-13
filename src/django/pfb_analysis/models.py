@@ -192,8 +192,7 @@ class Neighborhood(PFBModel):
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving """
-        if not self.name:
-            self.name = self.name_for_label(self.label)
+        self.name = self.name_for_label(self.label)
         self.full_clean()
         self._set_geom_from_boundary_file()
         super(Neighborhood, self).save(*args, **kwargs)
@@ -234,8 +233,6 @@ class Neighborhood(PFBModel):
             self.geom_simple = simplify_geom(geom)
             self.geom_pt = geom.centroid
             self.save()
-        except:
-            raise
         finally:
             if boundary_file:
                 boundary_file.close()
