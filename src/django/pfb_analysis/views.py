@@ -249,9 +249,9 @@ class NeighborhoodBoundsGeoJsonViewDetail(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None, *args, **kwargs):
-        # Look for a 'detailed' query param and return the full geometry if it's truthy
-        detailed = request.GET.get('detailed', False)
-        table = 'geom' if detailed else 'geom_simple'
+        # Look for a 'simplified' query param and return the simplified geometry if it's truthy
+        simplified = request.GET.get('simplified', False)
+        table = 'geom_simple' if simplified else 'geom'
 
         query = """
         SELECT row_to_json(fc)

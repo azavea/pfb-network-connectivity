@@ -39,7 +39,7 @@
         };
 
         function loadBounds(uuid) {
-            Neighborhood.bounds({uuid: uuid, detailed: true}).$promise.then(function (data) {
+            Neighborhood.bounds({uuid: uuid}).$promise.then(function (data) {
                 var boundsLayer = L.geoJSON(data, {});
                 ctl.map.addLayer(boundsLayer);
                 ctl.map.fitBounds(boundsLayer.getBounds(), {
