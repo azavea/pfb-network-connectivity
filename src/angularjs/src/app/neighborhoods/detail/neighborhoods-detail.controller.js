@@ -61,7 +61,7 @@
             })
         }
 
-        ctl.saveNeighborhood = function() {
+        ctl.saveNeighborhood = function(stayOnPage) {
             var uploadToast = toastr.info('Creating neighborhood. Please wait...',
                                           {autoDismiss: false});
 
@@ -86,7 +86,11 @@
             }).then(function() {
                 toastr.clear(uploadToast);
                 toastr.success('Successfully ' + verb + 'd neighborhood');
-                $state.go('admin.neighborhoods.list');
+                if (stayOnPage) {
+                    $state.reload();
+                } else {
+                    $state.go('admin.neighborhoods.list');
+                }
             }).catch(function(error) {
                 $log.error(error);
                 toastr.clear(uploadToast);

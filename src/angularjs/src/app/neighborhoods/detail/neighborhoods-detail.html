@@ -66,6 +66,11 @@
               <span ng-if="!neighborhoodDetail.editing">Create Neighborhood</span>
               <span ng-if="neighborhoodDetail.editing">Save Changes</span>
             </button>
+            <button ng-if="neighborhoodDetail.editing" class="btn-primary btn"
+                    type="button" ng-disabled="neighborhoodForm.$invalid">
+              <span ng-click="neighborhoodDetail.saveNeighborhood(true)">
+                Save and Continue Editing</span>
+            </button>
           </div>
         </div>
         </div>
