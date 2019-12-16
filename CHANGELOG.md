@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Added
 - A delete button for neighborhoods, with a confirmation modal
 - Clean up S3 assets when deleting neighborhoods and analysis jobs
-- Editing of neighborhood details
+- Editing of neighborhood details and boundary
 - A boundary map preview to the neighborhood editing page
 
 #### Changed

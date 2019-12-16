@@ -299,26 +299,33 @@ class Neighborhood(PFBModel):
         No explicit error handling/logging, will raise original exception if failure
 
         """
-        if overwrite or (self.boundary_file and not self.geom):
-            try:
-                tmpdir = tempfile.mkdtemp()
-                local_zipfile = os.path.join(tmpdir, '{}.zip'.format(self.name))
-                with open(local_zipfile, 'wb') as zip_handle:
-                    zip_handle.write(self.boundary_file.read())
-                with zipfile.ZipFile(local_zipfile, 'r') as zip_handle:
-                    zip_handle.extractall(tmpdir)
-                shpfiles = [filename for filename in os.listdir(tmpdir) if filename.endswith('shp')]
-                shp_filename = os.path.join(tmpdir, shpfiles[0])
-                with fiona.open(shp_filename, 'r') as shp_handle:
-                    feature = next(shp_handle)
-                    geom = GEOSGeometry(json.dumps(feature['geometry']))
-                    if geom.geom_type == 'Polygon':
-                        geom = MultiPolygon([geom])
-                    self.geom = geom
-                    self.geom_simple = simplify_geom(geom)
-                    self.geom_pt = geom.centroid
-            finally:
-                shutil.rmtree(tmpdir, ignore_errors=True)
+        if self.geom and not overwrite and self.boundary_file and self.boundary_file._committed:
+            # If the geometry already exists, 'overwrite' isn't true, and the boundary file was
+            # already saved, there's nothing to do.
+            # Using a private property of the FileField to figure out if there has been a change
+            # to the boundary isn't ideal, but the alternative seems like it would require a lot
+            # of overloading DRF internals to get that information all the way from the request
+            # to the model save method.
+            return
+        try:
+            tmpdir = tempfile.mkdtemp()
+            local_zipfile = os.path.join(tmpdir, '{}.zip'.format(self.name))
+            with open(local_zipfile, 'wb') as zip_handle:
+                zip_handle.write(self.boundary_file.read())
+            with zipfile.ZipFile(local_zipfile, 'r') as zip_handle:
+                zip_handle.extractall(tmpdir)
+            shpfiles = [filename for filename in os.listdir(tmpdir) if filename.endswith('shp')]
+            shp_filename = os.path.join(tmpdir, shpfiles[0])
+            with fiona.open(shp_filename, 'r') as shp_handle:
+                feature = next(shp_handle)
+                geom = GEOSGeometry(json.dumps(feature['geometry']))
+                if geom.geom_type == 'Polygon':
+                    geom = MultiPolygon([geom])
+                self.geom = geom
+                self.geom_simple = simplify_geom(geom)
+                self.geom_pt = geom.centroid
+        finally:
+            shutil.rmtree(tmpdir, ignore_errors=True)
 
     class Meta:
         # Note that uniqueness fields should also be used in the upload file path

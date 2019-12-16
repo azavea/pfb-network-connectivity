@@ -8,7 +8,7 @@
       <form name="neighborhoodForm" novalidate
             ng-submit="neighborhoodDetail.saveNeighborhood()" class="panel">
         <div class="panel-body">
-        <div class="form-group" ng-if="!neighborhoodDetail.editing">
+        <div class="form-group">
           <label for="file">File</label>
           <input ngf-select ng-model="neighborhoodDetail.file"
                  ngf-pattern="'.zip'" ngf-accept="'.zip'"
