@@ -62,7 +62,7 @@
         }
 
         ctl.saveNeighborhood = function() {
-            var uploadToast = toastr.info('Creating neighborhood. Please wait...',
+            var uploadToast = toastr.info('Saving neighborhood. Please wait...',
                                           {autoDismiss: false});
 
             var url = '/api/neighborhoods/' + (ctl.editing ? ctl.neighborhood.uuid + '/' : '');
