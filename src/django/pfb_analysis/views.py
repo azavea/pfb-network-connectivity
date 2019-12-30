@@ -16,6 +16,7 @@ from rest_framework import mixins, parsers, status
 from rest_framework.decorators import action, parser_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.filters import OrderingFilter
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, ViewSet
@@ -185,7 +186,7 @@ class AnalysisLocalUploadTaskViewSet(mixins.CreateModelMixin,
             ack_failure=True)
 
 
-class NeighborhoodViewSet(ModelViewSet):
+class NeighborhoodViewSet(ModelViewSet, UpdateModelMixin):
     """For listing or retrieving neighborhoods."""
 
     def get_queryset(self):
@@ -248,19 +249,23 @@ class NeighborhoodBoundsGeoJsonViewDetail(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None, *args, **kwargs):
+        # Look for a 'simplified' query param and return the simplified geometry if it's truthy
+        simplified = request.GET.get('simplified', False)
+        table = 'geom_simple' if simplified else 'geom'
+
         query = """
         SELECT row_to_json(fc)
         FROM (
             SELECT 'FeatureCollection' AS type,
                 array_to_json(array_agg(f)) AS features
             FROM (SELECT 'Feature' AS type,
-                  ST_AsGeoJSON(g.geom_simple)::json AS geometry,
+                  ST_AsGeoJSON(g.{table})::json AS geometry,
                   g.uuid AS id,
                   row_to_json((SELECT p FROM (
                     SELECT uuid AS id, name, label, country, state_abbrev, organization_id) AS p))
                     AS properties
             FROM pfb_analysis_neighborhood AS g WHERE g.uuid = %s) AS f) AS fc;
-        """
+        """.format(table=table)
 
         # get the neighborhood ID from the request
         uuid = kwargs.get('neighborhood', '')

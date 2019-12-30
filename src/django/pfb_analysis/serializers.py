@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from django_countries.serializer_fields import CountryField
+from django.core.exceptions import ValidationError as ModelValidationError
 from rest_framework import serializers
 import us
 
@@ -94,12 +95,23 @@ class NeighborhoodSerializer(PFBModelSerializer):
                 us_state = us.states.lookup(state_abbrev)
                 if us_state and not fips.startswith(us_state.fips):
                     raise serializers.ValidationError(
-                        'City FIPS must start with state FIPS: {state_fips}'
+                        'City FIPS must start with state FIPS ({state_fips})'
                         .format(state_fips=us_state.fips))
         elif data['city_fips']:
             raise serializers.ValidationError('City FIPS can only be set for US neighborhoods')
 
         return data
+
+    def save(self, *args, **kwargs):
+        """ Override the model save to convert errors raised there into serializer errors """
+        try:
+            super().save(*args, **kwargs)
+        except ModelValidationError as e:
+            try:
+                msg = '; '.join(e.messages)
+            except Exception:
+                msg = repr(e)
+            raise serializers.ValidationError(msg)
 
     class Meta:
         model = Neighborhood

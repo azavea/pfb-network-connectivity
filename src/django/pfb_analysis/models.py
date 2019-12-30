@@ -22,6 +22,8 @@ from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.contrib.postgres.fields import JSONField
 from django.core.files import File
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.utils.text import slugify
 
 import botocore
@@ -186,12 +188,11 @@ class Neighborhood(PFBModel):
                                   default=Visibility.PUBLIC)
     last_job = models.ForeignKey('AnalysisJob',
                                  related_name='last_job_neighborhood',
-                                 on_delete=models.CASCADE, blank=True, null=True)
+                                 on_delete=models.SET_NULL, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """ Override to do validation checks before saving """
-        if not self.name:
-            self.name = self.name_for_label(self.label)
+        self.name = self.name_for_label(self.label)
         self.full_clean()
         self._set_geom_from_boundary_file()
         super(Neighborhood, self).save(*args, **kwargs)
@@ -232,8 +233,6 @@ class Neighborhood(PFBModel):
             self.geom_simple = simplify_geom(geom)
             self.geom_pt = geom.centroid
             self.save()
-        except:
-            raise
         finally:
             if boundary_file:
                 boundary_file.close()
@@ -300,30 +299,43 @@ class Neighborhood(PFBModel):
         No explicit error handling/logging, will raise original exception if failure
 
         """
-        if overwrite or (self.boundary_file and not self.geom):
-            try:
-                tmpdir = tempfile.mkdtemp()
-                local_zipfile = os.path.join(tmpdir, '{}.zip'.format(self.name))
-                with open(local_zipfile, 'wb') as zip_handle:
-                    zip_handle.write(self.boundary_file.read())
-                with zipfile.ZipFile(local_zipfile, 'r') as zip_handle:
-                    zip_handle.extractall(tmpdir)
-                shpfiles = [filename for filename in os.listdir(tmpdir) if filename.endswith('shp')]
-                shp_filename = os.path.join(tmpdir, shpfiles[0])
-                with fiona.open(shp_filename, 'r') as shp_handle:
-                    feature = next(shp_handle)
-                    geom = GEOSGeometry(json.dumps(feature['geometry']))
-                    if geom.geom_type == 'Polygon':
-                        geom = MultiPolygon([geom])
-                    self.geom = geom
-                    self.geom_simple = simplify_geom(geom)
-                    self.geom_pt = geom.centroid
-            finally:
-                shutil.rmtree(tmpdir, ignore_errors=True)
+        if self.geom and not overwrite and self.boundary_file and self.boundary_file._committed:
+            # If the geometry already exists, 'overwrite' isn't true, and the boundary file was
+            # already saved, there's nothing to do.
+            # Using a private property of the FileField to figure out if there has been a change
+            # to the boundary isn't ideal, but the alternative seems like it would require a lot
+            # of overloading DRF internals to get that information all the way from the request
+            # to the model save method.
+            return
+        try:
+            tmpdir = tempfile.mkdtemp()
+            local_zipfile = os.path.join(tmpdir, '{}.zip'.format(self.name))
+            with open(local_zipfile, 'wb') as zip_handle:
+                zip_handle.write(self.boundary_file.read())
+            with zipfile.ZipFile(local_zipfile, 'r') as zip_handle:
+                zip_handle.extractall(tmpdir)
+            shpfiles = [filename for filename in os.listdir(tmpdir) if filename.endswith('shp')]
+            shp_filename = os.path.join(tmpdir, shpfiles[0])
+            with fiona.open(shp_filename, 'r') as shp_handle:
+                feature = next(shp_handle)
+                geom = GEOSGeometry(json.dumps(feature['geometry']))
+                if geom.geom_type == 'Polygon':
+                    geom = MultiPolygon([geom])
+                self.geom = geom
+                self.geom_simple = simplify_geom(geom)
+                self.geom_pt = geom.centroid
+        finally:
+            shutil.rmtree(tmpdir, ignore_errors=True)
 
     class Meta:
         # Note that uniqueness fields should also be used in the upload file path
         unique_together = ('name', 'country', 'state_abbrev', 'organization',)
+
+
+@receiver(post_delete, sender=Neighborhood)
+def delete_boundary_file(sender, instance, **kwargs):
+    instance.boundary_file.delete(save=False)
+    logger.info("Deleted boundary file for {}, {}".format(instance.label, instance.label_suffix))
 
 
 class AnalysisBatchManager(models.Manager):
@@ -760,6 +772,22 @@ class AnalysisJob(PFBModel):
             path=self.s3_results_path,
             filename=filename,
         )
+
+
+@receiver(post_delete, sender=AnalysisJob)
+def delete_analysisjob_s3_results(sender, instance, **kwargs):
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME)
+    path = instance.s3_results_path
+    delete_result = bucket.objects.filter(Prefix=path).delete()
+    try:
+        logger.info("Deleted {} results files from {}".format(
+            sum(len(batch['Deleted']) for batch in delete_result),
+            path,
+        ))
+    except KeyError:
+        # If the delete_result isn't as expected, still log a message
+        logger.info("Deleted S3 files from {}".format(path))
 
 
 class NeighborhoodWaysResults(models.Model):
