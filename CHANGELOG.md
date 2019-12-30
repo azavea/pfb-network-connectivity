@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+#### Changed
+- Upgraded Django and psycopg2 package versions and switched to psycopg2-binary
+
 ## [0.12.0] - 2019-12-30
 
 #### Added
