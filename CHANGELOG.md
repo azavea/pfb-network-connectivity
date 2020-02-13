@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Changed
 - Upgraded Django and psycopg2 package versions and switched to psycopg2-binary
+- Fix lane handling in analysis
+- Fix population scores for destinations in analysis
+- Add favicon
+- Increase max zoomlevel from 17 to 19
 
 ## [0.12.0] - 2019-12-30
 
