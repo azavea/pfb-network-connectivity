@@ -1,8 +1,8 @@
 # Django and psycopg2 are included in the django base container but repeated here
 # so that the analysis container will know to install them. These should be kept
 # in sync with the versions in the base container.
-Django==2.2.8
-psycopg2==2.8.3
+Django==2.2.10
+psycopg2-binary==2.8.4
 
 boto3==1.9.224
 django-amazon-ses==2.1.1
