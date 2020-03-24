@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Changed
 - Upgraded Django and psycopg2 package versions and switched to psycopg2-binary
+- Upgraded ansible-docker module to 5.0.0, Docker to 18.*, and Docker Compose to 1.23.*
 - Fix lane handling in analysis
 - Fix population scores for destinations in analysis
 - Add favicon
