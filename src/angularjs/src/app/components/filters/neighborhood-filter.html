@@ -1,0 +1,47 @@
+<tr class="filters">
+    <th>ID</th>
+    <th>
+        <div class="dropdown">
+        <input name="neighborhood-filter"
+               title="Filter by Name"
+               placeholder="Name"
+               ng-model="ctl.nameFilter"
+               ng-model-options="{ debounce: 400 }"
+               ng-change="ctl.onFilterChanged()"
+               type="text"
+               class="form-control">
+        </div>
+    </th>
+    <th>
+        <div class="dropdown neighborhood">
+            <input name="neighborhood-filter"
+                   title="Filter by State"
+                   placeholder="State"
+                   ng-model="ctl.stateFilter"
+                   ng-model-options="{ debounce: 400 }"
+                   ng-change="ctl.onFilterChanged()"
+                   type="text"
+                   class="form-control"/>
+        </div>
+    </th>
+    <th>
+        FIPS code
+    </th>
+    <th>
+        <div class="dropdown">
+            <input name="neighborhood-filter"
+                   title="Filter by Country"
+                   placeholder="Country"
+                   ng-model="ctl.countryFilter"
+                   ng-model-options="{ debounce: 400 }"
+                   ng-change="ctl.onFilterChanged()"
+                   type="text"
+                   class="form-control"/>
+        </div>
+    </th>
+    <th>Visibility</th>
+    <th>Created</th>
+    <th>Edit</th>
+    <th>Delete</th>
+    <th></th>
+</tr>
