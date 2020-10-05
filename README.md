@@ -55,7 +55,7 @@ aws s3api put-bucket-policy --bucket "${DEV_USER}-pfb-storage-us-east-1" --polic
 
 At this point, if you only intend to run the 'Bike Network Analysis', skip directly to [Running the Analysis](#running-the-analysis)
 
-To start the application containers:
+To start the application containers (from within the Vagrant VM):
 ```
 ./scripts/server
 ```
