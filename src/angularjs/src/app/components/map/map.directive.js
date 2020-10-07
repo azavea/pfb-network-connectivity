@@ -4,6 +4,7 @@
     function MapController($element) {
         var ctl = this;
         ctl.map = null;
+        ctl.speedLimit = null;
         ctl.mapHTMLElement = $element[0];
         ctl.pfbMapOptions = ctl.pfbMapOptions || {};
 
@@ -42,6 +43,9 @@
                     ctl.baseLayer = changes.pfbMapBaselayer.currentValue;
                     ctl.map.addLayer(ctl.baseLayer);
                 }
+            }
+            if (changes.speedLimit) {
+                ctl.speedLimit = changes.speedLimit
             }
         };
     }

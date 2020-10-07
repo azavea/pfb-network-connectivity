@@ -47,6 +47,9 @@
             position: 'bottomright',
             colors: ['#009fdf', '#ff3300'],
             labels: ['Low Stress', 'High Stress']
+        },
+        speedLimit: {
+            position: 'bottomright'
         }
     }
   };
