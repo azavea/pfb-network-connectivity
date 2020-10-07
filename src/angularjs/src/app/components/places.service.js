@@ -45,14 +45,16 @@
                         dfd.resolve({});
                         return dfd.promise;
                     }
-
                     place.results = results;
                     place.scores = results.overall_scores;
+
                     _.each(results.overall_scores, function (scores, key) {
                         scores.score_normalized = (key === 'population_total' ?
                                                    scores.score_original : scores.score_normalized)
                     });
-
+                    place.scores.default_speed_limit = {
+                        score_normalized: results.residential_speed_limit
+                    };
                     dfd.resolve(place);
                 });
             });

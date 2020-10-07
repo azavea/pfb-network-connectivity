@@ -54,3 +54,38 @@
     opacity: 0.7;
   }
 }
+
+.pfb-speed-limit-legend {
+    position: fixed;
+    width: 210px;
+    bottom: 100px;
+    right: 7px;
+    color: #555;
+    text-align: center;
+
+    h6 {
+        margin-top: 0;
+        padding-top: 0.3rem;
+        background: lightgray;
+    }
+    .speed-limit-inner {
+        margin: auto;
+        width: 140px;
+    }
+
+    .speed-limit-block {
+        display: inline-block;
+        margin: 0 15px 0 15px;
+    }
+
+    .speed-limit {
+        font-weight: 700;
+        font-size: 24pt;
+    }
+    .speed-stress {
+        font-weight: 500;
+        font-size: 1.4rem;
+        color: white;
+    }
+
+}
