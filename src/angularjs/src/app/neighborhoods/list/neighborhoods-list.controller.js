@@ -10,7 +10,7 @@
     'use strict';
 
     /** @ngInject */
-    function NeighborhoodListController($state, $stateParams, toastr, Pagination, AuthService,
+    function NeighborhoodListController($state, $stateParams, $scope, toastr, Pagination, AuthService,
                                         Neighborhood, ConfirmationModal) {
         var ctl = this;
 
@@ -36,7 +36,22 @@
             ctl.deleteUpload = deleteUpload;
             ctl.filters = {};
 
+            $scope.$watch(function(){return ctl.filters;}, filterNeighborhoods);
             getNeighborhoods();
+        }
+
+        function filterNeighborhoods(filters) {
+            var params = _.merge({}, defaultParams);
+            if (filters.name) {
+                params.name = filters.name;
+            }
+            if (filters.state) {
+                params.state = filters.state;
+            }
+            if (filters.country) {
+                params.country = filters.country;
+            }
+            getNeighborhoods(params);
         }
 
         function getNeighborhoods(params) {

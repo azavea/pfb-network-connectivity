@@ -40,7 +40,7 @@ from .serializers import (
     AnalysisScoreMetadataSerializer,
     NeighborhoodSerializer,
 )
-from .filters import AnalysisJobFilterSet
+from .filters import AnalysisJobFilterSet, NeighborhoodFilterSet
 from .countries import build_country_list
 
 
@@ -197,8 +197,8 @@ class NeighborhoodViewSet(ModelViewSet, UpdateModelMixin):
         return queryset
 
     permission_classes = (IsAdminOrgAndAdminCreateEditOnly, IsAuthenticatedOrReadOnly)
-    filter_fields = ('organization', 'name', 'label', 'country', 'state_abbrev')
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
+    filter_class = NeighborhoodFilterSet
     serializer_class = NeighborhoodSerializer
     pagination_class = OptionalLimitOffsetPagination
     ordering_fields = ('created_at', 'label')

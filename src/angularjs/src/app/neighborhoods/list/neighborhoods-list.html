@@ -9,19 +9,7 @@
       </button>
       <h1 class="no-margin-top">Neighborhoods</h1>
       <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>State/Province</th>
-            <th>City FIPS</th>
-            <th>Country</th>
-            <th>Visibility</th>
-            <th>Created</th>
-            <th ng-if="neighborhoodList.isAdminUser">Edit</th>
-            <th ng-if="neighborhoodList.isAdminUser">Delete</th>
-          </tr>
-        </thead>
+        <thead pfb-neighborhood-filter filters="neighborhoodList.filters"></thead>
         <tbody>
           <tr ng-repeat="neighborhood in neighborhoodList.neighborhoods">
             <td>{{neighborhood.uuid}}</td>

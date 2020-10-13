@@ -5,7 +5,7 @@ from django.db.models import Q
 from django_filters import rest_framework as filters
 import django_filters
 
-from .models import AnalysisJob
+from .models import AnalysisJob, Neighborhood
 
 
 logger = logging.getLogger(__name__)
@@ -50,3 +50,33 @@ class AnalysisJobFilterSet(filters.FilterSet):
                   'batch': ['exact', 'in'],
                   'status': ['exact'],
                   'latest': ['exact']}
+
+
+class NeighborhoodFilterSet(filters.FilterSet):
+    """ Filters for Neighborhood:
+      - city, find by name
+      - state, find by state
+      - country, find by country
+    """
+
+    name = django_filters.CharFilter(method='city_search')
+    state = django_filters.CharFilter(method='state_search')
+    country = django_filters.CharFilter(method='country_search')
+
+
+    def city_search(self, queryset, name, value):
+        return queryset.filter(Q(label__icontains=value))
+
+    def state_search(self, queryset, name, value):
+        return queryset.filter(Q(state_abbrev__icontains=value))
+
+    def country_search(self, queryset, name, value):
+        return queryset.filter(Q(country__icontains=value))
+
+    class Meta:
+        model = Neighborhood
+        fields = {'name': ['exact', 'icontains'],
+                  'label': ['exact', 'icontains'],
+                  'organization': ['exact'],
+                  'country': ['exact', 'icontains', 'in'],
+                  'state_abbrev': ['exact', 'icontains', 'in']}
