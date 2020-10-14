@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Upcoming release]
+- Add filter to Neighborhood List
+
 
 ## [0.13.0] - 2020-02-14
 
@@ -18,7 +20,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix population scores for destinations in analysis
 - Add favicon
 - Increase max zoomlevel from 17 to 19
-- Add filter to Neighborhood List
 
 ## [0.12.0] - 2019-12-30
 
