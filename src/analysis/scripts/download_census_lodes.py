@@ -168,12 +168,12 @@ def process_download(state, data_type, local_dir, bucket=None, check_only=False)
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--local_dir", default=None,
+    parser.add_argument("--local-dir", default=None,
                         help="The directory to put downloaded LODES files in")
-    parser.add_argument("--state_abbrev", default=None, help="state abbreviation")
-    parser.add_argument("--data_type", default=None, choices=LODES_DATA_TYPES,
+    parser.add_argument("--state-abbrev", default=None, help="state abbreviation")
+    parser.add_argument("--data-type", default=None, choices=LODES_DATA_TYPES,
                         help="data type (main or aux)")
-    parser.add_argument("--storage_bucket", default=None, help="S3 storage bucket")
+    parser.add_argument("--storage-bucket", default=None, help="S3 storage bucket")
     parser.add_argument('--verbose', '-v', action="store_true")
     args = parser.parse_args()
 
@@ -220,6 +220,8 @@ def main():
                             shutil.copyfileobj(gzip_file, out_file)
 
                 os.remove(local_file)
+
+            print(local_file.strip('.gz'))
 
     return
 
