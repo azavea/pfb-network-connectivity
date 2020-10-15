@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -e
+
+cd $(dirname "${0}")
+
+if [[ -n "${PFB_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+         "Usage: $(basename "$0") ['extra args']
+
+Updates the S3 cache of LODES Census files.
+
+'extra args' should be a string that will be fed through to the `docker-compose run` command.
+
+Optionally, set in the environment to override:
+AWS_PROFILE (default: pfb)
+AWS_STORAGE_BUCKET_NAME (default: ${DEV_USER}-pfb-storage-us-east-1)
+NB_DATA_DIR (default: /data)
+"
+}
+
+
+if [ "${1:-}" = "--help" ]
+then
+    usage
+else
+    EXTRA_ARGS="${1}"
+
+    AWS_PROFILE="${AWS_PROFILE:-pfb}"
+    NB_DATA_DIR="${NB_DATA_DIR:-/data}"
+
+    if aws iam get-user > /dev/null 2>&1; then
+        AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME:-${DEV_USER:-dev-user}-pfb-storage-us-east-1}"
+    else
+        echo -n "WARNING: AWS credentials not provided."
+        return 1
+    fi
+
+    docker-compose run $EXTRA_ARGS \
+        -e AWS_PROFILE="${AWS_PROFILE}" \
+        -e AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME}" \
+        -e NB_DATA_DIR=$NB_DATA_DIR \
+        -e PFB_DEBUG=$PFB_DEBUG \
+        --entrypoint "python3 /opt/pfb/analysis/scripts/download_census_lodes.py" \
+        analysis
+fi
