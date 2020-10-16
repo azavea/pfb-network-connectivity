@@ -1,6 +1,6 @@
 {
   "name": "tilegarden-pfb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AWS Lambda mapnik renderer",
   "contributors": [
     {
@@ -34,23 +34,23 @@
     "compile": "rsync -a src/*.js src/util src/config --exclude '*.mml' --exclude '*.mss' dist/"
   },
   "devDependencies": {
-    "bunyan": "^1.8.12",
-    "claudia": "^5.0.1",
+    "bunyan": "^1.8.14",
+    "claudia": "^5.12.0",
     "claudia-local-api": "https://github.com/azavea/claudia-local-api.git",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.12.0",
-    "jest": "^23.2.0",
-    "nodemon": "^1.17.5",
-    "rewire": "^4.0.1"
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "jest": "^26.5.3",
+    "nodemon": "^2.0.5",
+    "rewire": "^5.0.0"
   },
   "dependencies": {
-    "claudia-api-builder": "^4.1.0",
-    "lambda-warmer": "^1.1.0",
-    "mapnik": "^3.7.2",
+    "claudia-api-builder": "^4.1.2",
+    "lambda-warmer": "^1.2.1",
+    "mapnik": "^4.5.2",
     "sql-escape-string": "^1.1.0",
-    "winston": "^3.2.1",
-    "xml2js": "^0.4.19"
+    "winston": "^3.3.3",
+    "xml2js": "^0.4.23"
   },
   "optionalDependencies": {
     "aws-sdk": "^2.290.0"
