@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.12.0] - 2019-12-30
 
 #### Added
+- S3 caching for LODES data files
 - A delete button for neighborhoods, with a confirmation modal
 - Clean up S3 assets when deleting neighborhoods and analysis jobs
 - Editing of neighborhood details and boundary
