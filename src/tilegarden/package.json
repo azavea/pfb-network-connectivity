@@ -48,6 +48,7 @@
     "claudia-api-builder": "^4.1.2",
     "lambda-warmer": "^1.2.1",
     "mapnik": "^4.5.2",
+    "pg": "^8.4.1",
     "sql-escape-string": "^1.1.0",
     "winston": "^3.3.3",
     "xml2js": "^0.4.23"
