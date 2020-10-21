@@ -107,23 +107,15 @@ then
 
         # Get blocks for the state requested
         update_status "IMPORTING" "Downloading census blocks"
-        NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
-        if [ -f "/data/${NB_BLOCK_FILENAME}.zip" ]; then
-            echo "Using local census blocks file"
-            BLOCK_DOWNLOAD="/data/${NB_BLOCK_FILENAME}.zip"
-        elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip"; then
-            echo "Using census blocks file from S3"
-            BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
-            aws s3 cp "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip" "${BLOCK_DOWNLOAD}"
-        else
-            BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
-            wget -nv -O "${BLOCK_DOWNLOAD}" "http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
-        fi
-        unzip "${BLOCK_DOWNLOAD}" -d "${NB_TEMPDIR}"
+
+        NB_BLOCK_FILENAME="$(./../scripts/download_census_blocks.py \
+            --local-dir=${NB_TEMPDIR} \
+            --state-fips=${NB_STATE_FIPS} \
+            --storage-bucket=${AWS_STORAGE_BUCKET_NAME})"
 
         # Import block shapefile
         update_status "IMPORTING" "Loading census blocks"
-        import_and_transform_shapefile "${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.shp" neighborhood_census_blocks 4326
+        import_and_transform_shapefile "${NB_BLOCK_FILENAME}" neighborhood_census_blocks 4326
 
         # Only keep blocks in boundary+buffer
         update_status "IMPORTING" "Applying boundary buffer"
