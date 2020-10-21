@@ -184,7 +184,7 @@ def main():
             # Unzip the downloaded shapefile if using it for procssing, then delete the zipped file.
             # (Running this script for all states should only be done to build the S3 cache.)
             if not check_only:
-                with zipfile.ZipFile(local_file, 'rb') as zip_file:
+                with zipfile.ZipFile(local_file) as zip_file:
                     zip_file.extractall(local_dir)
 
             os.remove(local_file)
