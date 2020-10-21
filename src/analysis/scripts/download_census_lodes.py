@@ -40,7 +40,7 @@ LODES_DATA_TYPES = ('main', 'aux')
 LODES_MOST_RECENT_YEAR = '2017'
 LODES_FALLBACK_YEAR = '2016'
 LODES_URL = 'http://lehd.ces.census.gov/data/lodes/LODES7'
-S3_LODES_DIRECTORY = 'data/'
+S3_LODES_DIRECTORY = 'data'
 STATE_ABBREVIATIONS = [state.abbr.lower() for state in us.STATES]
 
 
