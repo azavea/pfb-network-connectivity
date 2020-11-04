@@ -45,28 +45,45 @@ function import_job_data() {
 
     NB_STATE_ABBREV="${1}"
     NB_DATA_TYPE="${2:-main}"    # Either 'main' or 'aux'
+
     NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2017.csv"
+    S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
 
     if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
         JOB_DOWNLOAD="/data/${NB_JOB_FILENAME}.gz"
-    elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"; then
+        echo "Using local job data file ${JOB_DOWNLOAD}"
+    elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
         JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-        aws s3 cp "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz" "${JOB_DOWNLOAD}"
+        aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
+        echo "Downloaded job data file ${JOB_DOWNLOAD} from S3"
     else
         JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
         set +e
         wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
         WGET_STATUS=$?
         set -e
+        # If the 2017 file isn't there (SD and AK), do the check/download/cache again for 2016
         if [[ $WGET_STATUS -eq 8 ]]; then
             echo "No 2017 job data available, falling back to 2016 data..."
-            JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
             NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2016.csv"
-            wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
+            S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
+            JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+            if [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
+                aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
+                echo "Downloaded job data file from S3"
+            else
+                wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
+                if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
+                    echo "Uploading job data file to S3 cache"
+                    aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
+                fi
+            fi
+        elif [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
+            echo "Uploading job data file to S3 cache"
+            aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
         fi
     fi
     gunzip -c "${JOB_DOWNLOAD}" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
-
 
     # Import to postgresql
     psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
