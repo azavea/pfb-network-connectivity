@@ -19,6 +19,7 @@ Requirements:
 #### Notes for non-Windows users
 
 1. An NFS daemon must be running on the host machine. This should be enabled by default on MacOS. Linux computers may require the installation of an additional package such as nfs-kernel-server on Ubuntu.
+2. For some commands (e.g., `./scripts/test`), you may need to add the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` for the shared folders to work as expected with Django. 
 
 ### Setting up AWS credentials
 

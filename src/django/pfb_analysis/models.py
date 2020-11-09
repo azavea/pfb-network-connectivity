@@ -391,25 +391,31 @@ class AnalysisBatchManager(models.Manager):
                 label = city
                 name = Neighborhood.name_for_label(label)
 
-                # Get or create neighborhood for feature
+                # Get or create neighborhood for feature using fields in Neighborhood `unique_together` clause
                 neighborhood_dict = {
                     'name': name,
                     'label': label,
                     'state_abbrev': state,
-                    'city_fips': city_fips,
                     'organization': user.organization,
-                    'created_by': user,
-                    'modified_by': user,
                 }
+
                 geom = GEOSGeometry(json.dumps(feature['geometry']))
                 try:
                     neighborhood = Neighborhood.objects.get(**neighborhood_dict)
                 except Neighborhood.DoesNotExist:
+                    # If the neighborhood doesn't exist, patch the required fields before creating
+                    neighborhood_dict['created_by'] = user
+                    neighborhood_dict['modified_by'] = user
                     neighborhood = Neighborhood(**neighborhood_dict)
                     logger.info('AnalysisBatch.create_from_shapefile CREATED: {}'
                                 .format(neighborhood))
 
                 neighborhood.set_boundary_file(geom)
+
+                # Update neighborhood record with provided fields not included in `unique_together` clause
+                neighborhood.city_fips = city_fips
+                neighborhood.modified_by = user
+                neighborhood.save()
 
                 # Create new job
                 job = AnalysisJob.objects.create(neighborhood=neighborhood,
