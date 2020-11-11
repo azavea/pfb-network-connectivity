@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Added
 - S3 caching of Census data files
+- Upgrade Django (2.2.10 -> 2.2.16) and psycopg2 (2.8.4 -> 2.8.5)
 
 ## [0.13.0] - 2020-02-14
 
