@@ -49,7 +49,7 @@
             labels: ['Low Stress', 'High Stress']
         },
         speedLimit: {
-            position: 'bottomleft'
+            position: 'bottomright'
         }
     }
   };
