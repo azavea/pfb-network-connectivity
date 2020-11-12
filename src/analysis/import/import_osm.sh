@@ -207,6 +207,27 @@ else
     echo "The city residential default speed is ${CITY_DEFAULT}."
 fi
 
+# Save default speed limit to a table for export later
+psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
+     -c "CREATE TABLE IF NOT EXISTS \"residential_speed_limit\" (
+            fips_code_state char(2),
+            fips_code_city char(7),
+            state_speed smallint,
+            city_speed smallint
+        );"
+psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
+     -c "INSERT INTO \"residential_speed_limit\" (
+            state_fips_code,
+            city_fips_code,
+            state_speed,
+            city_speed
+        ) VALUES (
+          ${PFB_STATE_FIPS},
+          ${PFB_CITY_FIPS},
+          ${STATE_DEFAULT},
+          ${CITY_DEFAULT}
+        );"
+
 rm -rf "${SPEED_TEMPDIR}"
 echo "DONE: Importing city default residential speed"
 
