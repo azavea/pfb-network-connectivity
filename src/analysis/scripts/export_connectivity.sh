@@ -173,23 +173,8 @@ then
 
         # Export neighborhood_overall_scores as CSV
         ec_export_table_csv "${OUTPUT_DIR}" "neighborhood_overall_scores"
-
-        # Export city and state speed as CSV
-        ec_export_table_csv "${OUTPUT_DIR}" "city_speed"
-        ec_export_table_csv "${OUTPUT_DIR}" "state_speed"
-
-        # Export neighborhood_
         # Send overall_scores to Django app
         update_overall_scores "${OUTPUT_DIR}/neighborhood_overall_scores.csv"
-
-        # Send city_speed to load_default_speed mgmt command in Django app
-        STATE_SPEED_FILE="${OUTPUT_DIR}/state_speed.csv"
-        CITY_SPEED_FILE="${OUTPUT_DIR}/city_speed.csv"
-        update_default_speeds
-
-        # Remove default speed artifacts from output folder
-        rm "${STATE_SPEED_FILE}"
-        rm "${CITY_SPEED_FILE}"
 
         if [ -n "${AWS_STORAGE_BUCKET_NAME}" ] && [ -n "${PFB_S3_RESULTS_PATH}" ]
         then
