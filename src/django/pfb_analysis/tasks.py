@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from pfb_analysis.management.commands.import_results_shapefiles import add_results_geoms
 from pfb_analysis.management.commands.load_overall_scores import load_scores
+from pfb_analysis.management.commands.load_residential_speed_limit import load_speed_limit
 from pfb_analysis.models import AnalysisBatch, AnalysisJob, AnalysisLocalUploadTask
 from pfb_network_connectivity.utils import download_file
 from users.models import PFBUser
@@ -21,13 +22,15 @@ DESTINATION_ANALYSIS_FILES = set(['neighborhood_{}.geojson'.format(destination)
                                  for destination in settings.PFB_ANALYSIS_DESTINATIONS])
 
 OVERALL_SCORES_FILE = 'neighborhood_overall_scores.csv'
+SPEED_LIMIT_FILE = 'residential_speed_limit.csv'
 
 OTHER_RESULTS_FILES = set([
     'neighborhood_score_inputs.csv',
     'neighborhood_ways.zip',
     'neighborhood_census_blocks.zip',
     OVERALL_SCORES_FILE,
-    'neighborhood_connected_census_blocks.csv.zip'])
+    'neighborhood_connected_census_blocks.csv.zip',
+])
 
 # The set of all the results files from a local analysis run to upload on import
 LOCAL_ANALYSIS_FILES = DESTINATION_ANALYSIS_FILES.union(OTHER_RESULTS_FILES)
@@ -85,7 +88,11 @@ def upload_local_analysis(local_upload_task_uuid):
 
             # Verify all expected results files are in the upload
             missing = LOCAL_ANALYSIS_FILES.difference(set(results_files))
-            if missing:
+            if missing == set([SPEED_LIMIT_FILE]):
+                # Warn but don't fail if there's no speed limit file, to support older exported
+                # analysis files
+                logging.warning('Analysis upload file has no {} file.'.format(SPEED_LIMIT_FILE))
+            elif missing:
                 raise LocalAnalysisFetchException('Missing expected results files: {files}'.format(
                     files=', '.join(missing)))
             logging.info('Results files extracted for upload task {uuid}'.format(
@@ -114,6 +121,11 @@ def upload_local_analysis(local_upload_task_uuid):
         # set the overall scores on the job
         local_scores_file = os.path.join(tmpdir, OVERALL_SCORES_FILE)
         load_scores(task.job, local_scores_file, 'score_id', None)
+        # set the default residential speed limit on the job, but don't crash if the file is missing
+        try:
+            load_speed_limit(task.job, os.path.join(tmpdir, SPEED_LIMIT_FILE))
+        except FileNotFoundError:
+            pass
 
         # Mark this upload task and its associated analysis job as completed.
         task.status = AnalysisLocalUploadTask.Status.COMPLETE

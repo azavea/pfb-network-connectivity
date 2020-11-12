@@ -210,8 +210,8 @@ fi
 # Save default speed limit to a table for export later
 psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
      -c "CREATE TABLE IF NOT EXISTS \"residential_speed_limit\" (
-            fips_code_state char(2),
-            fips_code_city char(7),
+            state_fips_code char(2),
+            city_fips_code char(7),
             state_speed smallint,
             city_speed smallint
         );"
