@@ -525,9 +525,14 @@ class AnalysisJob(PFBModel):
             (CANCELLED, 'Cancelled',),
             (ERROR, 'Error',),
         )
-        SPEED_LIMIT_SOURCES = (
-            ('State', 'State'),
-            ('City', 'City')
+
+    class SpeedLimitSource:
+        STATE = 'State'
+        CITY = 'City'
+
+        CHOICES = (
+            (STATE, 'State'),
+            (CITY, 'City')
         )
 
     batch_job_id = models.CharField(max_length=256, blank=True, null=True)
@@ -549,7 +554,12 @@ class AnalysisJob(PFBModel):
     final_runtime = models.PositiveIntegerField(default=0)
     status = models.CharField(choices=Status.CHOICES, max_length=12, default=Status.CREATED)
     default_speed_limit = models.PositiveIntegerField(blank=True, null=True)
-    speed_limit_src = models.CharField(choices=Status.SPEED_LIMIT_SOURCES, max_length=20, blank=True, null=True)
+    speed_limit_src = models.CharField(
+        choices=SpeedLimitSource.CHOICES,
+        max_length=20,
+        blank=True,
+        null=True
+    )
     objects = AnalysisJobManager()
 
     @property
