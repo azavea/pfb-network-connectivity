@@ -176,6 +176,11 @@ then
         # Send overall_scores to Django app
         update_overall_scores "${OUTPUT_DIR}/neighborhood_overall_scores.csv"
 
+        # Export residential_speed_limit as CSV
+        ec_export_table_csv "${OUTPUT_DIR}" "residential_speed_limit"
+        # Send residential_speed_limit to Django app
+        update_residential_speed_limit "${OUTPUT_DIR}/residential_speed_limit.csv"
+
         if [ -n "${AWS_STORAGE_BUCKET_NAME}" ] && [ -n "${PFB_S3_RESULTS_PATH}" ]
         then
           sync  # Probably superfluous, but the s3 command said "file changed while reading" once
