@@ -210,6 +210,7 @@ class AnalysisJobSerializer(PFBModelSerializer):
                    'analysis_job_definition', '_analysis_job_name',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'batch_job_id', 'batch', 'census_block_count', 'final_runtime',
+                            'default_speed_limit',
                             'local_upload_task')
 
 

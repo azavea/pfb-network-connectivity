@@ -487,7 +487,8 @@ class AnalysisJobManager(models.Manager):
                                                      ('overall_score', 'score_normalized')))
                 .annotate(population_total=ObjectAtPath('overall_scores',
                                                         ('population_total', 'score_original'),
-                          output_field=models.PositiveIntegerField())))
+                          output_field=models.PositiveIntegerField()))
+              )
         return qs
 
 
@@ -531,6 +532,15 @@ class AnalysisJob(PFBModel):
             (ERROR, 'Error',),
         )
 
+    class SpeedLimitSource:
+        STATE = 'State'
+        CITY = 'City'
+
+        CHOICES = (
+            (STATE, 'State'),
+            (CITY, 'City')
+        )
+
     batch_job_id = models.CharField(max_length=256, blank=True, null=True)
     neighborhood = models.ForeignKey(Neighborhood,
                                      related_name='analysis_jobs',
@@ -549,7 +559,13 @@ class AnalysisJob(PFBModel):
     start_time = models.DateTimeField(null=True, blank=True)
     final_runtime = models.PositiveIntegerField(default=0)
     status = models.CharField(choices=Status.CHOICES, max_length=12, default=Status.CREATED)
-
+    default_speed_limit = models.PositiveIntegerField(blank=True, null=True)
+    speed_limit_src = models.CharField(
+        choices=SpeedLimitSource.CHOICES,
+        max_length=20,
+        blank=True,
+        null=True
+    )
     objects = AnalysisJobManager()
 
     @property

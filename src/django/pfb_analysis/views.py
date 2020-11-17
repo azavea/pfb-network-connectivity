@@ -62,7 +62,7 @@ class AnalysisJobViewSet(ModelViewSet):
     filter_class = AnalysisJobFilterSet
     filter_backends = (DjangoFilterBackend, OrderingFilter, OrgAutoFilterBackend)
     ordering_fields = ('created_at', 'modified_at', 'overall_score', 'neighborhood__label',
-                       'neighborhood__country', 'neighborhood__state_abbrev', 'population_total')
+                       'neighborhood__country', 'neighborhood__state_abbrev', 'population_total', 'default_speed_limit')
     ordering = ('-created_at',)
 
     def perform_create(self, serializer):
@@ -86,6 +86,7 @@ class AnalysisJobViewSet(ModelViewSet):
             results = OrderedDict([
                 ('census_block_count', job.census_block_count),
                 ('census_blocks_url', job.census_blocks_url),
+                ('residential_speed_limit', job.default_speed_limit),
                 ('connected_census_blocks_url', job.connected_census_blocks_url),
                 ('destinations_urls', job.destinations_urls),
                 ('tile_urls', job.tile_urls),

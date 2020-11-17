@@ -72,7 +72,6 @@
             if (!layers) {
                 return;
             }
-
             var satelliteLayer = L.tileLayer(MapConfig.baseLayers.Satellite.url, {
                 attribution: MapConfig.baseLayers.Satellite.attribution,
                 maxZoom: MapConfig.conusMaxZoom
@@ -96,6 +95,11 @@
                 }, function () {
                     $window.print();
                 }).addTo(ctl.map);
+            }
+            if (ctl.pfbPlaceMapSpeedLimit && !ctl.speedLimitLegend) {
+                var speedLimitLegendOptions = MapConfig.legends["speedLimit"];
+                speedLimitLegendOptions.speedLimit = ctl.pfbPlaceMapSpeedLimit;
+                ctl.speedLimitLegend = L.control.speedLegend(speedLimitLegendOptions).addTo(ctl.map);
             }
 
             _.map(layers.tileLayers, function(layerObj) {
@@ -148,6 +152,8 @@
                     ctl.layerControl.addOverlay(layer.layer, layer.label, 'Destinations');
                 });
             });
+
+
 
             function onEachFeature(feature, layer) {
                 // TODO: Style marker and popup
@@ -202,7 +208,8 @@
             restrict: 'E',
             scope: {
                 pfbPlaceMapLayers: '<',
-                pfbPlaceMapUuid: '<'
+                pfbPlaceMapUuid: '<',
+                pfbPlaceMapSpeedLimit: '<'
             },
             controller: 'PlaceMapController',
             controllerAs: 'ctl',
