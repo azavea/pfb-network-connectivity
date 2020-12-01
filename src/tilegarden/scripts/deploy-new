@@ -1,6 +1,8 @@
 #!/bin/bash
 
 yarn claudia create --config claudia/claudia.json --no-optional-dependencies \
+    --runtime "provided" \
+    --layers "arn:aws:lambda:${LAMBDA_REGION}:553035198032:layer:nodejs12:36" \
     --api-module dist/api \
     --name ${LAMBDA_FUNCTION_NAME} \
     --region ${LAMBDA_REGION} \

@@ -1,6 +1,8 @@
 #!/bin/bash
 
 yarn claudia update --config claudia/claudia.json --no-optional-dependencies \
+    --runtime "provided" \
+    --layers "arn:aws:lambda:${LAMBDA_REGION}:553035198032:layer:nodejs12:36" \
     ${LAMBDA_TIMEOUT:+--timeout ${LAMBDA_TIMEOUT}} \
     ${LAMBDA_MEMORY:+--memory ${LAMBDA_MEMORY}} \
     ${LAMBDA_SECURITY_GROUPS:+--security-group-ids ${LAMBDA_SECURITY_GROUPS}} \
