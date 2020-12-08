@@ -103,9 +103,9 @@ module.exports.createMap = (z, x, y, filters, configOptions) => {
     return fetchMapFile(configOptions)
         .then(fillVars)
         .then(parseXml)
-        .then(xmlJsObj => addParamFilters(xmlJsObj, filters))
+        .then((xmlJsObj) => addParamFilters(xmlJsObj, filters))
         .then(buildXml)
-        .then(xml => new Promise((resolve, reject) => {
+        .then((xml) => new Promise((resolve, reject) => {
             logger.debug('createMap: calling map.FromString')
             map.fromString(xml, (err, result) => {
                 if (err) {
@@ -136,14 +136,14 @@ module.exports.imageTile = (map) => {
     // render map to image
     // return asynchronous rendering method as a promise
     return map
-        .then(m => new Promise((resolve, reject) => {
+        .then((m) => new Promise((resolve, reject) => {
             logger.debug('imageTile: rendering')
             m.render(img, {}, (err, result) => {
                 if (err) reject(err)
                 else resolve(result)
             })
         }))
-        .then(renderedTile => new Promise((resolve, reject) => {
+        .then((renderedTile) => new Promise((resolve, reject) => {
             logger.debug('imageTile: encoding')
             renderedTile.encode('png', {}, (err, result) => {
                 if (err) reject(err)

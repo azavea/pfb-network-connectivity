@@ -43,7 +43,7 @@ const getPositionalFilters = (req) => {
 }
 
 // Parses out the configuration specifications
-const processConfig = req => ({
+const processConfig = (req) => ({
     s3bucket: req.queryStringParameters ? req.queryStringParameters.s3bucket : null,
     config: req.pathParameters.config,
 })
@@ -100,7 +100,7 @@ const writeToS3 = (tile, req) => {
             return tile
         })
     }
-    return new Promise(resolve => resolve(tile))
+    return new Promise((resolve) => resolve(tile))
 }
 
 // Get tile for some zxy bounds
@@ -114,8 +114,8 @@ api.get(
 
             logger.debug('api.get: creating imageTile')
             return imageTile(createMap(z, x, y, filters, configOptions))
-                .then(tile => writeToS3(tile, req))
-                .then(img => new APIBuilder.ApiResponse(img, IMAGE_HEADERS, 200))
+                .then((tile) => writeToS3(tile, req))
+                .then((img) => new APIBuilder.ApiResponse(img, IMAGE_HEADERS, 200))
                 .catch(handleError)
         } catch (e) {
             return handleError(e)
@@ -175,7 +175,7 @@ api.proxyRouter = (event, context, callback) => {
         } else {
             origProxyRouter(event, context, callback)
         }
-    }).catch(err => logger.error('Error: ', err))
+    }).catch((err) => logger.error('Error: ', err))
 }
 
 // not es6-ic, but necessary for claudia to find the index
