@@ -56,33 +56,46 @@
 }
 
 .pfb-speed-limit-legend {
-    width: 210px;
-    color: #555;
+    width: auto;
     text-align: center;
 
     h6 {
-        margin-top: 0;
-        padding-top: 0.3rem;
-        background: lightgray;
+      font-weight: 400;
+      letter-spacing: normal;
+      background: #f3f3f3;
+      line-height: 1;
+      padding: 7px;
+      border-radius: 4px 4px 0 0;
+      margin: 0;
+      width: auto;
+      font-size: 13px;
     }
+
     .speed-limit-inner {
-        margin: auto;
-        width: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .speed-limit-block {
-        display: inline-block;
-        margin: 0 15px 0 15px;
+      margin: 4px 15px;
     }
 
     .speed-limit {
         font-weight: 700;
-        font-size: 24pt;
+        font-size: 2.5rem;
     }
+
     .speed-stress {
         font-weight: 500;
         font-size: 1.4rem;
         color: white;
     }
 
+    .speed-limit-footer {
+      margin: auto;
+      background: #012c40;
+      padding: 5px;
+      border-radius: 0 0 4px 4px;
+    }
 }

@@ -21,7 +21,7 @@
                 '<div class="speed-limit-block"><div class="speed-limit">' + this.speedLimit + '</div><div>mph</div></div>' +
                 '<div class="speed-limit-block"><div class="speed-limit">' + kphLimit + '</div><div>km/h</div></div>' +
                 '</div>';
-            div.innerHTML += '<div style="margin: auto; background: navy;"><div class="speed-stress">Stress impact: '  + this.stressLevel + '</div></div>';
+            div.innerHTML += '<div class="speed-limit-footer"><div class="speed-stress">Stress impact: '  + this.stressLevel + '</div></div>';
             return div;
         },
         stressLevel: function () {
