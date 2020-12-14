@@ -6,11 +6,10 @@
             L.Util.setOptions(this, options);
             this.speedLimit = options.speedLimit;
             if (this.speedLimit <= 25) {
-                this.stressLevel = 'low'
-            } else if (this.speedLimit <= 30) {
-                this.stressLevel = 'med.'
+                this.stressLevel = 'Low'
+
             } else {
-                this.stressLevel = 'high'
+                this.stressLevel = 'High'
             }
         },
         onAdd: function () {
