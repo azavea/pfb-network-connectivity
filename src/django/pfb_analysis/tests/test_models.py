@@ -11,6 +11,7 @@ from pfb_analysis.models import (
     AnalysisBatch,
     AnalysisJob,
     SIMPLIFICATION_MIN_VALID_AREA_RATIO,
+    Neighborhood
 )
 from users.models import PFBUser
 
@@ -99,3 +100,57 @@ class AnalysisBatchCreateFromShapefileTestCase(TestCase):
         batch = AnalysisBatch.objects.create_from_shapefile(self.shapefile_path, user=user)
         self.assertEqual(batch.created_by.pk, user.pk)
         self.assertEqual(batch.modified_by.pk, user.pk)
+
+    def test_create_from_shapefile_not_filtering_on_created_user(self):
+        """This tests the filtering logic for matching neighborhoods in a batch upload to ensure that neighborhoods are
+        matched across batches, even if the existing neighborhood was created by a different user.
+
+        """
+        root_user = PFBUser.objects.get_root_user()
+
+        ## Create batch with root user
+        batch_1 = AnalysisBatch.objects.create_from_shapefile(self.shapefile_path, user=root_user)
+
+        ## Confirm that only 6 neighborhoods exist
+        self.assertEqual(Neighborhood.objects.all().count(), 6)
+
+        ## Create a new user
+        user = PFBUser.objects.create(email='user@peopleforbikes.org',
+                                      organization=root_user.organization,
+                                      created_by=root_user,
+                                      modified_by=root_user)
+
+        batch_2 = AnalysisBatch.objects.create_from_shapefile(self.shapefile_path, user=user)
+
+        ## Confirm that only 6 neighborhoods exist, indicating that the neighborhoods in batch_2 were not created again
+        self.assertEqual(Neighborhood.objects.all().count(), 6)
+
+    def test_create_from_shapefile_not_filtering_on_fips_code(self):
+        """This tests the filtering logic for matching neighborhoods in a batch upload to ensure that neighborhoods are
+        matched across batches, even if an existing neighborhood has a FIPS code and the neighborhood in the batch doesn't.
+
+        """
+        root_user = PFBUser.objects.get_root_user()
+
+        ## Create batch with root user
+        batch_1 = AnalysisBatch.objects.create_from_shapefile(self.shapefile_path, user=root_user)
+
+        ## Confirm that only 6 neighborhoods exist
+        neighborhoods = Neighborhood.objects.all()
+        self.assertEqual(neighborhoods.count(), 6)
+
+        ## Add a fips_code to one of the neighborhoods
+        n = neighborhoods[0]
+        n.fips_code = '01040608'
+        n.save()
+
+        ## Create a new user
+        user = PFBUser.objects.create(email='user@peopleforbikes.org',
+                                      organization=root_user.organization,
+                                      created_by=root_user,
+                                      modified_by=root_user)
+
+        batch_2 = AnalysisBatch.objects.create_from_shapefile(self.shapefile_path, user=user)
+
+        ## Confirm that only 6 neighborhoods exist, indicating that the neighborhoods in the batch were matched with the existing recs
+        self.assertEqual(Neighborhood.objects.all().count(), 6)

@@ -391,25 +391,31 @@ class AnalysisBatchManager(models.Manager):
                 label = city
                 name = Neighborhood.name_for_label(label)
 
-                # Get or create neighborhood for feature
+                # Get or create neighborhood for feature using fields in Neighborhood `unique_together` clause
                 neighborhood_dict = {
                     'name': name,
                     'label': label,
                     'state_abbrev': state,
-                    'city_fips': city_fips,
                     'organization': user.organization,
-                    'created_by': user,
-                    'modified_by': user,
                 }
+
                 geom = GEOSGeometry(json.dumps(feature['geometry']))
                 try:
                     neighborhood = Neighborhood.objects.get(**neighborhood_dict)
                 except Neighborhood.DoesNotExist:
+                    # If the neighborhood doesn't exist, patch the required fields before creating
+                    neighborhood_dict['created_by'] = user
+                    neighborhood_dict['modified_by'] = user
                     neighborhood = Neighborhood(**neighborhood_dict)
                     logger.info('AnalysisBatch.create_from_shapefile CREATED: {}'
                                 .format(neighborhood))
 
                 neighborhood.set_boundary_file(geom)
+
+                # Update neighborhood record with provided fields not included in `unique_together` clause
+                neighborhood.city_fips = city_fips
+                neighborhood.modified_by = user
+                neighborhood.save()
 
                 # Create new job
                 job = AnalysisJob.objects.create(neighborhood=neighborhood,
@@ -481,7 +487,8 @@ class AnalysisJobManager(models.Manager):
                                                      ('overall_score', 'score_normalized')))
                 .annotate(population_total=ObjectAtPath('overall_scores',
                                                         ('population_total', 'score_original'),
-                          output_field=models.PositiveIntegerField())))
+                          output_field=models.PositiveIntegerField()))
+              )
         return qs
 
 
@@ -525,6 +532,15 @@ class AnalysisJob(PFBModel):
             (ERROR, 'Error',),
         )
 
+    class SpeedLimitSource:
+        STATE = 'State'
+        CITY = 'City'
+
+        CHOICES = (
+            (STATE, 'State'),
+            (CITY, 'City')
+        )
+
     batch_job_id = models.CharField(max_length=256, blank=True, null=True)
     neighborhood = models.ForeignKey(Neighborhood,
                                      related_name='analysis_jobs',
@@ -543,7 +559,13 @@ class AnalysisJob(PFBModel):
     start_time = models.DateTimeField(null=True, blank=True)
     final_runtime = models.PositiveIntegerField(default=0)
     status = models.CharField(choices=Status.CHOICES, max_length=12, default=Status.CREATED)
-
+    default_speed_limit = models.PositiveIntegerField(blank=True, null=True)
+    speed_limit_src = models.CharField(
+        choices=SpeedLimitSource.CHOICES,
+        max_length=20,
+        blank=True,
+        null=True
+    )
     objects = AnalysisJobManager()
 
     @property

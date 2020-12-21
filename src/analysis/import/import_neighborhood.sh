@@ -108,16 +108,21 @@ then
         # Get blocks for the state requested
         update_status "IMPORTING" "Downloading census blocks"
         NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
+        S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip"
         if [ -f "/data/${NB_BLOCK_FILENAME}.zip" ]; then
             echo "Using local census blocks file"
             BLOCK_DOWNLOAD="/data/${NB_BLOCK_FILENAME}.zip"
-        elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip"; then
+        elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
             echo "Using census blocks file from S3"
             BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
-            aws s3 cp "s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip" "${BLOCK_DOWNLOAD}"
+            aws s3 cp "${S3_PATH}" "${BLOCK_DOWNLOAD}"
         else
             BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
             wget -nv -O "${BLOCK_DOWNLOAD}" "http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
+            if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
+                echo "Uploading census blocks file to S3 cache"
+                aws s3 cp "${BLOCK_DOWNLOAD}" "${S3_PATH}"
+            fi
         fi
         unzip "${BLOCK_DOWNLOAD}" -d "${NB_TEMPDIR}"
 

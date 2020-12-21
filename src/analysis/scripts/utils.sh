@@ -28,6 +28,15 @@ function update_overall_scores() {
     fi
 }
 
+function update_residential_speed_limit() {
+    # Usage:
+    #    update_residential_speed_limit RESIDENTIAL_SPEED_LIMIT_CSV
+    if [ -n "${PFB_JOB_ID}" ];
+    then
+        /opt/pfb/django/manage.py load_residential_speed_limit "${PFB_JOB_ID}" "$@"
+    fi
+}
+
 function set_job_attr() {
     # Usage:
     #    update_job_attr ATTRIBUTE VALUE

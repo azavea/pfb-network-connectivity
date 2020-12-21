@@ -9,10 +9,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.14.0] - 2020-12-21
+
+#### Changed
+- Add filter to Neighborhood List
+- Remove filters for created_by, modified_by and fips_code for matching an AnalysisJob to existing Neighborhood records
+- Upgrade Tilegarden Lambda runtime to Node 12
+
+#### Added
+- S3 caching of Census data files
+- Upgrade Django (2.2.10 -> 2.2.16) and psycopg2 (2.8.4 -> 2.8.5)
+- Add default speed limit for neighborhood to AnalysisJob model and display it on frontend
+
 ## [0.13.0] - 2020-02-14
 
 #### Changed
 - Upgraded Django and psycopg2 package versions and switched to psycopg2-binary
+- Upgraded ansible-docker module to 5.0.0, Docker to 18.*, and Docker Compose to 1.23.*
 - Fix lane handling in analysis
 - Fix population scores for destinations in analysis
 - Add favicon
@@ -125,7 +138,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.13.0...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.14.0...HEAD
+[0.14.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.10.0...0.11.0
