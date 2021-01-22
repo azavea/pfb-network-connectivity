@@ -9,12 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
-## [0.14.0] - 2020-12-21
+## [0.14.0]
 
 #### Changed
 - Add filter to Neighborhood List
 - Remove filters for created_by, modified_by and fips_code for matching an AnalysisJob to existing Neighborhood records
 - Upgrade Tilegarden Lambda runtime to Node 12
+- Update LODES data url to load 2018 data
 
 #### Added
 - S3 caching of Census data files
