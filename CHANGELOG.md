@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+#### Changed
+- Update LODES data url to load 2018 data in analysis
+
 ## [0.14.0] - 2020-12-21
 
 #### Changed
