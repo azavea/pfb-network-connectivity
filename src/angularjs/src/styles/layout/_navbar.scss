@@ -1,59 +1,57 @@
 .navbar {
-  @extend %clearfix;
-  position: relative;
-  padding: 1rem;
-  background-color: $brand-navy;
-  z-index: 11;
+    @extend %clearfix;
+    position: relative;
+    padding: 0.5rem 1rem;
+    background-color: $brand-navy;
+    z-index: 11;
 
-  .container {
-    max-width: 100%;
-    display: flex;
+    .container {
+        max-width: 100%;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
 
-    @include respond-to('sm-down') {
-      flex-direction: column;
-      text-align: center;
+        @include respond-to("sm-down") {
+            flex-direction: column;
+        }
     }
-  }
 
-  nav {
-    display: inline-block;
-    vertical-align: middle;
+    nav {
+        display: inline-block;
+        vertical-align: middle;
 
-    a {
-      padding: 18px 20px;
-      color: #fff;
-      text-transform: uppercase;
+        a {
+            padding: 18px 20px;
+            color: #fff;
+            text-transform: uppercase;
 
-      &:hover {
-        color: $link-color;
-      }
+            &:hover {
+                color: $link-color;
+            }
 
-      &.active {
-        color: $link-color;
-        box-shadow: 0 2px 0 0 $link-color;
-      }
+            &.active {
+                color: $link-color;
+                box-shadow: 0 2px 0 0 $link-color;
+            }
+        }
     }
-  }
 }
 
 .navbar-left {
-  flex: 1;
+    flex: none;
 }
 
 .navbar-right {
+    flex: none;
+}
 
-  @include respond-to('sm-down') {
-    justify-content: flex-end;
-  }
+.pfb-logo-small {
+    width: auto;
+    height: 6rem;
 }
 
 .brand {
-  display: inline-block;
-  vertical-align: middle;
-
-  > img {
-    max-height: 5rem;
-    top: 4px;
-    position: relative;
-  }
+    display: flex;
+    flex-direction: row;
 }
