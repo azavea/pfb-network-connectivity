@@ -48,10 +48,16 @@
 
 .pfb-logo-small {
     width: auto;
-    height: 6rem;
+    height: 4rem;
 }
 
 .brand {
     display: flex;
     flex-direction: row;
+
+    @include respond-to("sm-down") {
+        flex-direction: column;
+        margin-top: 2.4rem;
+        margin-bottom: 0.8rem;
+    }
 }
