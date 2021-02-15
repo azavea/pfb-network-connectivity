@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 #### Changed
 - Update LODES data url to load 2018 data in analysis
 - Upgrade AWS CLI to v2 and update syntax in `cipublish` script 
-
+- Update BNA logo with updated 2021 design
 
 ## [0.14.0] - 2020-12-21
 
