@@ -387,11 +387,15 @@ class AnalysisBatchManager(models.Manager):
                 city = feature['properties']['city']
                 state = feature['properties']['state']
                 city_fips = feature['properties'].get('city_fips', '')
+                # Handle NULL values in the city_fips property, which aren't allowed in the model
+                if city_fips is None:
+                    city_fips = ''
                 osm_extract_url = feature['properties'].get('osm_url', None)
                 label = city
                 name = Neighborhood.name_for_label(label)
 
-                # Get or create neighborhood for feature using fields in Neighborhood `unique_together` clause
+                # Get or create neighborhood for feature using only the fields in the
+                # Neighborhood `unique_together` constraint
                 neighborhood_dict = {
                     'name': name,
                     'label': label,
@@ -412,7 +416,7 @@ class AnalysisBatchManager(models.Manager):
 
                 neighborhood.set_boundary_file(geom)
 
-                # Update neighborhood record with provided fields not included in `unique_together` clause
+                # Update neighborhood record with provided fields not included in `unique_together`
                 neighborhood.city_fips = city_fips
                 neighborhood.modified_by = user
                 neighborhood.save()
