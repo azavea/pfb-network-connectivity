@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.15.0] - 2021-02-17
+
 #### Changed
 - Update LODES data url to load 2018 data in analysis
 - Upgrade AWS CLI to v2 and update syntax in `cipublish` script 
@@ -144,7 +146,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.14.0...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.0...HEAD
+[0.15.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.11.0...0.12.0
