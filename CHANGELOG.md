@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+#### Changed
+- Increase timeout and reduce retries for analysis import tasks
+
 ## [0.15.0] - 2021-02-17
 
 #### Changed
