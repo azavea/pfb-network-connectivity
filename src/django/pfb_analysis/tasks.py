@@ -76,7 +76,7 @@ def upload_local_analysis(local_upload_task_uuid):
         except Exception as ex:
             logging.error('Failed to upload analysis results for task {uuid}'.format(
                 uuid=local_upload_task_uuid))
-            raise LocalAnalysisFetchException(ex.message)
+            raise LocalAnalysisFetchException(ex)
 
     def download_and_extract_local_results(tmpdir, task):
         try:
@@ -99,9 +99,9 @@ def upload_local_analysis(local_upload_task_uuid):
                          uuid=local_upload_task_uuid))
         except Exception as ex:
             msg = 'Failed to fetch analysis results for task {uuid} from {url}: {msg}'.format(
-                uuid=local_upload_task_uuid, url=task.upload_results_url, msg=ex.message)
+                uuid=local_upload_task_uuid, url=task.upload_results_url, msg=str(ex))
             logging.error(msg)
-            raise LocalAnalysisFetchException(ex.message)
+            raise LocalAnalysisFetchException(ex)
 
     try:
         logging.info('Starting local analysis upload task {uuid}'.format(
@@ -141,7 +141,7 @@ def upload_local_analysis(local_upload_task_uuid):
         raise
     except Exception as ex:
         task.status = AnalysisLocalUploadTask.Status.ERROR
-        task.error = ex.message
+        task.error = str(ex)
         task.save()
         if task.job:
             task.job.update_status(AnalysisJob.Status.ERROR)

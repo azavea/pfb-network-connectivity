@@ -248,7 +248,19 @@ Q_CLUSTER = {
     'name': 'pfb-network-connectivity',
     'workers': 1,
     'recycle': 1,
-    'timeout': 600,
+    # Three hours. It certainly shouldn't take that long, but it can be slow for big files and
+    # failing is a bad option, so we want a big buffer.
+    'timeout': 10800,
+    # 'retry' is another timeout--the time between when a broker delivers a task and when it
+    # gives up on getting a result and delivers it again. It has to be longer than the 'timeout'
+    # value or you'll end up with a 2nd copy of a task added to the queue before the first one
+    # has definitely finished or been killed.
+    'retry': 10860,
+    # The default for 'max_attempts' is 0 which means "keep trying forever". It's not clear if
+    # retrying will ever work after a failure, but there's always the possibility of weird
+    # transient errors, so it's probably worth trying. Too many retries could cause stranded
+    # files to use up disk space, though, so one is enough.
+    'max_attempts': 2,
     'orm': 'default',
     'poll': 5,
     'cpu_affinity': 1

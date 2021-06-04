@@ -76,16 +76,17 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             apply)
                 docker-compose run --rm terraform apply "${PFB_SETTINGS_BUCKET}.tfplan"
 
-                popd
-                pushd "${DIR}/.."
+                # TODO (#843): Restore this once we've gotten Tilegarden deployment working again
+                # popd
+                # pushd "${DIR}/.."
 
-                aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/.env" "./src/tilegarden/.env"
-                aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/claudia.json" "./src/tilegarden/claudia/claudia.json"
+                # aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/.env" "./src/tilegarden/.env"
+                # aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/claudia.json" "./src/tilegarden/claudia/claudia.json"
 
-                docker-compose \
-                    -f docker-compose.yml \
-                    -f docker-compose.test.yml \
-                    run --rm --entrypoint yarn tilegarden deploy
+                # docker-compose \
+                #     -f docker-compose.yml \
+                #     -f docker-compose.test.yml \
+                #     run --rm --entrypoint yarn tilegarden deploy
                 ;;
             plan-mgmt)
                 update_batch_definitions
