@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+#### Changed
+- Upgrade AWS CLI to v2 in analysis container
+
 ## [0.15.1] - 2021-06-04
 
 #### Changed
