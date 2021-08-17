@@ -43,7 +43,7 @@ RUN set -xe && \
         unzip \
         zip \
         postgis \
-        python \
+        python3 \
         python3-dev \
         python3-pip \
         osm2pgrouting \
@@ -62,10 +62,10 @@ RUN set -xe && \
     apt-get purge -y --auto-remove ${BUILD_DEPS}
 
 RUN set -xe && \
-    wget -q "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" && \
-    unzip awscli-bundle.zip && \
-    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws && \
-    rm -r ./awscli-bundle*
+    wget -q "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" && \
+    unzip awscli-exe-linux-x86_64.zip && \
+    ./aws/install && \
+    rm -r ./aws*
 
 RUN set -xe && \
     wget -q -O /usr/local/bin/osmconvert "https://s3.amazonaws.com/pfb-binaries-us-east-1/osmconvert64" && \
