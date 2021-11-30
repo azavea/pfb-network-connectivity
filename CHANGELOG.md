@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Changed
 - Upgrade AWS CLI to v2 in analysis container
+- Upgrade base VM from Ubuntu 16.04 to 20.04
 
 ## [0.15.1] - 2021-06-04
 

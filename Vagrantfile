@@ -25,7 +25,7 @@ ROOT_VM_DIR = "/vagrant"
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "bento/ubuntu-16.04"
+  config.vm.box = "bento/ubuntu-20.04"
   config.vm.hostname = "pfb-network-connectivity"
   config.vm.network :private_network, ip: ENV.fetch("PFB_PRIVATE_IP", "192.168.111.111")
 
@@ -58,7 +58,7 @@ Vagrant.configure("2") do |config|
     ansible.install = true
     ansible.install_mode = "pip"
     # Install pip3 for the system version of python3, and make sure 'pip3' works as well
-    ansible.pip_install_cmd = "curl https://bootstrap.pypa.io/pip/3.5/get-pip.py | sudo python3 && sudo ln -s -f /usr/local/bin/pip /usr/local/bin/pip3"
+    ansible.pip_install_cmd = "sudo apt-get install -y python3-pip && sudo ln -s -f /usr/bin/pip3 /usr/bin/pip"
     ansible.version = "2.8.7"
   end
 
