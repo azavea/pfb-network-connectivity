@@ -1,7 +1,7 @@
 version: '2'
 services:
   database:
-    image: quay.io/azavea/postgis:postgres9.6-postgis2.3
+    image: quay.io/azavea/postgis:3-postgres13.3-slim
     environment:
       - POSTGRES_USER=pfb
       - POSTGRES_PASSWORD=pfb
