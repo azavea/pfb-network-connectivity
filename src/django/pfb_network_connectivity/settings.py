@@ -273,10 +273,8 @@ REPOSITORY_HELP_EMAIL = os.getenv('REPOSITORY_HELP_EMAIL', 'help@bna.peopleforbi
 # Root user email (the email address of the main admin user for the root org in the database)
 ROOT_USER_EMAIL = 'systems+pfb@azavea.com'
 
-if DJANGO_ENV in ['staging', 'production']:
-    EMAIL_BACKEND = 'django_amazon_ses.backends.boto.EmailBackend'
-elif DJANGO_ENV in ['development', 'test']:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+if DJANGO_ENV in ['staging', 'production', 'development', 'test']:
+    EMAIL_BACKEND = 'django_amazon_ses.EmailBackend'
 else:
     raise ImproperlyConfigured('Unknown DJANGO_ENV')
 
