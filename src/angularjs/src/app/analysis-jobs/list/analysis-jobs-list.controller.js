@@ -52,6 +52,12 @@
             if (filters.batch) {
                 params.batch = filters.batch;
             }
+            if (filters.state_abbrev) {
+                params.neighborhood__state_abbrev = filters.state_abbrev
+            }
+            if (filters.city_fips) {
+                params.neighborhood__city_fips = filters.city_fips
+            }
             getAnalysisJobs(params);
         }
 

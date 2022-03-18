@@ -134,7 +134,7 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
     class Meta:
         model = Neighborhood
         fields = ('uuid', 'name', 'label', 'label_suffix', 'country', 'state_abbrev',
-                  'organization', 'geom_pt',)
+                  'organization', 'geom_pt', 'city_fips',)
         read_only_fields = fields
 
 

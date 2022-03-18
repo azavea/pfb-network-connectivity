@@ -2,7 +2,7 @@
     <th>ID</th>
     <th>
         <div class="dropdown">
-        <input name="neighborhood-filter"
+        <input 
                title="Filter by Status"
                placeholder="Status"
                ng-model="ctl.statusFilter"
@@ -17,7 +17,7 @@
     </th>
     <th>
         <div class="dropdown neighborhood">
-            <input name="neighborhood-filter"
+            <input 
                    title="Filter by Neighborhood"
                    placeholder="Neighborhood"
                    ng-model="ctl.searchText"
@@ -29,7 +29,31 @@
     </th>
     <th>
         <div class="dropdown">
-            <input name="neighborhood-filter"
+            <input 
+                   title="Filter by State abbreviation"
+                   placeholder="State"
+                   ng-model="ctl.state_abbrev"
+                   ng-model-options="{ debounce: 400 }"
+                   ng-change="ctl.onFilterChanged()"
+                   type="text"
+                   class="form-control"/>
+        </div>
+    </th>
+    <th>
+        <div class="dropdown">
+            <input 
+                   title="Filter by City FIPS"
+                   placeholder="City FIPS"
+                   ng-model="ctl.city_fips"
+                   ng-model-options="{ debounce: 400 }"
+                   ng-change="ctl.onFilterChanged()"
+                   type="text"
+                   class="form-control"/>
+        </div>
+    </th>
+    <th>
+        <div class="dropdown">
+            <input 
                    title="Filter by Batch ID"
                    placeholder="Batch ID"
                    ng-model="ctl.batchId"
