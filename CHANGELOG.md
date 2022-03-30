@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Upgrade AWS CLI to v2 in analysis container
 - Upgrade base VM from Ubuntu 16.04 to 20.04
 - Update django-q from 1.0.2 to 1.3.6
+- Add State AbbreviaAnalysisJobtion, City FIPS to Admin Analysis Jobs table
 
 #### Fixed
 - Fixe email sending

@@ -22,9 +22,11 @@
 
         function onFilterChanged() {
             ctl.filters = {
+                batch: ctl.batchId,
+                city_fips: ctl.city_fips,
                 neighborhood: ctl.searchText,
-                status: AnalysisJobStatuses.filterMap[ctl.statusFilter],
-                batch: ctl.batchId
+                state_abbrev: ctl.state_abbrev.toUpperCase(),
+                status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
             };
         }
     }
