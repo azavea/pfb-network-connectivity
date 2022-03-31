@@ -4,7 +4,7 @@
 # Ideally these should be kept in sync with the versions in the base container
 # (https://github.com/azavea/docker-django/blob/master/2.2/requirements.txt) to avoid
 # downgrading when building the django container.
-Django==2.2.16
+Django==2.2.27
 psycopg2-binary==2.8.5
 
 boto3==1.9.224
