@@ -15,7 +15,7 @@ django-filter==2.2.0
 django-q==1.0.2
 django-storages==1.7.1
 django-watchman==0.18.0
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 fiona==1.8.6
 future==0.17.1
 pycountry==19.8.18
