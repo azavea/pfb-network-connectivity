@@ -25,7 +25,8 @@
                 url: '/api/analysis_batches/',
                 method: 'POST',
                 data: {
-                    file: ctl.file
+                    file: ctl.file,
+                    max_trip_distance: ctl.maxTripDistance
                 }
             }).then(function(data) {
                 var jobs = data.length;

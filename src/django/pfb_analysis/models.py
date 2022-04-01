@@ -340,7 +340,7 @@ def delete_boundary_file(sender, instance, **kwargs):
 
 class AnalysisBatchManager(models.Manager):
 
-    def create_from_shapefile(self, shapefile, submit=False, user=None, *args, **kwargs):
+    def create_from_shapefile(self, shapefile, max_trip_distance, submit=False, user=None, *args, **kwargs):
         """ Create a new AnalysisBatch from a well-formatted shapefile.
 
        shapefile can be one of:
@@ -423,6 +423,7 @@ class AnalysisBatchManager(models.Manager):
 
                 # Create new job
                 job = AnalysisJob.objects.create(neighborhood=neighborhood,
+                                                 max_trip_distance=max_trip_distance,
                                                  batch=batch,
                                                  osm_extract_url=osm_extract_url,
                                                  created_by=user,
@@ -562,6 +563,7 @@ class AnalysisJob(PFBModel):
     _analysis_job_name = models.CharField(max_length=50, default='')
     start_time = models.DateTimeField(null=True, blank=True)
     final_runtime = models.PositiveIntegerField(default=0)
+    max_trip_distance = models.PositiveIntegerField(blank=True, null=True, default=2680)
     status = models.CharField(choices=Status.CHOICES, max_length=12, default=Status.CREATED)
     default_speed_limit = models.PositiveIntegerField(blank=True, null=True)
     speed_limit_src = models.CharField(
@@ -727,6 +729,7 @@ class AnalysisJob(PFBModel):
         # Job-specific settings
         environment.update({
             'NB_TEMPDIR': os.path.join('/tmp', str(self.uuid)),
+            'NB_MAX_TRIP_DISTANCE': self.max_trip_distance,
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,
@@ -744,9 +747,11 @@ class AnalysisJob(PFBModel):
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':
             self.update_status(self.Status.QUEUED)
-            logger.warning("Can't actually run development analysis jobs on AWS. Try this:"
-                        "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_CITY_FIPS='{PFB_CITY_FIPS}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
-                        "./scripts/run-local-analysis "
+            env_string = " ".join("{}='{}'".format(key, value) for (key, value) in environment.items())
+            # A few envs must redundantly be added as arguments to run-local-analysis
+            logger.warning("Can't actually run development analysis jobs on AWS. Try this:\n"
+                        + env_string +
+                        " ./scripts/run-local-analysis "
                         "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
             return
 

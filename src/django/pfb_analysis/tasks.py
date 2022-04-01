@@ -36,14 +36,14 @@ OTHER_RESULTS_FILES = set([
 LOCAL_ANALYSIS_FILES = DESTINATION_ANALYSIS_FILES.union(OTHER_RESULTS_FILES)
 
 
-def create_batch_from_remote_shapefile(shapefile_url):
+def create_batch_from_remote_shapefile(shapefile_url, max_trip_distance):
 
     tmpdir = tempfile.mkdtemp()
     try:
         local_filename = os.path.join(tmpdir, 'shapefile.zip')
         download_file(shapefile_url, local_filename=local_filename)
         user = PFBUser.objects.get_root_user()
-        batch = AnalysisBatch.objects.create_from_shapefile(local_filename, submit=False, user=user)
+        batch = AnalysisBatch.objects.create_from_shapefile(local_filename, max_trip_distance=max_trip_distance, submit=False, user=user)
         batch.submit()
     finally:
         shutil.rmtree(tmpdir)
