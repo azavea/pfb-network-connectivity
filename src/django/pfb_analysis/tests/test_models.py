@@ -101,6 +101,22 @@ class AnalysisBatchCreateFromShapefileTestCase(TestCase):
         self.assertEqual(batch.created_by.pk, user.pk)
         self.assertEqual(batch.modified_by.pk, user.pk)
 
+    def test_create_from_shapefile_with_max_trip_distance(self):
+        max_trip_dist = 2350
+        batch = AnalysisBatch.objects.create_from_shapefile(
+            self.shapefile_path,
+            max_trip_distance=max_trip_dist
+        )
+        self.assertEqual(batch.jobs.last().max_trip_distance, max_trip_dist)
+
+    def test_create_from_shapefile_without_max_trip_distance(self):
+        # This is the only other place this number appears in the app code besides the
+        # model field itself. So moving it into a settings variable just to share it
+        # here seems like a lot.
+        default_max_trip_distance = 2680
+        batch = AnalysisBatch.objects.create_from_shapefile(self.shapefile_path)
+        self.assertEqual(batch.jobs.last().max_trip_distance, default_max_trip_distance)
+
     def test_create_from_shapefile_not_filtering_on_created_user(self):
         """This tests the filtering logic for matching neighborhoods in a batch upload to ensure that neighborhoods are
         matched across batches, even if the existing neighborhood was created by a different user.
