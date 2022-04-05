@@ -340,10 +340,16 @@ def delete_boundary_file(sender, instance, **kwargs):
 
 class AnalysisBatchManager(models.Manager):
 
-    def create_from_shapefile(self, shapefile, max_trip_distance, submit=False, user=None, *args, **kwargs):
+    def create_from_shapefile(
+        self,
+        shapefile,
+        max_trip_distance=None,
+        submit=False,
+        user=None,
+    ):
         """ Create a new AnalysisBatch from a well-formatted shapefile.
 
-       shapefile can be one of:
+        shapefile can be one of:
         - HTTP URL to remote, publicly accessible zip file
         - local path to zipfile containing shapefile (must end with .zip extension)
         - local path to unzipped shapefile (must end with .shp extension)
@@ -422,12 +428,16 @@ class AnalysisBatchManager(models.Manager):
                 neighborhood.save()
 
                 # Create new job
-                job = AnalysisJob.objects.create(neighborhood=neighborhood,
-                                                 max_trip_distance=max_trip_distance,
-                                                 batch=batch,
-                                                 osm_extract_url=osm_extract_url,
-                                                 created_by=user,
-                                                 modified_by=user)
+                job_params = {
+                    "neighborhood": neighborhood,
+                    "batch": batch,
+                    "osm_extract_url": osm_extract_url,
+                    "created_by": user,
+                    "modified_by": user,
+                }
+                if max_trip_distance is not None:
+                    job_params["max_trip_distance"] = max_trip_distance
+                job = AnalysisJob.objects.create(**job_params)
                 logger.info('AnalysisBatch.create_from_shapefile ID: {} -- {}'
                             .format(str(job.uuid), str(job)))
         except Exception as e:
