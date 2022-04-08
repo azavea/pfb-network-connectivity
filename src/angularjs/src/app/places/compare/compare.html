@@ -42,7 +42,7 @@
                             {{ ::m.label }}
                             <div class="tooltip" data-title="{{ ::m.description }}"><i class="icon-info-circled"></i></div>
                             <span ng-if="place.scores[m.name]"
-                                class="network-score small">{{ ::place.scores[m.name].score_normalized | number:0 }}</span>
+                                class="network-score small">{{ ::place.scores[m.name].score_normalized }}</span>
                             <span ng-if="!place.scores[m.name]"
                                 class="network-score small">N/A</span>
                         </li>
