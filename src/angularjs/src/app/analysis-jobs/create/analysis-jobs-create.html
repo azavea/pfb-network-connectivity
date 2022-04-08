@@ -25,6 +25,15 @@
           </div>
         </div>
         <div class="row">
+          <div class="column-4">
+            <div class="form-group">
+              <label for="label">Max Trip Distance (optional, in meters)</label>
+              <input ng-model="analysisJobCreate.maxTripDistance"
+                     class="form-control" id="maxTripDistance" type="number">
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="column-12">
             <button type="submit" ng-disabled="analysisJobCreateForm.$invalid"
                     class="btn-primary btn">Submit Analysis Job</button>

@@ -189,6 +189,7 @@ class AnalysisJobSerializer(PFBModelSerializer):
                                                    serializer=NeighborhoodSummarySerializer)
     overall_score = serializers.FloatField(read_only=True)
     population_total = serializers.IntegerField(read_only=True)
+    max_trip_distance = serializers.IntegerField(allow_null=True, required=False)
     local_upload_task = PrimaryKeyReferenceRelatedField(serializer=AnalysisLocalUploadTaskSummarySerializer,
                                                         read_only=True)
 

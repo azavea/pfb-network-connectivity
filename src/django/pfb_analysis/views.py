@@ -119,6 +119,7 @@ class AnalysisBatchViewSet(ViewSet):
 
         """
         file_obj = request.data['file']
+        max_trip_distance = request.data.get('max_trip_distance')
 
         client = boto3.client('s3', config=BotocoreClientConfig(signature_version='s3v4'))
 
@@ -134,6 +135,7 @@ class AnalysisBatchViewSet(ViewSet):
         )
         async_task('pfb_analysis.tasks.create_batch_from_remote_shapefile',
             url,
+            max_trip_distance=max_trip_distance,
             group='create_analysis_batch',
             ack_failure=True)
 
