@@ -11,9 +11,9 @@
       <nav>
         <span ng-if="!navbar.admin">
           <a ui-sref="places.list" ui-sref-active="active">All places</a>
-          <a ui-sref="methodology" ui-sref-active="active">Methodology</a>
-          <a href="https://www.peopleforbikes.org/placesforbikes/pages/bicycle-network-analysis"
-            target="_blank">Feedback</a>
+          <a href="https://cityratings.peopleforbikes.org/about/methodology" ui-sref-active="active"
+            target="_blank">Methodology</a>
+          <a href="http://cityratings.peopleforbikes.org/" target="_blank">City Ratings</a>
           <a href="https://www.peopleforbikes.org/" target="_blank">PeopleForBikes</a>
         </span>
         <span ng-if="navbar.admin">
@@ -22,9 +22,8 @@
           <a ui-sref="admin.neighborhoods.list">Neighborhoods</a>
           <a ng-if="navbar.isAdminOrOrgAdminUser" ui-sref="admin.users.list">User Management</a>
           <a ng-if="navbar.isAdminUser" ui-sref="admin.organizations.list">Org Management</a>
-          <span uib-dropdown class="dropdown"
-              ng-mouseenter="status.isopen = true" and ng-mouseleave="status.isopen = false"
-              is-open="status.isopen">
+          <span uib-dropdown class="dropdown" ng-mouseenter="status.isopen = true" and
+            ng-mouseleave="status.isopen = false" is-open="status.isopen">
             <a uib-dropdown-toggle role="button">{{navbar.userName}}<span class="caret"></span></a>
             <ul uib-dropdown-menu class="dropdown-menu">
               <li><a ui-sref="admin.users.edit({uuid: navbar.userUuid})">Account Settings</a></li>
