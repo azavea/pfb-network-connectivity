@@ -28,7 +28,7 @@ function check_database() {
     do
         echo "Checking if database is up yet (try ${counter})..."
         set +e
-        docker-compose exec -T database gosu postgres psql -d pfb -c 'select 1' >/dev/null 2>/dev/null
+        docker-compose exec -T database psql postgresql://pfb:pfb@database/pfb -c 'select 1' >/dev/null 2>/dev/null
         status_check=$?
         if [ $status_check == 0 ]
         then
