@@ -16,7 +16,7 @@ variable "aws_region" {}
 variable "environment" {}
 
 variable "bastion_ami" {
-  default = "ami-f5f41398"
+  default = "ami-0022f774911c1d690"
 }
 
 variable "r53_private_hosted_zone" {}
