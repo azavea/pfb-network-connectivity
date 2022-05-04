@@ -1,4 +1,4 @@
-FROM quay.io/azavea/postgis:2.3-postgres9.6-slim
+FROM postgis/postgis:13-3.1
 MAINTAINER Azavea
 LABEL type=pfb-analysis
 
@@ -14,7 +14,7 @@ COPY ./django/requirements.txt /opt/pfb/django/requirements.txt
 RUN set -xe && \
     BUILD_DEPS=" \
         postgresql-server-dev-$PG_MAJOR \
-        postgresql-server-dev-12 \
+        postgresql-server-dev-13 \
         libexpat1-dev \
         cmake \
         libboost-all-dev make \
@@ -36,7 +36,7 @@ RUN set -xe && \
         bc \
         time \
         parallel \
-        postgresql-plpython-$PG_MAJOR \
+        postgresql-plpython3-$PG_MAJOR \
         postgresql-$PG_MAJOR-pgrouting \
         python3-gdal \
         gdal-bin \

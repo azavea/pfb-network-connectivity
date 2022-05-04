@@ -1,0 +1,1494 @@
+/usr/local/lib/python3.8/dist-packages/requests/__init__.py:89: RequestsDependencyWarning: urllib3 (1.26.9) or chardet (3.0.4) doesn't match a supported version!
+  warnings.warn("urllib3 ({}) or chardet ({}) doesn't match a supported "
+Starting vagrant_database_1 ... 
+[1A[2K
+Starting vagrant_database_1 ... [32mdone[0m
+[1Bwaiting for database, try 1
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Etc/UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+initdb: warning: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2022-05-04 14:04:53.781 UTC [53] LOG:  starting PostgreSQL 13.6 (Debian 13.6-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+2022-05-04 14:04:53.783 UTC [53] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2022-05-04 14:04:53.792 UTC [54] LOG:  database system was shut down at 2022-05-04 14:04:53 UTC
+2022-05-04 14:04:53.797 UTC [53] LOG:  database system is ready to accept connections
+ done
+server started
+
+/usr/local/bin/docker-entrypoint.sh: sourcing /docker-entrypoint-initdb.d/10_postgis.sh
+CREATE DATABASE
+Loading PostGIS extensions into template_postgis
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+waiting for database, try 2
+CREATE EXTENSION
+Loading PostGIS extensions into postgres
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+
+/usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/setup_database.sh
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+ALTER SYSTEM
+NOTICE:  empty string is not a valid password, clearing password
+CREATE ROLE
+ALTER ROLE
+CREATE DATABASE
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE SCHEMA
+CREATE SCHEMA
+CREATE SCHEMA
+ALTER ROLE
+
+waiting for server to shut down...2022-05-04 14:04:58.329 UTC [53] LOG:  received fast shutdown request
+.2022-05-04 14:04:58.330 UTC [53] LOG:  aborting any active transactions
+2022-05-04 14:04:58.332 UTC [53] LOG:  background worker "logical replication launcher" (PID 60) exited with exit code 1
+2022-05-04 14:04:58.334 UTC [55] LOG:  shutting down
+waiting for database, try 3
+2022-05-04 14:04:58.385 UTC [53] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+2022-05-04 14:04:58.509 UTC [9] LOG:  starting PostgreSQL 13.6 (Debian 13.6-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+2022-05-04 14:04:58.509 UTC [9] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2022-05-04 14:04:58.509 UTC [9] LOG:  listening on IPv6 address "::", port 5432
+2022-05-04 14:04:58.512 UTC [9] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2022-05-04 14:04:58.517 UTC [83] LOG:  database system was shut down at 2022-05-04 14:04:58 UTC
+2022-05-04 14:04:58.522 UTC [9] LOG:  database system is ready to accept connections
+/opt/pfb/analysis /
+Updating job status: IMPORTING Downloading shapefile
+/tmp/tmp.3E1xgONNx2/boundary /opt/pfb/analysis /
+2022-05-04 14:05:04 URL:https://jacob-pfb-storage-us-east-1.s3.amazonaws.com/neighborhood_boundaries/root/IA/sioux-city.zip [7103/7103] -> "boundary.zip" [1]
+Archive:  boundary.zip
+ extracting: sioux-city.prj          
+ extracting: sioux-city.shx          
+ extracting: sioux-city.shp          
+ extracting: sioux-city.dbf          
+ extracting: sioux-city.cpg          
+Boundary shapefile is /tmp/tmp.3E1xgONNx2/boundary/sioux-city.shp
+/opt/pfb/analysis /
+Downloading OSM extract
+download_osm_extract.py 2022-05-04 14:05:18 INFO     Downloaded OSM extract from S3 for ia
+Updating job status: IMPORTING Importing boundary shapefile
+START: Importing neighborhood_boundary
+Field fid is an FTDouble with width 11 and precision 0
+Shapefile type: Polygon
+Postgis type: MULTIPOLYGON[2]
+Field fid is an FTDouble with width 11 and precision 0
+Shapefile type: Polygon
+Postgis type: MULTIPOLYGON[2]
+ALTER TABLE
+DONE: Importing neighborhood_boundary
+Updating job status: IMPORTING Downloading water blocks
+CREATE TABLE
+2022-05-04 14:05:26 URL:https://s3.amazonaws.com/pfb-public-documents/censuswaterblocks.zip [13306081/13306081] -> "/tmp/tmp.n61HVC3ppE/import_neighborhood/censuswaterblocks.zip" [1]
+Archive:  /tmp/tmp.n61HVC3ppE/import_neighborhood/censuswaterblocks.zip
+  inflating: /tmp/tmp.n61HVC3ppE/import_neighborhood/censuswaterblocks.csv  
+COPY 543099
+DONE: Importing water blocks
+Updating job status: IMPORTING Downloading census blocks
+Using local census blocks file
+Archive:  /data/tabblock2010_19_pophu.zip
+  inflating: /tmp/tmp.n61HVC3ppE/import_neighborhood/tabblock2010_19_pophu.shx  
+  inflating: /tmp/tmp.n61HVC3ppE/import_neighborhood/tabblock2010_19_pophu.dbf  
+  inflating: /tmp/tmp.n61HVC3ppE/import_neighborhood/tabblock2010_19_pophu.prj  
+  inflating: /tmp/tmp.n61HVC3ppE/import_neighborhood/tabblock2010_19_pophu.shp  
+  inflating: /tmp/tmp.n61HVC3ppE/import_neighborhood/tabblock2010_19_pophu.shp.xml  
+Updating job status: IMPORTING Loading census blocks
+START: Importing neighborhood_census_blocks
+Shapefile type: Polygon
+Postgis type: MULTIPOLYGON[2]
+Shapefile type: Polygon
+Postgis type: MULTIPOLYGON[2]
+ALTER TABLE
+DONE: Importing neighborhood_census_blocks
+Updating job status: IMPORTING Applying boundary buffer
+START: Removing blocks outside buffer with size 2680
+DELETE 211846
+DONE: Finished removing blocks outside buffer
+Updating job status: IMPORTING Removing water blocks
+START: Removing blocks that are 100% water from analysis
+DELETE 57
+DONE: FINISHED removing blocks that are 100% water
+Census Blocks in analysis:                 4104
+a75cb129-2ee3-4a7e-9084-c897f5cd9509: Set 'census_block_count' to '                4104'
+Updating job status: IMPORTING Importing jobs data
+Using local job data file /data/ia_od_main_JT00_2018.csv.gz
+CREATE TABLE
+TRUNCATE TABLE
+COPY 1283380
+Using local job data file /data/ia_od_aux_JT00_2018.csv.gz
+CREATE TABLE
+TRUNCATE TABLE
+COPY 107755
+Dropping old tables
+NOTICE:  table "neighborhood_ways" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_ways_intersections" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_relations_ways" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_osm_nodes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_osm_relations" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_osm_way_classes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_osm_way_tags" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_osm_way_types" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_cycwys_ways" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_cycwys_ways_vertices_pgr" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_cycwys_relations_ways" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_cycwys_osm_nodes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_cycwys_osm_relations" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_cycwys_osm_way_classes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_cycwys_osm_way_tags" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_cycwys_osm_way_types" does not exist, skipping
+DROP TABLE
+CLIPPING OSM TO: -96.529382,42.32580499999999,-96.252341,42.628952
+Updating job status: IMPORTING Clipping provided OSM file
+Updating job status: IMPORTING Importing OSM data
+Execution starts at: Wed May  4 14:06:24 2022
+
+***************************************************
+           COMMAND LINE CONFIGURATION             *
+***************************************************
+Filename = /tmp/tmp.OdbEAjgk3h/import_osm/converted.osm
+Configuration file = ./mapconfig_highway.xml
+host = localhost
+port = 5432
+dbname = pfb
+username = gis
+schema= received
+prefix = neighborhood_
+suffix = 
+Drop tables
+Don't create indexes
+Don't add OSM nodes
+***************************************************
+Testing database connection: pfb
+database connection successful: pfb
+Connecting to the database
+connection success
+2022-05-04 14:06:24.712 UTC [257] ERROR:  extension "postgis" already exists
+2022-05-04 14:06:24.712 UTC [257] STATEMENT:  CREATE EXTENSION postgis
+
+Dropping tables...
+TABLE: received.neighborhood_ways dropped ... OK.
+TABLE: received.neighborhood_ways_vertices_pgr dropped ... OK.
+TABLE: received.neighborhood_pointsofinterest dropped ... OK.
+TABLE: received.configuration dropped ... OK.
+TABLE: received.osm_nodes dropped ... OK.
+TABLE: received.osm_ways dropped ... OK.
+TABLE: received.osm_relations dropped ... OK.
+
+Creating tables...
+2022-05-04 14:06:24.742 UTC [262] ERROR:  relation "received.neighborhood_ways_vertices_pgr" does not exist at character 8
+2022-05-04 14:06:24.742 UTC [262] STATEMENT:  SELECT 'received.neighborhood_ways_vertices_pgr'::regclass
+TABLE: received.neighborhood_ways_vertices_pgr created ... OK.
+2022-05-04 14:06:24.775 UTC [263] ERROR:  relation "received.neighborhood_ways" does not exist at character 8
+2022-05-04 14:06:24.775 UTC [263] STATEMENT:  SELECT 'received.neighborhood_ways'::regclass
+TABLE: received.neighborhood_ways created ... OK.
+2022-05-04 14:06:24.784 UTC [264] ERROR:  relation "received.neighborhood_pointsofinterest" does not exist at character 8
+2022-05-04 14:06:24.784 UTC [264] STATEMENT:  SELECT 'received.neighborhood_pointsofinterest'::regclass
+TABLE: received.neighborhood_pointsofinterest created ... OK.
+2022-05-04 14:06:24.804 UTC [265] ERROR:  relation "received.configuration" does not exist at character 8
+2022-05-04 14:06:24.804 UTC [265] STATEMENT:  SELECT 'received.configuration'::regclass
+TABLE: received.configuration created ... OK.
+Opening configuration file: ./mapconfig_highway.xml
+    Parsing configuration
+
+Exporting configuration ...
+  - Done 
+Counting lines ...
+  - Done 
+Opening data file: /tmp/tmp.OdbEAjgk3h/import_osm/converted.osm	total lines: 383630
+    Parsing data
+
+
+End Of file
+
+
+    Finish Parsing data
+
+Adding auxiliary tables to database...
+
+Export Ways ...
+    Processing 15218 ways:
+
+[**************************************************|] (100%) Total processed: 15218	 Vertices inserted: 0	Split ways inserted 0
+
+Creating indexes ...
+
+Processing Points of Interest ...
+#########################
+size of streets: 15218
+Execution started at: Wed May  4 14:06:24 2022
+Execution ended at:   Wed May  4 14:06:25 2022
+Elapsed time: 1.274 Seconds.
+User CPU time: -> 0.92732 seconds
+#########################
+Execution starts at: Wed May  4 14:06:25 2022
+
+***************************************************
+           COMMAND LINE CONFIGURATION             *
+***************************************************
+Filename = /tmp/tmp.OdbEAjgk3h/import_osm/converted.osm
+Configuration file = ./mapconfig_cycleway.xml
+host = localhost
+port = 5432
+dbname = pfb
+username = gis
+schema= scratch
+prefix = neighborhood_cycwys_
+suffix = 
+Drop tables
+Don't create indexes
+Don't add OSM nodes
+***************************************************
+Testing database connection: pfb
+database connection successful: pfb
+Connecting to the database
+connection success
+2022-05-04 14:06:25.983 UTC [288] ERROR:  extension "postgis" already exists
+2022-05-04 14:06:25.983 UTC [288] STATEMENT:  CREATE EXTENSION postgis
+
+Dropping tables...
+TABLE: scratch.neighborhood_cycwys_ways dropped ... OK.
+TABLE: scratch.neighborhood_cycwys_ways_vertices_pgr dropped ... OK.
+TABLE: scratch.neighborhood_cycwys_pointsofinterest dropped ... OK.
+TABLE: scratch.configuration dropped ... OK.
+TABLE: scratch.osm_nodes dropped ... OK.
+TABLE: scratch.osm_ways dropped ... OK.
+TABLE: scratch.osm_relations dropped ... OK.
+
+Creating tables...
+2022-05-04 14:06:26.007 UTC [293] ERROR:  relation "scratch.neighborhood_cycwys_ways_vertices_pgr" does not exist at character 8
+2022-05-04 14:06:26.007 UTC [293] STATEMENT:  SELECT 'scratch.neighborhood_cycwys_ways_vertices_pgr'::regclass
+TABLE: scratch.neighborhood_cycwys_ways_vertices_pgr created ... OK.
+2022-05-04 14:06:26.036 UTC [294] ERROR:  relation "scratch.neighborhood_cycwys_ways" does not exist at character 8
+2022-05-04 14:06:26.036 UTC [294] STATEMENT:  SELECT 'scratch.neighborhood_cycwys_ways'::regclass
+TABLE: scratch.neighborhood_cycwys_ways created ... OK.
+2022-05-04 14:06:26.046 UTC [295] ERROR:  relation "scratch.neighborhood_cycwys_pointsofinterest" does not exist at character 8
+2022-05-04 14:06:26.046 UTC [295] STATEMENT:  SELECT 'scratch.neighborhood_cycwys_pointsofinterest'::regclass
+TABLE: scratch.neighborhood_cycwys_pointsofinterest created ... OK.
+2022-05-04 14:06:26.056 UTC [296] ERROR:  relation "scratch.configuration" does not exist at character 8
+2022-05-04 14:06:26.056 UTC [296] STATEMENT:  SELECT 'scratch.configuration'::regclass
+TABLE: scratch.configuration created ... OK.
+Opening configuration file: ./mapconfig_cycleway.xml
+    Parsing configuration
+
+Exporting configuration ...
+  - Done 
+Counting lines ...
+  - Done 
+Opening data file: /tmp/tmp.OdbEAjgk3h/import_osm/converted.osm	total lines: 383630
+    Parsing data
+
+
+End Of file
+
+
+    Finish Parsing data
+
+Adding auxiliary tables to database...
+
+Export Ways ...
+    Processing 15218 ways:
+
+[**************************************************|] (100%) Total processed: 15218	 Vertices inserted: 0	Split ways inserted 0
+
+Creating indexes ...
+
+Processing Points of Interest ...
+#########################
+size of streets: 15218
+Execution started at: Wed May  4 14:06:25 2022
+Execution ended at:   Wed May  4 14:06:27 2022
+Elapsed time: 1.14 Seconds.
+User CPU time: -> 0.873442 seconds
+#########################
+Renaming tables
+ALTER TABLE
+ALTER TABLE
+NOTICE:  table "osm_nodes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "osm_relations" does not exist, skipping
+DROP TABLE
+NOTICE:  table "osm_way_classes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "osm_way_tags" does not exist, skipping
+DROP TABLE
+NOTICE:  table "osm_way_types" does not exist, skipping
+DROP TABLE
+ALTER TABLE
+NOTICE:  table "osm_nodes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "osm_relations" does not exist, skipping
+DROP TABLE
+NOTICE:  table "osm_way_classes" does not exist, skipping
+DROP TABLE
+NOTICE:  table "osm_way_tags" does not exist, skipping
+DROP TABLE
+NOTICE:  table "osm_way_types" does not exist, skipping
+DROP TABLE
+Dropping old tables
+NOTICE:  table "neighborhood_osm_full_line" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_osm_full_point" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_osm_full_polygon" does not exist, skipping
+DROP TABLE
+NOTICE:  table "neighborhood_osm_full_roads" does not exist, skipping
+DROP TABLE
+2022-05-04 14:06:27  osm2pgsql version 1.4.1
+2022-05-04 14:06:27  Database version: 13.6 (Debian 13.6-1.pgdg110+1)
+2022-05-04 14:06:27  PostGIS version: 3.1
+2022-05-04 14:06:27  Node-cache: cache=800MB, maxblocks=12800*65536, allocation method=3
+2022-05-04 14:06:27  Setting up table 'neighborhood_osm_full_point'
+2022-05-04 14:06:28  Setting up table 'neighborhood_osm_full_line'
+2022-05-04 14:06:28  Setting up table 'neighborhood_osm_full_polygon'
+2022-05-04 14:06:28  Setting up table 'neighborhood_osm_full_roads'
+
+                                                                              
+2022-05-04 14:06:28  Reading input files done in 0s.
+2022-05-04 14:06:28    Processed 124777 nodes in 0s - 125k/s
+2022-05-04 14:06:28    Processed 15218 ways in 0s - 15k/s
+2022-05-04 14:06:28    Processed 135 relations in 0s - 135/s
+2022-05-04 14:06:28  node cache: stored: 124777(100.00%), storage efficiency: 48.43% (dense blocks: 1, sparse nodes: 124724), hit rate: 100.00%
+2022-05-04 14:06:28  Clustering table 'neighborhood_osm_full_point' by geometry...
+2022-05-04 14:06:28  Clustering table 'neighborhood_osm_full_polygon' by geometry...
+2022-05-04 14:06:28  Clustering table 'neighborhood_osm_full_line' by geometry...
+2022-05-04 14:06:28  Clustering table 'neighborhood_osm_full_roads' by geometry...
+2022-05-04 14:06:28  Creating geometry index on table 'neighborhood_osm_full_point'...
+2022-05-04 14:06:28  Creating geometry index on table 'neighborhood_osm_full_roads'...
+2022-05-04 14:06:28  Analyzing table 'neighborhood_osm_full_roads'...
+2022-05-04 14:06:28  Analyzing table 'neighborhood_osm_full_point'...
+2022-05-04 14:06:28  All postprocessing on table 'neighborhood_osm_full_roads' done in 0s.
+2022-05-04 14:06:28  Creating geometry index on table 'neighborhood_osm_full_polygon'...
+2022-05-04 14:06:28  All postprocessing on table 'neighborhood_osm_full_point' done in 0s.
+2022-05-04 14:06:28  Analyzing table 'neighborhood_osm_full_polygon'...
+2022-05-04 14:06:28  Creating geometry index on table 'neighborhood_osm_full_line'...
+2022-05-04 14:06:28  All postprocessing on table 'neighborhood_osm_full_polygon' done in 0s.
+2022-05-04 14:06:28  Analyzing table 'neighborhood_osm_full_line'...
+2022-05-04 14:06:28  All postprocessing on table 'neighborhood_osm_full_line' done in 0s.
+2022-05-04 14:06:28  osm2pgsql took 1s overall.
+START: Importing State Default Speed Table
+CREATE TABLE
+2022-05-04 14:06:29 URL:https://s3.amazonaws.com/pfb-public-documents/state_fips_speed.csv [709/709] -> "/tmp/tmp.6NDhVPBnNg/speed/state_fips_speed.csv" [1]
+COPY 68
+DONE: Importing state default residential speed
+START: Importing City Default Speed Table
+CREATE TABLE
+2022-05-04 14:06:29 URL:https://s3.amazonaws.com/pfb-public-documents/city_fips_speed.csv [2656/2656] -> "/tmp/tmp.6NDhVPBnNg/speed/city_fips_speed.csv" [1]
+COPY 106
+No default residential speed in city.
+CREATE TABLE
+INSERT 0 1
+DONE: Importing city default residential speed
+Moving tables to received schema
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+Updating field names
+ALTER TABLE
+2022-05-04 14:06:29.816 UTC [401] ERROR:  column "class_id" of relation "neighborhood_ways" does not exist
+2022-05-04 14:06:29.816 UTC [401] STATEMENT:  ALTER TABLE neighborhood_ways DROP COLUMN class_id;
+psql:./prepare_tables.sql:12: ERROR:  column "class_id" of relation "neighborhood_ways" does not exist
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+ANALYZE
+INSERT 0 0
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+Clipping OSM source data to boundary + buffer
+DELETE 0
+DELETE 0
+DELETE 850
+DELETE 115
+DELETE 143
+DELETE 82
+Removing paths that prohibit bicycles
+DELETE 1
+Setting values on road segments
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+DELETE 0
+DELETE 0
+DELETE 0
+psql:../features/paths.sql:7: NOTICE:  table "neighborhood_paths" does not exist, skipping
+DROP TABLE
+psql:../features/paths.sql:8: NOTICE:  index "idx_neighborhood_ways_path_id" does not exist, skipping
+DROP INDEX
+CREATE TABLE
+INSERT 0 0
+UPDATE 0
+UPDATE 0
+CREATE INDEX
+ANALYZE
+UPDATE 0
+UPDATE 0
+CREATE INDEX
+ANALYZE
+UPDATE 0
+CREATE INDEX
+ANALYZE
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+Setting values on intersections
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+Calculating stress
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+Updating job status: BUILDING Building network
+psql:../connectivity/build_network.sql:7: NOTICE:  table "neighborhood_ways_net_vert" does not exist, skipping
+DROP TABLE
+psql:../connectivity/build_network.sql:8: NOTICE:  table "neighborhood_ways_net_link" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 0
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+UPDATE 0
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -f ../connectivity/build_network.sql
+TIMING:	0:00.10 elapsed 0kb mem
+
+psql:../connectivity/census_blocks.sql:13: NOTICE:  column "road_ids" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:14: NOTICE:  column "pop_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:15: NOTICE:  column "pop_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:16: NOTICE:  column "pop_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:17: NOTICE:  column "emp_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:18: NOTICE:  column "emp_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:19: NOTICE:  column "emp_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:20: NOTICE:  column "schools_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:21: NOTICE:  column "schools_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:22: NOTICE:  column "schools_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:23: NOTICE:  column "universities_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:24: NOTICE:  column "universities_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:25: NOTICE:  column "universities_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:26: NOTICE:  column "colleges_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:27: NOTICE:  column "colleges_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:28: NOTICE:  column "colleges_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:29: NOTICE:  column "doctors_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:30: NOTICE:  column "doctors_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:31: NOTICE:  column "doctors_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:32: NOTICE:  column "dentists_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:33: NOTICE:  column "dentists_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:34: NOTICE:  column "dentists_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:35: NOTICE:  column "hospitals_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:36: NOTICE:  column "hospitals_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:37: NOTICE:  column "hospitals_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:38: NOTICE:  column "pharmacies_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:39: NOTICE:  column "pharmacies_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:40: NOTICE:  column "pharmacies_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:41: NOTICE:  column "retail_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:42: NOTICE:  column "retail_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:43: NOTICE:  column "retail_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:44: NOTICE:  column "supermarkets_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:45: NOTICE:  column "supermarkets_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:46: NOTICE:  column "supermarkets_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:47: NOTICE:  column "social_services_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:48: NOTICE:  column "social_services_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:49: NOTICE:  column "social_services_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:50: NOTICE:  column "parks_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:51: NOTICE:  column "parks_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:52: NOTICE:  column "parks_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:53: NOTICE:  column "trails_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:54: NOTICE:  column "trails_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:55: NOTICE:  column "trails_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:56: NOTICE:  column "community_centers_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:57: NOTICE:  column "community_centers_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:58: NOTICE:  column "community_centers_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:59: NOTICE:  column "transit_low_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:60: NOTICE:  column "transit_high_stress" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:61: NOTICE:  column "transit_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+psql:../connectivity/census_blocks.sql:62: NOTICE:  column "overall_score" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+psql:../connectivity/census_blocks.sql:123: NOTICE:  column "tmp_geom_buffer" of relation "neighborhood_census_blocks" does not exist, skipping
+ALTER TABLE
+ALTER TABLE
+UPDATE 4104
+CREATE INDEX
+ANALYZE
+UPDATE 4104
+ALTER TABLE
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v block_road_buffer=15 -v block_road_min_length=30 -f ../connectivity/census_blocks.sql
+TIMING:	0:01.05 elapsed 0kb mem
+
+Updating job status: CONNECTIVITY Reachable roads high stress
+psql:../connectivity/reachable_roads_high_stress_prep.sql:5: NOTICE:  table "neighborhood_reachable_roads_high_stress" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+
+TIMING: psql -h localhost -U gis -d pfb -f ../connectivity/reachable_roads_high_stress_prep.sql
+TIMING:	0:00.05 elapsed 0kb mem
+
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+
+TIMING: parallel
+TIMING:	0:00.36 elapsed 0kb mem
+
+CREATE INDEX
+CREATE INDEX
+VACUUM
+
+TIMING: psql -h localhost -U gis -d pfb -f ../connectivity/reachable_roads_high_stress_cleanup.sql
+TIMING:	0:00.07 elapsed 0kb mem
+
+Updating job status: CONNECTIVITY Reachable roads low stress
+psql:../connectivity/reachable_roads_low_stress_prep.sql:5: NOTICE:  table "neighborhood_reachable_roads_low_stress" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+
+TIMING: psql -h localhost -U gis -d pfb -f ../connectivity/reachable_roads_low_stress_prep.sql
+TIMING:	0:00.06 elapsed 0kb mem
+
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+
+TIMING: parallel
+TIMING:	0:00.26 elapsed 0kb mem
+
+CREATE INDEX
+CREATE INDEX
+VACUUM
+
+TIMING: psql -h localhost -U gis -d pfb -f ../connectivity/reachable_roads_low_stress_cleanup.sql
+TIMING:	0:00.15 elapsed 0kb mem
+
+Updating job status: CONNECTIVITY Connected census blocks
+psql:../connectivity/connected_census_blocks.sql:7: NOTICE:  table "neighborhood_connected_census_blocks" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 3285285
+UPDATE 0
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_max_trip_distance=2680 -v nb_output_srid=32614 -f ../connectivity/connected_census_blocks.sql
+TIMING:	0:54.96 elapsed 0kb mem
+
+Updating job status: METRICS Access: population
+UPDATE 3733
+UPDATE 4104
+
+TIMING: psql -h localhost -U gis -d pfb -v max_score=1 -v step1=0.03 -v score1=0.1 -v step2=0.2 -v score2=0.4 -v step3=0.5 -v score3=0.8 -f ../connectivity/access_population.sql
+TIMING:	0:26.65 elapsed 0kb mem
+
+Updating job status: METRICS Access: jobs
+ALTER TABLE
+UPDATE 107755
+ALTERUPDATE 1283380
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+ANALYZE
+psql:../connectivity/census_block_jobs.sql:27: NOTICE:  table "neighborhood_census_block_jobs" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 4104
+UPDATE 4104
+UPDATE 4104
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -f ../connectivity/census_block_jobs.sql
+TIMING:	0:06.00 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+
+TIMING: psql -h localhost -U gis -d pfb -v max_score=1 -v step1=0.03 -v score1=0.1 -v step2=0.2 -v score2=0.4 -v step3=0.5 -v score3=0.8 -f ../connectivity/access_jobs.sql
+TIMING:	0:04.81 elapsed 0kb mem
+
+Updating job status: METRICS Destinations
+psql:../connectivity/destinations/colleges.sql:8: NOTICE:  table "neighborhood_colleges" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 2
+UPDATE 2
+CREATE INDEX
+ANALYZE
+INSERT 0 1
+CREATE INDEX
+ANALYZE
+UPDATE 3
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=100 -f ../connectivity/destinations/colleges.sql
+TIMING:	0:00.08 elapsed 0kb mem
+
+psql:../connectivity/destinations/community_centers.sql:8: NOTICE:  table "neighborhood_community_centers" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 1
+UPDATE 1
+CREATE INDEX
+ANALYZE
+INSERT 0 0
+CREATE INDEX
+ANALYZE
+UPDATE 1
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=50 -f ../connectivity/destinations/community_centers.sql
+TIMING:	0:00.07 elapsed 0kb mem
+
+psql:../connectivity/destinations/doctors.sql:8: NOTICE:  table "neighborhood_doctors" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 6
+UPDATE 6
+CREATE INDEX
+ANALYZE
+INSERT 0 7
+CREATE INDEX
+ANALYZE
+UPDATE 13
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=50 -f ../connectivity/destinations/doctors.sql
+TIMING:	0:00.06 elapsed 0kb mem
+
+psql:../connectivity/destinations/dentists.sql:8: NOTICE:  table "neighborhood_dentists" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 2
+UPDATE 2
+CREATE INDEX
+ANALYZE
+INSERT 0 5
+CREATE INDEX
+ANALYZE
+UPDATE 7
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=50 -f ../connectivity/destinations/dentists.sql
+TIMING:	0:00.07 elapsed 0kb mem
+
+psql:../connectivity/destinations/hospitals.sql:8: NOTICE:  table "neighborhood_hospitals" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 2
+UPDATE 2
+CREATE INDEX
+ANALYZE
+INSERT 0 0
+CREATE INDEX
+ANALYZE
+UPDATE 2
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=50 -f ../connectivity/destinations/hospitals.sql
+TIMING:	0:00.07 elapsed 0kb mem
+
+psql:../connectivity/destinations/pharmacies.sql:8: NOTICE:  table "neighborhood_pharmacies" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 2
+UPDATE 2
+CREATE INDEX
+ANALYZE
+INSERT 0 9
+CREATE INDEX
+ANALYZE
+UPDATE 11
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=50 -f ../connectivity/destinations/pharmacies.sql
+TIMING:	0:00.08 elapsed 0kb mem
+
+psql:../connectivity/destinations/parks.sql:8: NOTICE:  table "neighborhood_parks" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 78
+UPDATE 78
+CREATE INDEX
+ANALYZE
+INSERT 0 2
+CREATE INDEX
+ANALYZE
+UPDATE 80
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=50 -f ../connectivity/destinations/parks.sql
+TIMING:	0:00.12 elapsed 0kb mem
+
+psql:../connectivity/destinations/retail.sql:8: NOTICE:  table "neighborhood_retail" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 17
+UPDATE 17
+CREATE INDEX
+ANALYZE
+UPDATE 17
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=50 -f ../connectivity/destinations/retail.sql
+TIMING:	0:00.10 elapsed 0kb mem
+
+psql:../connectivity/destinations/schools.sql:7: NOTICE:  table "neighborhood_schools" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 25
+DELETE 0
+CREATE INDEX
+ANALYZE
+INSERT 0 11
+CREATE INDEX
+ANALYZE
+UPDATE 36
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -f ../connectivity/destinations/schools.sql
+TIMING:	0:00.39 elapsed 0kb mem
+
+psql:../connectivity/destinations/social_services.sql:7: NOTICE:  table "neighborhood_social_services" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 11
+DELETE 0
+CREATE INDEX
+ANALYZE
+INSERT 0 0
+CREATE INDEX
+ANALYZE
+UPDATE 11
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -f ../connectivity/destinations/social_services.sql
+TIMING:	0:00.35 elapsed 0kb mem
+
+psql:../connectivity/destinations/supermarkets.sql:7: NOTICE:  table "neighborhood_supermarkets" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 10
+DELETE 0
+CREATE INDEX
+ANALYZE
+INSERT 0 9
+CREATE INDEX
+ANALYZE
+UPDATE 19
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -f ../connectivity/destinations/supermarkets.sql
+TIMING:	0:00.33 elapsed 0kb mem
+
+psql:../connectivity/destinations/transit.sql:7: NOTICE:  table "neighborhood_transit" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 1
+DELETE 0
+CREATE INDEX
+ANALYZE
+INSERT 0 0
+CREATE INDEX
+ANALYZE
+UPDATE 1
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=75 -f ../connectivity/destinations/transit.sql
+TIMING:	0:00.37 elapsed 0kb mem
+
+psql:../connectivity/destinations/universities.sql:8: NOTICE:  table "neighborhood_universities" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 1
+UPDATE 1
+CREATE INDEX
+ANALYZE
+INSERT 0 0
+CREATE INDEX
+ANALYZE
+UPDATE 1
+CREATE INDEX
+ANALYZE
+
+TIMING: psql -h localhost -U gis -d pfb -v nb_output_srid=32614 -v cluster_tolerance=150 -f ../connectivity/destinations/universities.sql
+TIMING:	0:00.07 elapsed 0kb mem
+
+Updating job status: METRICS Access: colleges
+UPDATE 3733
+UPDATE 4104
+UPDATE 3
+UPDATE 3
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.7 -v second=0 -v third=0 -v max_score=1 -f ../connectivity/access_colleges.sql
+TIMING:	0:06.08 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 1
+UPDATE 1
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.4 -v second=0.2 -v third=0.1 -v max_score=1 -f ../connectivity/access_community_centers.sql
+TIMING:	0:01.39 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 12
+UPDATE 13
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.4 -v second=0.2 -v third=0.1 -v max_score=1 -f ../connectivity/access_doctors.sql
+TIMING:	0:12.35 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 5
+UPDATE 7
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.4 -v second=0.2 -v third=0.1 -v max_score=1 -f ../connectivity/access_dentists.sql
+TIMING:	0:05.62 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 2
+UPDATE 2
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.7 -v second=0 -v third=0 -v max_score=1 -f ../connectivity/access_hospitals.sql
+TIMING:	0:05.62 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 11
+UPDATE 11
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.4 -v second=0.2 -v third=0.1 -v max_score=1 -f ../connectivity/access_pharmacies.sql
+TIMING:	0:11.35 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 67
+UPDATE 80
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.3 -v second=0.2 -v third=0.2 -v max_score=1 -f ../connectivity/access_parks.sql
+TIMING:	1:41.06 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 16
+UPDATE 17
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.4 -v second=0.2 -v third=0.1 -v max_score=1 -f ../connectivity/access_retail.sql
+TIMING:	0:28.48 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 34
+UPDATE 36
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.3 -v second=0.2 -v third=0.2 -v max_score=1 -f ../connectivity/access_schools.sql
+TIMING:	0:40.50 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 11
+UPDATE 11
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.7 -v second=0 -v third=0 -v max_score=1 -f ../connectivity/access_social_services.sql
+TIMING:	0:10.99 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 18
+UPDATE 19
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.6 -v second=0.2 -v third=0 -v max_score=1 -f ../connectivity/access_supermarkets.sql
+TIMING:	0:17.28 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.7 -v second=0.2 -v third=0 -v max_score=1 -v min_path_length=4800 -v min_bbox_length=3300 -f ../connectivity/access_trails.sql
+TIMING:	0:00.41 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 1
+UPDATE 1
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.6 -v second=0 -v third=0 -v max_score=1 -f ../connectivity/access_transit.sql
+TIMING:	0:01.41 elapsed 0kb mem
+
+UPDATE 3733
+UPDATE 4104
+UPDATE 1
+UPDATE 1
+
+TIMING: psql -h localhost -U gis -d pfb -v first=0.7 -v second=0 -v third=0 -v max_score=1 -f ../connectivity/access_universities.sql
+TIMING:	0:02.31 elapsed 0kb mem
+
+UPDATE 3733
+
+TIMING: psql -h localhost -U gis -d pfb -v total=100 -v people=15 -v opportunity=20 -v core_services=20 -v retail=15 -v recreation=15 -v transit=15 -f ../connectivity/access_overall.sql
+TIMING:	0:00.27 elapsed 0kb mem
+
+psql:../connectivity/score_inputs.sql:5: NOTICE:  table "neighborhood_score_inputs" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+psql:../connectivity/score_inputs.sql:36: NOTICE:  table "tmp_pop" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+
+TIMING: psql -h localhost -U gis -d pfb -f ../connectivity/score_inputs.sql
+TIMING:	0:04.17 elapsed 0kb mem
+
+Updating job status: METRICS Overall scores
+psql:../connectivity/overall_scores.sql:21: NOTICE:  table "neighborhood_overall_scores" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+UPDATE 20
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+UPDATE 2
+
+TIMING: psql -h localhost -U gis -d pfb -v total=100 -v people=15 -v opportunity=20 -v core_services=20 -v retail=15 -v recreation=15 -v transit=15 -f ../connectivity/overall_scores.sql
+TIMING:	0:00.64 elapsed 0kb mem
+
+ id |                 score_id                 | score_original | score_normalized |                                      human_explanation                                      
+----+------------------------------------------+----------------+------------------+---------------------------------------------------------------------------------------------
+  1 | people                                   |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this population score.
+  2 | opportunity_employment                   |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this employment score.
+  3 | opportunity_k12_education                |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this K12 schools score.
+  4 | opportunity_technical_vocational_college |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this tech/vocational colleges score.
+  5 | opportunity_higher_education             |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this universities score.
+  6 | opportunity                              |         0.0000 |           0.0000 | 
+  7 | core_services_doctors                    |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this doctors score.
+  8 | core_services_dentists                   |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this dentists score.
+  9 | core_services_hospitals                  |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this hospital score.
+ 10 | core_services_pharmacies                 |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this pharmacies score.
+ 11 | core_services_grocery                    |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this grocery score.
+ 12 | core_services_social_services            |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this social services score.
+ 13 | core_services                            |         0.0000 |           0.0000 | 
+ 14 | retail                                   |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this retail score.
+ 15 | recreation_parks                         |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this parks score.
+ 16 | recreation_trails                        |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this trails score.
+ 17 | recreation_community_centers             |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this community centers score.
+ 18 | recreation                               |         0.0000 |           0.0000 | 
+ 19 | transit                                  |         0.0000 |           0.0000 | On average, census blocks in the neighborhood received this transit score.
+ 20 | overall_score                            |         0.0000 |           0.0000 | 
+ 21 | population_total                         |     84541.0000 |                  | Total population of boundary
+ 22 | total_miles_low_stress                   |                |                  | Total low-stress miles
+ 23 | total_miles_high_stress                  |                |                  | Total high-stress miles
+(23 rows)
+
+Exporting analysis to /data/output/a75cb129-2ee3-4a7e-9084-c897f5cd9509
+Updating job status: EXPORTING Exporting results
+ALTER TABLE
+UPDATE 0
+Initializing... 
+ERROR: Could not determine table metadata (empty table)
+Updating job status: ERROR Failed See job logs for more details.
+[?2004hroot@1ca6a0fb58e6:/# ^C[?2004l[?2004h[?2004l
+[?2004hroot@1ca6a0fb58e6:/# ^C[?2004l[?2004h[?2004l
+[?2004hroot@1ca6a0fb58e6:/# ^C[?2004l[?2004h[?2004l
+[?2004hroot@1ca6a0fb58e6:/# ^C[?2004l[?2004h[?2004l
+[?2004hroot@1ca6a0fb58e6:/# ^C[?2004l[?2004h[?2004l
+[?2004hroot@1ca6a0fb58e6:/# [?2004l
+exit

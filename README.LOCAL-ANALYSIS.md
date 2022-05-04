@@ -96,7 +96,7 @@ NB_POSTGRESQL_PASSWORD=remote_db_password \
 
 ### Requirements
 
-- PostgreSQL 9.6+
+- PostgreSQL 13
 - PostGIS 2.3+
 - Extensions installed:
   - [PostGIS](http://postgis.net/)
@@ -104,7 +104,7 @@ NB_POSTGRESQL_PASSWORD=remote_db_password \
   - [quantile](https://github.com/tvondra/quantile)
   - uuid-ossp
   - hstore
-  - plpythonu
+  - plpython3u
 - Schemas created in NB_POSTGRESQL_DB with permission for NB_POSTGRESQL_USER to use them.
   In addition, these schemas must be added to the user's `search_path`:
   - `CREATE SCHEMA IF NOT EXISTS generated AUTHORIZATION ${NB_POSTGRESQL_USER};`
