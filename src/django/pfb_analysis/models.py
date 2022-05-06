@@ -739,7 +739,7 @@ class AnalysisJob(PFBModel):
         # Job-specific settings
         environment.update({
             'NB_TEMPDIR': os.path.join('/tmp', str(self.uuid)),
-            'NB_MAX_TRIP_DISTANCE': self.max_trip_distance,
+            'NB_MAX_TRIP_DISTANCE': str(self.max_trip_distance),
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,
