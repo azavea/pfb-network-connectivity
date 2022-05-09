@@ -10,48 +10,6 @@ resource "aws_db_subnet_group" "default" {
   }
 }
 
-resource "aws_db_parameter_group" "default" {
-  name        = "${var.rds_database_identifier}"
-  description = "Parameter group for the RDS instances"
-  family      = "${var.rds_parameter_group_family}"
-
-  parameter {
-    name  = "log_min_duration_statement"
-    value = "500"
-  }
-
-  parameter {
-    name  = "log_connections"
-    value = "1"
-  }
-
-  parameter {
-    name  = "log_disconnections"
-    value = "1"
-  }
-
-  parameter {
-    name  = "log_lock_waits"
-    value = "1"
-  }
-
-  parameter {
-    name  = "log_temp_files"
-    value = "500"
-  }
-
-  parameter {
-    name  = "log_autovacuum_min_duration"
-    value = "250"
-  }
-
-  tags {
-    Name        = "dbpgDatabaseServer"
-    Project     = "${var.project}"
-    Environment = "${var.environment}"
-  }
-}
-
 module "database" {
   source                     = "github.com/azavea/terraform-aws-postgresql-rds?ref=2.1.0"
   vpc_id                     = "${module.vpc.id}"
@@ -71,7 +29,7 @@ module "database" {
   storage_encrypted          = "${var.rds_sorage_encrypted}"
   auto_minor_version_upgrade = "${var.rds_auto_minor_version_upgrade}"
   subnet_group               = "${aws_db_subnet_group.default.name}"
-  parameter_group            = "${aws_db_parameter_group.default.name}"
+  parameter_group            = "${var.rds_parameter_group}"
 
   alarm_cpu_threshold         = "${var.rds_alarm_cpu_threshold}"
   alarm_disk_queue_threshold  = "${var.rds_alarm_disk_queue_threshold}"
