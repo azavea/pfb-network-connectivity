@@ -101,7 +101,7 @@ variable "rds_username" {}
 variable "rds_password" {}
 variable "rds_database_port" {}
 variable "rds_backup_retention_period" {}
-variable "rds_parameter_group_family" {}
+variable "rds_parameter_group" {}
 variable "rds_backup_window" {}
 variable "rds_maintenance_window" {}
 variable "rds_multi_availability_zone" {}
