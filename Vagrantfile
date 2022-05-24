@@ -8,7 +8,7 @@ PFB_SHARED_FOLDER_TYPE = ENV.fetch("PFB_SHARED_FOLDER_TYPE", "nfs")
 
 if PFB_SHARED_FOLDER_TYPE == "nfs"
   if Vagrant::Util::Platform.linux? then
-    PFB_MOUNT_OPTIONS = ['rw', 'vers=3', 'tcp', 'nolock', 'actimeo=1']
+    PFB_MOUNT_OPTIONS = ['rw', 'tcp', 'nolock', 'actimeo=1']
   else
     PFB_MOUNT_OPTIONS = ['vers=3', 'udp', 'actimeo=1']
   end
@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = "bento/ubuntu-20.04"
   config.vm.hostname = "pfb-network-connectivity"
-  config.vm.network :private_network, ip: ENV.fetch("PFB_PRIVATE_IP", "192.168.111.111")
+  config.vm.network :private_network, ip: ENV.fetch("PFB_PRIVATE_IP", "192.168.56.12")
 
   config.vm.network :forwarded_port, guest: 9200, host: ENV.fetch("PFB_NGINX_PORT", 9200)
   config.vm.network :forwarded_port, guest: 9202, host: ENV.fetch("PFB_GUNICORN_PORT", 9202)
