@@ -6,11 +6,12 @@ export NB_POSTGRESQL_HOST="${NB_POSTGRESQL_HOST:-localhost}"
 export NB_POSTGRESQL_DB="${NB_POSTGRESQL_DB:-pfb}"
 export NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 export PGPASSWORD="${NB_POSTGRESQL_PASSWORD:-gis}"
+export POSTGRES_PASSWORD="${PGPASSWORD}"
 
 source "$(dirname $0)"/utils.sh
 
 # start postgres and capture the PID
-/docker-entrypoint.sh postgres | tee /tmp/postgres_stdout.txt &
+/usr/local/bin/docker-entrypoint.sh postgres | tee /tmp/postgres_stdout.txt &
 POSTGRES_PROC=$!
 
 MAX_TRIES=30
@@ -58,7 +59,7 @@ fi
 bash
 
 # shutdown postgres
-su postgres -c "/usr/lib/postgresql/9.6/bin/pg_ctl stop"
+su postgres -c "/usr/lib/postgresql/13/bin/pg_ctl stop"
 wait
 
 exit $PFB_EXIT_STATUS

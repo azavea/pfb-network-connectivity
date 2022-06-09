@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add State Abbreviation, City FIPS to Admin Analysis Jobs table
 - Add Max Trip Distance (meters) to Admin Analysis Jobs forms
 - Make Places service show N/A for destination types w/o locations
+- Update Django and analysis containers to run Django 3.2
 
 #### Fixed
 - Fix email sending
