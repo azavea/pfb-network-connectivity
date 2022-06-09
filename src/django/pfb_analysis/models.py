@@ -19,7 +19,7 @@ import zipfile
 from django.conf import settings
 from django.contrib.gis.db.models import LineStringField, MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.core.files import File
 from django.db import models
 from django.db.models.signals import post_delete

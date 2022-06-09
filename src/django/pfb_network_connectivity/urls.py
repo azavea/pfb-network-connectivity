@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import include, url
+from django.conf.urls import include
+from django.urls import re_path
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -38,35 +39,35 @@ router.register(r'neighborhoods', analysis_views.NeighborhoodViewSet, basename='
 
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^api/', include((router.urls, 'api'))),
-    url(r'^api-auth/', include('rest_framework.urls')),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^api/', include((router.urls, 'api'))),
+    re_path(r'^api-auth/', include('rest_framework.urls')),
 
     # Countries view
-    url(r'^api/countries/', analysis_views.CountriesView.as_view()),
+    re_path(r'^api/countries/', analysis_views.CountriesView.as_view()),
 
     # Neighborhood points set
-    url(r'^api/neighborhoods_geojson/', analysis_views.NeighborhoodGeoJsonViewSet.as_view()),
+    re_path(r'^api/neighborhoods_geojson/', analysis_views.NeighborhoodGeoJsonViewSet.as_view()),
 
     # Neighborhood bounds
-    url(r'^api/neighborhoods_bounds_geojson/$',
+    re_path(r'^api/neighborhoods_bounds_geojson/$',
         analysis_views.NeighborhoodBoundsGeoJsonViewList.as_view()),
-    url(r'^api/neighborhoods_bounds_geojson/(?P<neighborhood>[0-9a-f-]+)/$',
+    re_path(r'^api/neighborhoods_bounds_geojson/(?P<neighborhood>[0-9a-f-]+)/$',
         analysis_views.NeighborhoodBoundsGeoJsonViewDetail.as_view()),
 
 
     # User Views
-    url(r'^api/login/', user_views.PFBUserLoginView.as_view()),
-    url(r'^api/logout/', user_views.PFBUserLogoutView.as_view()),
-    url(r'^api/users/(?P<pk>.+)/set-password',
+    re_path(r'^api/login/', user_views.PFBUserLoginView.as_view()),
+    re_path(r'^api/logout/', user_views.PFBUserLogoutView.as_view()),
+    re_path(r'^api/users/(?P<pk>.+)/set-password',
         user_views.PFBUserViewSet.as_view({'post': 'set_password'})),
 
     # Password Reset
-    url(r'^api/request-password-reset/', user_views.PFBRequestPasswordReset.as_view()),
-    url(r'^api/reset-password/', user_views.PFBResetPassword.as_view()),
+    re_path(r'^api/request-password-reset/', user_views.PFBRequestPasswordReset.as_view()),
+    re_path(r'^api/reset-password/', user_views.PFBResetPassword.as_view()),
 
     # 3rd party
-    url(r'^healthcheck/', include('watchman.urls'))
+    re_path(r'^healthcheck/', include('watchman.urls'))
 ]
 
 if settings.DEBUG:

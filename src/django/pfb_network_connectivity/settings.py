@@ -278,6 +278,9 @@ if DJANGO_ENV in ['staging', 'production', 'development', 'test']:
 else:
     raise ImproperlyConfigured('Unknown DJANGO_ENV')
 
+# Added in 3.2, used to create id fields for models where it's not
+# explicitly specified in the model definition.
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Password Reset
 RESET_TOKEN_LENGTH = timedelta(hours=24)
