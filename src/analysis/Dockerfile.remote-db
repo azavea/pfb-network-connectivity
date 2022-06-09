@@ -1,4 +1,4 @@
-FROM quay.io/azavea/postgis:postgres9.6-postgis2.3
+FROM postgis/postgis:13-3.1
 MAINTAINER Azavea
 LABEL type=pfb-alt
 
@@ -30,7 +30,7 @@ RUN set -xe && \
         bc \
         time \
         parallel \
-        postgresql-plpython-$PG_MAJOR \
+        postgresql-plpython3-$PG_MAJOR \
         postgresql-$PG_MAJOR-pgrouting \
         python-gdal \
         gdal-bin \
