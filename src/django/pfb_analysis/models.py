@@ -20,6 +20,7 @@ from django.conf import settings
 from django.contrib.gis.db.models import LineStringField, MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 from django.db.models import JSONField
+from django.db.models.functions import Cast
 from django.core.files import File
 from django.db import models
 from django.db.models.signals import post_delete
@@ -500,9 +501,12 @@ class AnalysisJobManager(models.Manager):
         qs = super(AnalysisJobManager, self).get_queryset()
         qs = (qs.annotate(overall_score=ObjectAtPath('overall_scores',
                                                      ('overall_score', 'score_normalized')))
-                .annotate(population_total=ObjectAtPath('overall_scores',
-                                                        ('population_total', 'score_original'),
-                          output_field=models.PositiveIntegerField()))
+                .annotate(population_total=Cast((
+                    ObjectAtPath(
+                        'overall_scores',
+                        ('population_total', 'score_original')
+                    )
+                ), output_field=models.PositiveIntegerField()))
               )
         return qs
 
