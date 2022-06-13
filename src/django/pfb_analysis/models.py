@@ -318,7 +318,7 @@ class Neighborhood(PFBModel):
             shpfiles = [filename for filename in os.listdir(tmpdir) if filename.endswith('shp')]
             shp_filename = os.path.join(tmpdir, shpfiles[0])
             with fiona.open(shp_filename, 'r') as shp_handle:
-                feature = next(shp_handle)
+                feature = next(iter(shp_handle))
                 geom = GEOSGeometry(json.dumps(feature['geometry']))
                 if geom.geom_type == 'Polygon':
                     geom = MultiPolygon([geom])
