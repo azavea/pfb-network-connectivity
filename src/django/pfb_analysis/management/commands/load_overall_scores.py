@@ -7,7 +7,7 @@ from pfb_analysis.models import AnalysisJob
 
 def load_scores(job, csv_filename, key_column, skip_columns):
 
-    def clean_metric_dict(metric, skip_columns=None):
+    def clean_metric_dict(row_name, metric, skip_columns=None):
         """ Do some cleanup of the input row """
         if skip_columns is None:
             skip_columns = []
@@ -18,6 +18,9 @@ def load_scores(job, csv_filename, key_column, skip_columns):
         for k, v in metric.items():
             try:
                 metric[k] = float(v)
+                # If population, convert again into integer
+                if row_name == 'population_total':
+                    metric[k] = int(metric[k])
             except ValueError:
                 pass
         return metric
@@ -30,7 +33,7 @@ def load_scores(job, csv_filename, key_column, skip_columns):
         results = {}
         for row in reader:
             key_column_value = row.pop(key_column)
-            metric = clean_metric_dict(row.copy(), skip_columns=skip_columns)
+            metric = clean_metric_dict(key_column_value, row.copy(), skip_columns=skip_columns)
             results[key_column_value] = metric
     job.overall_scores = results
     job.save()

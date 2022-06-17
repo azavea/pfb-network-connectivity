@@ -49,8 +49,7 @@ class AnalysisJobFilterSet(filters.FilterSet):
                   'neighborhood__state_abbrev': ['exact'],
                   'neighborhood__city_fips': ['exact'],
                   'batch': ['exact', 'in'],
-                  'status': ['exact'],
-                  'latest': ['exact']}
+                  'status': ['exact']}
 
 
 class NeighborhoodFilterSet(filters.FilterSet):
