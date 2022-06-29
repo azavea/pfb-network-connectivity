@@ -8,8 +8,3 @@ terraform {
     encrypt = "true"
   }
 }
-
-provider "template" {
-  version = "~> 2.1.0"
-}
-
