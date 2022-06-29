@@ -63,7 +63,7 @@ resource "aws_cloudfront_distribution" "tilegarden" {
   }
 
   # Tilegarden lambda origin for generating new tiles
-  cache_behavior {
+  ordered_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "tilegardenOriginEastId"
