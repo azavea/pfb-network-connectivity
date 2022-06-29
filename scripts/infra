@@ -69,7 +69,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 docker-compose run --rm \
                     terraform plan \
                           -var-file="${PFB_SETTINGS_BUCKET}.tfvars" \
-                          -var="git_commit=\"${GIT_COMMIT}\"" \
+                          -var="git_commit=${GIT_COMMIT}" \
                           -var="batch_analysis_job_definition_name_revision=${BATCH_ANALYSIS_JOB_NAME_REVISION}" \
                           -out="${PFB_SETTINGS_BUCKET}.tfplan"
                 ;;

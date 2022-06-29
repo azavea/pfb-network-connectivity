@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "anonymous_read_storage_bucket_policy" {
     actions = ["s3:GetObject"]
 
     resources = [
-      "arn:aws:s3:::${lower("${var.environment}")}-pfb-storage-${var.aws_region}/*",
+      "arn:aws:s3:::${lower(var.environment)}-pfb-storage-${var.aws_region}/*",
     ]
   }
 }
@@ -105,7 +105,7 @@ data "aws_iam_policy_document" "anonymous_read_tile_cache_bucket_policy" {
 #
 resource "aws_iam_policy" "batch_manage_jobs" {
   name   = "${var.environment}BatchManageJobs"
-  policy = "${data.aws_iam_policy_document.batch_manage_jobs.json}"
+  policy = data.aws_iam_policy_document.batch_manage_jobs.json
 }
 
 #
@@ -113,22 +113,22 @@ resource "aws_iam_policy" "batch_manage_jobs" {
 #
 resource "aws_iam_role" "app_container_instance_ecs" {
   name               = "ecs${var.environment}AppInstanceRole"
-  assume_role_policy = "${data.aws_iam_policy_document.container_instance_ecs_assume_role.json}"
+  assume_role_policy = data.aws_iam_policy_document.container_instance_ecs_assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_for_ec2_policy_pfb_app_ecs_role" {
-  role       = "${aws_iam_role.app_container_instance_ecs.name}"
-  policy_arn = "${var.aws_ecs_for_ec2_service_role_policy_arn}"
+  role       = aws_iam_role.app_container_instance_ecs.name
+  policy_arn = var.aws_ecs_for_ec2_service_role_policy_arn
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_policy" {
-  role       = "${aws_iam_role.app_container_instance_ecs.name}"
-  policy_arn = "${var.aws_ecs_service_role_policy_arn}"
+  role       = aws_iam_role.app_container_instance_ecs.name
+  policy_arn = var.aws_ecs_service_role_policy_arn
 }
 
 resource "aws_iam_role_policy_attachment" "sqs_read_write" {
-  role       = "${aws_iam_role.app_container_instance_ecs.name}"
-  policy_arn = "${var.aws_sqs_read_write_policy_arn}"
+  role       = aws_iam_role.app_container_instance_ecs.name
+  policy_arn = var.aws_sqs_read_write_policy_arn
 }
 
 #
@@ -136,38 +136,38 @@ resource "aws_iam_role_policy_attachment" "sqs_read_write" {
 #
 resource "aws_iam_role" "app_container_instance_ec2" {
   name               = "${var.environment}AppContainerInstanceProfile"
-  assume_role_policy = "${data.aws_iam_policy_document.container_instance_ec2_assume_role.json}"
+  assume_role_policy = data.aws_iam_policy_document.container_instance_ec2_assume_role.json
 }
 
 resource "aws_iam_role_policy" "ec2_ses_send_email" {
   name   = "${var.environment}EC2SESSendEmail"
-  role   = "${aws_iam_role.app_container_instance_ec2.id}"
-  policy = "${data.aws_iam_policy_document.ses_send_email.json}"
+  role   = aws_iam_role.app_container_instance_ec2.id
+  policy = data.aws_iam_policy_document.ses_send_email.json
 }
 
 resource "aws_iam_role_policy_attachment" "batch_manage_jobs_policy_container_instance_role" {
-  role       = "${aws_iam_role.app_container_instance_ec2.name}"
-  policy_arn = "${aws_iam_policy.batch_manage_jobs.arn}"
+  role       = aws_iam_role.app_container_instance_ec2.name
+  policy_arn = aws_iam_policy.batch_manage_jobs.arn
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_logs_policy_container_instance_role" {
-  role       = "${aws_iam_role.app_container_instance_ec2.name}"
-  policy_arn = "${var.aws_cloudwatch_logs_policy_arn}"
+  role       = aws_iam_role.app_container_instance_ec2.name
+  policy_arn = var.aws_cloudwatch_logs_policy_arn
 }
 
 resource "aws_iam_role_policy_attachment" "app_ec2_s3_policy" {
-  role       = "${aws_iam_role.app_container_instance_ec2.name}"
-  policy_arn = "${var.aws_s3_policy_arn}"
+  role       = aws_iam_role.app_container_instance_ec2.name
+  policy_arn = var.aws_s3_policy_arn
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_for_ec2_policy_container_instance_role" {
-  role       = "${aws_iam_role.app_container_instance_ec2.name}"
-  policy_arn = "${var.aws_ecs_for_ec2_service_role_policy_arn}"
+  role       = aws_iam_role.app_container_instance_ec2.name
+  policy_arn = var.aws_ecs_for_ec2_service_role_policy_arn
 }
 
 resource "aws_iam_instance_profile" "app_container_instance" {
-  name = "${aws_iam_role.app_container_instance_ec2.name}"
-  role = "${aws_iam_role.app_container_instance_ec2.name}"
+  name = aws_iam_role.app_container_instance_ec2.name
+  role = aws_iam_role.app_container_instance_ec2.name
 }
 
 #
@@ -175,22 +175,22 @@ resource "aws_iam_instance_profile" "app_container_instance" {
 #
 resource "aws_iam_role" "batch_container_instance_ec2" {
   name               = "${var.environment}BatchInstanceProfile"
-  assume_role_policy = "${data.aws_iam_policy_document.container_instance_ec2_assume_role.json}"
+  assume_role_policy = data.aws_iam_policy_document.container_instance_ec2_assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_for_ec2_policy_batch_container_instance_role" {
-  role       = "${aws_iam_role.batch_container_instance_ec2.name}"
-  policy_arn = "${var.aws_ecs_for_ec2_service_role_policy_arn}"
+  role       = aws_iam_role.batch_container_instance_ec2.name
+  policy_arn = var.aws_ecs_for_ec2_service_role_policy_arn
 }
 
 resource "aws_iam_role_policy_attachment" "batch_ec2_s3_policy" {
-  role       = "${aws_iam_role.batch_container_instance_ec2.name}"
-  policy_arn = "${var.aws_s3_policy_arn}"
+  role       = aws_iam_role.batch_container_instance_ec2.name
+  policy_arn = var.aws_s3_policy_arn
 }
 
 resource "aws_iam_instance_profile" "batch_container_instance" {
-  name = "${aws_iam_role.batch_container_instance_ec2.name}"
-  role = "${aws_iam_role.batch_container_instance_ec2.name}"
+  name = aws_iam_role.batch_container_instance_ec2.name
+  role = aws_iam_role.batch_container_instance_ec2.name
 }
 
 #
@@ -211,7 +211,7 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 
 data "aws_iam_policy_document" "lambda_invoke" {
   statement {
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["arn:aws:lambda:*:*:function:${var.tilegarden_function_name}"]
     actions = [
       "lambda:InvokeFunction",
@@ -221,8 +221,8 @@ data "aws_iam_policy_document" "lambda_invoke" {
 
 data "aws_iam_policy_document" "logs_create_and_write" {
   statement {
-    effect = "Allow"
-    resources = ["arn:aws:logs:*:*:*"],
+    effect    = "Allow"
+    resources = ["arn:aws:logs:*:*:*"]
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
@@ -233,8 +233,8 @@ data "aws_iam_policy_document" "logs_create_and_write" {
 
 data "aws_iam_policy_document" "vpc_access" {
   statement {
-    effect = "Allow"
-    resources = ["*"],
+    effect    = "Allow"
+    resources = ["*"]
     actions = [
       "ec2:CreateNetworkInterface",
       "ec2:DeleteNetworkInterface",
@@ -264,29 +264,30 @@ data "aws_iam_policy_document" "s3_write_tile_cache" {
 
 resource "aws_iam_role" "tilegarden_executor" {
   name               = "${var.tilegarden_function_name}Executor"
-  assume_role_policy = "${data.aws_iam_policy_document.lambda_assume_role.json}"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
 resource "aws_iam_role_policy" "executor_role_lambda_invoke_policy" {
   name   = "${var.environment}InvokeLambda"
-  role   = "${aws_iam_role.tilegarden_executor.id}"
-  policy = "${data.aws_iam_policy_document.lambda_invoke.json}"
+  role   = aws_iam_role.tilegarden_executor.id
+  policy = data.aws_iam_policy_document.lambda_invoke.json
 }
 
 resource "aws_iam_role_policy" "executor_role_logs_create_and_write_policy" {
   name   = "${var.environment}WriteLogs"
-  role   = "${aws_iam_role.tilegarden_executor.id}"
-  policy = "${data.aws_iam_policy_document.logs_create_and_write.json}"
+  role   = aws_iam_role.tilegarden_executor.id
+  policy = data.aws_iam_policy_document.logs_create_and_write.json
 }
 
 resource "aws_iam_role_policy" "executor_role_vpc_access_policy" {
   name   = "${var.environment}AccessVPC"
-  role   = "${aws_iam_role.tilegarden_executor.id}"
-  policy = "${data.aws_iam_policy_document.vpc_access.json}"
+  role   = aws_iam_role.tilegarden_executor.id
+  policy = data.aws_iam_policy_document.vpc_access.json
 }
 
 resource "aws_iam_role_policy" "executor_role_s3_write_tile_cache_policy" {
   name   = "${var.environment}WriteTileCache"
-  role   = "${aws_iam_role.tilegarden_executor.id}"
-  policy = "${data.aws_iam_policy_document.s3_write_tile_cache.json}"
+  role   = aws_iam_role.tilegarden_executor.id
+  policy = data.aws_iam_policy_document.s3_write_tile_cache.json
 }
+
