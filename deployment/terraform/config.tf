@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "${var.aws_region}"
+  region = var.aws_region
 }
 
 terraform {
@@ -8,3 +8,8 @@ terraform {
     encrypt = "true"
   }
 }
+
+provider "template" {
+  version = "~> 2.1.0"
+}
+

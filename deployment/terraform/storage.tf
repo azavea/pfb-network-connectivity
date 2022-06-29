@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "static" {
-  bucket = "${lower("${var.environment}")}-pfb-static-${var.aws_region}"
+  bucket = "${lower(var.environment)}-pfb-static-${var.aws_region}"
   acl    = "private"
 
   cors_rule {
@@ -9,16 +9,16 @@ resource "aws_s3_bucket" "static" {
     allowed_headers = ["Authorization"]
   }
 
-  tags {
-    Environment = "${var.environment}"
-    Project     = "${var.project}"
+  tags = {
+    Environment = var.environment
+    Project     = var.project
   }
 }
 
 resource "aws_s3_bucket" "storage" {
-  bucket = "${lower("${var.environment}")}-pfb-storage-${var.aws_region}"
+  bucket = "${lower(var.environment)}-pfb-storage-${var.aws_region}"
   acl    = "public-read"
-  policy = "${data.aws_iam_policy_document.anonymous_read_storage_bucket_policy.json}"
+  policy = data.aws_iam_policy_document.anonymous_read_storage_bucket_policy.json
 
   cors_rule {
     allowed_origins = ["*"]
@@ -28,9 +28,9 @@ resource "aws_s3_bucket" "storage" {
     expose_headers  = ["ETag"]
   }
 
-  tags {
-    Environment = "${var.environment}"
-    Project     = "${var.project}"
+  tags = {
+    Environment = var.environment
+    Project     = var.project
   }
 
   lifecycle_rule {
@@ -47,7 +47,7 @@ resource "aws_s3_bucket" "storage" {
 resource "aws_s3_bucket" "tile_cache" {
   bucket = "${lower(var.environment)}-pfb-tile-cache-${var.aws_region}"
   acl    = "public-read"
-  policy = "${data.aws_iam_policy_document.anonymous_read_tile_cache_bucket_policy.json}"
+  policy = data.aws_iam_policy_document.anonymous_read_tile_cache_bucket_policy.json
 
   cors_rule {
     allowed_headers = ["Authorization"]
@@ -73,10 +73,12 @@ resource "aws_s3_bucket" "tile_cache" {
     }
 }]
 EOF
+
   }
 
-  tags {
-    Project     = "${var.project}"
-    Environment = "${var.environment}"
+  tags = {
+    Project     = var.project
+    Environment = var.environment
   }
 }
+
