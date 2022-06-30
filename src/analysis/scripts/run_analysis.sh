@@ -11,6 +11,7 @@ export NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 export NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 # Same units as NB_MAX_TRIP_DISTANCE
 export NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
+export PFB_POP_URL="${PFB_POP_URL:-}"
 
 source "$(dirname $0)"/utils.sh
 
@@ -68,8 +69,11 @@ fi
 
 # determine coordinate reference system based on input shapefile UTM zone
 export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
-
-./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS $PFB_OSM_FILE
+if [ -n "${PFB_COUNTRY}" ]; then
+    ./scripts/import.sh $PFB_SHPFILE $PFB_OSM_FILE $PFB_COUNTRY
+else
+    ./scripts/import.sh $PFB_SHPFILE $PFB_OSM_FILE $PFB_STATE $PFB_STATE_FIPS
+fi
 ./scripts/run_connectivity.sh
 
 # print scores

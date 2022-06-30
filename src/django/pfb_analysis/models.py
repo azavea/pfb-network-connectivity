@@ -398,6 +398,7 @@ class AnalysisBatchManager(models.Manager):
                 if city_fips is None:
                     city_fips = ''
                 osm_extract_url = feature['properties'].get('osm_url', None)
+                population_url = feature['properties'].get('population_url', None)
                 label = city
                 name = Neighborhood.name_for_label(label)
 
@@ -433,6 +434,7 @@ class AnalysisBatchManager(models.Manager):
                     "neighborhood": neighborhood,
                     "batch": batch,
                     "osm_extract_url": osm_extract_url,
+                    "population_url": population_url,
                     "created_by": user,
                     "modified_by": user,
                 }
@@ -571,6 +573,7 @@ class AnalysisJob(PFBModel):
         'e.g. http://a.com/foo.osm or http://a.com/foo.osm.bz2'
     ))
     overall_scores = JSONField(db_index=True, default=dict)
+    population_url = models.URLField(max_length=2048, null=True, blank=True)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
 
     analysis_job_definition = models.CharField(max_length=50, default=generate_analysis_job_def)
@@ -731,13 +734,6 @@ class AnalysisJob(PFBModel):
             logger.warning('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
 
-        # TODO: #614 remove this check on adding support for running international jobs
-        if not self.neighborhood.state:
-            logger.warning('Running jobs outside the US is not supported yet. Skipping {}.'.format(
-                self.uuid))
-            self.update_status(self.Status.ERROR)
-            return
-
         # Provide the base environment to enable runnin Django commands in the container
         environment = self.base_environment()
         # Job-specific settings
@@ -747,11 +743,11 @@ class AnalysisJob(PFBModel):
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,
-            'PFB_STATE_FIPS': self.neighborhood.state.fips,
+            'PFB_STATE_FIPS': self.neighborhood.state.fips if self.neighborhood.state else "",
             'PFB_CITY_FIPS': self.neighborhood.city_fips,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
-            'PFB_S3_RESULTS_PATH': self.s3_results_path
+            'PFB_POP_URL': self.population_url,
         })
 
         if self.osm_extract_url:

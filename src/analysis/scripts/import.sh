@@ -25,8 +25,18 @@ then
     then
         usage
     else
-        ../import/import_neighborhood.sh "${1}" "${3}"
-        ../import/import_jobs.sh "${2}"
-        ../import/import_osm.sh "${4}"
+        PFB_SHPFILE="${1}"
+        PFB_OSM_FILE="${2}"
+        PFB_COUNTRY_OR_STATE="${3}"
+        PFB_STATE_FIPS="${4}"
+
+        ../import/import_neighborhood.sh $PFB_SHPFILE $PFB_COUNTRY_OR_STATE $PFB_STATE_FIPS
+        if [ "$RUN_IMPORT_JOBS" = true ]
+        then
+            ../import/import_jobs.sh $PFB_COUNTRY_OR_STATE
+        else
+            echo "Skipping Importing Jobs"
+        fi
+        ../import/import_osm.sh $PFB_OSM_FILE
     fi
 fi

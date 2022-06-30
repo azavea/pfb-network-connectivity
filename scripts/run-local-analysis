@@ -41,7 +41,10 @@ NB_POSTGRESQL_USER (default: gis)
 PFB_JOB_ID (default: none, local-only results)
 PFB_OSM_FILE (default: none, downloaded by the analysis job)
 PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
+PFB_STATE (default: none, no adjustments to speed defaults)
+PFB_STATE_FIPS (default: none, no adjustments to defaults)
 PFB_CITY_FIPS (default: none, no adjustments to speed defaults)
+PFB_POP_URL (default: none)
 
 EXAMPLES:
 A boulder run with local shapefile and all defaults:
@@ -102,6 +105,7 @@ Results available locally at ${NB_OUTPUT_DIR}
         -e PFB_JOB_ID=$PFB_JOB_ID \
         -e PFB_OSM_FILE=$PFB_OSM_FILE \
         -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
+        -e PFB_POP_URL=$PFB_POP_URL \
         -e PFB_S3_RESULTS_PATH=$PFB_S3_RESULTS_PATH \
         -e PFB_SHPFILE=$PFB_SHPFILE \
         -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
