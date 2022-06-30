@@ -42,6 +42,24 @@
           </div>
         </div>
         <div class="row">
+          <div class="column-4">
+            <div class="form-group">
+              <label for="label">Jobs File URL (optional)</label>
+              <input ng-model="analysisJobCreate.jobsUrl"
+                     class="form-control" id="jobsUrl" type="url">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column-4">
+            <div class="form-group">
+              <input ng-model="analysisJobCreate.skipImportJobs"
+                     class="form-control" id="skipImportJobsCheck" type="checkbox">
+              <label for="label">Omit jobs data in analysis</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="column-12">
             <button type="submit" ng-disabled="analysisJobCreateForm.$invalid"
                     class="btn-primary btn">Submit Analysis Job</button>

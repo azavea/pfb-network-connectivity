@@ -30,7 +30,9 @@
                 max_trip_distance: ctl.maxTripDistance,
                 neighborhood: ctl.neighborhood.uuid,
                 osm_extract_url: ctl.osmUrl,
-                population_url: ctl.populationUrl
+                population_url: ctl.populationUrl,
+                jobs_url: ctl.jobsUrl,
+                skip_import_jobs: ctl.skipImportJobs
             });
             job.$save().then(function() {
                 toastr.clear(submitToast);

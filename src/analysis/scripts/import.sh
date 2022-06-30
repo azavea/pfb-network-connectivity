@@ -31,7 +31,7 @@ then
         PFB_STATE_FIPS="${4}"
 
         ../import/import_neighborhood.sh $PFB_SHPFILE $PFB_COUNTRY_OR_STATE $PFB_STATE_FIPS
-        if [ "$RUN_IMPORT_JOBS" = true ]
+        if [ "$RUN_IMPORT_JOBS" = "1" ]
         then
             ../import/import_jobs.sh $PFB_COUNTRY_OR_STATE
         else

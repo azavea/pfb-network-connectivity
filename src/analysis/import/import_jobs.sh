@@ -43,10 +43,11 @@ function import_job_data() {
     # Must chmod after creating subdir
     chmod -R 775 "${ROOT_TEMPDIR}"
 
-    NB_STATE_ABBREV="${1}"
+    NB_REGION_ABBREV="${1}"
     NB_DATA_TYPE="${2:-main}"    # Either 'main' or 'aux'
 
-    NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2018.csv"
+    # Changed from 2018 to 2017 to accommodate BEL filenames/date
+    NB_JOB_FILENAME="${NB_REGION_ABBREV}_od_${NB_DATA_TYPE}_JT00_2017.csv"
     S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
 
     if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
@@ -59,20 +60,24 @@ function import_job_data() {
     else
         JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
         set +e
-        wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
+        # also add PFB_SKIP_JOB to script envs and skip all this if it's true
+        if [[ -z $PFB_JOB_URL ]]; then
+            PFB_JOB_URL="http://lehd.ces.census.gov/data/lodes/LODES7/${NB_REGION_ABBREV}/od/${NB_JOB_FILENAME}.gz"
+        fi
+        wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}" 
         WGET_STATUS=$?
         set -e
         # If the 2018 file isn't there (SD and AK), do the check/download/cache again for 2016
         if [[ $WGET_STATUS -eq 8 ]]; then
             echo "No 2018 job data available, falling back to 2016 data..."
-            NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2016.csv"
+            NB_JOB_FILENAME="${NB_REGION_ABBREV}_od_${NB_DATA_TYPE}_JT00_2016.csv"
             S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
             JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
             if [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
                 aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
                 echo "Downloaded job data file from S3"
             else
-                wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
+                wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}"
                 if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
                     echo "Uploading job data file to S3 cache"
                     aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
@@ -118,10 +123,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ] || [ -z "${1:-}" ]; then
         usage
     else
-        NB_STATE_ABBREV="${1,,}"  # force to lower case to match the jobs file download paths
+        NB_REGION_ABBREV="${1,,}"  # force to lower case to match the jobs file download paths
 
         update_status "IMPORTING" "Importing jobs data"
-        import_job_data "${NB_STATE_ABBREV}" "main"
-        import_job_data "${NB_STATE_ABBREV}" "aux"
+        import_job_data "${NB_REGION_ABBREV}" "main"
+        import_job_data "${NB_REGION_ABBREV}" "aux"
     fi
 fi

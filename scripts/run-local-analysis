@@ -45,6 +45,7 @@ PFB_STATE (default: none, no adjustments to speed defaults)
 PFB_STATE_FIPS (default: none, no adjustments to defaults)
 PFB_CITY_FIPS (default: none, no adjustments to speed defaults)
 PFB_POP_URL (default: none)
+RUN_IMPORT_JOBS (default: 1)
 
 EXAMPLES:
 A boulder run with local shapefile and all defaults:
@@ -75,6 +76,9 @@ else
     NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
     PFB_JOB_ID="${PFB_JOB_ID:-}"
+    PFB_STATE="${PFB_STATE:-}"
+    PFB_STATE_FIPS="${PFB_STATE_FIPS:-}"
+    RUN_IMPORT_JOBS="${RUN_IMPORT_JOBS:-1}"
 
     if [ -n "${PFB_JOB_ID}" ] && aws iam get-user > /dev/null 2>&1; then
         AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME:-${DEV_USER:-dev-user}-pfb-storage-us-east-1}"
@@ -103,13 +107,15 @@ Results available locally at ${NB_OUTPUT_DIR}
         -e NB_POSTGRESQL_PASSWORD \
         -e NB_POSTGRESQL_USER \
         -e PFB_JOB_ID=$PFB_JOB_ID \
+        -e PFB_JOB_URL=$PFB_JOB_URL \
         -e PFB_OSM_FILE=$PFB_OSM_FILE \
         -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
         -e PFB_POP_URL=$PFB_POP_URL \
         -e PFB_S3_RESULTS_PATH=$PFB_S3_RESULTS_PATH \
         -e PFB_SHPFILE=$PFB_SHPFILE \
         -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
-        -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
-        -e PFB_CITY_FIPS=$PFB_CITY_FIPS \
+        -e PFB_STATE=$PFB_STATE \
+        -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
+        -e RUN_IMPORT_JOBS=$RUN_IMPORT_JOBS \
         analysis
 fi

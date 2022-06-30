@@ -399,6 +399,8 @@ class AnalysisBatchManager(models.Manager):
                     city_fips = ''
                 osm_extract_url = feature['properties'].get('osm_url', None)
                 population_url = feature['properties'].get('population_url', None)
+                jobs_url = feature['properties'].get('jobs_url', None)
+                skip_import_jobs = feature['properties'].get('skip_import_jobs', False)
                 label = city
                 name = Neighborhood.name_for_label(label)
 
@@ -435,6 +437,8 @@ class AnalysisBatchManager(models.Manager):
                     "batch": batch,
                     "osm_extract_url": osm_extract_url,
                     "population_url": population_url,
+                    "jobs_url": jobs_url,
+                    "skip_import_jobs": skip_import_jobs,
                     "created_by": user,
                     "modified_by": user,
                 }
@@ -575,6 +579,8 @@ class AnalysisJob(PFBModel):
     overall_scores = JSONField(db_index=True, default=dict)
     population_url = models.URLField(max_length=2048, null=True, blank=True)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
+    jobs_url = models.URLField(max_length=2048, null=True, blank=True)
+    skip_import_jobs = models.BooleanField(default=False)
 
     analysis_job_definition = models.CharField(max_length=50, default=generate_analysis_job_def)
     _analysis_job_name = models.CharField(max_length=50, default='')
@@ -748,11 +754,13 @@ class AnalysisJob(PFBModel):
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
             'PFB_POP_URL': self.population_url,
+            'PFB_JOB_URL': self.jobs_url
         })
 
         if self.osm_extract_url:
             environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
-
+        environment['RUN_IMPORT_JOBS'] = 0 if self.skip_import_jobs else 1
+   
         # Workaround for not being able to run development jobs on the actual batch cluster:
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':

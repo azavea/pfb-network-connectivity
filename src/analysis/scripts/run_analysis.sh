@@ -12,6 +12,8 @@ export NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 # Same units as NB_MAX_TRIP_DISTANCE
 export NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
 export PFB_POP_URL="${PFB_POP_URL:-}"
+export PFB_JOB_URL="${PFB_JOB_URL:-}"
+export RUN_IMPORT_JOBS="${RUN_IMPORT_JOBS:-1}"
 
 source "$(dirname $0)"/utils.sh
 
