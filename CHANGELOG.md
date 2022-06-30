@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replace Feedback link with City Ratings link, point Methodology link to City Ratings methodology page
 - Facilitate non-US analyses with custom population files, jobs files, and osm extracts
 - Make analysis convert kmph speed limits to rounded mph
+- Upgrade Terraform to 1.1.9
 
 #### Fixed
 - Fix email sending

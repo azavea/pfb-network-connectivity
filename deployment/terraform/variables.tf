@@ -8,6 +8,7 @@ variable "project" {
 
 variable "aws_account_id" {
   default = "950872791630"
+  sensitive = true
 }
 
 variable "aws_region" {
@@ -144,6 +145,7 @@ variable "rds_username" {
 }
 
 variable "rds_password" {
+  sensitive = true
 }
 
 variable "rds_database_port" {
@@ -216,6 +218,7 @@ variable "django_env" {
 }
 
 variable "django_secret_key" {
+  sensitive = true
 }
 
 variable "django_allowed_hosts" {

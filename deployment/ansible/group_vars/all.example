@@ -12,6 +12,3 @@ pfb_aws_batch_analysis_job_definition_name: "staging-pfb-analysis-run-job"
 docker_version: 5:19.*
 docker_options: "--storage-opt dm.basesize=20G"
 docker_compose_version: 1.23.*
-
-# azavea.terraform
-terraform_version: 0.9.11

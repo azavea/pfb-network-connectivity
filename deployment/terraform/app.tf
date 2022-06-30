@@ -16,8 +16,8 @@ resource "aws_security_group" "pfb_app_alb" {
 #
 resource "aws_alb" "pfb_app" {
   security_groups = [aws_security_group.pfb_app_alb.id]
-  subnets = module.vpc.public_subnet_ids
-  name    = "alb${var.environment}AppServer"
+  subnets         = module.vpc.public_subnet_ids
+  name            = "alb${var.environment}AppServer"
 
   tags = {
     Name        = "albAppServer"
