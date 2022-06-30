@@ -1,7 +1,7 @@
 resource "aws_db_subnet_group" "default" {
   name        = var.rds_database_identifier
   description = "Private subnets for the RDS instances"
-  subnet_ids = module.vpc.private_subnet_ids
+  subnet_ids  = module.vpc.private_subnet_ids
 
   tags = {
     Name        = "dbsngDatabaseServer"
