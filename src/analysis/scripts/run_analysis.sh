@@ -52,7 +52,7 @@ then
         *)         echo "Unrecognized zip format, skipping..." ;;
     esac
 
-    PFB_OSM_FILE="${PFB_TEMPDIR}/osm"/$(ls *.osm)  # Assumes there's exactly one .osm file
+    PFB_OSM_FILE="${PFB_TEMPDIR}/osm"/$(ls *.osm*)  # Assumes there's exactly one .osm file
     echo "OSM file is ${PFB_OSM_FILE}"
     popd
 elif [ ! "${PFB_OSM_FILE}" ] || [ ! -f "${PFB_OSM_FILE}" ]
@@ -64,7 +64,13 @@ then
     else
         BUCKET_ARG=""
     fi
-    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $BUCKET_ARG $PFB_TEMPDIR $PFB_STATE)"
+    if [ -n "${PFB_STATE}" ]
+    then
+        PFB_STATE_ARG="--state_abbrev ${PFB_STATE}"
+    else
+        PFB_STATE_ARG=""
+    fi
+    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $BUCKET_ARG $PFB_STATE_ARG $PFB_TEMPDIR $PFB_COUNTRY)"
 fi
 
 # run job

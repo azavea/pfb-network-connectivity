@@ -751,8 +751,10 @@ class AnalysisJob(PFBModel):
             'PFB_STATE': self.neighborhood.state_abbrev,
             'PFB_STATE_FIPS': self.neighborhood.state.fips if self.neighborhood.state else "",
             'PFB_CITY_FIPS': self.neighborhood.city_fips,
+            'PFB_COUNTRY': self.neighborhood.country.alpha3,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
+            'PFB_S3_RESULTS_PATH': self.s3_results_path,
             'PFB_POP_URL': self.population_url,
             'PFB_JOB_URL': self.jobs_url
         })
@@ -770,7 +772,7 @@ class AnalysisJob(PFBModel):
             logger.warning("Can't actually run development analysis jobs on AWS. Try this:\n"
                         + env_string +
                         " ./scripts/run-local-analysis "
-                        "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
+                        "'{PFB_SHPFILE_URL}' {PFB_COUNTRY}".format(**environment))
             return
 
         client = boto3.client('batch')

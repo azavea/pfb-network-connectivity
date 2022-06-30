@@ -24,7 +24,7 @@ def check_latlng(check_bbox):
 def check_width(check_bbox):
     """ Checks to see if the bounding box fits in a UTM zone """
     wide = check_bbox[1] - check_bbox[0]
-    if wide > 3:
+    if wide > 4:
         failure('This file is too many degrees wide for UTM')
     return True
 
