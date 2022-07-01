@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Max Trip Distance (meters) to Admin Analysis Jobs forms
 - Make Places service show N/A for destination types w/o locations
 - Update Django and analysis containers to run Django 3.2
+- Replace Feedback link with City Ratings link, point Methodology link to City Ratings methodology page
 
 #### Fixed
 - Fix email sending
