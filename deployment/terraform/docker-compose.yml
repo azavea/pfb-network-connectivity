@@ -5,6 +5,7 @@ services:
     volumes:
       - ./:/usr/local/src
       - $HOME/.aws:/root/.aws:ro
+      - ${PWD}/.gitconfig:/root/.gitconfig
     environment:
       - PFB_DEBUG=1
       - AWS_PROFILE
