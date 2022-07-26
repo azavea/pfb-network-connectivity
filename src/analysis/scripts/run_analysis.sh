@@ -14,6 +14,7 @@ export NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
 export PFB_POP_URL="${PFB_POP_URL:-}"
 export PFB_JOB_URL="${PFB_JOB_URL:-}"
 export RUN_IMPORT_JOBS="${RUN_IMPORT_JOBS:-1}"
+export PFB_COUNTRY="${PFB_COUNTRY:-USA}"
 
 source "$(dirname $0)"/utils.sh
 
@@ -77,11 +78,7 @@ fi
 
 # determine coordinate reference system based on input shapefile UTM zone
 export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
-if [ -n "${PFB_COUNTRY}" ]; then
-    ./scripts/import.sh $PFB_SHPFILE $PFB_OSM_FILE $PFB_COUNTRY
-else
-    ./scripts/import.sh $PFB_SHPFILE $PFB_OSM_FILE $PFB_STATE $PFB_STATE_FIPS
-fi
+./scripts/import.sh $PFB_SHPFILE $PFB_OSM_FILE $PFB_COUNTRY $PFB_STATE $PFB_STATE_FIPS
 ./scripts/run_connectivity.sh
 
 # print scores

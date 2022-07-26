@@ -26,7 +26,7 @@ import requests
 import pycountry
 import us
 
-import continents_to_country
+import country_to_continent
 
 
 logging.basicConfig(
@@ -178,7 +178,7 @@ def main():
     else:
         logger.setLevel('INFO')
 
-    continent = continents_to_country.get_continent(country_alpha3).lower().replace(' ', '-')
+    continent = country_to_continent.get_continent(country_alpha3).lower().replace(' ', '-')
     country_name = pycountry.countries.get(alpha_3=country_alpha3).name.lower().replace(' ', '-')
     # Shortcut and do a direct geofabrik download if we don't have AWS configured
     # or a bucket provided
