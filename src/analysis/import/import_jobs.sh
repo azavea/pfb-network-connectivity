@@ -76,25 +76,27 @@ function import_job_data() {
     PFB_COUNTRY="${1}"
     PFB_STATE="${2}"
     if [ -n "${PFB_JOB_URL}" ]; then
-        NB_JOB_FILENAME=$(basename "${PFB_JOB_URL}")
+        NB_JOB_FILENAME=$(basename "${PFB_JOB_URL}" .gz)
+        JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+        wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}" 
     else
         CENSUS_YEAR=2019
         NB_JOB_FILENAME="${PFB_STATE}_od_${NB_DATA_TYPE}_JT00_${CENSUS_YEAR}.csv"
-    fi
-    S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
+        S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
 
-    if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
-        JOB_DOWNLOAD="/data/${NB_JOB_FILENAME}.gz"
-        echo "Using local job data file ${JOB_DOWNLOAD}"
-    elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
-        JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-        aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
-        echo "Downloaded job data file ${JOB_DOWNLOAD} from S3"
-    else
-        JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-        set +e
-        if [[ -z $PFB_JOB_URL ]]; then
-            fetch_census_data
+        if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
+            JOB_DOWNLOAD="/data/${NB_JOB_FILENAME}.gz"
+            echo "Using local job data file ${JOB_DOWNLOAD}"
+        elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
+            JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+            aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
+            echo "Downloaded job data file ${JOB_DOWNLOAD} from S3"
+        else
+            JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+            set +e
+            if [[ -z $PFB_JOB_URL ]]; then
+                fetch_census_data
+            fi
         fi
     fi
     gunzip -c "${JOB_DOWNLOAD}" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
