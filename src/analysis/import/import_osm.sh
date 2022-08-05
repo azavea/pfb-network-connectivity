@@ -14,7 +14,7 @@ NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
 NB_SIGCTL_SEARCH_DIST="${NB_SIGCTL_SEARCH_DIST:-25}"    # max search distance for intersection controls
 NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
-PFB_STATE_FIPS="${PFB_STATE_FIPS}"
+PFB_STATE_FIPS="${PFB_STATE_FIPS:-NULL}"
 PFB_CITY_FIPS="${PFB_CITY_FIPS:-0}"
 
 # drop old tables
@@ -169,6 +169,9 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
 # Set default residential speed for state
 STATE_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
       -t -c "SELECT state_speed.speed FROM state_speed WHERE state_speed.fips_code_state = '${PFB_STATE_FIPS}'" )
+if [ -z $STATE_DEFAULT ]; then
+  STATE_DEFAULT=NULL
+fi
 echo "DONE: Importing state default residential speed"
 
 # Create table for city residential speeds

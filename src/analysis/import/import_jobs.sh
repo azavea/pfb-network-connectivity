@@ -34,8 +34,38 @@ NB_POSTGRESQL_PASSWORD - Default: gis
 "
 }
 
-function import_job_data() {
+function fetch_census_data() {
+    PFB_JOB_URL="http://lehd.ces.census.gov/data/lodes/LODES7/${PFB_STATE}/od/${NB_JOB_FILENAME}.gz"
+    wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}" 
+    WGET_STATUS=$?
+    set -e
+    # Recursively try prior years
+    if [[ $WGET_STATUS -eq 8 ]] && [[ $CENSUS_YEAR -gt 2017 ]]; then
+        (($CENSUS_YEAR--))
+        echo "No ${CENSUS_YEAR} job data available, falling back to ${CENSUS_YEAR-1} data..."
+        NB_JOB_FILENAME="${PFB_STATE}_od_${NB_DATA_TYPE}_JT00_${CENSUS_YEAR}.csv"
+        S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
+        JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+        fetch_census_data
+        
+        if [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
+            aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
+            echo "Downloaded job data file from S3"
+        else
+            wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}"
+            if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
+                echo "Uploading job data file to S3 cache"
+                aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
+            fi
+        fi
+    elif [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
+        echo "Uploading job data file to S3 cache"
+        aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
+    fi
+}
 
+function import_job_data() {
+    NB_DATA_TYPE="${3:-main}"    # Either 'main' or 'aux'
     ROOT_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}"
     NB_TEMPDIR="${ROOT_TEMPDIR}/import_jobs"
     mkdir -p "${NB_TEMPDIR}"
@@ -43,44 +73,30 @@ function import_job_data() {
     # Must chmod after creating subdir
     chmod -R 775 "${ROOT_TEMPDIR}"
 
-    NB_STATE_ABBREV="${1}"
-    NB_DATA_TYPE="${2:-main}"    # Either 'main' or 'aux'
-
-    NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2018.csv"
-    S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
-
-    if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
-        JOB_DOWNLOAD="/data/${NB_JOB_FILENAME}.gz"
-        echo "Using local job data file ${JOB_DOWNLOAD}"
-    elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
+    PFB_COUNTRY="${1}"
+    PFB_STATE="${2}"
+    if [ -n "${PFB_JOB_URL}" ]; then
+        NB_JOB_FILENAME=$(basename "${PFB_JOB_URL}" .gz)
         JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-        aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
-        echo "Downloaded job data file ${JOB_DOWNLOAD} from S3"
+        wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}" 
     else
-        JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-        set +e
-        wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
-        WGET_STATUS=$?
-        set -e
-        # If the 2018 file isn't there (SD and AK), do the check/download/cache again for 2016
-        if [[ $WGET_STATUS -eq 8 ]]; then
-            echo "No 2018 job data available, falling back to 2016 data..."
-            NB_JOB_FILENAME="${NB_STATE_ABBREV}_od_${NB_DATA_TYPE}_JT00_2016.csv"
-            S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
+        CENSUS_YEAR=2019
+        NB_JOB_FILENAME="${PFB_STATE}_od_${NB_DATA_TYPE}_JT00_${CENSUS_YEAR}.csv"
+        S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
+
+        if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
+            JOB_DOWNLOAD="/data/${NB_JOB_FILENAME}.gz"
+            echo "Using local job data file ${JOB_DOWNLOAD}"
+        elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
             JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-            if [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
-                aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
-                echo "Downloaded job data file from S3"
-            else
-                wget -nv -O "${JOB_DOWNLOAD}" "http://lehd.ces.census.gov/data/lodes/LODES7/${NB_STATE_ABBREV}/od/${NB_JOB_FILENAME}.gz"
-                if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
-                    echo "Uploading job data file to S3 cache"
-                    aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
-                fi
+            aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
+            echo "Downloaded job data file ${JOB_DOWNLOAD} from S3"
+        else
+            JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+            set +e
+            if [[ -z $PFB_JOB_URL ]]; then
+                fetch_census_data
             fi
-        elif [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
-            echo "Uploading job data file to S3 cache"
-            aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
         fi
     fi
     gunzip -c "${JOB_DOWNLOAD}" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
@@ -118,10 +134,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ] || [ -z "${1:-}" ]; then
         usage
     else
-        NB_STATE_ABBREV="${1,,}"  # force to lower case to match the jobs file download paths
+        # force to lower case to match the jobs file download paths
+        PFB_COUNTRY="${1,,}"
+        PFB_STATE="${2,,}"
 
         update_status "IMPORTING" "Importing jobs data"
-        import_job_data "${NB_STATE_ABBREV}" "main"
-        import_job_data "${NB_STATE_ABBREV}" "aux"
+        import_job_data "${PFB_COUNTRY}" "${PFB_STATE}" "main"
+        import_job_data "${PFB_COUNTRY}" "${PFB_STATE}" "aux"
     fi
 fi

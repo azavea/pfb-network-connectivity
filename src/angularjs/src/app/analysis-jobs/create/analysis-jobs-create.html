@@ -22,7 +22,7 @@
               <input ng-model="analysisJobCreate.osmUrl"
                      class="form-control" id="osmUrl" type="url">
             </div>
-          </div>
+         </div>
         </div>
         <div class="row">
           <div class="column-4">
@@ -30,6 +30,32 @@
               <label for="label">Max Trip Distance (optional, in meters)</label>
               <input ng-model="analysisJobCreate.maxTripDistance"
                      class="form-control" id="maxTripDistance" type="number">
+            </div>
+          </div>
+          <div class="column-4">
+            <div class="form-group">
+              <label for="label">Population File URL (optional)</label>
+              <input ng-model="analysisJobCreate.populationUrl"
+                     class="form-control" id="populationUrl" type="url">
+            </div>
+ 
+          </div>
+        </div>
+        <div class="row">
+          <div class="column-4">
+            <div class="form-group">
+              <label for="label">Jobs File URL (optional)</label>
+              <input ng-model="analysisJobCreate.jobsUrl"
+                     class="form-control" id="jobsUrl" type="url">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column-4">
+            <div class="form-group">
+              <input ng-model="analysisJobCreate.skipImportJobs"
+                     class="form-control" id="skipImportJobsCheck" type="checkbox">
+              <label for="label">Omit jobs data in analysis</label>
             </div>
           </div>
         </div>

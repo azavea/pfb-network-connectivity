@@ -397,7 +397,10 @@ class AnalysisBatchManager(models.Manager):
                 # Handle NULL values in the city_fips property, which aren't allowed in the model
                 if city_fips is None:
                     city_fips = ''
-                osm_extract_url = feature['properties'].get('osm_url', None)
+                osm_extract_url = '' if feature['properties'].get('osm_url', '') is None else feature['properties'].get('osm_url', '')
+                population_url = '' if feature['properties'].get('population_url', '') is None else feature['properties'].get('population_url', '')
+                jobs_url = '' if feature['properties'].get('jobs_url', '') is None else feature['properties'].get('jobs_url', '')
+                skip_import_jobs = feature['properties'].get('skip_import_jobs', False)
                 label = city
                 name = Neighborhood.name_for_label(label)
 
@@ -433,6 +436,9 @@ class AnalysisBatchManager(models.Manager):
                     "neighborhood": neighborhood,
                     "batch": batch,
                     "osm_extract_url": osm_extract_url,
+                    "population_url": population_url,
+                    "jobs_url": jobs_url,
+                    "skip_import_jobs": skip_import_jobs,
                     "created_by": user,
                     "modified_by": user,
                 }
@@ -571,7 +577,10 @@ class AnalysisJob(PFBModel):
         'e.g. http://a.com/foo.osm or http://a.com/foo.osm.bz2'
     ))
     overall_scores = JSONField(db_index=True, default=dict)
+    population_url = models.URLField(max_length=2048, null=True, blank=True)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
+    jobs_url = models.URLField(max_length=2048, null=True, blank=True)
+    skip_import_jobs = models.BooleanField(default=False)
 
     analysis_job_definition = models.CharField(max_length=50, default=generate_analysis_job_def)
     _analysis_job_name = models.CharField(max_length=50, default='')
@@ -731,13 +740,6 @@ class AnalysisJob(PFBModel):
             logger.warning('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
 
-        # TODO: #614 remove this check on adding support for running international jobs
-        if not self.neighborhood.state:
-            logger.warning('Running jobs outside the US is not supported yet. Skipping {}.'.format(
-                self.uuid))
-            self.update_status(self.Status.ERROR)
-            return
-
         # Provide the base environment to enable runnin Django commands in the container
         environment = self.base_environment()
         # Job-specific settings
@@ -747,15 +749,17 @@ class AnalysisJob(PFBModel):
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,
-            'PFB_STATE_FIPS': self.neighborhood.state.fips,
+            'PFB_STATE_FIPS': self.neighborhood.state.fips if self.neighborhood.state else "",
             'PFB_CITY_FIPS': self.neighborhood.city_fips,
+            'PFB_COUNTRY': self.neighborhood.country.alpha3,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
-            'PFB_S3_RESULTS_PATH': self.s3_results_path
+            'PFB_S3_RESULTS_PATH': self.s3_results_path,
+            'PFB_JOB_URL': self.jobs_url if self.jobs_url is not None else '',
+            'PFB_OSM_FILE_URL': self.osm_extract_url if self.osm_extract_url is not None else '',
+            'PFB_POP_URL': self.population_url if self.population_url is not None else '',
+            'RUN_IMPORT_JOBS': 0 if self.skip_import_jobs else 1
         })
-
-        if self.osm_extract_url:
-            environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
 
         # Workaround for not being able to run development jobs on the actual batch cluster:
         # bail out with a helpful message
@@ -766,7 +770,7 @@ class AnalysisJob(PFBModel):
             logger.warning("Can't actually run development analysis jobs on AWS. Try this:\n"
                         + env_string +
                         " ./scripts/run-local-analysis "
-                        "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
+                        "'{PFB_SHPFILE_URL}' {PFB_COUNTRY}".format(**environment))
             return
 
         client = boto3.client('batch')
