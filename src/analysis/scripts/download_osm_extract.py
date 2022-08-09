@@ -179,7 +179,11 @@ def main():
         logger.setLevel('INFO')
 
     continent = country_to_continent.get_continent(country_alpha3).lower().replace(' ', '-')
-    country_name = pycountry.countries.get(alpha_3=country_alpha3).name.lower().replace(' ', '-')
+    country_name = (
+        pycountry.countries.get(alpha_3=country_alpha3).name.lower().replace(" ", "-")
+        if country_alpha3.lower() != "usa"
+        else "us"
+    )
     # Shortcut and do a direct geofabrik download if we don't have AWS configured
     # or a bucket provided
     if S3_CLIENT is None or bucket is None:
