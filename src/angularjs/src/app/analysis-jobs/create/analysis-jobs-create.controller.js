@@ -27,7 +27,7 @@
                                           {autoDismiss: false});
 
             var job = new AnalysisJob({
-                max_trip_distance: ctl.maxTripDistance,
+                max_trip_distance: ctl.maxTripDistance === null ? undefined : ctl.maxTripDistance,
                 neighborhood: ctl.neighborhood.uuid,
                 osm_extract_url: ctl.osmUrl,
                 population_url: ctl.populationUrl,
