@@ -144,8 +144,10 @@ def create_environment(**kwargs):
 
     Writes argument pairs to an array {name, value} objects, which is what AWS wants for
     environment overrides.
+    Casts values to string, since that's what AWS wants, and there's some benefit (e.g. catching
+    a stray integer) and really no cost to making sure.
     """
-    return [{'name': k, 'value': v} for k, v in kwargs.items()]
+    return [{'name': k, 'value': str(v)} for k, v in kwargs.items()]
 
 
 class Neighborhood(PFBModel):
