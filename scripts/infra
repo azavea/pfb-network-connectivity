@@ -38,6 +38,7 @@ function update_batch_definitions() {
 
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    GIT_COMMIT="${GIT_COMMIT:0:7}"
     if [ "${1:-}" = "--help" ]; then
         usage
     else
@@ -55,7 +56,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
         case "${1}" in
             plan)
-                update_batch_definitions
+                #update_batch_definitions
 
                 docker-compose run --rm \
                     --entrypoint rm \

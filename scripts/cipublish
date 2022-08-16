@@ -31,7 +31,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         if [[ -n "${PFB_AWS_ECR_ENDPOINT}" ]]; then
             # Evaluate the return value of the get-login subcommand, which
             # is a docker login command with temporarily ECR credentials.
-            eval "$(aws ecr get-login --no-include-email)"
+            aws ecr get-login-password | docker login --username AWS --password-stdin ${PFB_AWS_ECR_ENDPOINT}
 
             docker tag "pfb-nginx:${GIT_COMMIT}" \
                    "${PFB_AWS_ECR_ENDPOINT}/pfb-nginx:${GIT_COMMIT}"
