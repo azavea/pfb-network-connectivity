@@ -137,7 +137,7 @@ then
             else
                 echo "Using blocks file from PFB_POP_URL: ${PFB_POP_URL}"
             fi
-            wget -nv -O "${BLOCK_DOWNLOAD}" "${PFB_POP_URL}"      
+            wget -nv -O "${BLOCK_DOWNLOAD}" "${PFB_POP_URL}"
 
             if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
                 echo "Uploading census blocks file to S3 cache"
@@ -145,14 +145,6 @@ then
             fi
         fi
         unzip "${BLOCK_DOWNLOAD}" -d "${NB_TEMPDIR}"
-
-        if [ "${PFB_COUNTRY}" != "USA" ]; then
-            # Rename unzipped files if not from census so they can be found easily
-            cd $NB_TEMPDIR
-            rm "${NB_BLOCK_FILENAME}.zip"
-            for x in *; do mv "$x" "${NB_BLOCK_FILENAME}.${x##*.}"; done
-            cd - 
-        fi
 
         # Import block shapefile
         update_status "IMPORTING" "Loading census blocks"
@@ -166,7 +158,7 @@ then
                 AS boundary WHERE NOT ST_DWithin(blocks.geom, boundary.geom, \
                 ${NB_BOUNDARY_BUFFER});"
         echo "DONE: Finished removing blocks outside buffer"
-        
+
         if [ "${PFB_COUNTRY}" == "USA" ]; then
             # Discard blocks that are all water / no land area
             update_status "IMPORTING" "Removing water blocks"
