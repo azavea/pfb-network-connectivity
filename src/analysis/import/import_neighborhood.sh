@@ -149,8 +149,8 @@ then
         if [ "${PFB_COUNTRY}" != "USA" ]; then
             # Rename unzipped files if not from census so they can be found easily
             cd $NB_TEMPDIR
-            rm "${NB_BLOCK_FILENAME}.zip"
-            for x in *; do mv "$x" "${NB_BLOCK_FILENAME}.${x##*.}"; done
+            rm -f "${NB_BLOCK_FILENAME}.zip"
+            for x in *; do mv -u "$x" "${NB_BLOCK_FILENAME}.${x##*.}"; done
             cd - 
         fi
 
