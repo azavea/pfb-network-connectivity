@@ -96,7 +96,7 @@ Results available locally at ${NB_OUTPUT_DIR}
         PFB_S3_RESULTS_PATH=""
     fi
 
-    docker-compose run $EXTRA_ARGS \
+    docker-compose run --rm $EXTRA_ARGS \
         -e AWS_PROFILE="${AWS_PROFILE}" \
         -e AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME}" \
         -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
