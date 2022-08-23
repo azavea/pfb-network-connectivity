@@ -182,6 +182,8 @@ class Neighborhood(PFBModel):
     state_abbrev = models.CharField(help_text='The state/province of the uploaded neighborhood',
                                     blank=True, null=True, max_length=10)
     city_fips = models.CharField(max_length=CITY_FIPS_LENGTH, blank=True, default='')
+    speed_limit = models.IntegerField(help_text='The default residential speed limit, in MPH',
+                                      blank=True, null=True)
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the '
@@ -753,6 +755,7 @@ class AnalysisJob(PFBModel):
             'PFB_STATE': self.neighborhood.state_abbrev,
             'PFB_STATE_FIPS': self.neighborhood.state.fips if self.neighborhood.state else "",
             'PFB_CITY_FIPS': self.neighborhood.city_fips,
+            'PFB_RESIDENTIAL_SPEED_LIMIT': self.neighborhood.speed_limit if self.neighborhood.speed_limit else "",
             'PFB_COUNTRY': self.neighborhood.country.alpha3,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,

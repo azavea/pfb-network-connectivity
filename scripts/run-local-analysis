@@ -43,6 +43,7 @@ PFB_OSM_FILE (default: none, downloaded by the analysis job)
 PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
 PFB_STATE (default: none, no adjustments to speed defaults)
 PFB_STATE_FIPS (default: none, no adjustments to defaults)
+PFB_RESIDENTIAL_SPEED_LIMIT (default: none)
 PFB_CITY_FIPS (default: none, no adjustments to speed defaults)
 PFB_POP_URL (default: none)
 RUN_IMPORT_JOBS (default: 1)
@@ -107,6 +108,7 @@ Results available locally at ${NB_OUTPUT_DIR}
         -e NB_POSTGRESQL_PASSWORD \
         -e NB_POSTGRESQL_USER \
         -e PFB_CITY_FIPS=$PFB_CITY_FIPS \
+        -e PFB_RESIDENTIAL_SPEED_LIMIT=$PFB_RESIDENTIAL_SPEED_LIMIT \
         -e PFB_COUNTRY=$PFB_COUNTRY \
         -e PFB_JOB_ID=$PFB_JOB_ID \
         -e PFB_JOB_URL=$PFB_JOB_URL \

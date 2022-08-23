@@ -74,6 +74,7 @@
                 state_abbrev: ctl.state && ctl.country.subdivisions ? ctl.state.code : '',
                 // Only send city FIPS if it's supported (i.e. only for US)
                 city_fips: ctl.isDefaultCountry() ? (ctl.neighborhood.city_fips || '') : '',
+                speed_limit: ctl.neighborhood.speed_limit || '',
                 country: ctl.country.alpha_2,
                 visibility: ctl.neighborhood.visibility,
                 label: ctl.neighborhood.label
