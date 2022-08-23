@@ -16,6 +16,7 @@ NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
 PFB_STATE_FIPS="${PFB_STATE_FIPS:-NULL}"
 PFB_CITY_FIPS="${PFB_CITY_FIPS:-0}"
+PFB_RESIDENTIAL_SPEED_LIMIT="${PFB_RESIDENTIAL_SPEED_LIMIT:-}"
 
 # drop old tables
 echo 'Dropping old tables'
@@ -188,10 +189,10 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
 CITY_SPEED_FILENAME="city_fips_speed"
 CITY_SPEED_DOWNLOAD="${SPEED_TEMPDIR}/${CITY_SPEED_FILENAME}.csv"
 if [ -f "/data/${CITY_SPEED_FILENAME}.csv" ]; then
-	echo "Using local city speed file"
+  echo "Using local city speed file"
   CITY_SPEED_DOWNLOAD="/data/${CITY_SPEED_FILENAME}.csv"
 else
-	wget -nv -O "${CITY_SPEED_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/${CITY_SPEED_FILENAME}.csv"
+  wget -nv -O "${CITY_SPEED_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/${CITY_SPEED_FILENAME}.csv"
 fi
 
 psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
@@ -200,8 +201,16 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
 # Set default residential speed for city
 CITY_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
       -t -c "SELECT city_speed.speed FROM city_speed WHERE city_speed.fips_code_city = '${PFB_CITY_FIPS}'" )
-# Check if no value for city default, if so set to NULL
 
+rm -rf "${SPEED_TEMPDIR}"
+
+if [ -n "${PFB_RESIDENTIAL_SPEED_LIMIT}" ]; then
+  # If the speed limit is provided, set/override the city speed limit with that.
+  echo "Setting city speed limit to provided residential speed limit (${PFB_RESIDENTIAL_SPEED_LIMIT})"
+  CITY_DEFAULT=$PFB_RESIDENTIAL_SPEED_LIMIT
+fi
+
+# Check if no value for city default, if so set to NULL
 if [[ -z "$CITY_DEFAULT" ]];
 then
     echo "No default residential speed in city."
@@ -231,8 +240,7 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
           ${CITY_DEFAULT}
         );"
 
-rm -rf "${SPEED_TEMPDIR}"
-echo "DONE: Importing city default residential speed"
+echo "DONE: Importing default residential speed limit"
 
 # move the full osm tables to the received schema
 echo 'Moving tables to received schema'
