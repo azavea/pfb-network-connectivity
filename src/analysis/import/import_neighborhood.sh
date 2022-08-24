@@ -150,7 +150,7 @@ then
             # Rename unzipped files if not from census so they can be found easily
             cd $NB_TEMPDIR
             rm -f "${NB_BLOCK_FILENAME}.zip"
-            for x in *; do mv -u "$x" "${NB_BLOCK_FILENAME}.${x##*.}"; done
+            for x in *; do mv -n "$x" "${NB_BLOCK_FILENAME}.${x##*.}"; done
             cd - 
         fi
 
