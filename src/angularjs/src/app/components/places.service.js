@@ -67,17 +67,24 @@
                             ? scores.score_original
                             : Math.round(scores.score_normalized);          
                         if (scores.score_normalized === 0) {
+                            // If the score for a destination type is zero *and* the list of
+                            // features for that destination type is empty, show "No data" instead.
                             var found_destinations_url = results.destinations_urls.find(function(destinations_url) {
                                 return scoreKeyToDestinationsUrlName(key) === destinations_url.name;
                             });
                             if (found_destinations_url) {
                                 var destinations_promise = $http.get(found_destinations_url.url).then(function(response) {
                                     if (response.data.features.length === 0) {
-                                        scores.score_normalized = 'N/A' ;
+                                        scores.score_normalized = "No data";
                                     }
                                     return scores;
                                 });
                                 destinations_promises.push(destinations_promise)
+                            }
+                            // For employment there is no list of destinations, so just always
+                            // treat a score of exactly zero as "No data"
+                            if (key === "opportunity_employment") {
+                                scores.score_normalized = "No data";
                             }
                         }
                     });
