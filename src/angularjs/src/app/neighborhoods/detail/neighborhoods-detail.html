@@ -49,7 +49,15 @@
                  class="form-control" id="city_fips" type="text" name="city_fips">
           <span ng-show="neighborhoodForm.city_fips.$invalid" class="color-danger">
             FIPS should be 7 digits, starting with the two-digit state FIPS.
-        </span>
+          </span>
+        </div>
+        <div class="form-group animationIf" ng-if="neighborhoodDetail.country && !neighborhoodDetail.isDefaultCountry()">
+          <label for="label">Default Residential Speed Limit (in MPH)</label>
+          <input ng-model="neighborhoodDetail.neighborhood.speed_limit" ng-pattern="/^[0-9]+$/"
+                 class="form-control" id="speed_limit" type="text" name="speed_limit">
+          <span ng-show="neighborhoodForm.speed_limit.$invalid" class="color-danger">
+            Speed limit should be a positive integer, or blank.
+          </span>
         </div>
         <div class="form-group">
           <label for="role">Visibility</label>

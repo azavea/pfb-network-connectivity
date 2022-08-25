@@ -46,6 +46,17 @@ Vagrant.configure("2") do |config|
     s.args = "'#{ROOT_VM_DIR}'"
   end
 
+  config.vm.provision "shell" do |s|
+    # The base box comes with a 64GB virtual disk but only 30GB is actually included
+    # in the filesystem. This extends the logical volume within the VM and expands the
+    # filesystem to use all of it.
+    # Ignores errors, since it will return an error if it has already been done.
+    s.inline = <<-SHELL
+      sudo lvextend -l +100%FREE --resizefs /dev/ubuntu-vg/ubuntu-lv \
+          || echo "Extending logical volume failed. Continuing anyway."
+    SHELL
+  end
+
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "deployment/ansible/pfb.yml"
     ansible.galaxy_role_file = "deployment/ansible/roles.yml"

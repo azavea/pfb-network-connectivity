@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replace Feedback link with City Ratings link, point Methodology link to City Ratings methodology page
 - Facilitate non-US analyses with custom population files, jobs files, and osm extracts
 - Make analysis convert kmph speed limits to rounded mph
+- Add field to set default speed limit for non-US cities
+- Round km/h speed limit values on map legend to the nearest 5
 - Upgrade Terraform to 1.1.9
 
 #### Fixed
