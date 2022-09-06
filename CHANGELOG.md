@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.16.0] - 2022-09-06
+
 #### Changed
 - Upgrade AWS CLI to v2 in analysis container
 - Upgrade base VM from Ubuntu 16.04 to 20.04
@@ -170,7 +172,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.1...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.16.0...HEAD
+[0.16.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.1...0.16.0
 [0.15.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.0...0.15.1
 [0.15.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.13.0...0.14.0
