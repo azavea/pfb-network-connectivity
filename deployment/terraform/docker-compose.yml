@@ -1,10 +1,11 @@
 version: '2'
 services:
   terraform:
-    image: quay.io/azavea/terraform:0.9.6
+    image: quay.io/azavea/terraform:1.1.9
     volumes:
       - ./:/usr/local/src
       - $HOME/.aws:/root/.aws:ro
+      - ${PWD}/.gitconfig:/root/.gitconfig
     environment:
       - PFB_DEBUG=1
       - AWS_PROFILE

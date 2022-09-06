@@ -18,11 +18,11 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_util" {
   statistic           = "Average"
   threshold           = "75"
 
-  dimensions {
-    ClusterName = "${aws_ecs_cluster.app_container_instance.name}"
+  dimensions = {
+    ClusterName = aws_ecs_cluster.app_container_instance.name
   }
 
-  alarm_actions = ["${aws_sns_topic.global.arn}"]
+  alarm_actions = [aws_sns_topic.global.arn]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs_memory_util" {
@@ -36,9 +36,10 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_util" {
   statistic           = "Average"
   threshold           = "80"
 
-  dimensions {
-    ClusterName = "${aws_ecs_cluster.app_container_instance.name}"
+  dimensions = {
+    ClusterName = aws_ecs_cluster.app_container_instance.name
   }
 
-  alarm_actions = ["${aws_sns_topic.global.arn}"]
+  alarm_actions = [aws_sns_topic.global.arn]
 }
+

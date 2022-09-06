@@ -19,7 +19,8 @@ import zipfile
 from django.conf import settings
 from django.contrib.gis.db.models import LineStringField, MultiPolygonField, PointField
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
+from django.db.models.functions import Cast
 from django.core.files import File
 from django.db import models
 from django.db.models.signals import post_delete
@@ -143,8 +144,10 @@ def create_environment(**kwargs):
 
     Writes argument pairs to an array {name, value} objects, which is what AWS wants for
     environment overrides.
+    Casts values to string, since that's what AWS wants, and there's some benefit (e.g. catching
+    a stray integer) and really no cost to making sure.
     """
-    return [{'name': k, 'value': v} for k, v in kwargs.items()]
+    return [{'name': k, 'value': str(v)} for k, v in kwargs.items()]
 
 
 class Neighborhood(PFBModel):
@@ -179,6 +182,8 @@ class Neighborhood(PFBModel):
     state_abbrev = models.CharField(help_text='The state/province of the uploaded neighborhood',
                                     blank=True, null=True, max_length=10)
     city_fips = models.CharField(max_length=CITY_FIPS_LENGTH, blank=True, default='')
+    speed_limit = models.IntegerField(help_text='The default residential speed limit, in MPH',
+                                      blank=True, null=True)
     boundary_file = models.FileField(max_length=1024,
                                      upload_to=get_neighborhood_file_upload_path,
                                      help_text='A zipped shapefile boundary to run the '
@@ -317,7 +322,7 @@ class Neighborhood(PFBModel):
             shpfiles = [filename for filename in os.listdir(tmpdir) if filename.endswith('shp')]
             shp_filename = os.path.join(tmpdir, shpfiles[0])
             with fiona.open(shp_filename, 'r') as shp_handle:
-                feature = next(shp_handle)
+                feature = next(iter(shp_handle))
                 geom = GEOSGeometry(json.dumps(feature['geometry']))
                 if geom.geom_type == 'Polygon':
                     geom = MultiPolygon([geom])
@@ -340,10 +345,16 @@ def delete_boundary_file(sender, instance, **kwargs):
 
 class AnalysisBatchManager(models.Manager):
 
-    def create_from_shapefile(self, shapefile, submit=False, user=None, *args, **kwargs):
+    def create_from_shapefile(
+        self,
+        shapefile,
+        max_trip_distance=None,
+        submit=False,
+        user=None,
+    ):
         """ Create a new AnalysisBatch from a well-formatted shapefile.
 
-       shapefile can be one of:
+        shapefile can be one of:
         - HTTP URL to remote, publicly accessible zip file
         - local path to zipfile containing shapefile (must end with .zip extension)
         - local path to unzipped shapefile (must end with .shp extension)
@@ -390,7 +401,10 @@ class AnalysisBatchManager(models.Manager):
                 # Handle NULL values in the city_fips property, which aren't allowed in the model
                 if city_fips is None:
                     city_fips = ''
-                osm_extract_url = feature['properties'].get('osm_url', None)
+                osm_extract_url = '' if feature['properties'].get('osm_url', '') is None else feature['properties'].get('osm_url', '')
+                population_url = '' if feature['properties'].get('population_url', '') is None else feature['properties'].get('population_url', '')
+                jobs_url = '' if feature['properties'].get('jobs_url', '') is None else feature['properties'].get('jobs_url', '')
+                skip_import_jobs = feature['properties'].get('skip_import_jobs', False)
                 label = city
                 name = Neighborhood.name_for_label(label)
 
@@ -422,11 +436,19 @@ class AnalysisBatchManager(models.Manager):
                 neighborhood.save()
 
                 # Create new job
-                job = AnalysisJob.objects.create(neighborhood=neighborhood,
-                                                 batch=batch,
-                                                 osm_extract_url=osm_extract_url,
-                                                 created_by=user,
-                                                 modified_by=user)
+                job_params = {
+                    "neighborhood": neighborhood,
+                    "batch": batch,
+                    "osm_extract_url": osm_extract_url,
+                    "population_url": population_url,
+                    "jobs_url": jobs_url,
+                    "skip_import_jobs": skip_import_jobs,
+                    "created_by": user,
+                    "modified_by": user,
+                }
+                if max_trip_distance is not None:
+                    job_params["max_trip_distance"] = max_trip_distance
+                job = AnalysisJob.objects.create(**job_params)
                 logger.info('AnalysisBatch.create_from_shapefile ID: {} -- {}'
                             .format(str(job.uuid), str(job)))
         except Exception as e:
@@ -489,9 +511,12 @@ class AnalysisJobManager(models.Manager):
         qs = super(AnalysisJobManager, self).get_queryset()
         qs = (qs.annotate(overall_score=ObjectAtPath('overall_scores',
                                                      ('overall_score', 'score_normalized')))
-                .annotate(population_total=ObjectAtPath('overall_scores',
-                                                        ('population_total', 'score_original'),
-                          output_field=models.PositiveIntegerField()))
+                .annotate(population_total=Cast((
+                    ObjectAtPath(
+                        'overall_scores',
+                        ('population_total', 'score_original')
+                    )
+                ), output_field=models.PositiveIntegerField()))
               )
         return qs
 
@@ -556,12 +581,16 @@ class AnalysisJob(PFBModel):
         'e.g. http://a.com/foo.osm or http://a.com/foo.osm.bz2'
     ))
     overall_scores = JSONField(db_index=True, default=dict)
+    population_url = models.URLField(max_length=2048, null=True, blank=True)
     census_block_count = models.PositiveIntegerField(blank=True, null=True)
+    jobs_url = models.URLField(max_length=2048, null=True, blank=True)
+    skip_import_jobs = models.BooleanField(default=False)
 
     analysis_job_definition = models.CharField(max_length=50, default=generate_analysis_job_def)
     _analysis_job_name = models.CharField(max_length=50, default='')
     start_time = models.DateTimeField(null=True, blank=True)
     final_runtime = models.PositiveIntegerField(default=0)
+    max_trip_distance = models.PositiveIntegerField(blank=True, null=True, default=2680)
     status = models.CharField(choices=Status.CHOICES, max_length=12, default=Status.CREATED)
     default_speed_limit = models.PositiveIntegerField(blank=True, null=True)
     speed_limit_src = models.CharField(
@@ -715,39 +744,38 @@ class AnalysisJob(PFBModel):
             logger.warning('Attempt to re-run job: {}. Skipping.'.format(self.uuid))
             return
 
-        # TODO: #614 remove this check on adding support for running international jobs
-        if not self.neighborhood.state:
-            logger.warning('Running jobs outside the US is not supported yet. Skipping {}.'.format(
-                self.uuid))
-            self.update_status(self.Status.ERROR)
-            return
-
         # Provide the base environment to enable runnin Django commands in the container
         environment = self.base_environment()
         # Job-specific settings
         environment.update({
             'NB_TEMPDIR': os.path.join('/tmp', str(self.uuid)),
+            'NB_MAX_TRIP_DISTANCE': str(self.max_trip_distance),
             'PGDATA': os.path.join('/pgdata', str(self.uuid)),
             'PFB_SHPFILE_URL': self.neighborhood.boundary_file.url,
             'PFB_STATE': self.neighborhood.state_abbrev,
-            'PFB_STATE_FIPS': self.neighborhood.state.fips,
+            'PFB_STATE_FIPS': self.neighborhood.state.fips if self.neighborhood.state else "",
             'PFB_CITY_FIPS': self.neighborhood.city_fips,
+            'PFB_RESIDENTIAL_SPEED_LIMIT': self.neighborhood.speed_limit if self.neighborhood.speed_limit else "",
+            'PFB_COUNTRY': self.neighborhood.country.alpha3,
             'PFB_JOB_ID': str(self.uuid),
             'AWS_STORAGE_BUCKET_NAME': settings.AWS_STORAGE_BUCKET_NAME,
-            'PFB_S3_RESULTS_PATH': self.s3_results_path
+            'PFB_S3_RESULTS_PATH': self.s3_results_path,
+            'PFB_JOB_URL': self.jobs_url if self.jobs_url is not None else '',
+            'PFB_OSM_FILE_URL': self.osm_extract_url if self.osm_extract_url is not None else '',
+            'PFB_POP_URL': self.population_url if self.population_url is not None else '',
+            'RUN_IMPORT_JOBS': 0 if self.skip_import_jobs else 1
         })
-
-        if self.osm_extract_url:
-            environment['PFB_OSM_FILE_URL'] = self.osm_extract_url
 
         # Workaround for not being able to run development jobs on the actual batch cluster:
         # bail out with a helpful message
         if settings.DJANGO_ENV == 'development':
             self.update_status(self.Status.QUEUED)
-            logger.warning("Can't actually run development analysis jobs on AWS. Try this:"
-                        "\nPFB_JOB_ID='{PFB_JOB_ID}' PFB_CITY_FIPS='{PFB_CITY_FIPS}' PFB_S3_RESULTS_PATH='{PFB_S3_RESULTS_PATH}' "
-                        "./scripts/run-local-analysis "
-                        "'{PFB_SHPFILE_URL}' {PFB_STATE} {PFB_STATE_FIPS}".format(**environment))
+            env_string = " ".join("{}='{}'".format(key, value) for (key, value) in environment.items())
+            # A few envs must redundantly be added as arguments to run-local-analysis
+            logger.warning("Can't actually run development analysis jobs on AWS. Try this:\n"
+                        + env_string +
+                        " ./scripts/run-local-analysis "
+                        "'{PFB_SHPFILE_URL}' {PFB_COUNTRY}".format(**environment))
             return
 
         client = boto3.client('batch')

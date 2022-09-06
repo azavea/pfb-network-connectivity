@@ -11,6 +11,10 @@ export NB_POSTGRESQL_USER="${NB_POSTGRESQL_USER:-gis}"
 export NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 # Same units as NB_MAX_TRIP_DISTANCE
 export NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
+export PFB_POP_URL="${PFB_POP_URL:-}"
+export PFB_JOB_URL="${PFB_JOB_URL:-}"
+export RUN_IMPORT_JOBS="${RUN_IMPORT_JOBS:-1}"
+export PFB_COUNTRY="${PFB_COUNTRY:-USA}"
 
 source "$(dirname $0)"/utils.sh
 
@@ -49,7 +53,7 @@ then
         *)         echo "Unrecognized zip format, skipping..." ;;
     esac
 
-    PFB_OSM_FILE="${PFB_TEMPDIR}/osm"/$(ls *.osm)  # Assumes there's exactly one .osm file
+    PFB_OSM_FILE="${PFB_TEMPDIR}/osm"/$(ls *.osm*)  # Assumes there's exactly one .osm file
     echo "OSM file is ${PFB_OSM_FILE}"
     popd
 elif [ ! "${PFB_OSM_FILE}" ] || [ ! -f "${PFB_OSM_FILE}" ]
@@ -61,15 +65,20 @@ then
     else
         BUCKET_ARG=""
     fi
-    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $BUCKET_ARG $PFB_TEMPDIR $PFB_STATE)"
+    if [ -n "${PFB_STATE}" ]
+    then
+        PFB_STATE_ARG="--state_abbrev ${PFB_STATE}"
+    else
+        PFB_STATE_ARG=""
+    fi
+    PFB_OSM_FILE="$(./scripts/download_osm_extract.py $BUCKET_ARG $PFB_STATE_ARG $PFB_TEMPDIR $PFB_COUNTRY)"
 fi
 
 # run job
 
 # determine coordinate reference system based on input shapefile UTM zone
 export NB_OUTPUT_SRID="$(./scripts/detect_utm_zone.py $PFB_SHPFILE)"
-
-./scripts/import.sh $PFB_SHPFILE $PFB_STATE $PFB_STATE_FIPS $PFB_OSM_FILE
+./scripts/import.sh $PFB_SHPFILE $PFB_OSM_FILE $PFB_COUNTRY $PFB_STATE $PFB_STATE_FIPS
 ./scripts/run_connectivity.sh
 
 # print scores

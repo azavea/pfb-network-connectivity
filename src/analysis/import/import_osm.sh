@@ -14,8 +14,9 @@ NB_OUTPUT_SRID="${NB_OUTPUT_SRID:-2163}"
 NB_SIGCTL_SEARCH_DIST="${NB_SIGCTL_SEARCH_DIST:-25}"    # max search distance for intersection controls
 NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
 NB_BOUNDARY_BUFFER="${NB_BOUNDARY_BUFFER:-$NB_MAX_TRIP_DISTANCE}"
-PFB_STATE_FIPS="${PFB_STATE_FIPS}"
+PFB_STATE_FIPS="${PFB_STATE_FIPS:-NULL}"
 PFB_CITY_FIPS="${PFB_CITY_FIPS:-0}"
+PFB_RESIDENTIAL_SPEED_LIMIT="${PFB_RESIDENTIAL_SPEED_LIMIT:-}"
 
 # drop old tables
 echo 'Dropping old tables'
@@ -94,7 +95,7 @@ echo 'Renaming tables'
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "ALTER TABLE received.neighborhood_ways_vertices_pgr RENAME TO neighborhood_ways_intersections;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE received.neighborhood_ways_intersections RENAME CONSTRAINT vertex_id TO neighborhood_vertex_id;"
+  -c "ALTER TABLE received.neighborhood_ways_intersections RENAME CONSTRAINT neighborhood_ways_vertices_pgr_osm_id_key TO neighborhood_vertex_id;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "DROP TABLE IF EXISTS received.osm_nodes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
@@ -106,7 +107,7 @@ psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "DROP TABLE IF EXISTS received.osm_way_types CASCADE;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
-  -c "ALTER TABLE scratch.neighborhood_cycwys_ways_vertices_pgr RENAME CONSTRAINT vertex_id TO neighborhood_vertex_id;"
+  -c "ALTER TABLE scratch.neighborhood_cycwys_ways_vertices_pgr RENAME CONSTRAINT neighborhood_cycwys_ways_vertices_pgr_osm_id_key TO neighborhood_vertex_id;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
   -c "DROP TABLE IF EXISTS scratch.osm_nodes;"
 psql -h $NB_POSTGRESQL_HOST -U ${NB_POSTGRESQL_USER} -d ${NB_POSTGRESQL_DB} \
@@ -169,6 +170,9 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
 # Set default residential speed for state
 STATE_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
       -t -c "SELECT state_speed.speed FROM state_speed WHERE state_speed.fips_code_state = '${PFB_STATE_FIPS}'" )
+if [ -z $STATE_DEFAULT ]; then
+  STATE_DEFAULT=NULL
+fi
 echo "DONE: Importing state default residential speed"
 
 # Create table for city residential speeds
@@ -185,10 +189,10 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
 CITY_SPEED_FILENAME="city_fips_speed"
 CITY_SPEED_DOWNLOAD="${SPEED_TEMPDIR}/${CITY_SPEED_FILENAME}.csv"
 if [ -f "/data/${CITY_SPEED_FILENAME}.csv" ]; then
-	echo "Using local city speed file"
+  echo "Using local city speed file"
   CITY_SPEED_DOWNLOAD="/data/${CITY_SPEED_FILENAME}.csv"
 else
-	wget -nv -O "${CITY_SPEED_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/${CITY_SPEED_FILENAME}.csv"
+  wget -nv -O "${CITY_SPEED_DOWNLOAD}" "https://s3.amazonaws.com/pfb-public-documents/${CITY_SPEED_FILENAME}.csv"
 fi
 
 psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
@@ -197,8 +201,16 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
 # Set default residential speed for city
 CITY_DEFAULT=$( psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
       -t -c "SELECT city_speed.speed FROM city_speed WHERE city_speed.fips_code_city = '${PFB_CITY_FIPS}'" )
-# Check if no value for city default, if so set to NULL
 
+rm -rf "${SPEED_TEMPDIR}"
+
+if [ -n "${PFB_RESIDENTIAL_SPEED_LIMIT}" ]; then
+  # If the speed limit is provided, set/override the city speed limit with that.
+  echo "Setting city speed limit to provided residential speed limit (${PFB_RESIDENTIAL_SPEED_LIMIT})"
+  CITY_DEFAULT=$PFB_RESIDENTIAL_SPEED_LIMIT
+fi
+
+# Check if no value for city default, if so set to NULL
 if [[ -z "$CITY_DEFAULT" ]];
 then
     echo "No default residential speed in city."
@@ -228,8 +240,7 @@ psql -h $NB_POSTGRESQL_HOST -U $NB_POSTGRESQL_USER -d $NB_POSTGRESQL_DB \
           ${CITY_DEFAULT}
         );"
 
-rm -rf "${SPEED_TEMPDIR}"
-echo "DONE: Importing city default residential speed"
+echo "DONE: Importing default residential speed limit"
 
 # move the full osm tables to the received schema
 echo 'Moving tables to received schema'

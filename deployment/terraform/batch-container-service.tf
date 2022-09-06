@@ -2,12 +2,12 @@
 # Security group resources
 #
 resource "aws_security_group" "batch_container_instance" {
-  vpc_id = "${module.vpc.id}"
+  vpc_id = module.vpc.id
 
-  tags {
+  tags = {
     Name        = "sgBatchContainerInstance"
-    Project     = "${var.project}"
-    Environment = "${var.environment}"
+    Project     = var.project
+    Environment = var.environment
   }
 }
 
@@ -15,14 +15,14 @@ resource "aws_security_group" "batch_container_instance" {
 # Autoscaling Resources
 #
 data "template_file" "batch_container_instance_cloud_config" {
-  template = "${file("cloud-config/ecs-batch-user-data.yml")}"
+  template = file("cloud-config/ecs-batch-user-data.yml")
 
-  vars {
-    ecs_cluster_name                      = "${var.batch_ecs_cluster_name}"
-    environment                           = "${var.environment}"
-    ecs_engine_task_cleanup_wait_duration = "${var.batch_ecs_engine_task_cleanup_wait_duration}"
-    ecs_image_cleanup_interval            = "${var.batch_ecs_image_cleanup_interval}"
-    ecs_image_minimum_cleanup_age         = "${var.batch_ecs_image_minimum_cleanup_age}"
+  vars = {
+    ecs_cluster_name                      = var.batch_ecs_cluster_name
+    environment                           = var.environment
+    ecs_engine_task_cleanup_wait_duration = var.batch_ecs_engine_task_cleanup_wait_duration
+    ecs_image_cleanup_interval            = var.batch_ecs_image_cleanup_interval
+    ecs_image_minimum_cleanup_age         = var.batch_ecs_image_minimum_cleanup_age
   }
 }
 
@@ -32,23 +32,23 @@ resource "aws_launch_configuration" "batch_container_instance" {
   }
 
   ebs_optimized        = true
-  iam_instance_profile = "${aws_iam_instance_profile.batch_container_instance.name}"
-  image_id             = "${var.ecs_instance_ami_id}"
-  instance_type        = "${var.batch_container_instance_type}"
-  key_name             = "${var.aws_key_name}"
-  security_groups      = ["${aws_security_group.batch_container_instance.id}"]
+  iam_instance_profile = aws_iam_instance_profile.batch_container_instance.name
+  image_id             = var.ecs_instance_ami_id
+  instance_type        = var.batch_container_instance_type
+  key_name             = var.aws_key_name
+  security_groups      = [aws_security_group.batch_container_instance.id]
 
-  user_data = "${data.template_file.batch_container_instance_cloud_config.rendered}"
+  user_data = data.template_file.batch_container_instance_cloud_config.rendered
 }
 
 resource "aws_autoscaling_group" "batch_container_instance" {
   name = "asg${var.environment}BatchContainerInstance"
 
-  launch_configuration = "${aws_launch_configuration.batch_container_instance.name}"
+  launch_configuration = aws_launch_configuration.batch_container_instance.name
   health_check_type    = "EC2"
-  desired_capacity     = "${var.batch_container_instance_asg_desired_capacity}"
-  min_size             = "${var.batch_container_instance_asg_min_size}"
-  max_size             = "${var.batch_container_instance_asg_max_size}"
+  desired_capacity     = var.batch_container_instance_asg_desired_capacity
+  min_size             = var.batch_container_instance_asg_min_size
+  max_size             = var.batch_container_instance_asg_max_size
 
   enabled_metrics = [
     "GroupMinSize",
@@ -61,7 +61,7 @@ resource "aws_autoscaling_group" "batch_container_instance" {
     "GroupTotalInstances",
   ]
 
-  vpc_zone_identifier = ["${module.vpc.private_subnet_ids}"]
+  vpc_zone_identifier = module.vpc.private_subnet_ids
 
   tag {
     key                 = "Name"
@@ -71,13 +71,14 @@ resource "aws_autoscaling_group" "batch_container_instance" {
 
   tag {
     key                 = "Project"
-    value               = "${var.project}"
+    value               = var.project
     propagate_at_launch = true
   }
 
   tag {
     key                 = "Environment"
-    value               = "${var.environment}"
+    value               = var.environment
     propagate_at_launch = true
   }
 }
+

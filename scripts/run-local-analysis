@@ -10,7 +10,7 @@ fi
 
 function usage() {
     echo -n \
-         "Usage: $(basename "$0") PFB_SHPFILE[_URL] PFB_STATE PFB_STATE_FIPS ['extra args']
+         "Usage: $(basename "$0") PFB_SHPFILE[_URL] PFB_COUNTRY ['extra args']
 
 Run an analysis job in local development. Sets a bunch of the required
 arguments to useful defaults.
@@ -41,20 +41,26 @@ NB_POSTGRESQL_USER (default: gis)
 PFB_JOB_ID (default: none, local-only results)
 PFB_OSM_FILE (default: none, downloaded by the analysis job)
 PFB_OSM_FILE_URL (expects a zipped .osm file, overrides PFB_OSM_FILE. default: none)
+PFB_STATE (default: none, no adjustments to speed defaults)
+PFB_STATE_FIPS (default: none, no adjustments to defaults)
+PFB_RESIDENTIAL_SPEED_LIMIT (default: none)
 PFB_CITY_FIPS (default: none, no adjustments to speed defaults)
+PFB_POP_URL (default: none)
+RUN_IMPORT_JOBS (default: 1)
 
 EXAMPLES:
 A boulder run with local shapefile and all defaults:
-   ./scripts/run-local-analysis /data/boulder.shp co 08
+    PFB_STATE='co' PFB_STATE_FIPS=08 \\
+        ./scripts/run-local-analysis /data/boulder.shp usa
 
 Override the max trip distance and supply an OSM file:
-   PFB_OSM_FILE=/data/boulder.osm NB_MAX_TRIP_DISTANCE=2000 \\
-       ./scripts/run-local-analysis /data/boulder.shp co 08
+   PFB_OSM_FILE=/data/boulder.osm NB_MAX_TRIP_DISTANCE=2000 PFB_STATE='co' PFB_STATE_FIPS=08 \\
+       ./scripts/run-local-analysis /data/boulder.shp usa
 "
 }
 
 
-if [ "${1:-}" = "--help" ] || [ -z "${3}" ]
+if [ "${1:-}" = "--help" ] || [ -z "${2}" ]
 then
     usage
 else
@@ -63,15 +69,17 @@ else
     else
         PFB_SHPFILE="${1}"
     fi
-    PFB_STATE="${2}"
-    PFB_STATE_FIPS="${3}"
-    EXTRA_ARGS="${4}"
+    PFB_COUNTRY="${2}"
+    EXTRA_ARGS="${3}"
 
     AWS_PROFILE="${AWS_PROFILE:-pfb}"
     NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
     NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"
     PFB_JOB_ID="${PFB_JOB_ID:-}"
+    PFB_STATE="${PFB_STATE:-}"
+    PFB_STATE_FIPS="${PFB_STATE_FIPS:-}"
+    RUN_IMPORT_JOBS="${RUN_IMPORT_JOBS:-1}"
 
     if [ -n "${PFB_JOB_ID}" ] && aws iam get-user > /dev/null 2>&1; then
         AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME:-${DEV_USER:-dev-user}-pfb-storage-us-east-1}"
@@ -88,7 +96,7 @@ Results available locally at ${NB_OUTPUT_DIR}
         PFB_S3_RESULTS_PATH=""
     fi
 
-    docker-compose run $EXTRA_ARGS \
+    docker-compose run --rm $EXTRA_ARGS \
         -e AWS_PROFILE="${AWS_PROFILE}" \
         -e AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME}" \
         -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \
@@ -99,13 +107,19 @@ Results available locally at ${NB_OUTPUT_DIR}
         -e NB_POSTGRESQL_HOST \
         -e NB_POSTGRESQL_PASSWORD \
         -e NB_POSTGRESQL_USER \
+        -e PFB_CITY_FIPS=$PFB_CITY_FIPS \
+        -e PFB_RESIDENTIAL_SPEED_LIMIT=$PFB_RESIDENTIAL_SPEED_LIMIT \
+        -e PFB_COUNTRY=$PFB_COUNTRY \
         -e PFB_JOB_ID=$PFB_JOB_ID \
+        -e PFB_JOB_URL=$PFB_JOB_URL \
         -e PFB_OSM_FILE=$PFB_OSM_FILE \
         -e PFB_OSM_FILE_URL=$PFB_OSM_FILE_URL \
+        -e PFB_POP_URL=$PFB_POP_URL \
         -e PFB_S3_RESULTS_PATH=$PFB_S3_RESULTS_PATH \
         -e PFB_SHPFILE=$PFB_SHPFILE \
         -e PFB_SHPFILE_URL=$PFB_SHPFILE_URL \
-        -e PFB_STATE=$PFB_STATE -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
-        -e PFB_CITY_FIPS=$PFB_CITY_FIPS \
+        -e PFB_STATE=$PFB_STATE \
+        -e PFB_STATE_FIPS=$PFB_STATE_FIPS \
+        -e RUN_IMPORT_JOBS=$RUN_IMPORT_JOBS \
         analysis
 fi

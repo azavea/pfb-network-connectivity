@@ -7,7 +7,6 @@
       apt: update_cache=yes
 
   roles:
-    - { role: "azavea.terraform" }
     - { role: "pfb.aws-cli" }
     - { role: "pfb.env" }
     - { role: "pfb.docker" }

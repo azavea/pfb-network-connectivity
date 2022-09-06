@@ -14,7 +14,7 @@
         },
         onAdd: function () {
             var div = L.DomUtil.create('div', 'leaflet-control-layers pfb-speed-limit-legend');
-            var kphLimit = Math.round(this.speedLimit * 1.609);
+            var kphLimit = Math.round(this.speedLimit * 1.609 / 5) * 5;
             div.innerHTML += '<h6>Residential Speed Limit</h6>';
             div.innerHTML += '<div class="speed-limit-inner">' +
                 '<div class="speed-limit-block"><div class="speed-limit">' + this.speedLimit + '</div><div>mph</div></div>' +

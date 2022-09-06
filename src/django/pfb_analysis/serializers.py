@@ -118,7 +118,7 @@ class NeighborhoodSerializer(PFBModelSerializer):
         # explicitly list fields (instead of using `exclude`) to control ordering
         fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                   'name', 'label', 'label_suffix', 'organization', 'country', 'state_abbrev',
-                  'city_fips', 'boundary_file', 'visibility', 'last_job',)
+                  'city_fips', 'speed_limit', 'boundary_file', 'visibility', 'last_job',)
         read_only_fields = ('uuid', 'createdAt', 'modifiedAt', 'createdBy', 'modifiedBy',
                             'organization', 'last_job', 'name',)
 
@@ -134,7 +134,7 @@ class NeighborhoodSummarySerializer(PFBModelSerializer):
     class Meta:
         model = Neighborhood
         fields = ('uuid', 'name', 'label', 'label_suffix', 'country', 'state_abbrev',
-                  'organization', 'geom_pt',)
+                  'organization', 'geom_pt', 'city_fips',)
         read_only_fields = fields
 
 
@@ -189,6 +189,7 @@ class AnalysisJobSerializer(PFBModelSerializer):
                                                    serializer=NeighborhoodSummarySerializer)
     overall_score = serializers.FloatField(read_only=True)
     population_total = serializers.IntegerField(read_only=True)
+    max_trip_distance = serializers.IntegerField(allow_null=True, required=False)
     local_upload_task = PrimaryKeyReferenceRelatedField(serializer=AnalysisLocalUploadTaskSummarySerializer,
                                                         read_only=True)
 

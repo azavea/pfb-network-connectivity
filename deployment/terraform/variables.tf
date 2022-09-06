@@ -8,47 +8,75 @@ variable "project" {
 
 variable "aws_account_id" {
   default = "950872791630"
+  sensitive = true
 }
 
-variable "aws_region" {}
+variable "aws_region" {
+}
 
 # Must be one of release, staging, production
-variable "environment" {}
-
-variable "bastion_ami" {
-  default = "ami-f5f41398"
+variable "environment" {
 }
 
-variable "r53_private_hosted_zone" {}
-variable "r53_public_hosted_zone" {}
+variable "bastion_ami" {
+  default = "ami-0022f774911c1d690"
+}
+
+variable "r53_private_hosted_zone" {
+}
+
+variable "r53_public_hosted_zone" {
+}
 
 # Scaling
-variable "app_container_instance_asg_desired_capacity" {}
+variable "app_container_instance_asg_desired_capacity" {
+}
 
-variable "app_container_instance_asg_min_size" {}
-variable "app_container_instance_asg_max_size" {}
-variable "app_container_instance_type" {}
-variable "aws_key_name" {}
-variable "ecs_instance_ami_id" {}
+variable "app_container_instance_asg_min_size" {
+}
+
+variable "app_container_instance_asg_max_size" {
+}
+
+variable "app_container_instance_type" {
+}
+
+variable "aws_key_name" {
+}
+
+variable "ecs_instance_ami_id" {
+}
 
 # ECS
 ## HTTP API server
-variable "pfb_app_http_ecs_desired_count" {}
+variable "pfb_app_http_ecs_desired_count" {
+}
 
-variable "pfb_app_http_ecs_deployment_min_percent" {}
-variable "pfb_app_http_ecs_deployment_max_percent" {}
+variable "pfb_app_http_ecs_deployment_min_percent" {
+}
+
+variable "pfb_app_http_ecs_deployment_max_percent" {
+}
 
 ## HTTPS API server
-variable "pfb_app_https_ecs_deployment_max_percent" {}
+variable "pfb_app_https_ecs_deployment_max_percent" {
+}
 
-variable "pfb_app_https_ecs_desired_count" {}
-variable "pfb_app_https_ecs_deployment_min_percent" {}
+variable "pfb_app_https_ecs_desired_count" {
+}
+
+variable "pfb_app_https_ecs_deployment_min_percent" {
+}
 
 ## Async Queue
-variable "pfb_app_async_queue_ecs_desired_count" {}
+variable "pfb_app_async_queue_ecs_desired_count" {
+}
 
-variable "pfb_app_async_queue_ecs_deployment_min_percent" {}
-variable "pfb_app_async_queue_ecs_deployment_max_percent" {}
+variable "pfb_app_async_queue_ecs_deployment_min_percent" {
+}
+
+variable "pfb_app_async_queue_ecs_deployment_max_percent" {
+}
 
 # IAM
 variable "aws_ecs_for_ec2_service_role_policy_arn" {
@@ -68,60 +96,110 @@ variable "aws_sqs_read_write_policy_arn" {
 }
 
 # Variables that must be defined for VPC
-variable "vpc_cidr_block" {}
+variable "vpc_cidr_block" {
+}
 
 variable "vpc_private_subnet_cidr_blocks" {
-  type = "list"
+  type = list(string)
 }
 
 variable "vpc_public_subnet_cidr_blocks" {
-  type = "list"
+  type = list(string)
 }
 
-variable "vpc_external_access_cidr_block" {}
-variable "vpc_bastion_instance_type" {}
+variable "vpc_external_access_cidr_block" {
+}
+
+variable "vpc_bastion_instance_type" {
+}
 
 variable "vpc_availibility_zones" {
-  type = "list"
+  type = list(string)
 }
 
 #variable "ecs_iam_role" {}
 #variable "ecs_iam_profile" {}
-variable "git_commit" {}
+variable "git_commit" {
+}
 
 # RDS
-variable "rds_storage_size_gb" {}
+variable "rds_storage_size_gb" {
+}
 
-variable "rds_engine_version" {}
-variable "rds_instance_type" {}
-variable "rds_storage_type" {}
-variable "rds_database_identifier" {}
-variable "rds_database_name" {}
-variable "rds_username" {}
-variable "rds_password" {}
-variable "rds_database_port" {}
-variable "rds_backup_retention_period" {}
-variable "rds_parameter_group_family" {}
-variable "rds_backup_window" {}
-variable "rds_maintenance_window" {}
-variable "rds_multi_availability_zone" {}
-variable "rds_sorage_encrypted" {}
-variable "rds_auto_minor_version_upgrade" {}
-variable "rds_alarm_cpu_threshold" {}
-variable "rds_alarm_disk_queue_threshold" {}
-variable "rds_alarm_free_disk_threshold" {}
-variable "rds_alarm_free_memory_threshold" {}
+variable "rds_engine_version" {
+}
+
+variable "rds_instance_type" {
+}
+
+variable "rds_storage_type" {
+}
+
+variable "rds_database_identifier" {
+}
+
+variable "rds_database_name" {
+}
+
+variable "rds_username" {
+}
+
+variable "rds_password" {
+  sensitive = true
+}
+
+variable "rds_database_port" {
+}
+
+variable "rds_backup_retention_period" {
+}
+
+variable "rds_parameter_group" {
+}
+
+variable "rds_backup_window" {
+}
+
+variable "rds_maintenance_window" {
+}
+
+variable "rds_multi_availability_zone" {
+}
+
+variable "rds_sorage_encrypted" {
+}
+
+variable "rds_auto_minor_version_upgrade" {
+}
+
+variable "rds_alarm_cpu_threshold" {
+}
+
+variable "rds_alarm_disk_queue_threshold" {
+}
+
+variable "rds_alarm_free_disk_threshold" {
+}
+
+variable "rds_alarm_free_memory_threshold" {
+}
 
 # Batch ECS Cluster
-variable "batch_ecs_cluster_name" {}
+variable "batch_ecs_cluster_name" {
+}
 
 variable "batch_container_instance_type" {
   description = "Must be one of the instance types in the AWS EC2 'i3' family"
 }
 
-variable "batch_container_instance_asg_desired_capacity" {}
-variable "batch_container_instance_asg_min_size" {}
-variable "batch_container_instance_asg_max_size" {}
+variable "batch_container_instance_asg_desired_capacity" {
+}
+
+variable "batch_container_instance_asg_min_size" {
+}
+
+variable "batch_container_instance_asg_max_size" {
+}
 
 variable "batch_ecs_engine_task_cleanup_wait_duration" {
   default = "5m"
@@ -136,32 +214,48 @@ variable "batch_ecs_image_minimum_cleanup_age" {
 }
 
 # Django
-variable "django_env" {}
+variable "django_env" {
+}
 
-variable "django_secret_key" {}
-variable "django_allowed_hosts" {}
-variable "batch_analysis_job_queue_name" {}
-variable "batch_analysis_job_definition_name_revision" {} # format: 'name:revision'
+variable "django_secret_key" {
+  sensitive = true
+}
 
-variable "papertrail_host" {}
-variable "papertrail_port" {}
+variable "django_allowed_hosts" {
+}
 
-variable "ssl_certificate_arn" {}
+variable "batch_analysis_job_queue_name" {
+}
+
+variable "batch_analysis_job_definition_name_revision" { # format: 'name:revision'
+}
+
+variable "papertrail_host" {
+}
+
+variable "papertrail_port" {
+}
+
+variable "ssl_certificate_arn" {
+}
 
 variable "aws_cloudwatch_logs_policy_arn" {
   default = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
 variable "pfb_app_alb_ingress_cidr_block" {
-  type = "list"
+  type = list(string)
 }
 
 # Tilegarden tiler
-variable "tilegarden_api_gateway_domain_name" {}
+variable "tilegarden_api_gateway_domain_name" {
+}
 
 variable "cloudfront_price_class" {
   default = "PriceClass_100"
 }
 
 # Should be environment-specific and match the value in the Tilegarden .env file
-variable "tilegarden_function_name" {}
+variable "tilegarden_function_name" {
+}
+

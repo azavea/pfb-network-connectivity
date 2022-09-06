@@ -79,6 +79,12 @@ def add_results_geoms(job):
             # Set job ID on the objects we just imported. Since we're in a transaction, there
             # should be no potential for conflict between simultaneous imports.
             model.objects.filter(job=None).update(job=job)
+            # Workaround for null stress: the django upgrade (2.2->3.2) caused tf_seg_str to be
+            # null in cases when it would formerly come out as zero. The tiler config expects those
+            # zeroes and doesn't work right with nulls. Switching the values here is easier than
+            # adjusting the tiler.
+            if "tf_seg_str" in layer_mapping:
+                model.objects.filter(job=job, tf_seg_str=None).update(tf_seg_str=0)
         except Exception:
             logger.exception('Error importing {} shapefile for job: {}'.format(str(model),
                                                                                str(job.uuid)))

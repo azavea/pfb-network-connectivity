@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.16.0] - 2022-09-06
+
+#### Changed
+- Upgrade AWS CLI to v2 in analysis container
+- Upgrade base VM from Ubuntu 16.04 to 20.04
+- Add State Abbreviation, City FIPS to Admin Analysis Jobs table
+- Add Max Trip Distance (meters) to Admin Analysis Jobs forms
+- Make Places service return "No data" for destination types w/o locations
+- Also return "No data" for employment score when it's zero (because jobs data was not provided)
+- Update Django and analysis containers to run Django 3.2
+- Replace Feedback link with City Ratings link, point Methodology link to City Ratings methodology page
+- Facilitate non-US analyses with custom population files, jobs files, and osm extracts
+- Make analysis convert kmph speed limits to rounded mph
+- Add field to set default speed limit for non-US cities
+- Round km/h speed limit values on map legend to the nearest 5
+- Upgrade Terraform to 1.1.9
+
+#### Fixed
+- Fix email sending
+
 ## [0.15.1] - 2021-06-04
 
 #### Changed
@@ -152,7 +172,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.1...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.16.0...HEAD
+[0.16.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.1...0.16.0
 [0.15.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.0...0.15.1
 [0.15.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.13.0...0.14.0

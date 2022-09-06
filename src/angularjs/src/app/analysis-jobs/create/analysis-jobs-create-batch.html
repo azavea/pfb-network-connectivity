@@ -17,6 +17,15 @@
         </div>
         <div class="row">
           <div class="column-12">
+            <div class="form-group">
+              <label for="label">Max Trip Distance (optional, in meters)</label>
+              <input ng-model="analysisBatchCreate.maxTripDistance"
+                     class="form-control" id="maxTripDistance" type="number">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column-12">
             <button type="submit" ng-disabled="analysisBatchCreateForm.$invalid"
                     class="btn-primary btn">Submit Analysis Batch</button>
           </div>
