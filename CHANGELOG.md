@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Upgrade base VM from Ubuntu 16.04 to 20.04
 - Add State Abbreviation, City FIPS to Admin Analysis Jobs table
 - Add Max Trip Distance (meters) to Admin Analysis Jobs forms
-- Make Places service show N/A for destination types w/o locations
+- Make Places service return "No data" for destination types w/o locations
+- Also return "No data" for employment score when it's zero (because jobs data was not provided)
 - Update Django and analysis containers to run Django 3.2
 - Replace Feedback link with City Ratings link, point Methodology link to City Ratings methodology page
 - Facilitate non-US analyses with custom population files, jobs files, and osm extracts
