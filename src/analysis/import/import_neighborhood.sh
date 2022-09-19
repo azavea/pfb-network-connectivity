@@ -114,35 +114,43 @@ then
         fi
 
         # Get blocks for the place requested
-        update_status "IMPORTING" "Downloading census blocks"
+        update_status "IMPORTING" "Loading census blocks"
+        # Set the filename for US states, otherwise use a generic name
         if [ "${PFB_COUNTRY}" == "USA" ]; then
             NB_BLOCK_FILENAME="tabblock2010_${NB_STATE_FIPS}_pophu"
-            PFB_POP_URL="http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
         else
             NB_BLOCK_FILENAME="population"
         fi
+        BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
 
-        S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip"
-        if [ -f "/data/${NB_BLOCK_FILENAME}.zip" ]; then
+        # If POP_FILE_URL is provided as input, always download and use it
+        if [ -n "${PFB_POP_URL}" ]; then
+            echo "Using blocks file from PFB_POP_URL: ${PFB_POP_URL}"
+            wget -nv -O "${BLOCK_DOWNLOAD}" "${PFB_POP_URL}"
+        # If there's a file in `/data/` with the given name, use that
+        elif [ -f "/data/${NB_BLOCK_FILENAME}.zip" ]; then
             echo "Using local census blocks file"
             BLOCK_DOWNLOAD="/data/${NB_BLOCK_FILENAME}.zip"
-        elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
-            echo "Using census blocks file from S3"
-            BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
-            aws s3 cp "${S3_PATH}" "${BLOCK_DOWNLOAD}"
-        else
-            BLOCK_DOWNLOAD="${NB_TEMPDIR}/${NB_BLOCK_FILENAME}.zip"
-            if [ "${PFB_COUNTRY}" == "USA" ]; then
-                echo "Using census blocks file from official census site"
+        elif [ "${PFB_COUNTRY}" == "USA" ]; then
+            # If we're in the US and there's no URL or local file, look in S3 for a matching file
+            # first, falling back to downloading from Census
+            S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_BLOCK_FILENAME}.zip"
+            if [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
+                echo "Using census blocks file from S3"
+                aws s3 cp "${S3_PATH}" "${BLOCK_DOWNLOAD}"
             else
-                echo "Using blocks file from PFB_POP_URL: ${PFB_POP_URL}"
+                PFB_POP_URL="http://www2.census.gov/geo/tiger/TIGER2010BLKPOPHU/${NB_BLOCK_FILENAME}.zip"
+                echo "Using census blocks file from official census site: ${PFB_POP_URL}"
+                wget -nv -O "${BLOCK_DOWNLOAD}" "${PFB_POP_URL}"
+                # Cache the downloaded file to S3 for next time
+                if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
+                    echo "Uploading census blocks file to S3 cache"
+                    aws s3 cp "${BLOCK_DOWNLOAD}" "${S3_PATH}"
+                fi
             fi
-            wget -nv -O "${BLOCK_DOWNLOAD}" "${PFB_POP_URL}"
-
-            if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
-                echo "Uploading census blocks file to S3 cache"
-                aws s3 cp "${BLOCK_DOWNLOAD}" "${S3_PATH}"
-            fi
+        else
+            echo "Error: No population file or URL provided."
+            exit 1
         fi
         unzip "${BLOCK_DOWNLOAD}" -d "${NB_TEMPDIR}"
 
