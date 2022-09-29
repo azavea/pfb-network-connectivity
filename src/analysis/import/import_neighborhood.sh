@@ -190,6 +190,14 @@ then
         echo "Census Blocks in analysis: ${BLOCK_COUNT}"
         set_job_attr "census_block_count" "${BLOCK_COUNT}"
 
+        POPULATION=$(psql -h "${NB_POSTGRESQL_HOST}" -U "${NB_POSTGRESQL_USER}" -d "${NB_POSTGRESQL_DB}" \
+            -t -c "SELECT SUM(pop10) FROM neighborhood_census_blocks;")
+        echo "Population is ${POPULATION}"
+        if [[ $POPULATION -eq 0 ]]; then
+            echo "Error: Total population of included census blocks is zero."
+            exit 1
+        fi
+
         # Remove NB_TEMPDIR
         rm -rf "${NB_TEMPDIR}"
     fi
