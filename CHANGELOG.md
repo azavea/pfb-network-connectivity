@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Use 'great-britain', not 'united-kingdom', in OSM extract URLs
 - Stop caching non-US population files
 - Downgrade django-countries package to fix country search in Neighborhoods admin
+- Throw errors rather than failing messily when total population is zero
 
 ## [0.16.0] - 2022-09-06
 
