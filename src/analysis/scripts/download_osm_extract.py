@@ -43,7 +43,7 @@ LOCKFILE_POLLING_ATTEMPTS = 21  # One is immediate, so total timeout is interval
 
 try:
     S3_CLIENT = boto3.client('s3')
-except ProfileNotFound as e:
+except ProfileNotFound:
     S3_CLIENT = None
 
 
@@ -105,12 +105,13 @@ def get_lockfile(bucket, region):
         else:
             logger.info('Another job got the download lock for {}'.format(region))
             return None
-    except:
+    except Exception:
         # If something goes wrong, we want to clear the lockfile rather than leave it.
         # There's a chance that would mean we're clearing another job's lockfile, but the
         # consequences of that are less bad than the consequences of an orphaned lockfile.
         delete_from_s3(bucket, key)
         raise
+
 
 def local_filepath_for_region(local_dir, region):
     return os.path.join(local_dir, '{}.osm.pbf'.format(region))
@@ -178,12 +179,18 @@ def main():
     else:
         logger.setLevel('INFO')
 
+    # The URL structure for Geofabric's OSM extracts includes the continent and country name
     continent = country_to_continent.get_continent(country_alpha3).lower().replace(' ', '-')
-    country_name = (
-        pycountry.countries.get(alpha_3=country_alpha3).name.lower().replace(" ", "-")
-        if country_alpha3.lower() != "usa"
-        else "us"
-    )
+    # The country name usually matches the name given by pycountry (made lowercase and using hyphens
+    # for spaces) but there are a few cases where it's something different.
+    if country_alpha3 == "USA":
+        country_name = "us"
+    elif country_alpha3 == "GBR":
+        # pycountry has "United Kingdom"
+        country_name = "great-britain"
+    else:
+        country_name = pycountry.countries.get(alpha_3=country_alpha3).name.lower().replace(" ", "-")
+
     # Shortcut and do a direct geofabrik download if we don't have AWS configured
     # or a bucket provided
     if S3_CLIENT is None or bucket is None:
@@ -223,5 +230,6 @@ def main():
                 delete_from_s3(bucket, lockfile_key)
 
     print(osm_extract_filepath)
+
 
 main()
