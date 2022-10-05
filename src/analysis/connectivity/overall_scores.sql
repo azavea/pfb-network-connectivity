@@ -83,6 +83,16 @@ INSERT INTO generated.neighborhood_overall_scores (
     score_id, score_original, human_explanation
 )
 SELECT  'opportunity',
+        CASE
+        WHEN EXISTS (
+            SELECT  1
+            FROM    neighborhood_census_blocks
+            WHERE   emp_high_stress > 0
+            OR      schools_high_stress > 0
+            OR      colleges_high_stress > 0
+            OR      universities_high_stress > 0
+        )
+            THEN
         (
             0.35 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_employment')
             + 0.35 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_k12_education')
@@ -90,7 +100,11 @@ SELECT  'opportunity',
             + 0.2 * (SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'opportunity_higher_education')
         ) /
         (
-            0.35
+            CASE
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE emp_high_stress > 0)
+                    THEN 0.35
+                ELSE 0
+                END
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE schools_high_stress > 0)
                     THEN 0.35
@@ -106,7 +120,9 @@ SELECT  'opportunity',
                     THEN 0.2
                 ELSE 0
                 END
-        ),
+        )
+        ELSE NULL
+        END,
         NULL;
 
 -- doctors
@@ -332,7 +348,16 @@ SELECT  'overall_score',
             + :transit * COALESCE((SELECT score_original FROM neighborhood_overall_scores WHERE score_id = 'transit'),0)
         ) /
         (
-            :people + :opportunity
+            :people
+            +   CASE
+                WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks
+                    WHERE emp_high_stress > 0
+                    OR    schools_high_stress > 0
+                    OR    colleges_high_stress > 0
+                    OR    universities_high_stress > 0
+                ) THEN :opportunity
+                ELSE 0
+                END
             +   CASE
                 WHEN EXISTS (SELECT 1 FROM neighborhood_census_blocks WHERE doctors_high_stress > 0)
                     THEN :core_services
