@@ -25,7 +25,7 @@
                 batch: ctl.batchId,
                 city_fips: ctl.city_fips,
                 neighborhood: ctl.searchText,
-                state_abbrev: ctl.state_abbrev.toUpperCase(),
+                state_abbrev: ctl.state_abbrev ? ctl.state_abbrev.toUpperCase() : null,
                 status: AnalysisJobStatuses.filterMap[ctl.statusFilter]
             };
         }
