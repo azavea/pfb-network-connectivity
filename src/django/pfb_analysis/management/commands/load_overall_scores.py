@@ -22,6 +22,10 @@ def load_scores(job, csv_filename, key_column, skip_columns):
                 if row_name == 'population_total':
                     metric[k] = int(metric[k])
             except ValueError:
+                # Letting an empty value get into the JSONB where it expects a number causes
+                # database errors, so raise an error here instead.
+                if row_name == 'population_total' and k == 'score_original':
+                    raise Exception("population_total.score_original must not be empty")
                 pass
         return metric
 
