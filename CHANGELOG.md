@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.16.0] - 2022-10-06
+
 #### Fixed
 - Use 'great-britain', not 'united-kingdom', in OSM extract URLs
 - Stop caching non-US population files
