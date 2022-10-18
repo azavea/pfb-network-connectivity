@@ -118,14 +118,14 @@ def local_filepath_for_region(local_dir, region):
 
 
 def download_from_geofabrik(local_dir, continent, country_name, state_abbrev):
-    # Use state level extracts available at:
-    #   http://download.geofabrik.de/north-america.html
-    # We have to process the neighborhood state abbrev to a full name in format found in the url
-    region = country_name if state_abbrev is None else state_abbrev
+    # Use state level extracts available at: http://download.geofabrik.de/north-america.html
+    # We have to convert the state abbrev to a full name in the format found in the url.
+    # For non-US places, never use state extracts.
+    region = country_name if country_name != "us" or state_abbrev is None else state_abbrev
     logger.info('Downloading OSM extract from Geofabrik for {}'.format(region))
     # get region
     osm_extract_url = GEOFABRIK_URL_TEMPLATE.format(continent, country_name)
-    if state_abbrev:
+    if country_name == "us" and state_abbrev is not None:
         state_name = us.states.lookup(state_abbrev).name.lower().replace(' ', '-')
         osm_extract_url = osm_extract_url + "/" + state_name
     osm_extract_url = osm_extract_url + "-latest.osm.pbf"
