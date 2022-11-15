@@ -949,3 +949,19 @@ class AnalysisLocalUploadTask(PFBModel):
     job = models.OneToOneField(AnalysisJob, related_name='local_upload_task',
                                on_delete=models.CASCADE)
     upload_results_url = models.URLField(max_length=8192)
+
+class Crash(models.Model):
+    class FatalityType:
+        ACTIVE = 'ACTIVE'
+        BIKE = 'BIKE'
+        MOTOR_VEHICLE = 'MOTOR_VEHICLE'
+
+        CHOICES = (
+            (ACTIVE, 'Other Active Transport',),
+            (BIKE, 'Bike',),
+            (MOTOR_VEHICLE, 'Motor Vehicle',),
+        )
+    fatality_count = models.IntegerField()
+    fatality_type = models.CharField(max_length=16, choices=FatalityType.CHOICES)
+    geom_pt = PointField(srid=4326)
+    year = models.IntegerField()

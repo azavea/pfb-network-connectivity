@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+####  Added
+- Add endpoint to serve crash data
+
 #### Fixed
 - Ignore state for non-US neighborhoods when downloading OSM extract
 
