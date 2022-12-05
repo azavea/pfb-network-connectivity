@@ -375,8 +375,9 @@ class CrashesGeojsonViewSet(APIView):
         analysis_job = get_object_or_404(AnalysisJob, pk=analysis_job_uuid)
         neighborhood_boundary = analysis_job.neighborhood.geog
         # Throughout this repo, boundary buffer can be inferred as an equivalent of max trip distance
-        # TODO: instead of passing 0, use max_trip_distance as the boundary buffer
-        crashes = Crash.objects.filter(geom_pt__dwithin=(neighborhood_boundary, 0))        
+        crashes = Crash.objects.filter(
+            geom_pt__dwithin=(neighborhood_boundary, analysis_job.max_trip_distance)
+        )   
         geojson = serialize(
             "geojson",
             crashes,
