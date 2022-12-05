@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('fatality_count', models.IntegerField()),
                 ('fatality_type', models.CharField(choices=[('ACTIVE', 'Other Active Transport'), ('BIKE', 'Bike'), ('MOTOR_VEHICLE', 'Motor Vehicle')], max_length=16)),
-                ('geom_pt', django.contrib.gis.db.models.fields.PointField(srid=4326)),
+                ('geom_pt', django.contrib.gis.db.models.fields.PointField(srid=4326, geography=True)),
                 ('year', models.IntegerField()),
             ],
         ),

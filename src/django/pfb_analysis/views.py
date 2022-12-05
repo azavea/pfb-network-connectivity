@@ -373,10 +373,12 @@ class CrashesGeojsonViewSet(APIView):
         try:
             analysis_job_uuid = request.GET.get('uuid')
             analysis_job = AnalysisJob.objects.get(pk=analysis_job_uuid)
-            neighborhood_geometry = analysis_job.neighborhood.geom
+            neighborhood_geometry = analysis_job.neighborhood.geog
             # Throughout this repo, boundary buffer can be inferred as an equivalent of max trip distance
             # TODO: instead of passing 0, use max_trip_distance as the boundary buffer
-            crashes = Crash.objects.filter(geom_pt__dwithin=(neighborhood_geometry, 0))        
+            crashes = Crash.objects.filter(
+                geom_pt__dwithin=(neighborhood_geometry, analysis_job.max_trip_distance)
+            )
             geojson = serialize('geojson',crashes,geometry_field='geom_pt',fields=('fatality_count','fatality_type','geom_pt', 'year'))
         except ObjectDoesNotExist:
             geojson = serialize('geojson',{},geometry_field='geom_pt',fields=('fatality_count','fatality_type','geom_pt', 'year'))

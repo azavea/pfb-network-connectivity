@@ -172,6 +172,7 @@ class Neighborhood(PFBModel):
     label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood, ' +
                                                        'should not include State')
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    geog = MultiPolygonField(srid=4326, blank=True, null=True, geography=True)
     geom_simple = MultiPolygonField(srid=4326, blank=True, null=True)
     geom_pt = PointField(srid=4326, blank=True, null=True)
     organization = models.ForeignKey(Organization,
@@ -235,6 +236,7 @@ class Neighborhood(PFBModel):
             boundary_file = File(open(zip_filename, 'rb'))
             self.boundary_file = boundary_file
             self.geom = geom
+            self.geog = geom  # Also save as geography for fast lookup in the Crashes query
             self.geom_simple = simplify_geom(geom)
             self.geom_pt = geom.centroid
             self.save()
@@ -963,5 +965,5 @@ class Crash(models.Model):
         )
     fatality_count = models.IntegerField()
     fatality_type = models.CharField(max_length=16, choices=FatalityType.CHOICES)
-    geom_pt = PointField(srid=4326)
+    geom_pt = PointField(srid=4326, geography=True)
     year = models.IntegerField()
