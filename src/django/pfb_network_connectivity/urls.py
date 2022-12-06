@@ -46,6 +46,9 @@ urlpatterns = [
     # Countries view
     re_path(r'^api/countries/', analysis_views.CountriesView.as_view()),
 
+    # Crashes view
+    re_path(r'^api/crashes/', analysis_views.CrashesGeojsonViewSet.as_view()),
+
     # Neighborhood points set
     re_path(r'^api/neighborhoods_geojson/', analysis_views.NeighborhoodGeoJsonViewSet.as_view()),
 

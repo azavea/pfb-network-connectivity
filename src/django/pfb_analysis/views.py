@@ -8,7 +8,11 @@ import boto3
 from botocore.client import Config as BotocoreClientConfig
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.serializers import serialize
 from django.db import connection, DataError
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from django_filters.rest_framework import DjangoFilterBackend
 from django_q.tasks import async_task
@@ -30,6 +34,7 @@ from .models import (
     AnalysisJob,
     AnalysisLocalUploadTask,
     AnalysisScoreMetadata,
+    Crash,
     Neighborhood,
     get_batch_shapefile_upload_path,
 )
@@ -355,3 +360,28 @@ class CountriesView(APIView):
                                            if sub['code'] in states_with_jobs]
 
         return Response(countries)
+
+
+class CrashesGeojsonViewSet(APIView):
+    """For retrieving all crash points as GeoJSON feature collection."""
+
+    filter_class = None
+    pagination_class = None
+    permission_classes = (RestrictedCreate, IsAuthenticatedOrReadOnly)
+    serializer_class = None
+
+    def get(self, request, format=None, *args, **kwargs):
+        analysis_job_uuid = request.GET.get('uuid')
+        analysis_job = get_object_or_404(AnalysisJob, pk=analysis_job_uuid)
+        neighborhood_boundary = analysis_job.neighborhood.geog
+        # Throughout this repo, boundary buffer can be inferred as an equivalent of max trip distance
+        # TODO: instead of passing 0, use max_trip_distance as the boundary buffer
+        crashes = Crash.objects.filter(geom_pt__dwithin=(neighborhood_boundary, 0))        
+        geojson = serialize(
+            "geojson",
+            crashes,
+            geometry_field="geom_pt",
+            fields=("fatality_count", "fatality_type", "geom_pt", "year"),
+        )       
+         
+        return HttpResponse(geojson)
