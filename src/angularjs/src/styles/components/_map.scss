@@ -22,6 +22,63 @@
   z-index: 1;
 }
 
+.leaflet-popup-content {
+  margin: 0;
+  margin-top: 1em;
+}
+
+.leaflet-popup-content-header {
+  margin: 0;
+  position: relative;
+  padding: 8px;
+  padding-right: 24px;
+  padding-bottom: 0;
+  top: -14px;
+  font-family: 'Cabin Condensed';
+  font-weight: 500;
+}
+
+.leaflet-popup-content-row, .leaflet-popup-content-row-hint {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background:#FFFFFF;
+  border-top: 2px solid rgba(0, 0, 0, 0.25);
+  padding: 10px;
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.leaflet-popup-content-row-hint {
+  border: none;
+  padding-top: 0px;
+  color: #999;
+}
+
+.leaflet-popup-content-key {
+  font-weight: 500;
+  padding-right: 1em;
+}
+
+.leaflet-popup-content-val {
+  font-weight: 700;
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  background-color: #F3F3F3;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 4px;
+}
+
+.leaflet-popup-close-button {
+  z-index: 1;
+}
+
 .leaflet-btn {
   width: 44px;
   height: 44px;

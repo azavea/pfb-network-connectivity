@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlaceMapController($filter, $log, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
+    function PlaceMapController($filter, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -224,7 +224,6 @@
             });
 
             function onEachFeature(feature, layer) {
-                // TODO: Style marker and popup
                 layer.on({
                     click: function () {
                         if (feature && feature.geometry &&
@@ -250,24 +249,43 @@
 
                 // omit some less-useful properties
                 var ignore = ['blockid10', 'osm_id', 'fatality_type'];
+                var fatality_type = properties['fatality_type']
+                var title = ''
+                if (properties['fatality_type']) {
+                    fatality_type = fatality_type.toLowerCase().replace(/_/g, ' ').replace(/active/g,'active transportation')
+                    title = 'Fatal crash'
+                }
                 properties = _.omitBy(properties, function(val, key) {
                     return _.find(ignore, function(i) {return i === key;});
                 });
 
-                var snippet = '<ul>';
+                var snippet = '<h3 class="leaflet-popup-content-header">'+title+'</h3>';
                 snippet += _.map(properties, function(val, key) {
+                    var unjoinedHtml = []
+                    var label = key.replace(/fatality_count/g, 'fatalities').replace(/_/g, ' ')
+                    label = label.charAt(0).toUpperCase() + label.slice(1)
+                    unjoinedHtml.push('<div class="leaflet-popup-content-row">')
+                    unjoinedHtml.push('<div class="leaflet-popup-content-key">'+label+'</div>')
+
                     // humanize numbers: round to 3 digits and add commas
                     if (key !== 'year' && Number.parseFloat(val)) {
                         val = $filter('number')(val);
                     }
-                    return ['<li>',
-                            key.replace(/_/g, ' '),
-                            ': ',
-                            (val ? val : '--'),
-                            '</li>'
-                            ].join('');
-                }).join('');
-                snippet += '</ul>';
+
+                    unjoinedHtml.push('<div class="leaflet-popup-content-val">'+(val ? val : '--')+'</div>')     
+                    unjoinedHtml.push('</div>')
+                
+                    if (label === 'Fatalities' && val > 1) {
+                        unjoinedHtml.push('<div class="leaflet-popup-content-row-hint">Involving at least 1 ' + fatality_type + ' fatality'+'</div>')
+                    }
+                    
+                    return unjoinedHtml.join('');
+                }).join('')
+                
+                if (fatality_type === 'active transportation') {
+                    snippet +='<div class="leaflet-popup-content-row-hint">Other active transportation, e.g. pedestrians, scooters, skateboards, wheelchairs, etc.</div>'
+                }
+
                 return $sanitize(snippet);
             }
         }
