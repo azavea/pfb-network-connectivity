@@ -165,3 +165,11 @@ Boulder:
 - BOUNDARY_BUFFER=50
 - https://s3.amazonaws.com/test-pfb-inputs/boulder/boulder.osm
 - https://s3.amazonaws.com/test-pfb-inputs/boulder/boulder.zip
+
+## Import crash data
+
+Crash data is stored in the `pfb-public-documents` bucket under `/data/crashes.zip` and gets loaded automatically via `scripts/update`. You can run this import manually in the VM like so:
+`scripts/django-manage import_crash_data`
+
+To run it using a zip in your own developer bucket under `/data/crashes.zip` you can use the `--dev` flag, i.e.
+`scripts/django-manage import_crash_data --dev`

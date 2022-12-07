@@ -172,6 +172,7 @@ class Neighborhood(PFBModel):
     label = models.CharField(max_length=256, help_text='Human-readable label for neighborhood, ' +
                                                        'should not include State')
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
+    geog = MultiPolygonField(srid=4326, blank=True, null=True, geography=True)
     geom_simple = MultiPolygonField(srid=4326, blank=True, null=True)
     geom_pt = PointField(srid=4326, blank=True, null=True)
     organization = models.ForeignKey(Organization,
@@ -235,6 +236,7 @@ class Neighborhood(PFBModel):
             boundary_file = File(open(zip_filename, 'rb'))
             self.boundary_file = boundary_file
             self.geom = geom
+            self.geog = geom  # Also save as geography for fast lookup in the Crashes query
             self.geom_simple = simplify_geom(geom)
             self.geom_pt = geom.centroid
             self.save()
@@ -327,6 +329,7 @@ class Neighborhood(PFBModel):
                 if geom.geom_type == 'Polygon':
                     geom = MultiPolygon([geom])
                 self.geom = geom
+                self.geog = geom  # Also save as geography for fast lookup in the Crashes query
                 self.geom_simple = simplify_geom(geom)
                 self.geom_pt = geom.centroid
         finally:
@@ -949,3 +952,19 @@ class AnalysisLocalUploadTask(PFBModel):
     job = models.OneToOneField(AnalysisJob, related_name='local_upload_task',
                                on_delete=models.CASCADE)
     upload_results_url = models.URLField(max_length=8192)
+
+class Crash(models.Model):
+    class FatalityType:
+        ACTIVE = 'ACTIVE'
+        BIKE = 'BIKE'
+        MOTOR_VEHICLE = 'MOTOR_VEHICLE'
+
+        CHOICES = (
+            (ACTIVE, 'Other Active Transport',),
+            (BIKE, 'Bike',),
+            (MOTOR_VEHICLE, 'Motor Vehicle',),
+        )
+    fatality_count = models.IntegerField()
+    fatality_type = models.CharField(max_length=16, choices=FatalityType.CHOICES)
+    geom_pt = PointField(srid=4326, geography=True)
+    year = models.IntegerField()

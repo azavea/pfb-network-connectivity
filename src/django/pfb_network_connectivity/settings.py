@@ -83,6 +83,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'pfb_network_connectivity.urls'
 
+SERIALIZATION_MODULES = {
+    "geojson": "django.contrib.gis.serializers.geojson", 
+ }
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
