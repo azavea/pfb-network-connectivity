@@ -126,6 +126,83 @@
                 ctl.layerControl.addOverlay(layer, label, 'Overlays');
             });
 
+            if (ctl.pfbPlaceMapCountry && ctl.pfbPlaceMapCountry === 'US') {
+                if (!ctl.dataNoneLayer) {
+                    ctl.dataNoneLayer = L.geoJSON({type:'FeatureCollection', features: []});
+                    ctl.layerControl.addOverlay(ctl.dataNoneLayer, 'None', 'Data');
+                    ctl.map.addLayer(ctl.dataNoneLayer);
+                }
+
+                var dataLayerPromises = _.map(layers.dataLayers, function(layerObj) {
+                    var label = $sanitize(layerObj.name.replace(/_/g, ' '));
+                    label = label[0].toUpperCase() + label.slice(1);
+                    return $http.get(layerObj.url).then(function(response) {
+                        if (response.data && response.data.features) {
+                            var layer = L.geoJSON(response.data, {
+                                onEachFeature: onEachFeature,
+                                pointToLayer: function (feature, latlng) {
+                                    var coords = [latlng.lat, latlng.lng]
+                                    var iconUrl;
+                                    if (feature.properties.fatality_type === 'ACTIVE') {
+                                        iconUrl = 'assets/images/fatality-active-icon.png'
+                                    } else if (feature.properties.fatality_type === 'MOTOR_VEHICLE') {
+                                        iconUrl = 'assets/images/fatality-motor-icon.png'
+                                    } else {
+                                        iconUrl = 'assets/images/fatality-bike-icon.png'
+                                    }
+                                    var icon = L.icon({
+                                        iconUrl: iconUrl,
+                                        iconSize: [24, 24]
+                                    });
+    
+                                    return L.marker(coords, { icon: icon })
+                                }
+                            }
+                            );
+                            return {'layer': layer, 'label': label};
+                        }
+                    });
+                });
+    
+                $q.all(dataLayerPromises).then(function (layers) {
+                    _.forEach(_.sortBy(layers, 'label'), function (layer) {
+                        var cluster = L.markerClusterGroup({
+                            iconCreateFunction: function(cluster) {
+                                var childCount = cluster.getChildCount()
+                                var radius = 18
+                                if (childCount < 10) radius = 12
+                                else if (childCount < 100) radius = 15
+                                var iconHTML = [
+                                    '<svg',
+                                    'width="' + radius*2 + '"',
+                                    'height="' + radius*2 + '"',
+                                    'viewBox="-' + radius, '-' + radius, radius*2, radius*2 + '"',
+                                    'xmlns="http://www.w3.org/2000/svg">',
+                                    '<style>.text { font: bold 13px sans-serif; fill: #fff; text-anchor: middle; dominant-baseline: central; }</style>',
+                                    '<circle r="' + radius + '" />',
+                                    '<text class="text">',
+                                    childCount,
+                                    '</text></svg>'
+                                ].join(' ')
+                                
+                                return L.divIcon({
+                                    html: iconHTML,
+                                    className: ''
+                                });
+                            }
+                        });
+                        layer.layer.addTo(cluster)
+                        ctl.layerControl.addOverlay(cluster, layer.label, 'Data');
+                    });
+                });
+            }
+
+            if (!ctl.destinationsNoneLayer && ctl.pfbPlaceMapCountry) {
+                ctl.destinationsNoneLayer = L.geoJSON({type:'FeatureCollection', features: []});
+                ctl.layerControl.addOverlay(ctl.destinationsNoneLayer, 'None', 'Destinations');
+                ctl.map.addLayer(ctl.destinationsNoneLayer);
+            }
+
             // We need to fetch and do some processing on each destination layer, which means
             // they could come back and get inserted in arbitrary order.
             // Loading them all before adding them to the picker lets us sort.
@@ -143,83 +220,8 @@
             });
 
             $q.all(destLayerPromises).then(function (layers) {
-                if (!ctl.destinationsNoneLayer && layers && layers.length) {
-                    var noneLayer = L.geoJSON({type:'FeatureCollection', features: []});
-                    ctl.destinationsNoneLayer = noneLayer
-                    ctl.layerControl.addOverlay(ctl.destinationsNoneLayer, 'None', 'Destinations');
-                    ctl.map.addLayer(ctl.destinationsNoneLayer);
-                }
                 _.forEach(_.sortBy(layers, 'label'), function (layer) {
                     ctl.layerControl.addOverlay(layer.layer, layer.label, 'Destinations');
-                });
-            });
-
-            var dataLayerPromises = _.map(layers.dataLayers, function(layerObj) {
-                var label = $sanitize(layerObj.name.replace(/_/g, ' '));
-                label = label[0].toUpperCase() + label.slice(1);
-                return $http.get(layerObj.url).then(function(response) {
-                    if (response.data && response.data.features) {
-                        var layer = L.geoJSON(response.data, {
-                            onEachFeature: onEachFeature,
-                            pointToLayer: function (feature, latlng) {
-                                var coords = [latlng.lat, latlng.lng]
-                                var iconUrl;
-                                if (feature.properties.fatality_type === 'ACTIVE') {
-                                    iconUrl = 'assets/images/fatality-active-icon.png'
-                                } else if (feature.properties.fatality_type === 'MOTOR_VEHICLE') {
-                                    iconUrl = 'assets/images/fatality-motor-icon.png'
-                                } else {
-                                    iconUrl = 'assets/images/fatality-bike-icon.png'
-                                }
-                                var icon = L.icon({
-                                    iconUrl: iconUrl,
-                                    iconSize: [30, 30]
-                                });
-
-                                return L.marker(coords, { icon: icon })
-                            }
-                        }
-                        );
-                        return {'layer': layer, 'label': label};
-                    }
-                });
-            });
-
-            $q.all(dataLayerPromises).then(function (layers) {
-                if (!ctl.dataNoneLayer && layers && layers.length) {
-                    var noneLayer = L.geoJSON({type:'FeatureCollection', features: []});
-                    ctl.dataNoneLayer = noneLayer
-                    ctl.layerControl.addOverlay(ctl.dataNoneLayer, 'None', 'Data');
-                    ctl.map.addLayer(ctl.dataNoneLayer);
-                }
-                _.forEach(_.sortBy(layers, 'label'), function (layer) {
-                    var cluster = L.markerClusterGroup({
-                        iconCreateFunction: function(cluster) {
-                            var childCount = cluster.getChildCount()
-                            var radius = 18
-                            if (childCount < 10) radius = 12
-                            else if (childCount < 100) radius = 15
-                            var iconHTML = [
-                                '<svg',
-                                'width="' + radius*2 + '"',
-                                'height="' + radius*2 + '"',
-                                'viewBox="-' + radius, '-' + radius, radius*2, radius*2 + '"',
-                                'xmlns="http://www.w3.org/2000/svg">',
-                                '<style>.text { font: bold 13px sans-serif; fill: #fff; text-anchor: middle; dominant-baseline: central; }</style>',
-                                '<circle r="' + radius + '" />',
-                                '<text class="text">',
-                                childCount,
-                                '</text></svg>'
-                            ].join(' ')
-                            
-                            return L.divIcon({
-                                html: iconHTML,
-                                className: ''
-                            });
-                        }
-                    });
-                    layer.layer.addTo(cluster)
-                    ctl.layerControl.addOverlay(cluster, layer.label, 'Data');
                 });
             });
 
@@ -274,17 +276,25 @@
 
                     unjoinedHtml.push('<div class="leaflet-popup-content-val">'+(val ? val : '--')+'</div>')     
                     unjoinedHtml.push('</div>')
-                
-                    if (label === 'Fatalities' && val > 1) {
-                        unjoinedHtml.push('<div class="leaflet-popup-content-row-hint">Involving at least 1 ' + fatality_type + ' fatality'+'</div>')
+
+                    /*
+                        The following hints are meant to clarify the following points:
+                        - The active transportation fatality type refers to non-bicyclist, non-motorist fatalities.
+                        - If a crash leads to 1+ bike fatalities, the crash will always have a fatality type of bike.
+                        - If a crash leads to 1+ active transportation and 0 bike fatalities, the crash will always have a fatality type of active transportation.
+                        - If a crash leads to motor vehicle fatalities exclusively, the crash will always have a fatality type of motor vehicle.
+                    */
+                    if (label === 'Fatalities' && fatality_type === 'active transportation') {
+                        if (val > 1) unjoinedHtml.push('<div class="leaflet-popup-content-row-hint">Involving at least 1 non-bike active transportation fatality, e.g.  pedestrians, scooters, skateboards, wheelchairs, etc.</div>');
+                        else unjoinedHtml.push('<div class="leaflet-popup-content-row-hint">Non-bike active transportation fatality, e.g. pedestrians, scooters, skateboards, wheelchairs, etc.</div>');
+                    } else if (label === 'Fatalities' && fatality_type === 'bike' && val > 1) {
+                        unjoinedHtml.push('<div class="leaflet-popup-content-row-hint">Involving at least 1 bike fatality</div>');
                     }
                     
                     return unjoinedHtml.join('');
                 }).join('')
                 
-                if (fatality_type === 'active transportation') {
-                    snippet +='<div class="leaflet-popup-content-row-hint">Other active transportation, e.g. pedestrians, scooters, skateboards, wheelchairs, etc.</div>'
-                }
+
 
                 return $sanitize(snippet);
             }
@@ -295,6 +305,7 @@
         var module = {
             restrict: 'E',
             scope: {
+                pfbPlaceMapCountry: '<',
                 pfbPlaceMapLayers: '<',
                 pfbPlaceMapUuid: '<',
                 pfbPlaceMapSpeedLimit: '<'
