@@ -1,7 +1,7 @@
 (function() {
 
     /* @ngInject */
-    function PlaceMapController($filter, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
+    function PlaceMapController($filter, $log, $http, $sanitize, $q, $window, MapConfig, Neighborhood) {
         var ctl = this;
         ctl.map = null;
         ctl.layerControl = null;
@@ -83,9 +83,10 @@
                     'Satellite': satelliteLayer
                 }, {
                     'Overlays': {},
+                    'Data': {},
                     'Destinations': {}
                 }, {
-                    exclusiveGroups: ['Overlays', 'Destinations']
+                    exclusiveGroups: ['Overlays', 'Data','Destinations']
                 }).addTo(ctl.map);
             }
             if (!ctl.printButton) {
@@ -153,7 +154,74 @@
                 });
             });
 
+            var dataLayerPromises = _.map(layers.dataLayers, function(layerObj) {
+                var label = $sanitize(layerObj.name.replace(/_/g, ' '));
+                label = label[0].toUpperCase() + label.slice(1);
+                return $http.get(layerObj.url).then(function(response) {
+                    if (response.data && response.data.features) {
+                        var layer = L.geoJSON(response.data, {
+                            onEachFeature: onEachFeature,
+                            pointToLayer: function (feature, latlng) {
+                                var coords = [latlng.lat, latlng.lng]
+                                var iconUrl;
+                                if (feature.properties.fatality_type === 'ACTIVE') {
+                                    iconUrl = 'assets/images/fatality-active-icon.png'
+                                } else if (feature.properties.fatality_type === 'MOTOR_VEHICLE') {
+                                    iconUrl = 'assets/images/fatality-motor-icon.png'
+                                } else {
+                                    iconUrl = 'assets/images/fatality-bike-icon.png'
+                                }
+                                var icon = L.icon({
+                                    iconUrl: iconUrl,
+                                    iconSize: [30, 30]
+                                });
 
+                                return L.marker(coords, { icon: icon })
+                            }
+                        }
+                        );
+                        return {'layer': layer, 'label': label};
+                    }
+                });
+            });
+
+            $q.all(dataLayerPromises).then(function (layers) {
+                if (!ctl.dataNoneLayer && layers && layers.length) {
+                    var noneLayer = L.geoJSON({type:'FeatureCollection', features: []});
+                    ctl.dataNoneLayer = noneLayer
+                    ctl.layerControl.addOverlay(ctl.dataNoneLayer, 'None', 'Data');
+                    ctl.map.addLayer(ctl.dataNoneLayer);
+                }
+                _.forEach(_.sortBy(layers, 'label'), function (layer) {
+                    var cluster = L.markerClusterGroup({
+                        iconCreateFunction: function(cluster) {
+                            var childCount = cluster.getChildCount()
+                            var radius = 18
+                            if (childCount < 10) radius = 12
+                            else if (childCount < 100) radius = 15
+                            var iconHTML = [
+                                '<svg',
+                                'width="' + radius*2 + '"',
+                                'height="' + radius*2 + '"',
+                                'viewBox="-' + radius, '-' + radius, radius*2, radius*2 + '"',
+                                'xmlns="http://www.w3.org/2000/svg">',
+                                '<style>.text { font: bold 13px sans-serif; fill: #fff; text-anchor: middle; dominant-baseline: central; }</style>',
+                                '<circle r="' + radius + '" />',
+                                '<text class="text">',
+                                childCount,
+                                '</text></svg>'
+                            ].join(' ')
+                            
+                            return L.divIcon({
+                                html: iconHTML,
+                                className: ''
+                            });
+                        }
+                    });
+                    layer.layer.addTo(cluster)
+                    ctl.layerControl.addOverlay(cluster, layer.label, 'Data');
+                });
+            });
 
             function onEachFeature(feature, layer) {
                 // TODO: Style marker and popup
@@ -161,7 +229,9 @@
                     click: function () {
                         if (feature && feature.geometry &&
                             feature.geometry.coordinates) {
-                            var popup = L.popup()
+                            var popup = L.popup({
+                                offset: [0, -5]
+                            })
                                 .setLatLng([
                                     feature.geometry.coordinates[1],
                                     feature.geometry.coordinates[0]
@@ -179,7 +249,7 @@
             function buildLabel(properties) {
 
                 // omit some less-useful properties
-                var ignore = ['blockid10', 'osm_id'];
+                var ignore = ['blockid10', 'osm_id', 'fatality_type'];
                 properties = _.omitBy(properties, function(val, key) {
                     return _.find(ignore, function(i) {return i === key;});
                 });
@@ -187,7 +257,7 @@
                 var snippet = '<ul>';
                 snippet += _.map(properties, function(val, key) {
                     // humanize numbers: round to 3 digits and add commas
-                    if (Number.parseFloat(val)) {
+                    if (key !== 'year' && Number.parseFloat(val)) {
                         val = $filter('number')(val);
                     }
                     return ['<li>',
