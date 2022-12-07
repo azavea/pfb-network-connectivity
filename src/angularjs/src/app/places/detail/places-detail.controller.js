@@ -13,8 +13,6 @@
     function PlaceDetailController($stateParams,
                                    $log,
                                    $q,
-                                   AnalysisJob,
-                                   Neighborhood,
                                    Places,
                                    ScoreMetadata) {
         var ctl = this;
@@ -46,6 +44,10 @@
                 if (place.lastJob) {
                     ctl.lastJobScore = place.lastJob.overall_score;
                     ctl.mapLayers = {
+                        dataLayers: [{
+                            name: 'crashes',
+                            url: '/api/crashes/?uuid=' + place.lastJob.uuid
+                        }],
                         tileLayers: place.results.tile_urls,
                         featureLayers: place.results.destinations_urls
                     };
