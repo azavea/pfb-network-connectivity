@@ -32,24 +32,24 @@
     conusMaxZoom: 19,
     legends: {
         census_blocks: {
-            position: 'bottomright',
+            position: 'bottomleft',
             colors: ['#FF3300', '#D04628', '#B9503C', '#A25A51', '#8B6465', '#736D79', '#5C778D', '#4581A2', '#2E8BB6', '#009FDF'],
             labels: ['0 - 9', '10 - 19', '20 - 29', '30 - 39', '40 - 49', '50 - 59', '60 - 69', '70 - 79', '80 - 89', '90 - 100'],
             title: 'BNA Score'
         },
         bike_infrastructure: {
-            position: 'bottomright',
+            position: 'bottomleft',
             colors: ['#8c54de', '#5072f5', '#44a3a6', '#15bf50'],
             labels: ['Conventional Lane', 'Buffered Lane', 'Protected Lane', 'Off-Street Path'],
             title: 'Bike Infrastructure'
         },
         ways: {
-            position: 'bottomright',
+            position: 'bottomleft',
             colors: ['#009fdf', '#ff3300'],
             labels: ['Low Stress', 'High Stress']
         },
         speedLimit: {
-            position: 'bottomright'
+            position: 'bottomleft'
         }
     }
   };
