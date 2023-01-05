@@ -45,7 +45,7 @@
                     ctl.lastJobScore = place.lastJob.overall_score;
                     ctl.mapLayers = {
                         dataLayers: [{
-                            name: 'crashes',
+                            name: 'Fatal Crashes (2016 - 2020)',
                             url: '/api/crashes/?uuid=' + place.lastJob.uuid
                         }],
                         tileLayers: place.results.tile_urls,
