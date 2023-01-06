@@ -35,14 +35,16 @@ NB_POSTGRESQL_PASSWORD - Default: gis
 }
 
 function fetch_census_data() {
+    set +e
     PFB_JOB_URL="http://lehd.ces.census.gov/data/lodes/LODES7/${PFB_STATE}/od/${NB_JOB_FILENAME}.gz"
     wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}" 
     WGET_STATUS=$?
     set -e
-    # Recursively try prior years
-    if [[ $WGET_STATUS -eq 8 ]] && [[ $CENSUS_YEAR -gt 2017 ]]; then
-        (($CENSUS_YEAR--))
-        echo "No ${CENSUS_YEAR} job data available, falling back to ${CENSUS_YEAR-1} data..."
+    # Recursively try prior years as far back as 2016
+    if [[ $WGET_STATUS -eq 8 ]] && [[ $CENSUS_YEAR -gt 2016 ]]; then
+        PRIOR_YEAR=$CENSUS_YEAR
+        ((CENSUS_YEAR--))
+        echo "No ${PRIOR_YEAR} job data available, falling back to ${CENSUS_YEAR} data..."
         NB_JOB_FILENAME="${PFB_STATE}_od_${NB_DATA_TYPE}_JT00_${CENSUS_YEAR}.csv"
         S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
         JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
