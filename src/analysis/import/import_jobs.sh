@@ -35,34 +35,32 @@ NB_POSTGRESQL_PASSWORD - Default: gis
 }
 
 function fetch_census_data() {
-    set +e
-    PFB_JOB_URL="http://lehd.ces.census.gov/data/lodes/LODES7/${PFB_STATE}/od/${NB_JOB_FILENAME}.gz"
-    wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}" 
-    WGET_STATUS=$?
-    set -e
-    # Recursively try prior years as far back as 2016
-    if [[ $WGET_STATUS -eq 8 ]] && [[ $CENSUS_YEAR -gt 2016 ]]; then
-        PRIOR_YEAR=$CENSUS_YEAR
-        ((CENSUS_YEAR--))
-        echo "No ${PRIOR_YEAR} job data available, falling back to ${CENSUS_YEAR} data..."
-        NB_JOB_FILENAME="${PFB_STATE}_od_${NB_DATA_TYPE}_JT00_${CENSUS_YEAR}.csv"
-        S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
+    CENSUS_YEAR=$1
+    NB_JOB_FILENAME="${PFB_STATE}_od_${NB_DATA_TYPE}_JT00_${CENSUS_YEAR}.csv"
+    S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
+
+    if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
+        JOB_DOWNLOAD="/data/${NB_JOB_FILENAME}.gz"
+        echo "Using local job data file ${JOB_DOWNLOAD}"
+    elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
         JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-        fetch_census_data
-        
-        if [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
-            aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
-            echo "Downloaded job data file from S3"
-        else
-            wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}"
-            if [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
-                echo "Uploading job data file to S3 cache"
-                aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
-            fi
+        aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
+        echo "Downloaded job data file ${JOB_DOWNLOAD} from S3"
+    else
+        JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
+        set +e
+        CENSUS_DOWNLOAD_URL="http://lehd.ces.census.gov/data/lodes/LODES7/${PFB_STATE}/od/${NB_JOB_FILENAME}.gz"
+        wget -nv -O "${JOB_DOWNLOAD}" "${CENSUS_DOWNLOAD_URL}"
+        WGET_STATUS=$?
+        set -e
+        if [[ $WGET_STATUS -eq 8 ]] && [[ $CENSUS_YEAR -gt 2016 ]]; then
+            PREVIOUS_YEAR=$((CENSUS_YEAR - 1))
+            echo "No ${CENSUS_YEAR} job data available, falling back to ${PREVIOUS_YEAR} data..."
+            fetch_census_data $PREVIOUS_YEAR
+        elif [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
+            echo "Uploading job data file to S3 cache"
+            aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
         fi
-    elif [ "${AWS_STORAGE_BUCKET_NAME}" ]; then
-        echo "Uploading job data file to S3 cache"
-        aws s3 cp "${JOB_DOWNLOAD}" "${S3_PATH}"
     fi
 }
 
@@ -82,24 +80,7 @@ function import_job_data() {
         JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
         wget -nv -O "${JOB_DOWNLOAD}" "${PFB_JOB_URL}" 
     else
-        CENSUS_YEAR=2019
-        NB_JOB_FILENAME="${PFB_STATE}_od_${NB_DATA_TYPE}_JT00_${CENSUS_YEAR}.csv"
-        S3_PATH="s3://${AWS_STORAGE_BUCKET_NAME}/data/${NB_JOB_FILENAME}.gz"
-
-        if [ -f "/data/${NB_JOB_FILENAME}.gz" ]; then
-            JOB_DOWNLOAD="/data/${NB_JOB_FILENAME}.gz"
-            echo "Using local job data file ${JOB_DOWNLOAD}"
-        elif [ "${AWS_STORAGE_BUCKET_NAME}" ] && aws s3 ls "${S3_PATH}"; then
-            JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-            aws s3 cp "${S3_PATH}" "${JOB_DOWNLOAD}"
-            echo "Downloaded job data file ${JOB_DOWNLOAD} from S3"
-        else
-            JOB_DOWNLOAD="${NB_TEMPDIR}/${NB_JOB_FILENAME}.gz"
-            set +e
-            if [[ -z $PFB_JOB_URL ]]; then
-                fetch_census_data
-            fi
-        fi
+        fetch_census_data 2019
     fi
     gunzip -c "${JOB_DOWNLOAD}" > "${NB_TEMPDIR}/${NB_JOB_FILENAME}"
 
