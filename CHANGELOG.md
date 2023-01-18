@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 #### Fixed
 - Ignore state for non-US neighborhoods when downloading OSM extract
+- Fix analyses using pre-2018 census data
 
 ## [0.16.1] - 2022-10-06
 
