@@ -9,7 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
-## [0.16.0] - 2022-10-06
+## [0.17.0] - 2023-01-19
+
+####  Added
+- Add endpoint to serve crash data
+- Facilitate crash data imports
+- Add crash markers and tooltips to client
+
+#### Fixed
+- Ignore state for non-US neighborhoods when downloading OSM extract
+- Fix analyses using pre-2018 census data
+
+## [0.16.1] - 2022-10-06
 
 #### Fixed
 - Use 'great-britain', not 'united-kingdom', in OSM extract URLs
@@ -181,7 +192,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.16.0...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.17.0...HEAD
+[0.17.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.16.1...0.17.0
+[0.16.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.16.0...0.16.1
 [0.16.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.1...0.16.0
 [0.15.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.15.0...0.15.1
 [0.15.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.14.0...0.15.0

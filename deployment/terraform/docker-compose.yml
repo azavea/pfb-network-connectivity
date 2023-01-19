@@ -12,5 +12,7 @@ services:
       - GIT_COMMIT
       - PFB_SETTINGS_BUCKET
       - BATCH_ANALYSIS_JOB_NAME_REVISION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     working_dir: /usr/local/src
     entrypoint: terraform
