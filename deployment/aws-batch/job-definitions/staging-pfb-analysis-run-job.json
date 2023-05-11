@@ -52,6 +52,9 @@
         "readonlyRootFilesystem": false,
         "privileged": true,
         "ulimits": [],
-        "user": ""
+        "user": "",
+        "linuxParameters": {
+            "sharedMemorySize": 4096
+        }
     }
 }
