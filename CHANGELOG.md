@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+- Strip backslash characters from OSM file
+- Increase memory and resource allocations for analysis
+
 ## [0.17.0] - 2023-01-19
 
 ####  Added

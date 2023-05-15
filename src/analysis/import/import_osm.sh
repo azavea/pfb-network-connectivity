@@ -61,11 +61,15 @@ OSM_TEMPDIR="${NB_TEMPDIR:-$(mktemp -d)}/import_osm"
 mkdir -p "${OSM_TEMPDIR}"
 
 update_status "IMPORTING" "Clipping provided OSM file"
+OSM_DATA_FILE="${OSM_TEMPDIR}/converted.osm"
 osmconvert "${1}" \
   --drop-broken-refs \
   -b="${BBOX}" \
-  -o="${OSM_TEMPDIR}/converted.osm"
-OSM_DATA_FILE="${OSM_TEMPDIR}/converted.osm"
+  -o="${OSM_DATA_FILE}"
+# If the OSM file contains "\" as a segment name, osm2pgrouting chokes on those segments and drops
+# everything that happens to be in the same processing chunk. So strip them out.
+sed 's/\\/backslash/' $OSM_DATA_FILE > "${OSM_DATA_FILE}-cleaned"
+mv "${OSM_DATA_FILE}-cleaned" $OSM_DATA_FILE
 
 # import the osm with highways
 update_status "IMPORTING" "Importing OSM data"
