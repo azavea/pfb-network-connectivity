@@ -3,6 +3,9 @@ FROM node:6.17-stretch
 MAINTAINER Azavea
 
 ENV ANGULAR_DIR /opt/pfb/angularjs
+ENV NODE_OPTIONS --use-openssl-ca
+
+RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y rsync \
     && rm -rf /var/lib/apt/lists/*
