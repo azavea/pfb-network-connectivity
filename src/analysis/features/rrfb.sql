@@ -13,6 +13,6 @@ AND     EXISTS (
             SELECT  1
             FROM    neighborhood_osm_full_point osm
             WHERE   osm.highway = 'crossing'
-            AND     osm.flashing_lights = 'yes'
+            AND     osm.flashing_lights IN ('yes','button','always','sensor')
             AND     ST_DWithin(neighborhood_ways_intersections.geom, osm.way, :sigctl_search_dist)
         );
