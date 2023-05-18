@@ -43,7 +43,7 @@ SET     functional_class = 'path',
 FROM    neighborhood_osm_full_line osm
 WHERE   neighborhood_ways.osm_id = osm.osm_id
 AND     osm.highway = 'footway'
-AND     osm.footway = 'crossing';
+AND     osm.footway IN ('crossing','traffic_island');
 
 UPDATE  neighborhood_ways
 SET     functional_class = 'path'
