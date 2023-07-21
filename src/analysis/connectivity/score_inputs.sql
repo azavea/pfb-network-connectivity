@@ -87,20 +87,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'People',
         'Median score of access to population',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of population accessible by low stress
             to population accessible overall, expressed as
             the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            half have a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            half have a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile pop access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -108,20 +108,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'People',
         '70th percentile score of access to population',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of population accessible by low stress
             to population accessible overall, expressed as
             the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            70% have a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            70% have a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile pop access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -129,20 +129,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'People',
         '30th percentile score of access to population',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of population accessible by low stress
             to population accessible overall, expressed as
             the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            30% have a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            30% have a lower ratio.','\n\s+',' ','g');
 
 -- avg pop access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -196,20 +196,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Median score of access to employment',
-        quantile(CASE WHEN emp_high_stress=0 THEN 0 ELSE emp_low_stress::FLOAT/emp_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY emp_low_stress::FLOAT/NULLIF(emp_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of employment accessible by low stress
             to employment accessible overall, expressed as
             the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            half have a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            half have a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile jobs access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -217,20 +217,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '70th percentile score of access to employment',
-        quantile(CASE WHEN emp_high_stress=0 THEN 0 ELSE emp_low_stress::FLOAT/emp_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY emp_low_stress::FLOAT/NULLIF(emp_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of employment accessible by low stress
             to employment accessible overall, expressed as
             the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            70% have a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            70% have a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile jobs access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -238,20 +238,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '30th percentile score of access to employment',
-        quantile(CASE WHEN emp_high_stress=0 THEN 0 ELSE emp_low_stress::FLOAT/emp_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY emp_low_stress::FLOAT/NULLIF(emp_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of employment accessible by low stress
             to employment accessible overall, expressed as
             the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of all census blocks in the neighborhood have
             a ratio of low stress to high stress access above this number,
-            30% have a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            30% have a lower ratio.','\n\s+',' ','g');
 
 -- avg jobs access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -325,20 +325,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Median score of school access',
-        quantile(CASE WHEN schools_high_stress=0 THEN 0 ELSE schools_low_stress::FLOAT/schools_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY schools_low_stress::FLOAT/NULLIF(schools_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of schools within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile schools access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -346,20 +346,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '70th percentile score of school access',
-        quantile(CASE WHEN schools_high_stress=0 THEN 0 ELSE schools_low_stress::FLOAT/schools_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY schools_low_stress::FLOAT/NULLIF(schools_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of schools within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile schools access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -367,20 +367,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '30th percentile score of school access',
-        quantile(CASE WHEN schools_high_stress=0 THEN 0 ELSE schools_low_stress::FLOAT/schools_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY schools_low_stress::FLOAT/NULLIF(schools_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of schools accessible by low stress
             compared to schools accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of schools within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -431,20 +431,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Median school population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_schools
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as a median of all
             schools in the neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of schools in the neighborhood have low stress
             connections to a higher percentage of people within biking
-            distance, half are connected to a lower percentage.','\n\s+',' ','g')
-FROM    neighborhood_schools
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
-        );
+            distance, half are connected to a lower percentage.','\n\s+',' ','g');
 
 -- school pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -452,20 +452,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '70th percentile school population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_schools
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as the 70th percentile of all
             schools in the neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of schools in the neighborhood have low stress
             connections to a higher percentage of people within biking
-            distance, 70% are connected to a lower percentage.','\n\s+',' ','g')
-FROM    neighborhood_schools
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
-        );
+            distance, 70% are connected to a lower percentage.','\n\s+',' ','g');
 
 -- school pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -473,20 +473,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '30th percentile school population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_schools
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to schools
             in the neighborhood to total population within the bike shed
             of each school expressed as the 30th percentile of all
             schools in the neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of schools in the neighborhood have low stress
             connections to a higher percentage of people within biking
-            distance, 30% are connected to a lower percentage.','\n\s+',' ','g')
-FROM    neighborhood_schools
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_schools.geom_pt,b.geom)
-        );
+            distance, 30% are connected to a lower percentage.','\n\s+',' ','g');
 
 
 -------------------------------------
@@ -519,20 +519,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Median score of tech/vocational college access',
-        quantile(CASE WHEN colleges_high_stress=0 THEN 0 ELSE colleges_low_stress::FLOAT/colleges_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY colleges_low_stress::FLOAT/NULLIF(colleges_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of tech/vocational colleges within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile colleges access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -540,20 +540,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '70th percentile score of tech/vocational college access',
-        quantile(CASE WHEN colleges_high_stress=0 THEN 0 ELSE colleges_low_stress::FLOAT/colleges_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY colleges_low_stress::FLOAT/NULLIF(colleges_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of tech/vocational colleges within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile colleges access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -561,20 +561,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '30th percentile score of tech/vocational college access',
-        quantile(CASE WHEN colleges_high_stress=0 THEN 0 ELSE colleges_low_stress::FLOAT/colleges_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY colleges_low_stress::FLOAT/NULLIF(colleges_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of tech/vocational colleges accessible by low stress
             compared to tech/vocational colleges accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of tech/vocational colleges within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -625,7 +625,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Median tech/vocational college population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_colleges
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as a median of all
@@ -634,13 +640,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one tech/vocational college exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_colleges
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- college pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -648,7 +648,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '70th percentile tech/vocational college population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_colleges
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as the 70th percentile of all
@@ -657,13 +663,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one tech/vocational college exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_colleges
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- college pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -671,7 +671,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '30th percentile tech/vocational college population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0)) 
+        FROM    neighborhood_colleges
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to tech/vocational colleges
             in the neighborhood to total population within the bike shed
             of each college expressed as the 30th percentile of all
@@ -680,13 +686,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one tech/vocational college exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_colleges
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_colleges.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 
 -------------------------------------
@@ -719,20 +719,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Median score of university access',
-        quantile(CASE WHEN universities_high_stress=0 THEN 0 ELSE universities_low_stress::FLOAT/universities_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY universities_low_stress::FLOAT/NULLIF(universities_high_stress,0)) 
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of universities within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile universities access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -740,20 +740,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '70th percentile score of university access',
-        quantile(CASE WHEN universities_high_stress=0 THEN 0 ELSE universities_low_stress::FLOAT/universities_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY universities_low_stress::FLOAT/NULLIF(universities_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of universities within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile universities access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -761,20 +761,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '30th percentile score of university access',
-        quantile(CASE WHEN universities_high_stress=0 THEN 0 ELSE universities_low_stress::FLOAT/universities_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY universities_low_stress::FLOAT/NULLIF(universities_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of universities accessible by low stress
             compared to universities accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of universities within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -825,7 +825,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         'Median university population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+       (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_universities
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as a median of all
@@ -834,13 +840,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one university exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_universities
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- university pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -848,7 +848,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '70th percentile university population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_universities
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as the 70th percentile of all
@@ -857,13 +863,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one university exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_universities
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- university pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -871,7 +871,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Opportunity',
         '30th percentile university population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_universities
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to universities
             in the neighborhood to total population within the bike shed
             of each university expressed as the 30th percentile of all
@@ -880,13 +886,7 @@ SELECT  'Opportunity',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one university exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_universities
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_universities.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 
 -------------------------------------
@@ -919,20 +919,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median score of doctors access',
-        quantile(CASE WHEN doctors_high_stress=0 THEN 0 ELSE doctors_low_stress::FLOAT/doctors_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY doctors_low_stress::FLOAT/NULLIF(doctors_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of doctors within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile doctors access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -940,20 +940,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile score of doctors access',
-        quantile(CASE WHEN doctors_high_stress=0 THEN 0 ELSE doctors_low_stress::FLOAT/doctors_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY doctors_low_stress::FLOAT/NULLIF(doctors_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of doctors within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile doctors access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -961,20 +961,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile score of doctors access',
-        quantile(CASE WHEN doctors_high_stress=0 THEN 0 ELSE doctors_low_stress::FLOAT/doctors_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY doctors_low_stress::FLOAT/NULLIF(doctors_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of doctors accessible by low stress
             compared to doctors accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of doctors within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1025,7 +1025,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median doctors population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_doctors
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as a median of all
@@ -1034,13 +1040,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one doctors office exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_doctors
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- doctors pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1048,7 +1048,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile doctors population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_doctors
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as the 70th percentile of all
@@ -1057,13 +1063,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one doctors exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_doctors
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- doctors pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1071,7 +1071,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile doctors population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_doctors
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to doctors
             in the neighborhood to total population within the bike shed
             of each doctors office expressed as the 30th percentile of all
@@ -1080,13 +1086,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one doctors exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_doctors
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_doctors.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- dentists
@@ -1118,20 +1118,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median score of dentists access',
-        quantile(CASE WHEN dentists_high_stress=0 THEN 0 ELSE dentists_low_stress::FLOAT/dentists_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY dentists_low_stress::FLOAT/NULLIF(dentists_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of dentists within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile dentists access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1139,20 +1139,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile score of dentists access',
-        quantile(CASE WHEN dentists_high_stress=0 THEN 0 ELSE dentists_low_stress::FLOAT/dentists_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY dentists_low_stress::FLOAT/NULLIF(dentists_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of dentists within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile dentists access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1160,20 +1160,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile score of dentists access',
-        quantile(CASE WHEN dentists_high_stress=0 THEN 0 ELSE dentists_low_stress::FLOAT/dentists_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY dentists_low_stress::FLOAT/NULLIF(dentists_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of dentists accessible by low stress
             compared to dentists accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of dentists within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1224,7 +1224,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median dentists population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_dentists
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as a median of all
@@ -1233,13 +1239,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one dentists office exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_dentists
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- dentists pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1247,7 +1247,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile dentists population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_dentists
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as the 70th percentile of all
@@ -1256,13 +1262,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one dentists office exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_dentists
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- dentists pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1270,7 +1270,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile dentists population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_dentists
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to dentists
             in the neighborhood to total population within the bike shed
             of each dentists office expressed as the 30th percentile of all
@@ -1279,13 +1285,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one dentists office exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_dentists
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_dentists.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- hospitals
@@ -1317,20 +1317,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median score of hospitals access',
-        quantile(CASE WHEN hospitals_high_stress=0 THEN 0 ELSE hospitals_low_stress::FLOAT/hospitals_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY hospitals_low_stress::FLOAT/NULLIF(hospitals_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of hospitals within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile hospitals access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1338,20 +1338,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile score of hospitals access',
-        quantile(CASE WHEN hospitals_high_stress=0 THEN 0 ELSE hospitals_low_stress::FLOAT/hospitals_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY hospitals_low_stress::FLOAT/NULLIF(hospitals_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of hospitals within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile hospitals access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1359,20 +1359,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile score of hospitals access',
-        quantile(CASE WHEN hospitals_high_stress=0 THEN 0 ELSE hospitals_low_stress::FLOAT/hospitals_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY hospitals_low_stress::FLOAT/NULLIF(hospitals_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of hospitals accessible by low stress
             compared to hospitals accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of hospitals within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1423,7 +1423,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median hospitals population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_hospitals
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as a median of all
@@ -1432,13 +1438,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one hospital exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_hospitals
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- hospitals pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1446,7 +1446,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile hospitals population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_hospitals
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as the 70th percentile of all
@@ -1455,13 +1461,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one hospital exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_hospitals
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- hospitals pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1469,7 +1469,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile hospitals population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_hospitals
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to hospitals
             in the neighborhood to total population within the bike shed
             of each hospital expressed as the 30th percentile of all
@@ -1478,13 +1484,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one hospital exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_hospitals
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_hospitals.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- pharmacies
@@ -1516,20 +1516,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median score of pharmacies access',
-        quantile(CASE WHEN pharmacies_high_stress=0 THEN 0 ELSE pharmacies_low_stress::FLOAT/pharmacies_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pharmacies_low_stress::FLOAT/NULLIF(pharmacies_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of pharmacies within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile pharmacies access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1537,20 +1537,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile score of pharmacies access',
-        quantile(CASE WHEN pharmacies_high_stress=0 THEN 0 ELSE pharmacies_low_stress::FLOAT/pharmacies_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pharmacies_low_stress::FLOAT/NULLIF(pharmacies_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of pharmacies within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile pharmacies access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1558,20 +1558,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile score of pharmacies access',
-        quantile(CASE WHEN pharmacies_high_stress=0 THEN 0 ELSE pharmacies_low_stress::FLOAT/pharmacies_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pharmacies_low_stress::FLOAT/NULLIF(pharmacies_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of pharmacies accessible by low stress
             compared to pharmacies accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of pharmacies within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1622,7 +1622,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median pharmacies population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_pharmacies
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as a median of all
@@ -1631,13 +1637,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one pharmacy exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_pharmacies
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- pharmacies pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1645,7 +1645,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile pharmacies population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_pharmacies
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as the 70th percentile of all
@@ -1654,13 +1660,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one pharmacy exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_pharmacies
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- pharmacies pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1668,7 +1668,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile pharmacies population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_pharmacies
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to pharmacies
             in the neighborhood to total population within the bike shed
             of each pharmacy expressed as the 30th percentile of all
@@ -1677,13 +1683,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one pharmacy exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_pharmacies
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_pharmacies.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- retail
@@ -1715,20 +1715,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Retail',
         'Median score of retail access',
-        quantile(CASE WHEN retail_high_stress=0 THEN 0 ELSE retail_low_stress::FLOAT/retail_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY retail_low_stress::FLOAT/NULLIF(retail_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of retail within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile retail access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1736,20 +1736,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Retail',
         '70th percentile score of retail access',
-        quantile(CASE WHEN retail_high_stress=0 THEN 0 ELSE retail_low_stress::FLOAT/retail_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY retail_low_stress::FLOAT/NULLIF(retail_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of retail within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile retail access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1757,20 +1757,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Retail',
         '30th percentile score of retail access',
-        quantile(CASE WHEN retail_high_stress=0 THEN 0 ELSE retail_low_stress::FLOAT/retail_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY retail_low_stress::FLOAT/NULLIF(retail_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of retail accessible by low stress
             compared to retail accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of retail within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1821,7 +1821,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Retail',
         'Median retail population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_retail
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as a median of all
@@ -1830,13 +1836,7 @@ SELECT  'Retail',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one retail exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_retail
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- retail pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1844,7 +1844,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Retail',
         '70th percentile retail population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_retail
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as the 70th percentile of all
@@ -1853,13 +1859,7 @@ SELECT  'Retail',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one retail exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_retail
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- retail pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1867,7 +1867,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Retail',
         '30th percentile retail population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_retail
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to retail
             in the neighborhood to total population within the bike shed
             of each retail cluster expressed as the 30th percentile of all
@@ -1876,13 +1882,7 @@ SELECT  'Retail',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one retail exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_retail
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_retail.geom_poly,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- supermarkets
@@ -1914,20 +1914,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median score of supermarkets access',
-        quantile(CASE WHEN supermarkets_high_stress=0 THEN 0 ELSE supermarkets_low_stress::FLOAT/supermarkets_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY supermarkets_low_stress::FLOAT/NULLIF(supermarkets_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of supermarkets within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile supermarkets access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1935,20 +1935,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile score of supermarkets access',
-        quantile(CASE WHEN supermarkets_high_stress=0 THEN 0 ELSE supermarkets_low_stress::FLOAT/supermarkets_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY supermarkets_low_stress::FLOAT/NULLIF(supermarkets_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of supermarkets within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile supermarkets access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -1956,20 +1956,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile score of supermarkets access',
-        quantile(CASE WHEN supermarkets_high_stress=0 THEN 0 ELSE supermarkets_low_stress::FLOAT/supermarkets_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY supermarkets_low_stress::FLOAT/NULLIF(supermarkets_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of supermarkets accessible by low stress
             compared to supermarkets accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of supermarkets within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2020,7 +2020,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median supermarkets population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_supermarkets
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as a median of all
@@ -2029,13 +2035,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one supermarkets exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_supermarkets
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- supermarkets pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2043,7 +2043,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile supermarkets population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_supermarkets
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as the 70th percentile of all
@@ -2052,13 +2058,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one supermarkets exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_supermarkets
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- supermarkets pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2066,7 +2066,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile supermarkets population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_supermarkets
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to supermarkets
             in the neighborhood to total population within the bike shed
             of each supermarket expressed as the 30th percentile of all
@@ -2075,13 +2081,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one supermarkets exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_supermarkets
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_supermarkets.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- social_services
@@ -2113,20 +2113,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median score of social services access',
-        quantile(CASE WHEN social_services_high_stress=0 THEN 0 ELSE social_services_low_stress::FLOAT/social_services_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY social_services_low_stress::FLOAT/NULLIF(social_services_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of social services within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile social_services access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2134,20 +2134,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile score of social services access',
-        quantile(CASE WHEN social_services_high_stress=0 THEN 0 ELSE social_services_low_stress::FLOAT/social_services_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY social_services_low_stress::FLOAT/NULLIF(social_services_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of social services within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile social_services access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2155,20 +2155,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile score of social services access',
-        quantile(CASE WHEN social_services_high_stress=0 THEN 0 ELSE social_services_low_stress::FLOAT/social_services_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY social_services_low_stress::FLOAT/NULLIF(social_services_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of social services accessible by low stress
             compared to social services accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of social services within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2219,7 +2219,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         'Median social_services population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_social_services
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as a median of all
@@ -2228,13 +2234,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_social_services
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- social_services pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2242,7 +2242,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '70th percentile social_services population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_social_services
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as the 70th percentile of all
@@ -2251,13 +2257,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_social_services
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- social_services pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2265,7 +2265,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Core Services',
         '30th percentile social_services population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_social_services
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to social services
             in the neighborhood to total population within the bike shed
             of each social service location expressed as the 30th percentile of all
@@ -2274,13 +2280,7 @@ SELECT  'Core Services',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one social_services exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_social_services
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_social_services.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- parks
@@ -2312,20 +2312,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         'Median score of parks access',
-        quantile(CASE WHEN parks_high_stress=0 THEN 0 ELSE parks_low_stress::FLOAT/parks_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY parks_low_stress::FLOAT/NULLIF(parks_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of parks within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile parks access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2333,20 +2333,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '70th percentile score of parks access',
-        quantile(CASE WHEN parks_high_stress=0 THEN 0 ELSE parks_low_stress::FLOAT/parks_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY parks_low_stress::FLOAT/NULLIF(parks_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of parks within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile parks access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2354,20 +2354,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '30th percentile score of parks access',
-        quantile(CASE WHEN parks_high_stress=0 THEN 0 ELSE parks_low_stress::FLOAT/parks_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY parks_low_stress::FLOAT/NULLIF(parks_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of parks accessible by low stress
             compared to parks accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of parks within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2418,7 +2418,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         'Median parks population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_parks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as a median of all
@@ -2427,13 +2433,7 @@ SELECT  'Recreation',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one parks exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_parks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- parks pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2441,7 +2441,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '70th percentile parks population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_parks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as the 70th percentile of all
@@ -2450,13 +2456,7 @@ SELECT  'Recreation',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one parks exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_parks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- parks pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2464,7 +2464,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '30th percentile parks population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_parks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to parks
             in the neighborhood to total population within the bike shed
             of each parks expressed as the 30th percentile of all
@@ -2473,13 +2479,7 @@ SELECT  'Recreation',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one parks exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_parks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_parks.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- trails
@@ -2511,20 +2511,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         'Median score of trails access',
-        quantile(CASE WHEN trails_high_stress=0 THEN 0 ELSE trails_low_stress::FLOAT/trails_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY trails_low_stress::FLOAT/NULLIF(trails_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of trails within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile trails access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2532,20 +2532,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '70th percentile score of trails access',
-        quantile(CASE WHEN trails_high_stress=0 THEN 0 ELSE trails_low_stress::FLOAT/trails_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY trails_low_stress::FLOAT/NULLIF(trails_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of trails within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile trails access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2553,20 +2553,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '30th percentile score of trails access',
-        quantile(CASE WHEN trails_high_stress=0 THEN 0 ELSE trails_low_stress::FLOAT/trails_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY trails_low_stress::FLOAT/NULLIF(trails_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of trails accessible by low stress
             compared to trails accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of trails within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2617,20 +2617,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         'Median score of community centers access',
-        quantile(CASE WHEN community_centers_high_stress=0 THEN 0 ELSE community_centers_low_stress::FLOAT/community_centers_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY community_centers_low_stress::FLOAT/NULLIF(community_centers_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of community centers within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile community centers access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2638,20 +2638,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '70th percentile score of community centers access',
-        quantile(CASE WHEN community_centers_high_stress=0 THEN 0 ELSE community_centers_low_stress::FLOAT/community_centers_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY community_centers_low_stress::FLOAT/NULLIF(community_centers_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of community centers within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile community centers access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2659,20 +2659,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '30th percentile score of community centers access',
-        quantile(CASE WHEN community_centers_high_stress=0 THEN 0 ELSE community_centers_low_stress::FLOAT/community_centers_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY community_centers_low_stress::FLOAT/NULLIF(community_centers_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of community centers accessible by low stress
             compared to community centers accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of community centers within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2723,7 +2723,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         'Median community centers population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_community_centers
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as a median of all
@@ -2732,13 +2738,7 @@ SELECT  'Recreation',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one community centers exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_community_centers
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- community centers pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2746,7 +2746,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '70th percentile community centers population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_community_centers
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as the 70th percentile of all
@@ -2755,13 +2761,7 @@ SELECT  'Recreation',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one community centers exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_community_centers
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- community centers pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2769,7 +2769,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Recreation',
         '30th percentile community centers population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_community_centers
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to community centers
             in the neighborhood to total population within the bike shed
             of each community centers expressed as the 30th percentile of all
@@ -2778,13 +2784,7 @@ SELECT  'Recreation',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one community centers exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_community_centers
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_community_centers.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -------------------------------------
 -- transit
@@ -2816,20 +2816,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Transit',
         'Median score of transit access',
-        quantile(CASE WHEN transit_high_stress=0 THEN 0 ELSE transit_low_stress::FLOAT/transit_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY transit_low_stress::FLOAT/NULLIF(transit_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the median of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('Half of census blocks in this neighborhood
             have low stress access to a higher ratio of transit stations within
-            biking distance, half have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, half have access to a lower ratio.','\n\s+',' ','g');
 
 -- 70th percentile transit access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2837,20 +2837,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Transit',
         '70th percentile score of transit access',
-        quantile(CASE WHEN transit_high_stress=0 THEN 0 ELSE transit_low_stress::FLOAT/transit_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY transit_low_stress::FLOAT/NULLIF(transit_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the 70th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('30% of census blocks in this neighborhood
             have low stress access to a higher ratio of transit stations within
-            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 70% have access to a lower ratio.','\n\s+',' ','g');
 
 -- 30th percentile transit access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2858,20 +2858,20 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Transit',
         '30th percentile score of transit access',
-        quantile(CASE WHEN transit_high_stress=0 THEN 0 ELSE transit_low_stress::FLOAT/transit_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY transit_low_stress::FLOAT/NULLIF(transit_high_stress,0))
+        FROM    neighborhood_census_blocks
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
+        )),
         regexp_replace('Score of transit stations accessible by low stress
             compared to transit stations accessible by high stress
             expressed as the 30th percentile of all census blocks in the
             neighborhood','\n\s+',' ','g'),
         regexp_replace('70% of census blocks in this neighborhood
             have low stress access to a higher ratio of transit stations within
-            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g')
-FROM    neighborhood_census_blocks
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_census_blocks.geom,b.geom)
-        );
+            biking distance, 30% have access to a lower ratio.','\n\s+',' ','g');
 
 -- population weighted census block score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2922,7 +2922,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Transit',
         'Median transit population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.5),
+        (SELECT  PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_transit
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as a median of all
@@ -2931,13 +2937,7 @@ SELECT  'Transit',
             connections to a higher percentage of people within biking
             distance, half are connected to a lower percentage.
             (if only one transit station exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_transit
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- transit pop shed 70th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2945,7 +2945,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Transit',
         '70th percentile transit population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.7),
+        (SELECT  PERCENTILE_CONT(0.7) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_transit
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as the 70th percentile of all
@@ -2954,13 +2960,7 @@ SELECT  'Transit',
             connections to a higher percentage of people within biking
             distance, 70% are connected to a lower percentage.
             (if only one transit station exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_transit
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
 
 -- transit pop shed 30th percentile low stress access score
 INSERT INTO generated.neighborhood_score_inputs (
@@ -2968,7 +2968,13 @@ INSERT INTO generated.neighborhood_score_inputs (
 )
 SELECT  'Transit',
         '30th percentile transit population shed score',
-        quantile(CASE WHEN pop_high_stress=0 THEN 0 ELSE pop_low_stress::FLOAT/pop_high_stress END,0.3),
+        (SELECT  PERCENTILE_CONT(0.3) WITHIN GROUP(ORDER BY pop_low_stress::FLOAT/NULLIF(pop_high_stress,0))
+        FROM    neighborhood_transit
+        WHERE   EXISTS (
+            SELECT  1
+            FROM    neighborhood_boundary AS b
+            WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
+        )),
         regexp_replace('Score of population with low stress access to transit stations
             in the neighborhood to total population within the bike shed
             of each transit stations expressed as the 30th percentile of all
@@ -2977,10 +2983,4 @@ SELECT  'Transit',
             connections to a higher percentage of people within biking
             distance, 30% are connected to a lower percentage.
             (if only one transit station exists this is the score for that one
-            location)','\n\s+',' ','g')
-FROM    neighborhood_transit
-WHERE   EXISTS (
-            SELECT  1
-            FROM    neighborhood_boundary AS b
-            WHERE   ST_Intersects(neighborhood_transit.geom_pt,b.geom)
-        );
+            location)','\n\s+',' ','g');
