@@ -4,8 +4,8 @@
     "parameters": {},
     "containerProperties": {
         "image": "{image}",
-        "vcpus": 2,
-        "memory": 12288,
+        "vcpus": 8,
+        "memory": 61000,
         "command": [
             "/pfb/scripts/entrypoint.sh"
         ],
@@ -26,19 +26,19 @@
             "value": "2680"
         }, {
             "name": "PFB_MAINTENANCE_WORK_MEM",
-            "value": "2048MB"
+            "value": "8GB"
         }, {
             "name": "PFB_MAX_WAL_SIZE",
-            "value": "4096MB"
+            "value": "8GB"
         }, {
             "name": "PFB_SHARED_BUFFERS",
-            "value": "3072MB"
+            "value": "24GB"
         }, {
             "name": "PFB_TEMP_FILE_LIMIT",
-            "value": "104857600"
+            "value": "100GB"
         }, {
             "name": "PFB_WORK_MEM",
-            "value": "1536MB"
+            "value": "3GB"
         }],
         "mountPoints": [{
             "sourceVolume": "pgdata",
@@ -52,6 +52,9 @@
         "readonlyRootFilesystem": false,
         "privileged": true,
         "ulimits": [],
-        "user": ""
+        "user": "",
+        "linuxParameters": {
+            "sharedMemorySize": 4096
+        }
     }
 }

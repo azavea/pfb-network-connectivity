@@ -52,10 +52,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [[ -n "${PFB_SETTINGS_BUCKET}" ]]; then
         pushd "${TERRAFORM_DIR}"
 
-        aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/terraform/terraform.tfvars" "${PFB_SETTINGS_BUCKET}.tfvars"
-
         case "${1}" in
             plan)
+                aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/terraform/terraform.tfvars" "${PFB_SETTINGS_BUCKET}.tfvars"
+
                 update_batch_definitions
 
                 docker-compose run --rm \
@@ -111,6 +111,10 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 ;;
             apply-mgmt)
                 docker-compose run --rm terraform apply "${PFB_SETTINGS_BUCKET}-mgmt.tfplan"
+                ;;
+            update-tfvars)
+                aws s3 cp "${PFB_SETTINGS_BUCKET}.tfvars" \
+                    "s3://${PFB_SETTINGS_BUCKET}/terraform/terraform.tfvars" --sse
                 ;;
             *)
                 echo "ERROR: I don't have support for that Terraform subcommand!"

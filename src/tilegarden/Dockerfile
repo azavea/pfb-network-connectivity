@@ -1,10 +1,9 @@
-FROM node:12.19-stretch-slim
+FROM node:12.19-buster-slim
 
 ENV BASE_DIR /opt/pfb/tilegarden
 
 # Install git for git dependencies
-RUN apt-get update -y
-RUN apt-get install git jq -y
+RUN apt-get update -y && apt-get install -y git jq python2 && apt-get clean
 RUN yarn global add carto
 
 # Copy files needed for installing packages first
