@@ -88,6 +88,8 @@ node,way   bicycle      text         linear
 node,way   bridge       text         linear
 node,way   button_operated    text   linear
 node,way   crossing     text         linear
+node,way   crossing:island    text   linear
+node,way   crossing_ref       text   linear
 way        cycleway     text         linear
 way        cycleway:left      text   linear
 way        cycleway:right     text   linear
