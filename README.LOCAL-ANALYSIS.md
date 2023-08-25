@@ -101,7 +101,6 @@ NB_POSTGRESQL_PASSWORD=remote_db_password \
 - Extensions installed:
   - [PostGIS](http://postgis.net/)
   - [pgRouting](http://pgrouting.org/)
-  - [quantile](https://github.com/tvondra/quantile)
   - uuid-ossp
   - hstore
   - plpython3u
