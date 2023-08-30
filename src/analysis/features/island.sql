@@ -13,6 +13,6 @@ AND     EXISTS (
             SELECT  1
             FROM    neighborhood_osm_full_point osm
             WHERE   osm.highway = 'crossing'
-            AND     osm.crossing = 'island'
+            AND     osm."crossing:island" = 'yes'
             AND     ST_DWithin(neighborhood_ways_intersections.geom, osm.way, :sigctl_search_dist)
         );

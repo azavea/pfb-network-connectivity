@@ -4,7 +4,6 @@ LABEL type=pfb-alt
 
 ENV GIT_BRANCH_OSM2PGROUTING osm2pgrouting-2.1.0
 ENV GIT_BRANCH_OSM2PGSQL 0.90.1
-ENV GIT_BRANCH_QUANTILE master
 
 RUN set -xe && \
     BUILD_DEPS=" \
@@ -46,8 +45,6 @@ RUN set -xe && \
         (cd osm2pgrouting && mkdir build && cmake -H. -Bbuild && cd build && make install) && \
       git clone --branch $GIT_BRANCH_OSM2PGSQL https://github.com/openstreetmap/osm2pgsql.git && \
         (cd osm2pgsql && mkdir build && cd build && cmake ../ && make install) && \
-      git clone --branch $GIT_BRANCH_QUANTILE https://github.com/tvondra/quantile.git && \
-        (cd quantile && make install) && \
     \
     cd /tmp/ && rm -rf /tmp/build/ /var/lib/apt/lists/* && \
     apt-get purge -y --auto-remove ${BUILD_DEPS}

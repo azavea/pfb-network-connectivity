@@ -50,15 +50,11 @@ RUN set -xe && \
         osm2pgsql" && \
     apt-get update && apt-get install -y ${BUILD_DEPS} ${DEPS} --no-install-recommends && \
     \
-    mkdir /tmp/build/ && cd /tmp/build && \
-    git clone --branch master https://github.com/tvondra/quantile.git && \
-      (cd quantile && make install) && \
-    \
     pip3 install --upgrade pip setuptools && \
     hash -r && \
     pip3 install -r /opt/pfb/django/requirements.txt && \
     \
-    cd /tmp/ && rm -rf /tmp/build/ /var/lib/apt/lists/* && \
+    cd /tmp/ && rm -rf /var/lib/apt/lists/* && \
     apt-get purge -y --auto-remove ${BUILD_DEPS}
 
 RUN set -xe && \
