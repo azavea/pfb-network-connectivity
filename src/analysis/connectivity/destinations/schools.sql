@@ -27,7 +27,7 @@ SELECT  osm_id,
         ST_Centroid(way),
         way
 FROM    neighborhood_osm_full_polygon
-WHERE   amenity = 'school';
+WHERE   amenity IN ('school','kindergarten');
 
 -- remove subareas that are mistakenly designated as amenity=school
 DELETE FROM generated.neighborhood_schools
@@ -50,7 +50,7 @@ SELECT  osm_id,
         name,
         way
 FROM    neighborhood_osm_full_point
-WHERE   amenity = 'school'
+WHERE   amenity IN ('school','kindergarten')
 AND     NOT EXISTS (
             SELECT  1
             FROM    neighborhood_schools s
