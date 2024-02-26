@@ -23,7 +23,8 @@ INSERT INTO generated.neighborhood_retail (
 )
 SELECT  ST_Multi(ST_Buffer(ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3),0))
 FROM    neighborhood_osm_full_polygon
-WHERE   landuse = 'retail';
+WHERE   landuse = 'retail' OR
+        building = 'retail';
 
 -- set points on polygons
 UPDATE  generated.neighborhood_retail

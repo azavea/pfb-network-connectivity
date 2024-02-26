@@ -86,6 +86,7 @@ node       amenity      text         linear
 way        amenity      text         polygon
 node,way   bicycle      text         linear
 node,way   bridge       text         linear
+node,way   building     text         polygon
 node,way   button_operated    text   linear
 node,way   crossing     text         linear
 node,way   crossing:island    text   linear
@@ -105,6 +106,7 @@ way        cycleway:both:width  text linear
 node,way   flashing_lights      text linear
 node,way   foot         text         linear
 way        footway      text         linear
+node,way   healthcare   text         polygon
 node,way   highway      text         linear
 node,way   junction     text         linear
 way        landuse      text         linear,polygon

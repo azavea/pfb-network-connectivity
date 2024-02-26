@@ -25,7 +25,8 @@ INSERT INTO generated.neighborhood_pharmacies (
 )
 SELECT  ST_Multi(ST_Buffer(ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3),0))
 FROM    neighborhood_osm_full_polygon
-WHERE   amenity = 'pharmacy';
+WHERE   amenity = 'pharmacy' OR
+        shop = 'chemist';
 
 -- set points on polygons
 UPDATE  generated.neighborhood_pharmacies
@@ -43,7 +44,8 @@ SELECT  osm_id,
         name,
         way
 FROM    neighborhood_osm_full_point
-WHERE   amenity = 'pharmacy'
+WHERE   amenity = 'pharmacy' OR
+        shop = 'chemist'
 AND     NOT EXISTS (
             SELECT  1
             FROM    neighborhood_pharmacies s

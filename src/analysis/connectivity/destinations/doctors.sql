@@ -25,7 +25,8 @@ INSERT INTO generated.neighborhood_doctors (
 )
 SELECT  ST_Multi(ST_Buffer(ST_CollectionExtract(unnest(ST_ClusterWithin(way,:cluster_tolerance)),3),0))
 FROM    neighborhood_osm_full_polygon
-WHERE   amenity IN ('clinic','doctors');
+WHERE   amenity IN ('clinic','doctors') OR
+        healthcare IN ('doctor','doctors','clinic');
 
 -- set points on polygons
 UPDATE  generated.neighborhood_doctors
@@ -43,7 +44,8 @@ SELECT  osm_id,
         name,
         way
 FROM    neighborhood_osm_full_point
-WHERE   amenity IN ('clinic','doctors')
+WHERE   amenity IN ('clinic','doctors') OR
+        healthcare IN ('doctor','doctors','clinic')
 AND     NOT EXISTS (
             SELECT  1
             FROM    neighborhood_doctors s
