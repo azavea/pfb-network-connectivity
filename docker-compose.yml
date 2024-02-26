@@ -22,7 +22,7 @@ services:
   django:
     image: pfb-app
     extends:
-      service: django
+      service: django-common
       file: common.yml
     ports:
       - "9202:9202"
@@ -39,7 +39,7 @@ services:
   django-q:
     image: django-q
     extends:
-      service: django
+      service: django-common
       file: common.yml
     entrypoint: ./manage.py
     command: qcluster
@@ -72,7 +72,7 @@ services:
   analysis:
     image: pfb-analysis
     extends:
-      service: django
+      service: django-common
       file: common.yml
     build:
       context: ./src
