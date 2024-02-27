@@ -1,0 +1,9 @@
+---
+docker_repository_arch: "amd64"
+docker_packages:
+  - "docker-ce={{ docker_version }}"
+  - "docker-ce-cli={{ docker_version }}"
+  - "containerd.io={{ docker_containerd_version }}"
+docker_version: "5:25.*"
+docker_containerd_version: "1.6.*"
+docker_options: "--storage-opt dm.basesize=20G"
