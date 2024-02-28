@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+- Update OSM tags for doctors, dentists, hospitals, and pharmacies
+- Update Vagrant and Docker provisioning
+
 ## [0.19.0] - 2023-08-30
 
 - Update OSM tags for crossings and traffic islands (PR #948)

@@ -7,7 +7,7 @@ run `vagrant ssh` from the project directory on your host machine.
 
 The container is built by `scripts/update`, but can also be rebuilt separately by running:
 ```
-docker-compose build analysis
+docker compose build analysis
 ```
 
 ## Example

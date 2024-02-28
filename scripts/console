@@ -31,11 +31,11 @@ esac
 pushd ..
 
 if [ -n "$NORMAL_CONTAINER" ]; then
-    docker-compose exec "${1}" /bin/bash
+    docker compose exec "${1}" /bin/bash
 fi
 
 if [ -n "$DATABASE_CONTAINER" ]; then
-    docker-compose exec database gosu postgres psql -d pfb
+    docker compose exec database gosu postgres psql -d pfb
 fi
 
 popd

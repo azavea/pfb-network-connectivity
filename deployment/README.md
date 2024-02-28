@@ -166,7 +166,7 @@ and they will be passed in during deployment.
 Use the Tilegarden Node scripts in the VM to deploy a new Tilegarden instance:
 
 ```
-vagrant@pfb-network-connectivity:/vagrant$ docker-compose \
+vagrant@pfb-network-connectivity:/vagrant$ docker compose \
                                              -f docker-compose.yml \
                                              -f docker-compose.test.yml \
                                              run --rm --entrypoint yarn \

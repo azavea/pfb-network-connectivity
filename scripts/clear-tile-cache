@@ -2,7 +2,7 @@
 
 set -e
 
-DEFAULT_BUCKET_NAME=$(docker-compose run --rm tilegarden bash -c 'echo -n $PFB_TILEGARDEN_CACHE_BUCKET')
+DEFAULT_BUCKET_NAME=$(docker compose run --rm tilegarden bash -c 'echo -n $PFB_TILEGARDEN_CACHE_BUCKET')
 
 function usage() {
     echo -n \
