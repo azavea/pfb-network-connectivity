@@ -25,7 +25,7 @@ then
     else
         pushd ..
 
-        docker-compose up --build nginx django django-q angularjs tilegarden
+        docker compose up --build nginx django django-q angularjs tilegarden
 
         popd
     fi

@@ -135,7 +135,7 @@ Build the docker container for the verification tool within the VM:
 
 ```
 cd src/verifier
-docker-compose build
+docker compose build
 ```
 
 Ensure the exported output from the analysis to check exists in the `data/output` directory. It will be there by default if the `data` directory was used for the neighborhood input shapefile.
@@ -143,7 +143,7 @@ Ensure the exported output from the analysis to check exists in the `data/output
 To compare the analysis output for Boulder, run the verification tool with:
 
 ```
-docker-compose run verifier boulder.csv
+docker compose run verifier boulder.csv
 ```
 
 Any output in the `verified_output` directory may be used for comparison.
@@ -151,7 +151,7 @@ Any output in the `verified_output` directory may be used for comparison.
 To compare to analysis output that has a non-default filename (`analysis_neighborhood_score_inputs.csv`), run the verification tool with the name of the file in `data/output` as the second argument:
 
 ```
-docker-compose run verifier boulder.csv my_output_to_verify.csv
+docker compose run verifier boulder.csv my_output_to_verify.csv
 ```
 
 If there are any differences in the outputs, a summary of the differences will be output to console.

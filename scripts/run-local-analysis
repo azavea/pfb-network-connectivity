@@ -20,7 +20,7 @@ The first argument can be either the path to a shapefile (within the container,
 which to download the zipped shapefile. Anything that starts with 'http' will be
 treated as a URL.
 
-'extra args' should be a string that will be fed through to the `docker-compose run`
+'extra args' should be a string that will be fed through to the `docker compose run`
 command, e.g. '-T' to disable pseudo-TTY allocation.
 
 The `NB_POSTGRESQL_*` variables can point to a remote DB instance. Be sure you've
@@ -96,7 +96,7 @@ Results available locally at ${NB_OUTPUT_DIR}
         PFB_S3_RESULTS_PATH=""
     fi
 
-    docker-compose run --rm $EXTRA_ARGS \
+    docker compose run --rm $EXTRA_ARGS \
         -e AWS_PROFILE="${AWS_PROFILE}" \
         -e AWS_STORAGE_BUCKET_NAME="${AWS_STORAGE_BUCKET_NAME}" \
         -e NB_BOUNDARY_BUFFER=$NB_BOUNDARY_BUFFER \

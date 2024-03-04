@@ -19,7 +19,7 @@ services:
     volumes:
       - $HOME/.aws:/root/.aws:ro
 
-  django:
+  django-common:
     extends:
       service: base
     build:

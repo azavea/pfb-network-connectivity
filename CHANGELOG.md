@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.20.0] - 2024-03-04
+
+- Update OSM tags for doctors, dentists, hospitals, and pharmacies
+- Update Vagrant and Docker provisioning
+
 ## [0.19.0] - 2023-08-30
 
 - Update OSM tags for crossings and traffic islands (PR #948)
@@ -202,7 +207,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.1.0] - 2017-04-21
 
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.19.0...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.20.0...HEAD
+[0.20.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.19.0...0.20.0
 [0.19.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.18.0...0.19.0
 [0.18.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.17.0...0.18.0
 [0.17.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.16.1...0.17.0

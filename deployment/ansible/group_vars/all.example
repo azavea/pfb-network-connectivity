@@ -7,8 +7,3 @@ aws_profile: pfb
 # AWS Batch development settings
 pfb_aws_batch_analysis_job_queue_name: "name_of_batch_analysis_job_queue"
 pfb_aws_batch_analysis_job_definition_name: "staging-pfb-analysis-run-job"
-
-# azavea.docker
-docker_version: 5:19.*
-docker_options: "--storage-opt dm.basesize=20G"
-docker_compose_version: 1.23.*

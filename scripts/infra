@@ -24,10 +24,10 @@ function update_batch_definitions() {
     #       and reuse old version
     # TODO: This is a bit awkward. If we `plan` but never `apply`, we'll have created
     #       an orphaned job definition that never gets used.
-    docker-compose build
+    docker compose build
 
     ENVIRONMENT="${ENVIRONMENT:-staging}"
-    BATCH_ANALYSIS_JOB_NAME_REVISION=$(docker-compose run --rm \
+    BATCH_ANALYSIS_JOB_NAME_REVISION=$(docker compose run --rm \
         update-job-defs \
         "${ENVIRONMENT}-pfb-analysis-run-job.json" \
         "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}")
@@ -58,16 +58,16 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
 
                 update_batch_definitions
 
-                docker-compose run --rm \
+                docker compose run --rm \
                     --entrypoint rm \
                     terraform -rf .terraform/ terraform.tfstate*
 
-                docker-compose run --rm \
+                docker compose run --rm \
                     terraform init \
                     -backend-config="bucket=${PFB_SETTINGS_BUCKET}" \
                     -backend-config="key=terraform/state"
 
-                docker-compose run --rm \
+                docker compose run --rm \
                     terraform plan \
                           -var-file="${PFB_SETTINGS_BUCKET}.tfvars" \
                           -var="git_commit=${GIT_COMMIT}" \
@@ -75,7 +75,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                           -out="${PFB_SETTINGS_BUCKET}.tfplan"
                 ;;
             apply)
-                docker-compose run --rm terraform apply "${PFB_SETTINGS_BUCKET}.tfplan"
+                docker compose run --rm terraform apply "${PFB_SETTINGS_BUCKET}.tfplan"
 
                 # TODO (#843): Restore this once we've gotten Tilegarden deployment working again
                 # popd
@@ -84,7 +84,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                 # aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/.env" "./src/tilegarden/.env"
                 # aws s3 cp "s3://${PFB_SETTINGS_BUCKET}/tilegarden/claudia.json" "./src/tilegarden/claudia/claudia.json"
 
-                # docker-compose \
+                # docker compose \
                 #     -f docker-compose.yml \
                 #     -f docker-compose.test.yml \
                 #     run --rm --entrypoint yarn tilegarden deploy
@@ -92,16 +92,16 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
             plan-mgmt)
                 update_batch_definitions
 
-                docker-compose run --rm \
+                docker compose run --rm \
                     --entrypoint rm \
                     terraform -rf .terraform/ terraform.tfstate*
 
-                docker-compose run --rm \
+                docker compose run --rm \
                     terraform init \
                     -backend-config="bucket=${PFB_SETTINGS_BUCKET}" \
                     -backend-config="key=terraform/state"
 
-                docker-compose run --rm \
+                docker compose run --rm \
                     terraform plan \
                           -var-file="${PFB_SETTINGS_BUCKET}.tfvars" \
                           -var="git_commit=${GIT_COMMIT}" \
@@ -110,7 +110,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
                           -out="${PFB_SETTINGS_BUCKET}-mgmt.tfplan"
                 ;;
             apply-mgmt)
-                docker-compose run --rm terraform apply "${PFB_SETTINGS_BUCKET}-mgmt.tfplan"
+                docker compose run --rm terraform apply "${PFB_SETTINGS_BUCKET}-mgmt.tfplan"
                 ;;
             update-tfvars)
                 aws s3 cp "${PFB_SETTINGS_BUCKET}.tfvars" \
