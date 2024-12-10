@@ -47,6 +47,7 @@ def add_root_org(apps, schema_editor):
     root_org = Organization.objects.create(created_by=root_user,
                                            modified_by=root_user,
                                            name='root',
+                                           uuid='7adf4108-f9e4-4f1f-ae9c-4fccf55d9796',
                                            org_type='ADMIN',
                                            label='Default administrative organization')
     root_org.save()

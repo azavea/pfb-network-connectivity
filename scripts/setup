@@ -30,7 +30,7 @@ then
 
         vagrant up --provision
 
-        vagrant ssh -c "cd /vagrant && ./scripts/update"
+        vagrant ssh -c "cd /vagrant && ./scripts/update --load-data"
 
         popd
     fi
