@@ -1,4 +1,3 @@
-version: '2'
 services:
   database:
     image: postgis/postgis:13-3.1

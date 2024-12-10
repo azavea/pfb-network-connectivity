@@ -1,4 +1,3 @@
-version: '2'
 services:
   update-job-defs:
       image: update-job-defs

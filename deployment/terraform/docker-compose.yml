@@ -1,4 +1,3 @@
-version: '2'
 services:
   terraform:
     image: quay.io/azavea/terraform:1.1.9

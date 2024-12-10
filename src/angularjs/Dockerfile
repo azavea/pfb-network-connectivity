@@ -10,7 +10,7 @@ RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.
 RUN apt-get update && apt-get install -y rsync \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g bower gulp
+RUN npm install -g bower gulp@3.9.0
 
 WORKDIR /opt/pfb/angularjs
 COPY package.json ${ANGULAR_DIR}/package.json

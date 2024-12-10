@@ -1,4 +1,3 @@
-version: '2'
 services:
   nginx:
     image: pfb-nginx:${GIT_COMMIT}
