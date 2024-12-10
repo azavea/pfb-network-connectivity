@@ -57,8 +57,28 @@ function run_database_migrations() {
 function run_data_fixtures() {
     docker compose up -d database
     check_database
+    echo "*** Loading score metadata fixture..."
     docker compose run --rm --entrypoint python3 django manage.py loaddata analysis-score-metadata
-    docker compose run --rm --entrypoint python3 django manage.py import_crash_data
+
+    if [ $1 ]; then
+        echo "*** Importing crash data..."
+        docker compose run --rm --entrypoint python3 django manage.py import_crash_data
+
+        # The sample analysis results fixture takes a few steps
+        echo "*** Downloading sample analysis results fixture..."
+        aws --profile pfb s3 sync --exclude "*" --include "sample_analysis_results.json.gz" \
+            "s3://test-pfb-inputs/" src/django/pfb_analysis/fixtures/
+        echo "*** Loading sample analysis results fixture..."
+        docker compose run --rm --entrypoint python3 django manage.py loaddata sample_analysis_results
+        echo "*** Copying S3 files for sample analysis results fixture into your bucket..."
+        # If we're running on host rather than in Vagrant, source .env to get the DEV_USER variable
+        if [ -z $DEV_USER ]; then
+            source .env
+        fi
+        aws --profile pfb s3 sync --quiet \
+            "s3://test-pfb-inputs/fixture_results_files/" \
+            "s3://${DEV_USER}-pfb-storage-us-east-1/results/"
+    fi
     docker compose stop database
 }
 
@@ -73,7 +93,11 @@ then
         docker compose build --pull database django angularjs analysis tilegarden django-q
 
         run_database_migrations
-        run_data_fixtures
+        if [ "${1:-}" = "--load-data" ]; then
+            run_data_fixtures true
+        else
+            run_data_fixtures
+        fi
 
         echo "Copying angular site to nginx"
         pushd "src/nginx"
