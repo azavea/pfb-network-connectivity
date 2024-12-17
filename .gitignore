@@ -5,6 +5,9 @@ Thumbs.db
 #Vagrant
 .vagrant
 
+#Env file used for docker-on-host
+.env
+
 #Ansible
 deployment/ansible/group_vars/all
 deployment/ansible/roles/azavea.*

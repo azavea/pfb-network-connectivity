@@ -17,30 +17,27 @@ Requirements:
 3. Before starting the VM, ensure the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` is set. NFS is not supported on windows, so we need to ensure that Vagrant ignores our request for it.
 4. Do not use `vagrant reload`. In some cases it will create a new VM rather than autodetecting that the old one exists
 
-#### Notes for non-Windows users
+#### Notes for non-Windows Vagrant users
 
 1. An NFS daemon must be running on the host machine. This should be enabled by default on MacOS. Linux computers may require the installation of an additional package such as nfs-kernel-server on Ubuntu.
 2. For some commands (e.g., `./scripts/test`), you may need to add the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` for the shared folders to work as expected with Django.
 
-#### Notes for Docker only users
+#### Notes for Docker-only users
 
-This mirrors what Jenkins does and may not work for all tasks.
+The Vagrant VM provides a few tools and environment variables. To use Docker on host:
 
-1. Setup AWS credentials like below.
-2. Setup an export file (or manually) like:
+1. Install the AWS CLI on your machine, and set up AWS credentials as described below.
+2. Create an `.env` file to provide values for variables that don't have defaults in the docker-compose file:
+   ```bash
+   DEV_USER=$USER
+   AWS_PROFILE=pfb
+   PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME='dummy-test-pfb-analysis-job-queue'
+   PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION='dummy-test-pfb-analysis-run-job:1'
+   PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME='dummy-test-pfb-analysis-run-job'
+   ```
+   Note: `DEV_USER` doesn't have to be your local username, but that's a convenient default. If you want something different, or if your system doesn't set `$USER` in your environment, just hard-code a (unique) value of your choice.
 
-```bash
-export AWS_DEFAULT_REGION="us-east-1"
-export PFB_SETTINGS_BUCKET="staging-pfb-config-us-east-1"
-export PFB_S3STORAGE_BUCKET="staging-pfb-static-us-east-1"
-export PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME="dummy-test-pfb-analysis-job-queue"
-export PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION="dummy-test-pfb-analysis-run-job:1"
-export AWS_PROFILE=pfb
-export GIT_COMMIT=0577186
-export BATCH_ANALYSIS_JOB_NAME_REVISION="dummy-test-pfb-analysis-run-job:1"
-```
-
-3. Use update and server STRTA (do not use setup)
+3. Ignore `./scripts/setup`, which provisions the Vagrant VM, and just use `./scripts/update`
 
 ### Setting up AWS credentials
 
@@ -73,29 +70,45 @@ Run `./scripts/setup` to install project dependencies and prepare the developmen
 vagrant ssh
 ```
 
-Once in the VM, if you added AWS credentials above, run the following commands to configure your development S3 buckets:
+### Creating your development S3 bucket
+
+If you added AWS credentials above, run the following commands to configure your development S3 bucket. If you're running without Vagrant, either replace `${DEV_USER}` on the first line with the value you're using, or run `source .env` to set it in your shell.
 
 ```
-aws s3api create-bucket --bucket "${DEV_USER}-pfb-storage-us-east-1"
-aws s3api put-bucket-policy --bucket "${DEV_USER}-pfb-storage-us-east-1" --policy "{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::${DEV_USER}-pfb-storage-us-east-1/*\"}]}"
+export PFB_DEV_BUCKET="${DEV_USER}-pfb-storage-us-east-1"
+aws s3api create-bucket --bucket $PFB_DEV_BUCKET
+aws s3api put-bucket-policy --bucket $PFB_DEV_BUCKET --policy "{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::${PFB_DEV_BUCKET}/*\"}]}"
+aws s3api put-bucket-cors --bucket $PFB_DEV_BUCKET --cors-configuration "{\"CORSRules\":[{\"AllowedHeaders\":[\"Authorization\"],\"AllowedMethods\":[\"GET\"],\"AllowedOrigins\":[\"*\"],\"ExposeHeaders\":[],\"MaxAgeSeconds\":3000}]}"
 ```
 
 At this point, if you only intend to run the 'Bike Network Analysis', skip directly to [Running the Analysis](#running-the-analysis)
 
-To start the application containers (from within the Vagrant VM):
+### Running the development server
+
+The following commands should be run from within the Vagrant VM if you're using it, or from the project root directory on your host machine if not.
+
+For initial setup or to apply dependency or database updates, run:
+
+```
+./scripts/update --load-data
+```
+
+To start the application containers, run:
 
 ```
 ./scripts/server
 ```
 
-In order to use the API, you'll need to run migrations on the Django app server:
+### Using the development app
 
+The migrations that get run by `scripts/update` will add a default admin user:
 ```
-./scripts/django-manage migrate
+Username: systems+pfb@azavea.com
+Password: root
+```
 
-This will add a default admin user that can log in to http://localhost:9200/api/ as:
-systems+pfb@azavea.com / root
-```
+These credentials will work to log in to either the front-end admin (http://localhost:9301/#/login/) or the Django Rest Framework development interface (http://localhost:9200/api/).
+
 
 ## Ports
 
