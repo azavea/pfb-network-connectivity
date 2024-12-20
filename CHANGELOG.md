@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+- Add fixture with sample analysis results
+
 ## [0.20.0] - 2024-03-04
 
 - Update OSM tags for doctors, dentists, hospitals, and pharmacies
