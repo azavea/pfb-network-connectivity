@@ -78,6 +78,9 @@ function run_data_fixtures() {
         aws --profile pfb s3 sync --quiet \
             "s3://test-pfb-inputs/fixture_results_files/" \
             "s3://${DEV_USER}-pfb-storage-us-east-1/results/"
+        aws --profile pfb s3 sync --quiet \
+            "s3://test-pfb-inputs/fixture_neighborhood_boundaries/" \
+            "s3://${DEV_USER}-pfb-storage-us-east-1/neighborhood_boundaries/"
     fi
     docker compose stop database
 }
