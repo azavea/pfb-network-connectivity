@@ -6,43 +6,10 @@ PFB Bicycle Network Connectivity
 
 Requirements:
 
-- Vagrant 2.2.6+
-- VirtualBox 5.2+
+- [Docker Compose](https://docs.docker.com/compose/install/)
 - [AWS CLI](https://aws.amazon.com/cli/)
 
-#### Notes for Windows users
-
-1. Ensure all project files checkout with LF (unix) line endings. The easiest way is to run `git config --global core.autocrlf false` before checking out the project. Alternatively, you can checkout the project, then run `git config core.autocrlf false` within the project dir, then manually fix all remaining CRLF line endings before running `vagrant up`.
-2. Run all commands in a **shell with administrator permissions**. It's highly recommended to run all commands within the "Git for Windows" Git Bash shell, as that already includes an SSH client, and allows running the commands below as-is.
-3. Before starting the VM, ensure the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` is set. NFS is not supported on windows, so we need to ensure that Vagrant ignores our request for it.
-4. Do not use `vagrant reload`. In some cases it will create a new VM rather than autodetecting that the old one exists
-
-#### Notes for non-Windows Vagrant users
-
-1. An NFS daemon must be running on the host machine. This should be enabled by default on MacOS. Linux computers may require the installation of an additional package such as nfs-kernel-server on Ubuntu.
-2. For some commands (e.g., `./scripts/test`), you may need to add the ENV variable `PFB_SHARED_FOLDER_TYPE=virtualbox` for the shared folders to work as expected with Django.
-
-#### Notes for Docker-only users
-
-The Vagrant VM provides a few tools and environment variables. To use Docker on host:
-
-1. Install the AWS CLI on your machine, and set up AWS credentials as described below.
-2. Create an `.env` file to provide values for variables that don't have defaults in the docker-compose file:
-   ```bash
-   DEV_USER=$USER
-   AWS_PROFILE=pfb
-   PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME='dummy-test-pfb-analysis-job-queue'
-   PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION='dummy-test-pfb-analysis-run-job:1'
-   PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME='dummy-test-pfb-analysis-run-job'
-   ```
-   Note: `DEV_USER` doesn't have to be your local username, but that's a convenient default. If you want something different, or if your system doesn't set `$USER` in your environment, just hard-code a (unique) value of your choice.
-
-3. Ignore `./scripts/setup`, which provisions the Vagrant VM, and just use `./scripts/update`
-
-### Setting up AWS credentials
-
-**Note:** If you do not have AWS credentials, this step can be skipped if you just want to run local analyses.
-Continue below at [Provisioning the VM](#provisioning-the-vm)
+### Setting up AWS credentials and reating your development S3 bucket
 
 As noted above, ensure the AWS CLI is installed on your host machine. Once it is, you can configure your PFB account credentials by running:
 
@@ -50,48 +17,20 @@ As noted above, ensure the AWS CLI is installed on your host machine. Once it is
 aws configure --profile pfb
 ```
 
-### Provisioning the VM
-
-First you'll need to copy the example ansible group_vars file:
-
+Run the following commands to configure your development S3 bucket:
 ```
-cp deployment/ansible/group_vars/all.example deployment/ansible/group_vars/all
-```
-
-If you want to run the full development application and you've configured AWS credentials, copy the appropriate values at the links below into `deployment/ansible/group_vars/all`, choosing the resources with 'staging' in the name:
-
-- [AWS Batch Job Queue](https://console.aws.amazon.com/batch/home?region=us-east-1#/queues): Copy the staging `analysis` job queue name to the equivalent group var setting.
-
-If you don't have access to the console, or just want to run a local analysis, copying the values into `group_vars/all` can be skipped.
-
-Run `./scripts/setup` to install project dependencies and prepare the development environment. Then, SSH into the VM:
-
-```
-vagrant ssh
-```
-
-### Creating your development S3 bucket
-
-If you added AWS credentials above, run the following commands to configure your development S3 bucket. If you're running without Vagrant, either replace `${DEV_USER}` on the first line with the value you're using, or run `source .env` to set it in your shell.
-
-```
-export PFB_DEV_BUCKET="${DEV_USER}-pfb-storage-us-east-1"
+export AWS_PROFILE=pfb
+export PFB_DEV_BUCKET="${USER}-pfb-storage-us-east-1"
 aws s3api create-bucket --bucket $PFB_DEV_BUCKET
 aws s3api put-bucket-policy --bucket $PFB_DEV_BUCKET --policy "{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::${PFB_DEV_BUCKET}/*\"}]}"
 aws s3api put-bucket-cors --bucket $PFB_DEV_BUCKET --cors-configuration "{\"CORSRules\":[{\"AllowedHeaders\":[\"Authorization\"],\"AllowedMethods\":[\"GET\"],\"AllowedOrigins\":[\"*\"],\"ExposeHeaders\":[],\"MaxAgeSeconds\":3000}]}"
 ```
 
-At this point, if you only intend to run the 'Bike Network Analysis', skip directly to [Running the Analysis](#running-the-analysis)
+### Provisioning the development environment
+
+Run `./scripts/setup` to build the containers and prepare the development environment. This includes downloading and loading a fixture containing sample neighborhood and analysis data. To build the containers but skip loading the fixture, run `./scripts/update` instead.
 
 ### Running the development server
-
-The following commands should be run from within the Vagrant VM if you're using it, or from the project root directory on your host machine if not.
-
-For initial setup or to apply dependency or database updates, run:
-
-```
-./scripts/update --load-data
-```
 
 To start the application containers, run:
 
@@ -99,7 +38,7 @@ To start the application containers, run:
 ./scripts/server
 ```
 
-### Using the development app
+The development server can be found at http://localhost:9301/.
 
 The migrations that get run by `scripts/update` will add a default admin user:
 ```
@@ -127,16 +66,19 @@ These credentials will work to log in to either the front-end admin (http://loca
 
 | Name          | Description                                                        |
 | ------------- | ------------------------------------------------------------------ |
-| setup         | Bring up a dev VM, and perform initial installation steps          |
+| setup         | Build application containers and import data fixture               |
 | update        | Re-build application Docker containers and run database migrations |
 | server        | Start the application containers                                   |
 | console       | Start a bash shell on one of the running Docker containers         |
 | django-manage | Run a Django management command on the django container            |
+| test          | Run unit tests and linters                                         |
+| cibuild       | Deployment script for building and testing container images        |
+| cipublish     | Deployment script for publishing container images to AWS ECR       |
+| infra         | Deployment script for deploying infrastructure on AWS              |
 
 ## Running the Analysis
 
-On creating a local anaylsis job in the admin UI, the Django logs will print the appropriate command
-to run in the VM console to actually run the analysis jobs locally.
+Local environments are not hooked up to Batch to run the analysis, so when you create a job locally, it doesn't automatically get run.  Instead, when you create ananaylsis job in the local admin UI, the logs for the Django container will print the appropriate command to run that analysis job locally, so you can just copy the command from there and run it.
 
 See [Running the Analysis Locally](README.LOCAL-ANALYSIS.md) for details.
 
@@ -144,7 +86,7 @@ See [Running the Analysis Locally](README.LOCAL-ANALYSIS.md) for details.
 
 The output from the analysis run may be compared to previous output to see if it has changed. See the section below for the input parameters used to generate the verified output.
 
-Build the docker container for the verification tool within the VM:
+Build the docker container for the verification tool:
 
 ```
 cd src/verifier
@@ -167,7 +109,7 @@ To compare to analysis output that has a non-default filename (`analysis_neighbo
 docker compose run verifier boulder.csv my_output_to_verify.csv
 ```
 
-If there are any differences in the outputs, a summary of the differences will be output to console.
+If there are any differences in the outputs, a summary of the differences will be printed to the console.
 
 ### Verified Output Parameters
 
@@ -181,8 +123,8 @@ Boulder:
 
 ## Import crash data
 
-Crash data is stored in the `pfb-public-documents` bucket under `/data/crashes.zip` and gets loaded automatically via `scripts/update`. You can run this import manually in the VM like so:
-`scripts/django-manage import_crash_data`
+Crash data is stored in the `pfb-public-documents` bucket under `/data/crashes.zip` and gets loaded automatically via `scripts/update`. You can run this import manually with:
+`./scripts/django-manage import_crash_data`
 
 To run it using a zip in your own developer bucket under `/data/crashes.zip` you can use the `--dev` flag, i.e.
-`scripts/django-manage import_crash_data --dev`
+`./scripts/django-manage import_crash_data --dev`
