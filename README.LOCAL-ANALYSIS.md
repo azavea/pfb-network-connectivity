@@ -2,9 +2,6 @@
 
 ## Setup
 
-All commands should be run inside the VM from the `/vagrant/` directory. To SSH into the VM,
-run `vagrant ssh` from the project directory on your host machine.
-
 The container is built by `scripts/update`, but can also be rebuilt separately by running:
 ```
 docker compose build analysis
@@ -18,8 +15,7 @@ Running a bike network analysis requires a few inputs. At a minimum, you'll need
 - The boundary for the area you want to run the analysis for, as a zipped shapefile
 - The [state abbreviation and FIPS code](https://www.mcc.co.mercer.pa.us/dps/state_fips_code_listing.htm) for the state that the boundary area is in
 
-Once, you've prepared the above information, you can run a local analysis using the
-following general form:
+The command to run a local analysis using those parameters would look like this:
 ```
 NB_OUTPUT_DIR=/data/path/to/results/folder \
     ./scripts/run-local-analysis \
@@ -97,7 +93,7 @@ NB_POSTGRESQL_PASSWORD=remote_db_password \
 ### Requirements
 
 - PostgreSQL 13
-- PostGIS 2.3+
+- PostGIS 3.1+
 - Extensions installed:
   - [PostGIS](http://postgis.net/)
   - [pgRouting](http://pgrouting.org/)
