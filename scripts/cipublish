@@ -21,6 +21,10 @@ else
     GIT_COMMIT="$(git rev-parse --short HEAD)"
 fi
 
+# If there's not already an AWS profile or key set, and a 'pfb' profile is defined, use that
+if [[ -z "${AWS_PROFILE}" && -z "${AWS_ACCESS_KEY_ID}" && -n $(aws configure list-profiles | grep '^pfb$') ]]; then
+    AWS_PROFILE=pfb
+fi
 
 DIR="$(dirname "$0")"
 

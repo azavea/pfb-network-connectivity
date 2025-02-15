@@ -19,10 +19,21 @@ Runs django migrations
 "
 }
 
+# If there's not already an AWS profile or key set, and a 'pfb' profile is defined, use that
+if [[ -z "${AWS_PROFILE}" && -z "${AWS_ACCESS_KEY_ID}" && -n $(aws configure list-profiles | grep '^pfb$') ]]; then
+    AWS_PROFILE=pfb
+fi
+
+# Get DEV_USER variable for use in user-specific resources
+DEV_USER=${DEV_USER:-$USER}
+if [[ -z "${DEV_USER}" ]]; then
+    echo "DEV_USER must be set in the environment"
+fi
+
 function check_database() {
     # Check if database is set up to continue
 
-    max=21 # 1 minute
+    max=21 # 1 minute --load-data
     counter=1
     while true
     do
@@ -71,10 +82,6 @@ function run_data_fixtures() {
         echo "*** Loading sample analysis results fixture..."
         docker compose run --rm --entrypoint python3 django manage.py loaddata sample_analysis_results
         echo "*** Copying S3 files for sample analysis results fixture into your bucket..."
-        # If we're running on host rather than in Vagrant, source .env to get the DEV_USER variable
-        if [ -z $DEV_USER ]; then
-            source .env
-        fi
         aws --profile pfb s3 sync --quiet \
             "s3://test-pfb-inputs/fixture_results_files/" \
             "s3://${DEV_USER}-pfb-storage-us-east-1/results/"

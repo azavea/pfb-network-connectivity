@@ -17,6 +17,11 @@ With the --list option, lists and summarizes the contents before asking for conf
 "
 }
 
+# If there's not already an AWS profile or key set, and a 'pfb' profile is defined, use that
+if [[ -z "${AWS_PROFILE}" && -z "${AWS_ACCESS_KEY_ID}" && -n $(aws configure list-profiles | grep '^pfb$') ]]; then
+    AWS_PROFILE=pfb
+fi
+
 if [ "${BASH_SOURCE[0]}" = "${0}" ]
 then
     if [ "${1:-}" = "--help" ]; then
