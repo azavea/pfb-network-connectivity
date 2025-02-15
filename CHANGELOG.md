@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Upgrade Django
 - Add fixture with sample analysis results
 - Fix CI for staging deployment
+- Remove Vagrant and consolidate on docker-on-host local environment
 
 ## [0.20.0] - 2024-03-04
 
