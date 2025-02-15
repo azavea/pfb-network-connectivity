@@ -11,9 +11,9 @@ services:
       - PFB_DB_PORT=5432
       - PFB_DB_USER=pfb
       - PFB_SECRET_KEY=secret
-      - PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME
-      - PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION
-      - PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME
+      - PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME=dummy-test-pfb-analysis-job-queue
+      - PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION="dummy-test-pfb-analysis-run-job:1"
+      - PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME=dummy-test-pfb-analysis-run-job
       - PFB_TILEGARDEN_ROOT=http://localhost:9400
       - PFB_TILEGARDEN_CACHE_BUCKET=dev-pfb-tilecache-us-east-1
     volumes:

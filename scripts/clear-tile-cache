@@ -4,6 +4,11 @@ set -e
 
 DEFAULT_BUCKET_NAME=$(docker compose run --rm tilegarden bash -c 'echo -n $PFB_TILEGARDEN_CACHE_BUCKET')
 
+# If there's not already an AWS profile or key set, and a 'pfb' profile is defined, use that
+if [[ -z "${AWS_PROFILE}" && -z "${AWS_ACCESS_KEY_ID}" && -n $(aws configure list-profiles | grep '^pfb$') ]]; then
+    AWS_PROFILE=pfb
+fi
+
 function usage() {
     echo -n \
          "Usage: $(basename "$0") [--list] [BUCKET]
