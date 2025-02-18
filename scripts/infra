@@ -27,9 +27,7 @@ function update_batch_definitions() {
     docker compose build
 
     ENVIRONMENT="${ENVIRONMENT:-staging}"
-    BATCH_ANALYSIS_JOB_NAME_REVISION=$(AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
-        AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
-        docker compose run --rm \
+    BATCH_ANALYSIS_JOB_NAME_REVISION=$(docker compose run --rm \
         update-job-defs \
         "${ENVIRONMENT}-pfb-analysis-run-job.json" \
         "${PFB_AWS_ECR_ENDPOINT}/pfb-analysis:${GIT_COMMIT}")
