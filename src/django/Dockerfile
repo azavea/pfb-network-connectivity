@@ -1,23 +1,29 @@
 # Note: the Django and psycopg2 versions are repeated in requirements.txt for the benefit
 # of the analysis container. The base container and requirements file versions should be kept
 # in sync.
-FROM quay.io/azavea/django:3.2-python3.10-slim
+FROM python:3.10-slim-bullseye
 
-MAINTAINER Azavea
-
+WORKDIR /usr/src
 COPY requirements.txt /tmp/
-RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+
+RUN set -ex \
+    && buildDeps=" \
+       build-essential \
+       libpq-dev \
+    " \
+    && deps=" \
+       gdal-bin \
+       libgdal-dev \
+       gettext \
+       postgresql-client-13 \
+    " \
+    && apt-get update && apt-get install -y $buildDeps $deps --no-install-recommends \
+    && pip install --no-cache-dir -r /tmp/requirements.txt \
+    && apt-get purge -y --auto-remove $buildDeps \
+    && rm -rf /tmp/requirements.txt /var/lib/apt/lists/*
 
 COPY . /usr/src
-WORKDIR /usr/src
 
 EXPOSE 9202
 
-CMD ["-w", "1", \
-     "-b", "0.0.0.0:9202", \
-     "--reload", \
-     "--log-level", "info", \
-     "--error-logfile", "-", \
-     "--forwarded-allow-ips", "*", \
-     "-k", "gevent", \
-     "pfb_network_connectivity.wsgi"]
+ENTRYPOINT ["/usr/local/bin/gunicorn"]
