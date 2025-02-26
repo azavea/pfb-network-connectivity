@@ -1,5 +1,8 @@
 #!/bin/bash
+
 set -e
+
+DIR="$(dirname "$0")"
 
 if [[ -n "${PFB_DEBUG}" ]]; then
     set -x
@@ -10,8 +13,6 @@ if [[ -n "${GIT_COMMIT}" ]]; then
 else
     GIT_COMMIT="$(git rev-parse --short HEAD)"
 fi
-
-DIR="$(dirname "$0")"
 
 function usage() {
     echo -n \

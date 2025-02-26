@@ -33,7 +33,7 @@ services:
       - ./src/django:/usr/src
       - ./src/nginx/srv/static:/static/
     environment:
-      - DEV_USER
+      - DEV_USER=$USER
 
   django-q:
     image: django-q
@@ -47,7 +47,7 @@ services:
     volumes:
       - ./src/django:/usr/src
     environment:
-      - DEV_USER
+      - DEV_USER=$USER
 
   angularjs:
     image: pfb-angularjs

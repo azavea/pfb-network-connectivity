@@ -2,13 +2,16 @@
 
 set -e
 
+DIR="$(dirname "$0")"
+
 if [[ -n "${PFB_DEBUG}" ]]; then
     set -x
 fi
 
-set -u
-
-DIR="$(dirname "$0")"
+# If there's not already an AWS profile or key set, and a 'pfb' profile is defined, use that
+if [[ -z "${AWS_PROFILE}" && -z "${AWS_ACCESS_KEY_ID}" && -n $(aws configure list-profiles | grep '^pfb$') ]]; then
+    export AWS_PROFILE=pfb
+fi
 
 function usage() {
     echo -n \
