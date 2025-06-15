@@ -1,0 +1,46 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      git_commit:
+        description: "Short Git commit hash to deploy to production"
+        required: true
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      AWS_DEFAULT_REGION: "us-east-1"
+      BATCH_ANALYSIS_JOB_NAME_REVISION: "dummy-test-pfb-analysis-run-job:1"
+      DOCKER_BUILDKIT: 1
+      ENVIRONMENT: "production"
+      GIT_COMMIT: ${{ github.event.inputs.git_commit }}
+      PFB_AWS_BATCH_ANALYSIS_JOB_QUEUE_NAME: "dummy-test-pfb-analysis-job-queue"
+      PFB_AWS_BATCH_ANALYSIS_JOB_DEFINITION_NAME_REVISION: "dummy-test-pfb-analysis-run-job:1"
+      PFB_AWS_ECR_ENDPOINT: ${{ secrets.PFB_AWS_ECR_ENDPOINT }}
+      PFB_S3STORAGE_BUCKET: "production-pfb-static-us-east-1"
+      PFB_SETTINGS_BUCKET: "production-pfb-config-us-east-1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "us-east-1"
+
+      - name: CI Build
+        run: ./scripts/cibuild
+
+      - name: CI Publish
+        run: ./scripts/cipublish
+
+      - name: Infra Plan and Apply
+        run: |
+          unset AWS_PROFILE
+          ./scripts/infra plan
+          ./scripts/infra apply
