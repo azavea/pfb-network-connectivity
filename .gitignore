@@ -5,6 +5,9 @@ Thumbs.db
 #Vagrant
 .vagrant
 
+#Env file used for docker-on-host
+.env
+
 #Ansible
 deployment/ansible/group_vars/all
 deployment/ansible/roles/azavea.*
@@ -73,6 +76,7 @@ coverage.xml
 # Django stuff:
 *.log
 src/django/neighborhood_boundaries/*
+src/django/pfb_analysis/fixtures/sample_analysis_results.json.gz
 
 # Sphinx documentation
 docs/_build/

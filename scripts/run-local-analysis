@@ -72,7 +72,7 @@ else
     PFB_COUNTRY="${2}"
     EXTRA_ARGS="${3}"
 
-    AWS_PROFILE="${AWS_PROFILE:-pfb}"
+    export AWS_PROFILE="${AWS_PROFILE:-pfb}"
     NB_INPUT_SRID="${NB_INPUT_SRID:-4326}"
     NB_MAX_TRIP_DISTANCE="${NB_MAX_TRIP_DISTANCE:-2680}"
     NB_OUTPUT_DIR="${NB_OUTPUT_DIR:-/data/output}"

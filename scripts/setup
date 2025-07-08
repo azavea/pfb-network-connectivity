@@ -12,8 +12,7 @@ function usage() {
     echo -n \
          "Usage: $(basename "$0")
 
-Sets up the development environment by installing dependencies.
-See the Getting Started section of the project README for importing data
+Sets up the development environment by building containers and loading example data.
 
 "
 }
@@ -24,14 +23,6 @@ then
     then
         usage
     else
-        # Ensure aws config dir exists on host, so it can be mounted into VM
-        mkdir -p ~/.aws
-        pushd ..
-
-        vagrant up --provision
-
-        vagrant ssh -c "cd /vagrant && ./scripts/update"
-
-        popd
+        ./update --load-data
     fi
 fi
