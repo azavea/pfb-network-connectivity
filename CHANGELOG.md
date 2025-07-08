@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.21.0] - 2024-03-04
+
 - Upgrade Django
 - Add fixture with sample analysis results
 - Fix CI for staging deployment
@@ -253,7 +255,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.1.0] - 2017-04-21
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.20.0...HEAD
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.21.0...HEAD
+[0.21.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.20.0...0.21.0
 [0.20.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.19.0...0.20.0
 [0.19.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.18.0...0.19.0
 [0.18.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.17.0...0.18.0
