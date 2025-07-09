@@ -32,7 +32,7 @@ SELECT  source.blockid10,
         TRUE,
         (
             SELECT  MIN(hs.total_cost)
-            FROM    neighborhood_reachable_roads_low_stress hs
+            FROM    neighborhood_reachable_roads_high_stress hs
             WHERE   hs.base_road = ANY(source.road_ids)
             AND     hs.target_road = ANY(target.road_ids)
         )
