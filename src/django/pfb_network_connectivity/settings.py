@@ -31,6 +31,12 @@ DEV_USER = os.getenv('DEV_USER', None)
 
 DEBUG = DJANGO_ENV == 'development'
 
+# Starting with Django 4.0, the check against
+# CSRF_TRUSTED_ORIGINS became stricter
+CSRF_TRUSTED_ORIGINS = []
+if "PFB_ALLOWED_HOSTS" in os.environ:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{os.getenv('PFB_ALLOWED_HOSTS')}")
+
 ALLOWED_HOSTS = os.getenv('PFB_ALLOWED_HOSTS', '').split(',')
 if '' in ALLOWED_HOSTS:
     ALLOWED_HOSTS.remove('')
@@ -407,3 +413,9 @@ COUNTRY_CONFIG = {
         'subdivisions_required': True,
     },
 }
+
+# The cookie will be marked as “secure”
+# Browsers may ensure that the cookie is only sent
+# with an HTTPS connection.
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
