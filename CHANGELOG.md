@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+## [0.21.2] - 2024-08-03
+
 - Fix Django CSRF error
 
 ## [0.21.1] - 2024-07-08
@@ -261,8 +263,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.1.0] - 2017-04-21
 
-[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.21.1...HEAD
-[0.21.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.21.0...0.21.1
+[Upcoming release]: https://github.com/azavea/pfb-network-connectivity/compare/0.21.2...HEAD
+[0.21.2]: https://github.com/azavea/pfb-network-connectivity/compare/0.21.1...0.21.2
+[0.21.1]: https://github.com/azavea/pfb-network-connectivity/compare/0.21.0...0.21.1
 [0.21.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.20.0...0.21.0
 [0.20.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.19.0...0.20.0
 [0.19.0]: https://github.com/azavea/pfb-network-connectivity/compare/0.18.0...0.19.0
