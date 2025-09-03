@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Upcoming release]
 
+- Fix Django CSRF error
+
 ## [0.21.1] - 2024-07-08
 
 - Add `./scripts/update` to production release GitHub Actions workflow
