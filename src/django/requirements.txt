@@ -23,7 +23,7 @@ gevent==24.11.1
 gunicorn==23.0.0
 pycountry==22.3.5
 pyuca==1.2
-requests==2.27.1
+requests==2.32.4
 us==2.0.2
 
 # This been removed from application code but was used in old migrations, so it can't be removed
